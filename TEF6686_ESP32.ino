@@ -199,7 +199,6 @@ byte items[10] = {10, static_cast<byte>(dynamicspi ? 10 : 9), 7, 10, 10, 10, 9, 
 byte iMSEQ;
 byte iMSset;
 byte language;
-byte licold;
 byte longbandpress;
 byte memdoublepi;
 byte memorypos;
@@ -210,7 +209,6 @@ byte memstartpos;
 byte memstoppos;
 byte menuitem;
 byte menupage;
-byte MSold;
 byte poweroptions;
 byte rdsblockold;
 byte rdsqualityold;
@@ -340,9 +338,6 @@ String cryptedpassword;
 String ECColdString;
 String ECCString;
 String eonpsold[20];
-String LIColdString;
-String LICString;
-String pinstringold;
 String PIold;
 String PSold;
 String ptynold = " ";
@@ -3200,7 +3195,6 @@ void ShowFreq(int mode) {
 
   if (spispeed == 7) setAutoSpeedSPI();
   rdsreset = true;
-  licold = 254;
   ECCold = 253;
   afmethodBold = false;
   aid_counterold = 0;
@@ -3230,8 +3224,8 @@ void ShowFreq(int mode) {
     } else {
       RDSSprite.fillSprite(BackgroundColor);
       RDSSprite.pushSprite(36, 220);
-      tft.fillCircle(203, 223, 2, GreyoutColor);
-      tft.fillCircle(203, 234, 2, GreyoutColor);
+      tft.fillCircle(314, 223, 2, GreyoutColor);
+      tft.fillCircle(314, 234, 2, GreyoutColor);
     }
     rdsflagreset = true;
   }

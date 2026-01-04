@@ -2950,15 +2950,13 @@ void BuildAdvancedRDS() {
   tft.drawLine(0, 126, 320, 126, FrameColor);
   tft.drawLine(0, 140, 210, 140, FrameColor);
   tft.drawLine(0, 166, 210, 166, FrameColor);
-  tft.drawLine(0, 193, 210, 193, FrameColor);
-  tft.drawLine(0, 217, 210, 217, FrameColor);
+  tft.drawLine(0, 193, 320, 193, FrameColor);
+  tft.drawLine(0, 217, 320, 217, FrameColor);
   tft.drawLine(30, 30, 30, 0, FrameColor);
   tft.drawLine(66, 30, 66, 0, FrameColor);
   tft.drawLine(105, 30, 105, 0, FrameColor);
-  tft.drawLine(105, 30, 105, 0, FrameColor);
   tft.drawLine(162, 30, 162, 0, FrameColor);
-  tft.drawLine(210, 30, 210, 240, FrameColor);
-  tft.drawLine(210, 191, 320, 191, FrameColor);
+  tft.drawLine(210, 30, 210, 217, FrameColor);
   tft.drawLine(248, 30, 248, 0, FrameColor);
 
   tftPrint(ALEFT, "ERRORS", 3, 34, ActiveColor, ActiveColorSmooth, 16);
@@ -2973,17 +2971,15 @@ void BuildAdvancedRDS() {
   tftPrint(ALEFT, "PS", 3, 81, ActiveColor, ActiveColorSmooth, 16);
   tftPrint(ALEFT, "PTY", 3, 109, ActiveColor, ActiveColorSmooth, 16);
   tftPrint(ALEFT, "RT+", 3, 147, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ALEFT, "AF", 3, 199, ActiveColor, ActiveColorSmooth, 16);
   tftPrint(ALEFT, "EON", 3, 174, ActiveColor, ActiveColorSmooth, 16);
+  tftPrint(ALEFT, "AF", 3, 199, ActiveColor, ActiveColorSmooth, 16);
   tftPrint(ALEFT, "RT", 3, 222, ActiveColor, ActiveColorSmooth, 16);
 
   tftPrint(ALEFT, "A:", 66, 34, ActiveColor, ActiveColorSmooth, 16);
   tftPrint(ALEFT, "B:", 104, 34, ActiveColor, ActiveColorSmooth, 16);
   tftPrint(ALEFT, "C:", 142, 34, ActiveColor, ActiveColorSmooth, 16);
   tftPrint(ALEFT, "D:", 180, 34, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ALEFT, "ECC", 214, 193, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ALEFT, "LIC", 214, 208, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ALEFT, "PIN", 214, 223, ActiveColor, ActiveColorSmooth, 16);
+  tftPrint(ALEFT, "ECC", 214, 199, ActiveColor, ActiveColorSmooth, 16);
   tftPrint(ARIGHT, "Dynamic PTY", 300, 130, ActiveColor, ActiveColorSmooth, 16);
   tftPrint(ARIGHT, "Artificial head", 300, 145, ActiveColor, ActiveColorSmooth, 16);
   tftPrint(ARIGHT, "Compressed", 300, 160, ActiveColor, ActiveColorSmooth, 16);
@@ -3019,8 +3015,6 @@ void BuildAdvancedRDS() {
   tftPrint(ALEFT, "TMC", 88, 51, GreyoutColor, BackgroundColor, 16);
   tftPrint(ALEFT, "RT+", 123, 51, GreyoutColor, BackgroundColor, 16);
   tftPrint(ALEFT, "EON", 153, 51, GreyoutColor, BackgroundColor, 16);
-  tftPrint(ALEFT, "S", 185, 51, GreyoutColor, BackgroundColor, 16);
-  tftPrint(ALEFT, "M", 196, 51, GreyoutColor, BackgroundColor, 16);
 
   RDSstatusold = !RDSstatusold;
   ShowFreq(0);
@@ -3039,8 +3033,6 @@ void BuildAdvancedRDS() {
   PSold = " ";
   stationIDold = " ";
   stationStateold = " ";
-  MSold = 0;
-  licold = 254;
   af_counterold = 254;
   TAold = false;
   TPold = false;
@@ -3052,7 +3044,6 @@ void BuildAdvancedRDS() {
   hasafold = false;
   haseonold = false;
   BWreset = true;
-  pinstringold = "";
   hasrtplusold = false;
   afmethodBold = false;
   rds_clockold = "";
@@ -3173,7 +3164,6 @@ void BuildDisplay() {
   TAold = false;
   TPold = false;
   haseonold = false;
-  MSold = 0;
   rds_clockold = "";
   strcpy(programTypePrevious, "");
   PIold = " ";

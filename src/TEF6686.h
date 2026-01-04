@@ -339,137 +339,6 @@ static const char* const ECCtext[] {
   "Bangladesh" // 227
 };
 
-static const char* const LICtext[] = {
-  "Unknown",         // 0
-  "Albanian",        // 1
-  "Breton",          // 2
-  "Catalan",         // 3
-  "Croatian",        // 4
-  "Welsh",           // 5
-  "Czech",           // 6
-  "Danish",          // 7
-  "German",          // 8
-  "English",         // 9
-  "Spanish",         // 10
-  "Esperanto",       // 11
-  "Estonian",        // 12
-  "Basque",          // 13
-  "Faroese",         // 14
-  "French",          // 15
-  "Frisian",         // 16
-  "Irish",           // 17
-  "Gaelic",          // 18
-  "Galician",        // 19
-  "Icelandic",       // 20
-  "Italian",         // 21
-  "Lappish",         // 22
-  "Latin",           // 23
-  "Latvian",         // 24
-  "Luxemb.",         // 25
-  "Lithua.",         // 26
-  "Hungar.",         // 27
-  "Maltese",         // 28
-  "Dutch",           // 29
-  "Norweg.",         // 30
-  "Occitan",         // 31
-  "Polish",          // 32
-  "Portug.",         // 33
-  "Romanian",        // 34
-  "Romansh",         // 35
-  "Serbian",         // 36
-  "Slovak",          // 37
-  "Slovene",         // 38
-  "Finnish",         // 39
-  "Swedish",         // 40
-  "Turkish",         // 41
-  "Flemish",         // 42
-  "Walloon",         // 43
-  "Unknown",         // 44
-  "Unknown",         // 45
-  "Unknown",         // 46
-  "Unknown",         // 47
-  "Unknown",         // 48
-  "Unknown",         // 49
-  "Unknown",         // 50
-  "Unknown",         // 51
-  "Unknown",         // 52
-  "Unknown",         // 53
-  "Unknown",         // 54
-  "Unknown",         // 55
-  "Unknown",         // 56
-  "Unknown",         // 57
-  "Unknown",         // 58
-  "Unknown",         // 59
-  "Unknown",         // 60
-  "Unknown",         // 61
-  "Unknown",         // 62
-  "Unknown",         // 63
-  "Backgr.",         // 64
-  "Unknown",         // 65
-  "Unknown",         // 66
-  "Unknown",         // 67
-  "Unknown",         // 68
-  "Zulu",            // 69
-  "Vietnam.",        // 70
-  "Uzbek",           // 71
-  "Urdu",            // 72
-  "Ukrain.",         // 73
-  "Thai",            // 74
-  "Telugu",          // 75
-  "Tatar",           // 76
-  "Tamil",           // 77
-  "Tadzhik",         // 78
-  "Swahili",         // 79
-  "SrananT.",        // 80
-  "Somali",          // 81
-  "Sinhalese",       // 82
-  "Shona",           // 83
-  "Serbo-C.",        // 84
-  "Ruthen.",         // 85
-  "Russian",         // 86
-  "Quechua",         // 87
-  "Pushtu",          // 88
-  "Punjabi",         // 89
-  "Persian",         // 90
-  "Papami.",         // 91
-  "Oriya",           // 92
-  "Nepali",          // 93
-  "Ndebele",         // 94
-  "Marathi",         // 95
-  "Moldov.",         // 96
-  "Malays.",         // 97
-  "Malagas.",        // 98
-  "Macedon.",        // 99
-  "Laotian",         // 100
-  "Korean",          // 101
-  "Khmer",           // 102
-  "Kazakh",          // 103
-  "Kannada",         // 104
-  "Japanese",        // 105
-  "Indones.",        // 106
-  "Hindi",           // 107
-  "Hebrew",          // 108
-  "Hausa",           // 109
-  "Gurani",          // 110
-  "Gujurati",        // 111
-  "Greek",           // 112
-  "Georgian",        // 113
-  "Fulani",          // 114
-  "Dari",            // 115
-  "Churash",         // 116
-  "Chinese",         // 117
-  "Burmese",         // 118
-  "Bulgarian",       // 119
-  "Bengali",         // 120
-  "Belorus.",        // 121
-  "Bambora",         // 122
-  "Azerbaij.",       // 123
-  "Assamese",        // 124
-  "Armenian",        // 125
-  "Arabic",          // 126
-  "Amharic"          // 127
-};
-
 static const char* const oda_app_names[] {
   "None",
   "Cross referencing DAB within RDS",
@@ -572,7 +441,6 @@ const DABFrequencyLabel DABfrequencyTable[] = {
 typedef struct _rds_ {
   byte region;
   byte stationTypeCode;
-  byte MS;
   String stationName;
   String stationText;
   String stationText32;
@@ -580,7 +448,6 @@ typedef struct _rds_ {
   String RTContent2;
   String PTYN;
   String ECCtext;
-  String LICtext;
   String stationIDtext;
   String stationNameLong;
   String stationStatetext;
@@ -602,10 +469,6 @@ typedef struct _rds_ {
   byte aid_counter;
   byte fastps;
   unsigned int ECC;
-  unsigned int LIC;
-  byte pinMin;
-  byte pinHour;
-  byte pinDay;
   bool rdsAerror;
   bool rdsBerror;
   bool rdsCerror;
@@ -615,9 +478,7 @@ typedef struct _rds_ {
   bool hasDynamicPTY;
   bool hasStereo;
   bool hasRDS;
-  bool hasPIN;
   bool hasECC;
-  bool hasLIC;
   bool hasDABAF;
   bool hasLongPS;
   bool hasRT;

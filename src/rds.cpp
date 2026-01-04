@@ -51,30 +51,6 @@ void ShowAdvancedRDS() {
     }
   }
 
-  if (licold != radio.rds.LIC || rdsreset) {
-    if (!screenmute) {
-      if (radio.rds.hasLIC) LICString = (radio.rds.LICtext.length() == 0 ? textUI(73) : radio.rds.LICtext); else LICString = "N/A";
-      if (LICString != LIColdString) {
-        tftPrint(ALEFT, "N/A", 242, 208, BackgroundColor, BackgroundColor, 16);
-        tftPrint(ALEFT, LIColdString, 242, 208, BackgroundColor, BackgroundColor, 16);
-      }
-      tftPrint(ALEFT, LICString, 242, 208, RDSColor, RDSColorSmooth, 16);
-      LIColdString = LICString;
-      licold = radio.rds.LIC;
-    }
-  }
-
-  String pinstring = String(radio.rds.pinDay) + " " + String(radio.rds.pinHour) + ":" + (radio.rds.pinMin < 10 ? "0" : "") + String(radio.rds.pinMin);
-  if (pinstringold != pinstring) {
-    if (!screenmute)  {
-      tftPrint(ALEFT, "N/A", 242, 223, BackgroundColor, BackgroundColor, 16);
-      tftPrint(ALEFT, pinstringold, 242, 223, BackgroundColor, BackgroundColor, 16);
-
-      if (radio.rds.hasPIN) tftPrint(ALEFT, pinstring, 242, 223, RDSColor, RDSColorSmooth, 16); else tftPrint(ALEFT, "N/A", 242, 223, RDSColor, RDSColorSmooth, 16);
-      pinstringold = pinstring;
-    }
-  }
-
   String afstring;
   if (radio.rds.hasAF && radio.af_counter > 0) for (byte i = 0; i < radio.af_counter; i++) afstring += String(radio.af[i].frequency / 100) + "." + String((radio.af[i].frequency % 100) / 10) + (i == radio.af_counter - 1 ? "        " : " | "); else afstring = textUI(87);
   if (hasafold != radio.rds.hasAF) {
@@ -219,28 +195,6 @@ void ShowAdvancedRDS() {
     afmethodBold = radio.afmethodB;
   }
 
-  if (MSold != radio.rds.MS) {
-    if (!screenmute) {
-      switch (radio.rds.MS) {
-        case 0:
-          tftPrint(ALEFT, "M", 196, 51, GreyoutColor, BackgroundColor, 16);
-          tftPrint(ALEFT, "S", 185, 51, GreyoutColor, BackgroundColor, 16);
-          break;
-
-        case 1:
-          tftPrint(ALEFT, "M", 196, 51, RDSColor, RDSColorSmooth, 16);
-          tftPrint(ALEFT, "S", 185, 51, GreyoutColor, BackgroundColor, 16);
-          break;
-
-        case 2:
-          tftPrint(ALEFT, "M", 196, 51, GreyoutColor, BackgroundColor, 16);
-          tftPrint(ALEFT, "S", 185, 51, RDSColor, RDSColorSmooth, 16);
-          break;
-      }
-    }
-    MSold = radio.rds.MS;
-  }
-
   if (rdsblockold != radio.rdsblock) {
     if (rdsblockold < 33) tft.fillCircle((6 * rdsblockold) + 10, 133, 2, SignificantColor);
     if (radio.rdsblock < 33) tft.fillCircle((6 * radio.rdsblock) + 10, 133, 2, InsignificantColor);
@@ -285,10 +239,10 @@ void showECC() {
       if (!screenmute) {
         if (radio.rds.hasECC) ECCString = (radio.rds.ECCtext.length() == 0 ? textUI(73) : radio.rds.ECCtext); else ECCString = "N/A";
         if (ECCString != ECColdString) {
-          tftPrint(ALEFT, "N/A", 242, 193, BackgroundColor, BackgroundColor, 16);
-          tftPrint(ALEFT, ECColdString, 242, 193, BackgroundColor, BackgroundColor, 16);
+          tftPrint(ALEFT, "N/A", 242, 199, BackgroundColor, BackgroundColor, 16);
+          tftPrint(ALEFT, ECColdString, 242, 199, BackgroundColor, BackgroundColor, 16);
         }
-        tftPrint(ALEFT, ECCString, 242, 193, RDSColor, RDSColorSmooth, 16);
+        tftPrint(ALEFT, ECCString, 242, 199, RDSColor, RDSColorSmooth, 16);
       }
       ECColdString = ECCString;
     }
@@ -399,13 +353,8 @@ void readRds() {
           tftPrint(ALEFT, PTYold, 34, advancedRDS ? 109 : 163,
                    RDSColor, RDSColorSmooth, 16);
 
-          if (!advancedRDS) {
-            tft.fillCircle(314, 223, 2, GreyoutColor);
-            tft.fillCircle(314, 234, 2, GreyoutColor);
-          } else {
-            tft.fillCircle(203, 223, 2, GreyoutColor);
-            tft.fillCircle(203, 234, 2, GreyoutColor);
-          }
+          tft.fillCircle(314, 223, 2, GreyoutColor);
+          tft.fillCircle(314, 234, 2, GreyoutColor);
         }
         dropout = false;
         memreset = false;
@@ -887,19 +836,7 @@ void showRadioText() {
     if (radio.rds.hasRT &&
         (radio.rds.stationText.length() > 0 || radio.rds.stationText32.length() > 0)) {
 
-      // Determine whether to use advanced RDS mode
-      if (advancedRDS && RDSSprite.textWidth(radio.trimTrailingSpaces(RTString)) < 165) {
-        xPos = 0;
-        RDSSprite.fillSprite(BackgroundColor);
-        RDSSprite.setTextDatum(TL_DATUM);
-        RDSSprite.setTextColor(
-          RDSstatus ? RDSColor : RDSDropoutColor,
-          RDSstatus ? RDSColorSmooth : RDSDropoutColorSmooth,
-          false
-        );
-        RDSSprite.drawString(RTString, xPos, 2);
-        RDSSprite.pushSprite(36, 220);
-      } else if (!advancedRDS && RDSSprite.textWidth(radio.trimTrailingSpaces(RTString)) < 270) {
+      if (RDSSprite.textWidth(radio.trimTrailingSpaces(RTString)) < 270) {
         xPos = 0;
         FullLineSprite.fillSprite(BackgroundColor);
         FullLineSprite.setTextDatum(TL_DATUM);
@@ -920,7 +857,7 @@ void showRadioText() {
         FullLineSprite.pushSprite(36, 220);
       } else {
         // Handle scrolling text
-        if (millis() - rtticker >= (advancedRDS ? 5 : 15)) {
+        if (millis() - rtticker >= 15) {
           if (xPos == 0 && millis() - rttickerhold < 1000) {
             // Wait for a moment before scrolling
           } else {
@@ -930,52 +867,33 @@ void showRadioText() {
 
           if (xPos < -RadiotextWidth) xPos = 0; // Reset position if scrolled off
 
-          if (advancedRDS) {
-            RDSSprite.fillSprite(BackgroundColor);
-            RDSSprite.setTextDatum(TL_DATUM);
-            RDSSprite.setTextColor(
-              RDSstatus ? RDSColor : RDSDropoutColor,
-              RDSstatus ? RDSColorSmooth : RDSDropoutColorSmooth,
-              false
-            );
-            RDSSprite.drawString(RTString, xPos, 2);
-            RDSSprite.drawString(RTString, xPos + RadiotextWidth, 2);
-            RDSSprite.pushSprite(36, 220);
-          } else {
-            FullLineSprite.fillSprite(BackgroundColor);
-            FullLineSprite.setTextDatum(TL_DATUM);
-            FullLineSprite.setTextColor(
-              RDSstatus ? RDSColor : RDSDropoutColor,
-              RDSstatus ? RDSColorSmooth : RDSDropoutColorSmooth,
-              false
-            );
-            FullLineSprite.drawString(RTString, xPos, 2);
-            FullLineSprite.drawString(RTString, xPos + RadiotextWidth, 2);
-            FullLineSprite.fillRect(275, 0, 8, 19, BackgroundColor);
-            FullLineSprite.drawLine(283, 0, 283, 19, FrameColor);
+          FullLineSprite.fillSprite(BackgroundColor);
+          FullLineSprite.setTextDatum(TL_DATUM);
+          FullLineSprite.setTextColor(
+            RDSstatus ? RDSColor : RDSDropoutColor,
+            RDSstatus ? RDSColorSmooth : RDSDropoutColorSmooth,
+            false
+          );
+          FullLineSprite.drawString(RTString, xPos, 2);
+          FullLineSprite.drawString(RTString, xPos + RadiotextWidth, 2);
+          FullLineSprite.fillRect(275, 0, 8, 19, BackgroundColor);
+          FullLineSprite.drawLine(283, 0, 283, 19, FrameColor);
 
-            if (radio.rds.hasRT) {
-              FullLineSprite.fillCircle(278, 3, 2, radio.rds.rtAB ? GreyoutColor : InsignificantColor);
-              FullLineSprite.fillCircle(278, 14, 2, radio.rds.rtAB ? InsignificantColor : GreyoutColor);
-            }
-
-            FullLineSprite.pushSprite(36, 220);
+          if (radio.rds.hasRT) {
+            FullLineSprite.fillCircle(278, 3, 2, radio.rds.rtAB ? GreyoutColor : InsignificantColor);
+            FullLineSprite.fillCircle(278, 14, 2, radio.rds.rtAB ? InsignificantColor : GreyoutColor);
           }
+
+          FullLineSprite.pushSprite(36, 220);
           rtticker = millis();
         }
       }
-    }
-
-    // Update small indicators for RT AB status
-    if (radio.rds.hasRT && advancedRDS) {
-      tft.fillCircle(203, 223, 2, radio.rds.rtAB ? GreyoutColor : InsignificantColor);
-      tft.fillCircle(203, 234, 2, radio.rds.rtAB ? InsignificantColor : GreyoutColor);
     }
   }
 
   // Update RTold and RadiotextWidth if the string has changed
   if (RTold != RTString) {
-    RadiotextWidth = (advancedRDS ? RDSSprite.textWidth(RTString) : FullLineSprite.textWidth(RTString));
+    RadiotextWidth = FullLineSprite.textWidth(RTString);
 
     if (wifi) {
       Udp.beginPacket(remoteip, 9030);

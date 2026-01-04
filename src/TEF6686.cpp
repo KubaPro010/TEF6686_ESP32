@@ -673,8 +673,6 @@ void TEF6686::readRDS(byte showrdserrors) {
             if (rds.region == 0) strcpy(rds.stationType, PTY_EU[rds.stationTypeCode]); else strcpy(rds.stationType, PTY_USA[rds.stationTypeCode]);
 
             rds.hasTA = (bitRead(rds.rdsB, 4));                                                 // Read TA flag
-
-            if ((bitRead(rds.rdsB, 3)) == 1) rds.MS = 1; else rds.MS = 2;                       // Read MS flag
           }
 
           rds.hasTP = (bitRead(rds.rdsB, 10));                                                  // Read TP flag
@@ -1154,26 +1152,9 @@ void TEF6686::readRDS(byte showrdserrors) {
                   }
               }
             }
-
-            if (((rds.rdsC >> 12) & 0x07) == 3 && rdsblock == RDS_GROUP_1A) {                   // LIC code readout
-              rds.LIC = rds.rdsC & 0xff;
-              rds.hasLIC = true;
-              if (rds.LIC > 0 && rds.LIC < 128) rds.LICtext = LICtext[rds.LIC]; else rds.LICtext = "";
-            }
           }
 
           if (rds.rdsC >> 12 == 1 && rdsblock == RDS_GROUP_1A) rds.hasTMC = true;               // TMC flag
-
-          if (!rdsDerrorThreshold) {
-            if (rds.rdsD != 0) {                                                                // PIN decoder
-              if ((rds.rdsD & 0x3f) < 61 && ((rds.rdsD >> 6) & 0x1f) < 24) {
-                rds.hasPIN = true;
-                rds.pinMin = rds.rdsD & 0x3f;
-                rds.pinHour = rds.rdsD >> 6 & 0x1f;
-                rds.pinDay = rds.rdsD >> 11 & 0x1f;
-              }
-            }
-          }
         } break;
 
       case RDS_GROUP_2A: {
@@ -1704,7 +1685,6 @@ void TEF6686::clearRDS (bool fullsearchrds) {
   rds.RTContent2 = "";
   rds.PTYN = "";
   rds.ECCtext = "";
-  rds.LICtext = "";
   rds.stationIDtext = "";
   rds.stationStatetext = "";
   rds.enhancedRTtext = "";
@@ -1799,15 +1779,9 @@ void TEF6686::clearRDS (bool fullsearchrds) {
   piold = 0;
   rds.correctPI = 0;
   rds.ECC = 254;
-  rds.LIC = 254;
-  rds.pinHour = 0;
-  rds.pinMin = 0;
-  rds.pinDay = 0;
   rds.stationTypeCode = 32;
   rds.dabaffreq = 0;
-  rds.hasPIN = false;
   rds.hasECC = false;
-  rds.hasLIC = false;
   rds.hasRT = false;
   rds.hasRDS = false;
   rds.hasTP = false;
@@ -1834,7 +1808,6 @@ void TEF6686::clearRDS (bool fullsearchrds) {
   af_updatecounter = 0;
   eon_counter = 0;
   afreset = true;
-  rds.MS = 0;
   rds.rdsAerror = true;
   rds.rdsBerror = true;
   rds.rdsCerror = true;

@@ -497,14 +497,6 @@ void sendUDPlog() {
     ECC = String(eccBuffer);
   }
 
-  // Extract and format LIC (Language Identifier Code) if available
-  String LIC = "";
-  if (radio.rds.hasLIC) {
-    char licBuffer[3];
-    snprintf(licBuffer, sizeof(licBuffer), "%02X", radio.rds.LIC);
-    LIC = String(licBuffer);
-  }
-
   // Format the list of Alternative Frequencies (AF) if available
   String AF = "";
   if (radio.rds.hasAF && radio.af_counter > 0) {
@@ -556,7 +548,6 @@ void sendUDPlog() {
                String(radio.rds.hasTMC) + "," +
                String(radio.rds.stationTypeCode) + "," +
                ECC + "," +
-               LIC + "," +
                stationName + "," +
                radioTextModified + "," +
                AF + "," +
