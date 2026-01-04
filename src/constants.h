@@ -342,8 +342,7 @@
 #define EE_BYTE_MEMSTOPPOS            2227
 #define EE_BYTE_MEMPIONLY             2228
 #define EE_BYTE_MEMDOUBLEPI           2229
-#define EE_STRING_RABBITEARSUSER      2230
-#define EE_STRING_RABBITEARSPASSWORD  2241
+// blank space
 #define EE_BYTE_WAITONLYONSIGNAL      2253
 #define EE_UINT16_CALTOUCH1           2254
 #define EE_UINT16_CALTOUCH2           2258

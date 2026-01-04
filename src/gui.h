@@ -197,8 +197,6 @@ extern String rds_clockold;
 extern String stationIDold;
 extern String stationStateold;
 extern String XDRGTK_key;
-extern String RabbitearsUser;
-extern String RabbitearsPassword;
 extern unsigned int ConverterSet;
 extern unsigned int HighEdgeSet;
 extern unsigned int LowEdgeSet;
