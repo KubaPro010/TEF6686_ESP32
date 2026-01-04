@@ -4780,15 +4780,7 @@ void cancelDXScan() {
   if (XDRGTKUSB || XDRGTKTCP) DataPrint("J0\n");
 }
 
-void endMenu() {
-  radio.clearRDS(fullsearchrds);
-  menu = false;
-  menuopen = false;
-  LowLevelInit = true;
-  submenu = false;
-  menuoption = ITEM1;
-  menupage = INDEX;
-  menuitem = 0;
+void saveData() {
   EEPROM.writeByte(EE_BYTE_VOLSET, VolSet);
   EEPROM.writeUInt(EE_UINT16_CONVERTERSET, ConverterSet);
   EEPROM.writeUInt(EE_UINT16_FMLOWEDGESET, LowEdgeSet);
@@ -4877,6 +4869,18 @@ void endMenu() {
   EEPROM.writeByte(EE_BYTE_CLOCKAMPM, clockampm);
   EEPROM.writeUInt(EE_UINT16_PICTLOCK, radio.rds.PICTlock);
   EEPROM.commit();
+}
+
+void endMenu() {
+  radio.clearRDS(fullsearchrds);
+  menu = false;
+  menuopen = false;
+  LowLevelInit = true;
+  submenu = false;
+  menuoption = ITEM1;
+  menupage = INDEX;
+  menuitem = 0;
+  saveData();
   if (af == 2) radio.rds.afreg = true; else radio.rds.afreg = false;
   Serial.end();
   if (wifi) remoteip = IPAddress (WiFi.localIP()[0], WiFi.localIP()[1], WiFi.localIP()[2], subnetclient);

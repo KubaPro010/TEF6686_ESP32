@@ -12,9 +12,6 @@ extern const unsigned char tuner_init_tab4000[] PROGMEM;
 extern const unsigned char tuner_init_tab12000[] PROGMEM;
 extern const unsigned char tuner_init_tab55000[] PROGMEM;
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-variable"
-
 enum RDS_GROUPS {
   RDS_GROUP_0A,  RDS_GROUP_0B,  RDS_GROUP_1A,  RDS_GROUP_1B,  RDS_GROUP_2A,  RDS_GROUP_2B,  RDS_GROUP_3A,  RDS_GROUP_3B,
   RDS_GROUP_4A,  RDS_GROUP_4B,  RDS_GROUP_5A,  RDS_GROUP_5B,  RDS_GROUP_6A,  RDS_GROUP_6B,  RDS_GROUP_7A,  RDS_GROUP_7B,
@@ -547,16 +544,15 @@ class TEF6686 {
     void SetFreq(uint16_t frequency);
     void SetFreqAM(uint16_t frequency);
     void SetFreqAIR(uint16_t frequency);
-    bool getProcessing(uint16_t &highcut, uint16_t &stereo, uint16_t &sthiblend, uint8_t &stband_1, uint8_t &stband_2, uint8_t &stband_3, uint8_t &stband_4);
-    bool getStatus(int16_t &level, uint16_t &USN, uint16_t &WAM, int16_t &offset, uint16_t &bandwidth, uint16_t &modulation, int8_t &snr);
-    bool getStatusAM(int16_t &level, uint16_t &noise, uint16_t &cochannel, int16_t &offset, uint16_t &bandwidth, uint16_t &modulation, int8_t &snr);
-    bool getIdentification(uint16_t &device, uint16_t &hw_version, uint16_t &sw_version);
+    void getProcessing(uint16_t &highcut, uint16_t &stereo, uint16_t &sthiblend, uint8_t &stband_1, uint8_t &stband_2, uint8_t &stband_3, uint8_t &stband_4);
+    void getStatus(int16_t &level, uint16_t &USN, uint16_t &WAM, int16_t &offset, uint16_t &bandwidth, uint16_t &modulation, int8_t &snr);
+    void getStatusAM(int16_t &level, uint16_t &noise, uint16_t &cochannel, int16_t &offset, uint16_t &bandwidth, uint16_t &modulation, int8_t &snr);
+    void getIdentification(uint16_t &device, uint16_t &hw_version, uint16_t &sw_version);
     void I2Sin(bool mode);
     void setSoftmuteFM(uint8_t mode);
     void setSoftmuteAM(uint8_t mode);
     void setMono(bool mono);
     bool getStereoStatus();
-    void setCoax(uint8_t mode);
     void init(byte TEF);
     void clearRDS(bool fullsearchrds);
     void power(bool mode);

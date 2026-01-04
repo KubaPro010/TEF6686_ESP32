@@ -9,7 +9,7 @@ void Communication() {
     if (wifi) {
       int packetSize = Udp.parsePacket();
       if (packetSize > 0) {
-        char packetBuffer[packetSize + 1];  // +1 for null terminator
+        char packetBuffer[packetSize + 1];  // +1 for null getStatus
         Udp.read(packetBuffer, packetSize);
         packetBuffer[packetSize] = '\0';  // Ensure valid string
         Udp.endPacket();
@@ -864,7 +864,7 @@ void XDRGTKRoutine() {
         DataPrint("W" + String(bwtemp) + "\n");
         break;
       } case 'Y': {
-        VolSet = atoi(buff + 1);
+        VolSet = atoi(buff + 1) * 0.1;
         if (VolSet == 0) {
           radio.setMute();
           if (!screenmute) tft.drawBitmap(249, 4, Speaker, 28, 24, PrimaryColor);
@@ -873,11 +873,10 @@ void XDRGTKRoutine() {
         } else {
           radio.setUnMute();
           if (!screenmute) tft.drawBitmap(249, 4, Speaker, 28, 24, GreyoutColor);
-          radio.setVolume(VolSet * 0.12);
+          radio.setVolume(VolSet);
           XDRMute = false;
         }
         DataPrint("Y" + String(VolSet) + "\n");
-        VolSet *= 0.12;
         break;
       } case 'x': {
         DataPrint("OK\n");
@@ -892,29 +891,15 @@ void XDRGTKRoutine() {
         XDRGTKUSB = false;
         store = true;
         XDRMute = false;
-        if (XDRGTKMuteScreen) MuteScreen(0);
+        saveData();
+        radio.setUnMute();
+        MuteScreen(0);
         break;
       } case 'Z': {
-        byte ANT;
-        ANT = atol(buff + 1);
-        switch (ANT) {
-          case 0:
-            if (BAND_FM || BAND_OIRT) radio.setCoax(2); else radio.setCoax(0);
-            break;
-
-          case 1:
-            if (BAND_FM || BAND_OIRT) radio.setCoax(3); else radio.setCoax(1);
-            break;
-
-          case 2:
-            // Antenna C
-            break;
-
-          case 3:
-            // Antenna D
-            break;
-        }
-        DataPrint("Z" + String(ANT) + "\n");
+        // TEF does not do multiple antennas, just do a screen on/off, also more than 4 so no accidental switch
+        byte data = atoi(buff + 1);
+        DataPrint("Z" + String(data) + "\n");
+        MuteScreen((data > 4) ? true : false);
         break;
       }
     }
@@ -942,7 +927,7 @@ void passwordcrypt() {
     char letter = randomValue + 'a';
     if (randomValue > 26) letter = (randomValue - 26);
     saltkey.setCharAt(generated, letter);
-    generated ++;
+    generated++;
   }
   salt = saltkey + XDRGTK_key;
   cryptedpassword = String(sha1(salt));
@@ -963,7 +948,7 @@ void tryWiFi() {
       webserver.on("/logo.png", handleLogo);
       webserver.begin();
       NTPupdate();
-      remoteip = IPAddress (WiFi.localIP()[0], WiFi.localIP()[1], WiFi.localIP()[2], subnetclient);
+      remoteip = IPAddress(WiFi.localIP()[0], WiFi.localIP()[1], WiFi.localIP()[2], subnetclient);
       if (!setupmode) tftPrint(ACENTER, textUI(57), 155, 128, InsignificantColor, InsignificantColorSmooth, 28);
     } else {
       if (!setupmode) tftPrint(ACENTER, textUI(56), 155, 128, SignificantColor, SignificantColorSmooth, 28);

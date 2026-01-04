@@ -15,7 +15,6 @@ uint16_t TEF6686::getBlockA(void) {
   return blockA;
 }
 
-
 void TEF6686::TestAFEON() {
   uint16_t status;
   uint16_t dummy1;
@@ -158,17 +157,9 @@ void TEF6686::init(byte TEF) {
   }
 }
 
-bool TEF6686::getIdentification(uint16_t &device, uint16_t &hw_version, uint16_t &sw_version) {
+void TEF6686::getIdentification(uint16_t &device, uint16_t &hw_version, uint16_t &sw_version) {
   devTEF_Radio_Get_Identification(&device, &hw_version, &sw_version);
-  return device;
-  return hw_version;
-  return sw_version;
 }
-
-void TEF6686::setCoax(uint8_t mode) {
-  devTEF_Radio_Set_GPIO(mode);
-}
-
 
 void TEF6686::power(bool mode) {
   devTEF_APPL_Set_OperationMode(mode);
@@ -355,36 +346,13 @@ void TEF6686::setStHiBlendOffset(uint8_t start) {
   }
 }
 
-bool TEF6686::getProcessing(uint16_t &highcut, uint16_t &stereo, uint16_t &sthiblend, uint8_t &stband_1, uint8_t &stband_2, uint8_t &stband_3, uint8_t &stband_4) {
-  devTEF_Radio_Get_Processing_Status(&highcut, &stereo, &sthiblend, &stband_1, &stband_2, &stband_3, &stband_4);
-  return highcut;
-  return stereo;
-  return sthiblend;
-  return stband_1;
-  return stband_2;
-  return stband_3;
-  return stband_4;
-}
-
-bool TEF6686::getStatus(int16_t &level, uint16_t &USN, uint16_t &WAM, int16_t &offset, uint16_t &bandwidth, uint16_t &modulation, int8_t &snr) {
+void TEF6686::getStatus(int16_t &level, uint16_t &USN, uint16_t &WAM, int16_t &offset, uint16_t &bandwidth, uint16_t &modulation, int8_t &snr) {
   uint16_t status;
   devTEF_Radio_Get_Quality_Status(&status, &level, &USN, &WAM, &offset, &bandwidth, &modulation, &snr);
-  return level;
-  return USN;
-  return WAM;
-  return bandwidth;
-  return modulation;
-  return snr;
 }
 
-bool TEF6686::getStatusAM(int16_t &level, uint16_t &noise, uint16_t &cochannel, int16_t &offset, uint16_t &bandwidth, uint16_t &modulation, int8_t &snr) {
+void TEF6686::getStatusAM(int16_t &level, uint16_t &noise, uint16_t &cochannel, int16_t &offset, uint16_t &bandwidth, uint16_t &modulation, int8_t &snr) {
   devTEF_Radio_Get_Quality_Status_AM(&level, &noise, &cochannel, &offset, &bandwidth, &modulation, &snr);
-  return level;
-  return noise;
-  return cochannel;
-  return bandwidth;
-  return modulation;
-  return snr;
 }
 
 void TEF6686::readRDS(byte showrdserrors) {
@@ -439,9 +407,9 @@ void TEF6686::readRDS(byte showrdserrors) {
         rds.picode[3] = rds.rdsA & 0xF;
         for (int i = 0; i < 4; i++) {
           if (rds.picode[i] < 10) {
-            rds.picode[i] += '0';                                                                 // Add ASCII offset for decimal digits
+            rds.picode[i] += '0';
           } else {
-            rds.picode[i] += 'A' - 10;                                                            // Add ASCII offset for hexadecimal letters A-F
+            rds.picode[i] += 'A' - 10;
           }
         }
       }
@@ -454,7 +422,7 @@ void TEF6686::readRDS(byte showrdserrors) {
 
       if (!errorfreepi) {
         if (((rds.rdsErr >> 14) & 0x03) > 1) rds.picode[5] = '?'; else rds.picode[5] = ' ';
-        if (((rds.rdsErr >> 14) & 0x03) > 0) rds.picode[4] = '?'; else rds.picode[4] = ' ';       // Not sure, add a ?
+        if (((rds.rdsErr >> 14) & 0x03) > 0) rds.picode[4] = '?'; else rds.picode[4] = ' ';
       } else {
         rds.picode[4] = ' ';
         rds.picode[5] = ' ';
@@ -543,29 +511,20 @@ void TEF6686::readRDS(byte showrdserrors) {
 
             // Adjust stationID based on specific conditions
             if (stationID > 21671) {
-              if ((stationID & 0xF00U) == 0) {
-                stationID = ((uint16_t)(0xA0 + ((stationID & 0xF000U) >> 12)) << 8) + lowByte(stationID); // C0DE -> ACDE
-              } else if (lowByte(stationID) == 0) {
-                stationID = 0xAF00 + uint8_t(highByte(stationID)); // CD00 -> AFCD
-              }
+              if ((stationID & 0xF00U) == 0) stationID = ((uint16_t)(0xA0 + ((stationID & 0xF000U) >> 12)) << 8) + lowByte(stationID); // C0DE -> ACDE
+              else if (lowByte(stationID) == 0) stationID = 0xAF00 + uint8_t(highByte(stationID)); // CD00 -> AFCD
             }
 
             // Check if the station has a fixed callsign for Canada
             // Here we are skipping the `isFixed` and directly checking if the station is in Canada
             if (!(rds.region == 3 && stationID == 0xAF00)) { // Example condition for a fixed callsign (AF00 is just an example)
               // Determine prefix: 'W' or 'K' for USA, 'C' for Canada
-              if (rds.region == 1 || rds.region == 2) {
-                rds.stationID[0] = (stationID > 21671) ? 'W' : 'K';
-              } else if (rds.region == 3) {
-                rds.stationID[0] = 'C'; // Canadian stations start with 'C'
-              }
+              if (rds.region == 1 || rds.region == 2) rds.stationID[0] = (stationID > 21671) ? 'W' : 'K';
+              else if (rds.region == 3) rds.stationID[0] = 'C'; // Canadian stations start with 'C'
 
               // Adjust stationID based on the region and PI code
-              if (stationID < 39247) {
-                stationID -= (stationID > 21671) ? 21672 : 4096;
-              } else {
-                stationID -= 4835;
-              }
+              if (stationID < 39247) stationID -= (stationID > 21671) ? 21672 : 4096;
+              else stationID -= 4835;
 
               // Decode the last 3 letters of the callsign
               rds.stationID[1] = char(stationID / 676 + 'A');  // Using 'A' for readability
@@ -585,11 +544,8 @@ void TEF6686::readRDS(byte showrdserrors) {
           }
 
           // If any character is faulty, mark it as "Unknown"
-          if (faultyID) {
-            strcpy(rds.stationID, "Unknown");
-          } else {
-            rds.stationID[7] = '?'; // If not faulty, append '?'
-          }
+          if (faultyID) strcpy(rds.stationID, "Unknown");
+          else rds.stationID[7] = '?'; // If not faulty, append '?'
 
           rds.stationID[8] = '\0'; // Null terminate the callsign
         }
@@ -1842,7 +1798,7 @@ void TEF6686::clearRDS (bool fullsearchrds) {
 void TEF6686::tone(uint16_t time, int16_t amplitude, uint16_t frequency) {
   devTEF_Audio_Set_Mute(0);
   devTEF_Radio_Set_Wavegen(1, amplitude, frequency);
-  delay (time);
+  delay(time);
   devTEF_Radio_Set_Wavegen(0, 0, 0);
 }
 
@@ -1884,28 +1840,19 @@ String TEF6686::extractUTF8Substring(const String & utf8String, size_t start, si
     uint8_t currentByte = utf8String.charAt(utf8Index);
     uint8_t numBytes = 0;
 
-    if (currentByte < 0x80) {
-      numBytes = 1;
-    } else if ((currentByte >> 5) == 0x6) {
-      numBytes = 2;
-    } else if ((currentByte >> 4) == 0xE) {
-      numBytes = 3;
-    } else if ((currentByte >> 3) == 0x1E) {
-      numBytes = 4;
-    }
+    if (currentByte < 0x80) numBytes = 1;
+    else if ((currentByte >> 5) == 0x6) numBytes = 2;
+    else if ((currentByte >> 4) == 0xE) numBytes = 3;
+    else if ((currentByte >> 3) == 0x1E) numBytes = 4;
 
-    if (charIndex >= start) {
-      substring += utf8String.substring(utf8Index, utf8Index + numBytes);
-    }
+    if (charIndex >= start) substring += utf8String.substring(utf8Index, utf8Index + numBytes);
 
     utf8Index += numBytes;
     charIndex++;
   }
 
   if (under) {
-    while (substring.length() < length) {
-      substring += '_';
-    }
+    while (substring.length() < length) substring += '_';
   }
 
   return substring;
@@ -2068,16 +2015,13 @@ String TEF6686::ucs2ToUtf8(const char* ucs2Input) {
   String utf8Output;
 
   size_t length = 0;
-  while (ucs2Input[length] != '\0' || ucs2Input[length + 1] != '\0') {
-    length += 2;
-  }
+  while (ucs2Input[length] != '\0' || ucs2Input[length + 1] != '\0') length += 2;
 
   for (size_t i = 0; i < length; i += 2) {
     uint16_t ucs2Char = ((uint8_t)ucs2Input[i] << 8) | (uint8_t)ucs2Input[i + 1];
 
-    if (ucs2Char <= 0x7F) {
-      utf8Output += (char)ucs2Char;
-    } else if (ucs2Char <= 0x7FF) {
+    if (ucs2Char <= 0x7F) utf8Output += (char)ucs2Char;
+    else if (ucs2Char <= 0x7FF) {
       utf8Output += (char)(0xC0 | (ucs2Char >> 6));
       utf8Output += (char)(0x80 | (ucs2Char & 0x3F));
     } else {

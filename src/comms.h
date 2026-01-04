@@ -162,4 +162,5 @@ extern void TuneUp();
 extern void TuneDown();
 extern void ShowTuneMode();
 extern const char* textUI(uint16_t number);
+extern void saveData();
 #endif
