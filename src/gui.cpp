@@ -3483,10 +3483,10 @@ void MenuUpDown(bool dir) {
           case ITEM1:
             if (dir) {
               VolSet++;
-              if (VolSet > 10) VolSet = 10;
+              if (VolSet > 24) VolSet = 24;
             } else {
               VolSet--;
-              if (VolSet < -10) VolSet = -10;
+              if (VolSet < -59) VolSet = -59;
             }
 
             OneBigLineSprite.setTextDatum(TL_DATUM);
