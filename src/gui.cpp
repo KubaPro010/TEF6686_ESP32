@@ -2965,8 +2965,8 @@ void BuildAdvancedRDS() {
   if (radio.rds.region == 0) {
     tftPrint(ALEFT, "PI", 216, 81, ActiveColor, ActiveColorSmooth, 16);
   } else {
-    tftPrint(ALEFT, "PI:", 216, 72, ActiveColor, ActiveColorSmooth, 16);
-    tftPrint(ALEFT, "ID:", 216, 89, ActiveColor, ActiveColorSmooth, 16);
+    tftPrint(ALEFT, "PI", 216, 72, ActiveColor, ActiveColorSmooth, 16);
+    tftPrint(ALEFT, "ID", 216, 89, ActiveColor, ActiveColorSmooth, 16);
   }
   tftPrint(ALEFT, "PS", 3, 81, ActiveColor, ActiveColorSmooth, 16);
   tftPrint(ALEFT, "PTY", 3, 109, ActiveColor, ActiveColorSmooth, 16);

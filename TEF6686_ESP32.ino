@@ -1222,14 +1222,14 @@ void loop() {
         }
       }
       if (radio.rds.region == 0) {
-        tftPrint(ALEFT, "PI:", 212, 193, ActiveColor, ActiveColorSmooth, 16);
+        tftPrint(ALEFT, "PI", 212, 193, ActiveColor, ActiveColorSmooth, 16);
       } else {
-        tftPrint(ALEFT, "PI:", 212, 184, ActiveColor, ActiveColorSmooth, 16);
-        tftPrint(ALEFT, "ID:", 212, 201, ActiveColor, ActiveColorSmooth, 16);
+        tftPrint(ALEFT, "PI", 212, 184, ActiveColor, ActiveColorSmooth, 16);
+        tftPrint(ALEFT, "ID", 212, 201, ActiveColor, ActiveColorSmooth, 16);
       }
-      tftPrint(ALEFT, "PS:", 3, 193, ActiveColor, ActiveColorSmooth, 16);
-      tftPrint(ALEFT, "RT:", 3, 221, ActiveColor, ActiveColorSmooth, 16);
-      tftPrint(ALEFT, "PTY:", 3, 163, ActiveColor, ActiveColorSmooth, 16);
+      tftPrint(ALEFT, "PS", 3, 193, ActiveColor, ActiveColorSmooth, 16);
+      tftPrint(ALEFT, "RT", 3, 221, ActiveColor, ActiveColorSmooth, 16);
+      tftPrint(ALEFT, "PTY", 3, 163, ActiveColor, ActiveColorSmooth, 16);
       if (!showmodulation) tft.drawLine(16, 143, 203, 143, GreyoutColor); else tft.drawLine(16, 143, 203, 143, ActiveColor);
     }
     LowLevelInit = true;
@@ -1255,14 +1255,14 @@ void loop() {
           tft.fillRect(16, 133, 187, 6, GreyoutColor);
         }
         if (radio.rds.region == 0) {
-          tftPrint(ALEFT, "PI:", 212, 193, GreyoutColor, BackgroundColor, 16);
+          tftPrint(ALEFT, "PI", 212, 193, GreyoutColor, BackgroundColor, 16);
         } else {
-          tftPrint(ALEFT, "PI:", 212, 184, GreyoutColor, BackgroundColor, 16);
-          tftPrint(ALEFT, "ID:", 212, 201, GreyoutColor, BackgroundColor, 16);
+          tftPrint(ALEFT, "PI", 212, 184, GreyoutColor, BackgroundColor, 16);
+          tftPrint(ALEFT, "ID", 212, 201, GreyoutColor, BackgroundColor, 16);
         }
-        tftPrint(ALEFT, "PS:", 3, 193, GreyoutColor, BackgroundColor, 16);
-        tftPrint(ALEFT, "RT:", 3, 221, GreyoutColor, BackgroundColor, 16);
-        tftPrint(ALEFT, "PTY:", 3, 163, GreyoutColor, BackgroundColor, 16);
+        tftPrint(ALEFT, "PS", 3, 193, GreyoutColor, BackgroundColor, 16);
+        tftPrint(ALEFT, "RT", 3, 221, GreyoutColor, BackgroundColor, 16);
+        tftPrint(ALEFT, "PTY", 3, 163, GreyoutColor, BackgroundColor, 16);
         tft.drawLine(16, 143, 203, 143, GreyoutColor);
         tft.drawBitmap(68, 5, RDSLogo, 35, 22, GreyoutColor);
       }
@@ -2323,15 +2323,15 @@ void SelectBand() {
     doBW();
     if (!screenmute) {
       if (radio.rds.region == 0) {
-        tftPrint(ALEFT, "PI:", 212, 193, GreyoutColor, BackgroundColor, 16);
+        tftPrint(ALEFT, "PI", 212, 193, GreyoutColor, BackgroundColor, 16);
       } else {
-        tftPrint(ALEFT, "PI:", 212, 184, GreyoutColor, BackgroundColor, 16);
-        tftPrint(ALEFT, "ID:", 212, 201, GreyoutColor, BackgroundColor, 16);
+        tftPrint(ALEFT, "PI", 212, 184, GreyoutColor, BackgroundColor, 16);
+        tftPrint(ALEFT, "ID", 212, 201, GreyoutColor, BackgroundColor, 16);
       }
 
-      tftPrint(ALEFT, "PS:", 3, 193, GreyoutColor, BackgroundColor, 16);
-      tftPrint(ALEFT, "RT:", 3, 221, GreyoutColor, BackgroundColor, 16);
-      tftPrint(ALEFT, "PTY:", 3, 163, GreyoutColor, BackgroundColor, 16);
+      tftPrint(ALEFT, "PS", 3, 193, GreyoutColor, BackgroundColor, 16);
+      tftPrint(ALEFT, "RT", 3, 221, GreyoutColor, BackgroundColor, 16);
+      tftPrint(ALEFT, "PTY", 3, 163, GreyoutColor, BackgroundColor, 16);
       tft.drawBitmap(68, 5, RDSLogo, 35, 22, GreyoutColor);
       tft.fillRoundRect(249, 57, 30, 18, 2, GreyoutColor);
       tftPrint(ACENTER, "iMS", 265, 59, BackgroundColor, GreyoutColor, 16);
@@ -2358,14 +2358,14 @@ void SelectBand() {
     if (!externaltune && tunemode != TUNE_MEM) CheckBandForbiddenFM();
     doBW();
     if (radio.rds.region == 0) {
-      tftPrint(ALEFT, "PI:", 212, 193, ActiveColor, ActiveColorSmooth, 16);
+      tftPrint(ALEFT, "PI", 212, 193, ActiveColor, ActiveColorSmooth, 16);
     } else {
-      tftPrint(ALEFT, "PI:", 212, 184, ActiveColor, ActiveColorSmooth, 16);
-      tftPrint(ALEFT, "ID:", 212, 201, ActiveColor, ActiveColorSmooth, 16);
+      tftPrint(ALEFT, "PI", 212, 184, ActiveColor, ActiveColorSmooth, 16);
+      tftPrint(ALEFT, "ID", 212, 201, ActiveColor, ActiveColorSmooth, 16);
     }
-    tftPrint(ALEFT, "PS:", 3, 193, ActiveColor, ActiveColorSmooth, 16);
-    tftPrint(ALEFT, "RT:", 3, 221, ActiveColor, ActiveColorSmooth, 16);
-    tftPrint(ALEFT, "PTY:", 3, 163, ActiveColor, ActiveColorSmooth, 16);
+    tftPrint(ALEFT, "PS", 3, 193, ActiveColor, ActiveColorSmooth, 16);
+    tftPrint(ALEFT, "RT", 3, 221, ActiveColor, ActiveColorSmooth, 16);
+    tftPrint(ALEFT, "PTY", 3, 163, ActiveColor, ActiveColorSmooth, 16);
 
     tftReplace(ALEFT, "kHz", "MHz", 258, 76, ActiveColor, ActiveColorSmooth, BackgroundColor, 28);
   }
