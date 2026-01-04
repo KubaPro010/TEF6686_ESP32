@@ -260,7 +260,6 @@ int BWAutoColor;
 int BWAutoColorSmooth;
 int BWOld;
 int bwupdatetimer;
-int DeEmphasis;
 int DisplayedSegments;
 int ForceMono;
 int FrameColor;
@@ -2472,6 +2471,8 @@ void doStereoToggle() {
     Stereostatusold = false;
     StereoToggle = true;
   }
+  radio.setAudio(audiomode);
+  EEPROM.writeByte(EE_BYTE_AUDIOMODE, audiomode);
   EEPROM.writeByte(EE_BYTE_STEREO, StereoToggle);
   EEPROM.commit();
 }
@@ -3597,10 +3598,11 @@ void ShowModLevel() {
 }
 
 void showAutoSquelch(bool mode) {
+  int16_t size = SquelchSprite.textWidth("--");
   if (mode) {
-    tft.drawBitmap(223, 145, AutoSQ, 18, 18, PrimaryColor);
+    tft.drawBitmap(223, 147, AutoSQ, size, size, PrimaryColor);
   } else {
-    tft.drawBitmap(223, 145, AutoSQ, 18, 18, BackgroundColor);
+    tft.drawBitmap(223, 147, AutoSQ, size, size, BackgroundColor);
   }
 }
 

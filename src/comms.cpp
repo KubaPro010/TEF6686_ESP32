@@ -2,8 +2,6 @@
 #include "constants.h"
 #include <EEPROM.h>
 
-
-bool MPXsetbyXDR = false;
 extern mem presets[];
 
 void Communication() {
@@ -437,51 +435,61 @@ void XDRGTKRoutine() {
   if (XDRGTKdata) {
     switch (buff[0])
     {
-      case 'A':
-        int AGC;
-        AGC = atol(buff + 1);
+      case 'A': {
+        int AGC = atol(buff + 1);
         DataPrint("A" + String(AGC) + "\n");
         switch (AGC) {
-          case 0: if (band == BAND_FM || BAND_OIRT) radio.setAGC(92); else radio.setAMAGC(102); break;
-          case 1: if (band == BAND_FM || BAND_OIRT) radio.setAGC(90); else radio.setAMAGC(99); break;
-          case 2: if (band == BAND_FM || BAND_OIRT) radio.setAGC(87); else radio.setAMAGC(96); break;
-          case 3: if (band == BAND_FM || BAND_OIRT) radio.setAGC(84); else radio.setAMAGC(94); break;
+          case 0:
+            if (band == BAND_FM || BAND_OIRT) {
+              radio.setAGC(92);
+              fmagc = 92;
+            } else {
+              radio.setAMAGC(102);
+              amagc = 102;
+            }
+            break;
+          case 1:
+            if (band == BAND_FM || BAND_OIRT) {
+              radio.setAGC(90);
+              fmagc = 90;
+            } else {
+              radio.setAMAGC(99);
+              amagc = 99;
+            }
+            break;
+          case 2:
+            if (band == BAND_FM || BAND_OIRT) {
+              radio.setAGC(87);
+              fmagc = 87;
+            } else {
+              radio.setAMAGC(96);
+              amagc = 96;
+            }
+            break;
+          case 3:
+            if (band == BAND_FM || BAND_OIRT) {
+              radio.setAGC(84);
+              fmagc = 84;
+            } else {
+              radio.setAMAGC(94);
+              amagc = 94;
+            }
+            break;
         }
         break;
-
-      case 'B':
-        byte stmo;
-        stmo = atol(buff + 1);
+      } case 'B': {
+        byte stmo = atol(buff + 1);
         DataPrint("B" + String(stmo) + "\n");
-        if (stmo == 0) {
-          StereoToggle = false;
-          if (MPXsetbyXDR) {
-            radio.setAudio(false);
-            MPXsetbyXDR = false;
-          }
-          doStereoToggle();
-        } else if (stmo == 1) {
-          StereoToggle = true;
-          if (MPXsetbyXDR) {
-            radio.setAudio(false);
-            MPXsetbyXDR = false;
-          }
-          doStereoToggle();
-        } else {
-          MPXsetbyXDR = true;
-          StereoToggle = false;
-          doStereoToggle();
-          radio.setAudio(true);
-        }
+        StereoToggle = (stmo == 1);
+        audiomode = (stmo != 0 && stmo != 1);
+        doStereoToggle();
         break;
-
-      case 'C':
+      } case 'C': {
         if (afscreen || advancedRDS) {
           BuildDisplay();
           SelectBand();
         }
-        byte scanmethod;
-        scanmethod = atol(buff + 1);
+        byte scanmethod = atol(buff + 1);
 
         if (band < BAND_GAP) {
           stepsize = 0;
@@ -502,20 +510,23 @@ void XDRGTKRoutine() {
         }
         DataPrint("C0\n");
         break;
-
-      case 'D':
-        byte demp;
-        demp = atol(buff + 1);
+      } case 'D': {
+        byte demp = atol(buff + 1);
         DataPrint("D" + String(demp) + "\n");
         switch (demp) {
-          case 0: DeEmphasis = 1; break;
-          case 1: DeEmphasis = 2; break;
-          case 2: DeEmphasis = 0; break;
+          case 0:
+            fmdeemphasis = DEEMPHASIS_50;
+            break;
+          case 1:
+            fmdeemphasis = DEEMPHASIS_75;
+            break;
+          case 2:
+            fmdeemphasis = DEEMPHASIS_NONE;
+            break;
         }
-        radio.setDeemphasis(DeEmphasis);
+        radio.setDeemphasis(fmdeemphasis);
         break;
-
-      case 'F':
+      } case 'F': {
         XDRBWset = atol(buff + 1);
         DataPrint("F" + String(XDRBWset) + "\n");
         if (XDRBWset < 0) {
@@ -524,13 +535,10 @@ void XDRGTKRoutine() {
         } else if (XDRBWset < 16) {
           BWset = XDRBWset + 1;
           XDRBWsetold = XDRBWset;
-        } else {
-          XDRBWset = XDRBWsetold;
-        }
+        } else XDRBWset = XDRBWsetold;
         doBW();
         break;
-
-      case 'G':
+      } case 'G': {
         byte offsetg;
         offsetg = atol(buff + 1);
         if (offsetg == 0) {
@@ -556,42 +564,29 @@ void XDRGTKRoutine() {
         updateiMS();
         updateEQ();
         break;
-
-      case 'H':
-        byte autosq_read;
-        autosq_read = atol(buff + 1);
+      } case 'H': {
+        byte autosq_read = atol(buff + 1);
         if (autosq_read == 0) {
           autosquelch = false;
           DataPrint("H0\n");
         } else if (autosq_read == 1) {
           autosquelch = true;
           DataPrint("H1\n");
-        } else {
-          autosquelch = !autosquelch;
-        }
+        } else autosquelch = !autosquelch;
 
         if (autosquelch) {
           DataPrint("H1\n");
-          if (!screenmute) {
-            tftPrint(ALEFT, "SQ:", 212, 145, ActiveColor, ActiveColorSmooth, 16);
-            showAutoSquelch(1);
-          }
+          if (!screenmute) showAutoSquelch(1);
         } else {
           DataPrint("H0\n");
           if (!screenmute) {
-            if (!usesquelch) {
-              tftPrint(ALEFT, "SQ:", 212, 145, BackgroundColor, BackgroundColor, 16);
-              showAutoSquelch(0);
-            } else {
-              Squelch = -150;
-            }
+            if (!usesquelch) showAutoSquelch(0);
+            else Squelch = -150;
           }
         }
         break;
-
-      case 'I':
-        byte fmscansenstemp;
-        fmscansenstemp = atol(buff + 1);
+      } case 'I': {
+        byte fmscansenstemp = atol(buff + 1);
         if (fmscansenstemp > 0 && fmscansenstemp < 31) {
           fmscansens = fmscansenstemp;
           EEPROM.writeByte(EE_BYTE_FMSCANSENS, fmscansens);
@@ -599,18 +594,14 @@ void XDRGTKRoutine() {
         }
         DataPrint("I" + String(fmscansens) + "\n");
         break;
-
-      case 'J':
-        byte scandxtemp;
-        scandxtemp = atol(buff + 1);
+      } case 'J': {
+        byte scandxtemp = atol(buff + 1);
         if (scandxtemp == 0 && scandxmode) cancelDXScan();
         if (scandxtemp == 1 && !scandxmode) startFMDXScan();
         DataPrint("J" + String(scandxtemp) + "\n");
         break;
-
-      case 'K':
-        byte scanholdtemp;
-        scanholdtemp = atol(buff + 1);
+      } case 'K': {
+        byte scanholdtemp= atol(buff + 1);
         if (scanholdtemp < 31) {
           scanhold = scanholdtemp;
           EEPROM.writeByte(EE_BYTE_SCANHOLD, scanhold);
@@ -618,12 +609,9 @@ void XDRGTKRoutine() {
         }
         DataPrint("K" + String(scanhold) + "\n");
         break;
-
-      case 'M':
+      } case 'M': {
         if (scandxmode) cancelDXScan();
-        byte XDRband;
-        XDRband = atol(buff + 1);
-        if (XDRband == 0) DataPrint("M0\n"); else DataPrint("M1\n");
+        byte XDRband = atol(buff + 1);
         if (XDRband == 1) {
           if (frequency_AM >= LWLowEdgeSet && frequency_AM <= LWHighEdgeSet) {
             if (band != BAND_LW) {
@@ -659,11 +647,9 @@ void XDRGTKRoutine() {
         }
         store = true;
         break;
-
-      case 'T':
+      } case 'T': {
         if (scandxmode) cancelDXScan();
-        unsigned int freqtemp;
-        freqtemp = atoi(buff + 1);
+        unsigned int freqtemp = atoi(buff + 1);
 
         if (BAND_FM) freqtemp -= ConverterSet * 1000;
         if (seek) seek = false;
@@ -747,8 +733,7 @@ void XDRGTKRoutine() {
         aftest = true;
         aftimer = millis();
         break;
-
-      case 'Q':
+      } case 'Q': {
         Squelch = atoi(buff + 1);
         if (Squelch == -1) {
           DataPrint("Q-1\n");
@@ -759,8 +744,7 @@ void XDRGTKRoutine() {
           DataPrint("\n");
         }
         break;
-
-      case 'S':
+      } case 'S': {
         if (scandxmode) cancelDXScan();
         if (!XDRScan) BWsetRecall = BWset;
         XDRScan = true;
@@ -855,10 +839,8 @@ void XDRGTKRoutine() {
         }
         Data_Accelerator = false;
         break;
-
-      case 'W':
-        unsigned int bwtemp;
-        bwtemp = atoi(buff + 1);
+      } case 'W': {
+        unsigned int bwtemp = atoi(buff + 1);
         switch (bwtemp) {
           case 0: BWset = 0; break;
           case 56000: BWset = 1; break;
@@ -881,8 +863,7 @@ void XDRGTKRoutine() {
         doBW();
         DataPrint("W" + String(bwtemp) + "\n");
         break;
-
-      case 'Y':
+      } case 'Y': {
         VolSet = atoi(buff + 1);
         if (VolSet == 0) {
           radio.setMute();
@@ -892,45 +873,28 @@ void XDRGTKRoutine() {
         } else {
           radio.setUnMute();
           if (!screenmute) tft.drawBitmap(249, 4, Speaker, 28, 24, GreyoutColor);
-          radio.setVolume((VolSet - 40) / 10);
+          radio.setVolume(VolSet * 0.12);
           XDRMute = false;
         }
         DataPrint("Y" + String(VolSet) + "\n");
-        VolSet /= 10;
+        VolSet *= 0.12;
         break;
-
-      case 'x':
+      } case 'x': {
         DataPrint("OK\n");
-        if (BAND_FM) {
-          DataPrint("T" + String((frequency + ConverterSet * 100) * 10) + "\n");
-        } else if (BAND_OIRT) {
-          DataPrint("T" + String(frequency_OIRT * 10) + "\n");
-        } else {
-          DataPrint("T" + String(frequency_AM) + "\n");
-        }
+        if (BAND_FM) DataPrint("T" + String((frequency + ConverterSet * 100) * 10) + "\n");
+        else if (BAND_OIRT) DataPrint("T" + String(frequency_OIRT * 10) + "\n");
+        else DataPrint("T" + String(frequency_AM) + "\n");
         if (StereoToggle) DataPrint("B0\n"); else DataPrint("B1\n");
         if (XDRGTKMuteScreen) MuteScreen(1);
         break;
-
-      case 'X':
+      } case 'X': {
         XDRGTKTCP = false;
         XDRGTKUSB = false;
         store = true;
         XDRMute = false;
-        radio.setUnMute();
-        if (!screenmute) tft.drawBitmap(249, 4, Speaker, 28, 24, GreyoutColor);
-        VolSet = EEPROM.readByte(EE_BYTE_VOLSET);
-        LowLevelSet = EEPROM.readByte(EE_BYTE_LOWLEVELSET);
-        softmuteam = EEPROM.readByte(EE_BYTE_SOFTMUTEAM);
-        softmutefm = EEPROM.readByte(EE_BYTE_SOFTMUTEFM);
-        radio.setVolume(VolSet);
-        radio.setSoftmuteFM(softmutefm);
-        radio.setSoftmuteAM(softmuteam);
-        if (!usesquelch) radio.setUnMute();
         if (XDRGTKMuteScreen) MuteScreen(0);
         break;
-
-      case 'Z':
+      } case 'Z': {
         byte ANT;
         ANT = atol(buff + 1);
         switch (ANT) {
@@ -952,21 +916,17 @@ void XDRGTKRoutine() {
         }
         DataPrint("Z" + String(ANT) + "\n");
         break;
+      }
     }
     XDRGTKdata = false;
   }
 
   if (millis() >= signalstatustimer + 66) {
-    if (band > BAND_GAP) {
-      DataPrint("Sm");
-    } else {
-      if (!StereoToggle) {
-        DataPrint("SM");
-      } else if (Stereostatus) {
-        DataPrint("Ss");
-      } else {
-        DataPrint("Sm");
-      }
+    if (band > BAND_GAP) DataPrint("Sm");
+    else {
+      if (!StereoToggle) DataPrint("SM");
+      else if (Stereostatus) DataPrint("Ss");
+      else DataPrint("Sm");
     }
 
     DataPrint(String(((SStatus * 100) + 10875) / 1000) + "." + String(((SStatus * 100) + 10875) / 100 % 10) + "," + String(WAM / 10) + "," + String(USN / 10) + "," + String(BW) + "\n\n");
