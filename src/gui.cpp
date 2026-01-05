@@ -3027,7 +3027,7 @@ void BuildAdvancedRDS() {
   batteryVold = 0;
   vPerold = 0;
   ECCold = 253;
-  strcpy(programTypePrevious, "");
+  programTypePrevious = 32;
   ptynold = " ";
   PIold = " ";
   PSold = " ";
@@ -3165,7 +3165,7 @@ void BuildDisplay() {
   TPold = false;
   haseonold = false;
   rds_clockold = "";
-  strcpy(programTypePrevious, "");
+  programTypePrevious = 32;
   PIold = " ";
   PSold = " ";
   stationIDold = " ";

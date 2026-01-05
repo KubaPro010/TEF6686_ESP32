@@ -136,7 +136,7 @@ extern byte tunemode;
 extern byte unit;
 extern byte spispeed;
 extern char eonpicodeold[20][6];
-extern char programTypePrevious[18];
+extern byte programTypePrevious;
 extern float batteryVold;
 extern float vPerold;
 extern int ActiveColor;

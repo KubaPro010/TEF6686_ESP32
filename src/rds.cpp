@@ -526,8 +526,8 @@ void showPI() {
 }
 
 void showPTY() {
-  if (strcmp(radio.rds.stationType, programTypePrevious)) {
-    String PTYString = String(radio.rds.PTY) + "/" + (radio.rds.region != 0 ? radio.rds.stationType : textUI(228 + radio.rds.PTY));
+  if(radio.rds.PTY != programTypePrevious) {
+    String PTYString = String(radio.rds.PTY) + "/" + (radio.rds.region != 0 ? (radio.rds.region == 0 ? PTY_EU[radio.rds.PTY] : PTY_USA[radio.rds.PTY]) : textUI(228 + radio.rds.PTY));
 
     if (radio.rds.PTY == 32) PTYString = "";
 
@@ -548,7 +548,7 @@ void showPTY() {
       Udp.print(String(radio.rds.PTY, HEX));
       Udp.endPacket();
     }
-    strcpy(programTypePrevious, radio.rds.stationType);
+    programTypePrevious = radio.rds.PTY;
   }
 }
 

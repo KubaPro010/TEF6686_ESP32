@@ -446,7 +446,6 @@ typedef struct _rds_ {
   String stationNameLong;
   String stationStatetext;
   String enhancedRTtext;
-  char stationType[18];
   char picode[7];
   char stationID[9];
   char stationLongID[33];
@@ -545,7 +544,6 @@ class TEF6686 {
     void getStatus(int16_t &level, uint16_t &USN, uint16_t &WAM, int16_t &offset, uint16_t &bandwidth, uint16_t &modulation, int8_t &snr);
     void getStatusAM(int16_t &level, uint16_t &noise, uint16_t &cochannel, int16_t &offset, uint16_t &bandwidth, uint16_t &modulation, int8_t &snr);
     void getIdentification(uint16_t *device, uint16_t *hw_version, uint16_t *sw_version);
-    void I2Sin(bool mode);
     void setSoftmuteFM(uint8_t mode);
     void setSoftmuteAM(uint8_t mode);
     void setMono(bool mono);

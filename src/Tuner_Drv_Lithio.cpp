@@ -35,11 +35,10 @@ void devTEF_Radio_Set_Noiseblanker_AM(uint8_t mode, uint16_t start) {
   devTEF_Set_Cmd(TEF_AM, Cmd_Set_NoiseBlanker_Audio, 7, mode, 1000);
 }
 
-bool devTEF_APPL_Get_Operation_Status(uint8_t *bootstatus) {
+uint8_t devTEF_APPL_Get_Operation_Status() {
   uint8_t buf[2];
-  uint16_t r = devTEF_Get_Cmd(TEF_APPL, Cmd_Get_Operation_Status, buf, sizeof(buf));
-  *bootstatus = Convert8bto16b(buf);
-  return r;
+  devTEF_Get_Cmd(TEF_APPL, Cmd_Get_Operation_Status, buf, sizeof(buf));
+  return Convert8bto16b(buf);
 }
 
 bool devTEF_Radio_Get_Processing_Status (uint16_t *highcut, uint16_t *stereo, uint16_t *sthiblend, uint8_t *stband_1, uint8_t *stband_2, uint8_t *stband_3, uint8_t *stband_4) {

@@ -16,14 +16,9 @@ uint16_t TEF6686::getBlockA(void) {
 }
 
 void TEF6686::TestAFEON() {
-  uint16_t status;
-  uint16_t dummy1;
-  uint16_t dummy2;
+  uint16_t status, dummy1, dummy2, afusn, afwam;
   int8_t dummy3;
-  int16_t aflevel;
-  uint16_t afusn;
-  uint16_t afwam;
-  int16_t afoffset;
+  int16_t aflevel, afoffset;
   byte timing;
 
   if (af_counter != 0) {
@@ -60,20 +55,10 @@ void TEF6686::TestAFEON() {
 
 uint16_t TEF6686::TestAF() {
   if (af_counter != 0) {
-    uint16_t status;
-    uint16_t dummy1;
-    uint16_t dummy2;
+    uint16_t status, dummy1, dummy2, afusn, afwam, currentusn, currentwam;
     int8_t dummy3;
 
-    int16_t aflevel;
-    uint16_t afusn;
-    uint16_t afwam;
-    int16_t afoffset;
-
-    int16_t currentlevel;
-    uint16_t currentusn;
-    uint16_t currentwam;
-    int16_t currentoffset;
+    int16_t aflevel, afoffset, currentoffset, currentlevel;
 
     byte timing;
 
@@ -119,9 +104,7 @@ uint16_t TEF6686::TestAF() {
           af[highestIndex].afvalid = false;
           devTEF_Set_Cmd(TEF_FM, Cmd_Tune_To, 7, 4, currentfreq);
         }
-      } else {
-        devTEF_Set_Cmd(TEF_FM, Cmd_Tune_To, 7, 4, currentfreq);
-      }
+      } else devTEF_Set_Cmd(TEF_FM, Cmd_Tune_To, 7, 4, currentfreq);
     }
   }
   return currentfreq;
@@ -129,15 +112,14 @@ uint16_t TEF6686::TestAF() {
 
 
 void TEF6686::init(byte TEF) {
-  uint8_t bootstatus;
-  int xtalADC = 0;
   Tuner_I2C_Init();
-  devTEF_APPL_Get_Operation_Status(&bootstatus);
+
+  uint8_t bootstatus = devTEF_APPL_Get_Operation_Status();
   if (bootstatus == 0) {
     Tuner_Patch(TEF);
     delay(50);
 
-    xtalADC = analogRead(15);
+    int xtalADC = analogRead(15);
 
     if (xtalADC < XTAL_0V_ADC + XTAL_ADC_TOL) {
       Tuner_Init(tuner_init_tab9216);
@@ -541,13 +523,11 @@ void TEF6686::readRDS(byte showrdserrors) {
       }
     }
 
-    if(rdsBerrorThreshold) goto end;
+    if (!rds.rdsBerror || showrdserrors == 3) rdsgroup = rds.rdsB >> 11; else goto end;
 
     rds.TP = (bitRead(rds.rdsB, 10));
     rds.PTY = (rds.rdsB >> 5) & 0x1F;
-    strcpy(rds.stationType, rds.region == 0 ? PTY_EU[rds.PTY] : PTY_USA[rds.PTY]);
 
-    if (!rds.rdsBerror || showrdserrors == 3) rdsgroup = rds.rdsB >> 11; else return;
     rds.blockcounter[rdsgroup]++;
     processed_rdsblocks++;
 
@@ -1092,7 +1072,7 @@ void TEF6686::readRDS(byte showrdserrors) {
       case RDS_GROUP_2A: {
           if (showrdserrors == 3 || !(rdsCerrorThreshold && rdsDerrorThreshold)) {
             rds.hasRT = true;
-            rds.rtAB = (bitRead(rds.rdsB, 4));
+            rds.rtAB = bitRead(rds.rdsB, 4);
 
             if (initab) {
               rtABold = rds.rtAB;
@@ -1255,7 +1235,7 @@ void TEF6686::readRDS(byte showrdserrors) {
             J = J - (146097 * C + 3) / 4;
             Y = 4000 * (J + 1) / 1461001;
             J = J - 1461 * Y / 4 + 31;
-            M = 80 * (J + 0) / 2447;
+            M = 80 * J / 2447;
 
             if ((J - 2447 * M / 80) < 32) day = J - 2447 * M / 80;
             J = M / 11;
@@ -1304,10 +1284,9 @@ void TEF6686::readRDS(byte showrdserrors) {
               ptyn_buffer[(segment * 4) + 1] = rds.rdsC & 0xFF;
               ptyn_buffer[(segment * 4) + 2] = rds.rdsD >> 8;
               ptyn_buffer[(segment * 4) + 3] = rds.rdsD & 0xFF;
-              for (byte i = 0; i < 8; i++) PTYNtext[i] = L'\0';
+              for (byte i = 0; i < 8; i++) PTYNtext[i] = 0;
               RDScharConverter(ptyn_buffer, PTYNtext, sizeof(PTYNtext) / sizeof(wchar_t), false);
-              String utf8String = convertToUTF8(PTYNtext);
-              rds.PTYN = extractUTF8Substring(utf8String, 0, 8, false);
+              rds.PTYN = extractUTF8Substring(convertToUTF8(PTYNtext), 0, 8, false);
               rds.hasPTYN = true;
             }
           }
@@ -1323,7 +1302,7 @@ void TEF6686::readRDS(byte showrdserrors) {
       case RDS_GROUP_13A: {
           // RT+ decoding
           if ((!rdsBerrorThreshold && !rdsCerrorThreshold && !rdsDerrorThreshold) && rtplusblock == rdsgroup && rds.hasRTplus) {
-            rds.rdsplusTag1 = ((rds.rdsB & 0x07) << 3) + (rds.rdsC >> 13);                      // Are we in the right RT+ block and is all ok to go?
+            rds.rdsplusTag1 = ((rds.rdsB & 0x07) << 3) + (rds.rdsC >> 13);
             rds.rdsplusTag2 = ((rds.rdsC & 0x01) << 5) + (rds.rdsD >> 11);
             uint16_t start_marker_1 = (rds.rdsC >> 7) & 0x3F;
             uint16_t length_marker_1 = (rds.rdsC >> 1) & 0x3F;
@@ -1363,24 +1342,24 @@ void TEF6686::readRDS(byte showrdserrors) {
               RDSplus2[length_marker_2 + 1] = 0;
             }
 
-            wchar_t RTtext1[45] = L"";                                                          // Create 16 bit char buffer for Extended ASCII
-            RDScharConverter(RDSplus1, RTtext1, sizeof(RTtext1) / sizeof(wchar_t), false);      // Convert 8 bit ASCII to 16 bit ASCII
-            rds.RTContent1 = convertToUTF8(RTtext1);                                            // Convert RDS characterset to ASCII
-            rds.RTContent1 = extractUTF8Substring(rds.RTContent1, 0, 44, false);                // Make sure RT does not exceed 32 characters
+            wchar_t RTtext1[45] = L"";
+            RDScharConverter(RDSplus1, RTtext1, sizeof(RTtext1) / sizeof(wchar_t), false);
+            rds.RTContent1 = convertToUTF8(RTtext1);
+            rds.RTContent1 = extractUTF8Substring(rds.RTContent1, 0, 44, false);
 
-            wchar_t RTtext2[45] = L"";                                                          // Create 16 bit char buffer for Extended ASCII
-            RDScharConverter(RDSplus2, RTtext2, sizeof(RTtext2) / sizeof(wchar_t), false);      // Convert 8 bit ASCII to 16 bit ASCII
-            rds.RTContent2 = convertToUTF8(RTtext2);                                            // Convert RDS characterset to ASCII
-            rds.RTContent2 = extractUTF8Substring(rds.RTContent2, 0, 44, false);                // Make sure RT does not exceed 32 characters
+            wchar_t RTtext2[45] = L"";
+            RDScharConverter(RDSplus2, RTtext2, sizeof(RTtext2) / sizeof(wchar_t), false);
+            rds.RTContent2 = convertToUTF8(RTtext2);
+            rds.RTContent2 = extractUTF8Substring(rds.RTContent2, 0, 44, false);
           }
 
           // eRT decoding
           if ((!rdsBerrorThreshold && !rdsCerrorThreshold && !rdsDerrorThreshold) && eRTblock == rdsgroup && _hasEnhancedRT) {
             uint8_t offset = (rds.rdsB & 0x1f) * 4;
-            eRT_buffer[offset + 0] = rds.rdsC >> 8;                                             // First character of segment
-            eRT_buffer[offset + 1] = rds.rdsC & 0xff;                                           // Second character of segment
-            eRT_buffer[offset + 2] = rds.rdsD >> 8;                                             // Thirth character of segment
-            eRT_buffer[offset + 3] = rds.rdsD & 0xff;                                           // Fourth character of segment
+            eRT_buffer[offset + 0] = rds.rdsC >> 8;
+            eRT_buffer[offset + 1] = rds.rdsC & 0xff;
+            eRT_buffer[offset + 2] = rds.rdsD >> 8;
+            eRT_buffer[offset + 3] = rds.rdsD & 0xff;
             eRT_buffer[127] = '\0';
 
             byte endmarkereRT = 127;
@@ -1394,7 +1373,7 @@ void TEF6686::readRDS(byte showrdserrors) {
             }
 
             if (offset == 0 || foundendmarker) {
-              if (eRTcoding) rds.enhancedRTtext = eRT_buffer; else rds.enhancedRTtext = ucs2ToUtf8(eRT_buffer); // Convert to UTF-8 or UCS-2
+              if (eRTcoding) rds.enhancedRTtext = eRT_buffer; else rds.enhancedRTtext = ucs2ToUtf8(eRT_buffer);
               rds.enhancedRTtext = trimTrailingSpaces(rds.enhancedRTtext);
               if (rds.enhancedRTtext.length() > 0) rds.hasEnhancedRT = true;
             }
@@ -1426,13 +1405,13 @@ void TEF6686::readRDS(byte showrdserrors) {
       case RDS_GROUP_14A: {
           // EON
           if (!rdsAerrorThreshold && !rdsBerrorThreshold && !rdsCerrorThreshold && !rdsDerrorThreshold) {
-            rds.hasEON = true;                                                                  // Group is there, so we have EON
+            rds.hasEON = true;
 
             bool isValuePresent = false;
             int eonIndex = -1;
             int i = 0;
             for (; i < 20; i++) {
-              if (eon[i].pi == rds.rdsD || rds.rdsA == rds.rdsD) {                              // Check if EON is already in array
+              if (eon[i].pi == rds.rdsD || rds.rdsA == rds.rdsD) {
                 isValuePresent = true;
                 eonIndex = i;
                 break;
@@ -1522,18 +1501,18 @@ void TEF6686::readRDS(byte showrdserrors) {
       case RDS_GROUP_15A: {
           if (showrdserrors == 3 || (!rdsBerrorThreshold && !rdsCerrorThreshold && !rdsDerrorThreshold)) {
             if (pslong_process && rds.stationNameLong.length() > 0) rds.hasLongPS = true;
-            uint8_t offset = (rds.rdsB & 0xf) * 4;                                                                // Get Long PS character segment
+            uint8_t offset = (rds.rdsB & 7) * 4;
 
-            pslong_buffer2[offset + 0] = pslong_buffer[offset + 0];                                       // Copy PS long buffer
+            pslong_buffer2[offset + 0] = pslong_buffer[offset + 0];
             pslong_buffer2[offset + 1] = pslong_buffer[offset + 1];
             pslong_buffer2[offset + 2] = pslong_buffer[offset + 2];
             pslong_buffer2[offset + 3] = pslong_buffer[offset + 3];
             pslong_buffer2[32] = '\0';
 
-            pslong_buffer[offset + 0] = rds.rdsC >> 8;                                                    // First character of segment
-            pslong_buffer[offset + 1] = rds.rdsC & 0xff;                                                  // Second character of segment
-            pslong_buffer[offset + 2] = rds.rdsD >> 8;                                                    // Thirth character of segment
-            pslong_buffer[offset + 3] = rds.rdsD & 0xff;                                                  // Fourth character of segment
+            pslong_buffer[offset + 0] = rds.rdsC >> 8;
+            pslong_buffer[offset + 1] = rds.rdsC & 0xff;
+            pslong_buffer[offset + 2] = rds.rdsD >> 8;
+            pslong_buffer[offset + 3] = rds.rdsD & 0xff;
             pslong_buffer[32] = '\0';
 
             byte endmarkerLPS = 32;
@@ -1546,16 +1525,16 @@ void TEF6686::readRDS(byte showrdserrors) {
               }
             }
 
-            if ((offset == 0 || foundendmarker) && (pslong_process || !rds.fastps)) {                     // Last chars are received
-              if (strcmp(pslong_buffer, pslong_buffer2) == 0) {                                           // When no difference between current and buffer, let's go...
+            if ((offset == 0 || foundendmarker) && (pslong_process || !rds.fastps)) {
+              if (strcmp(pslong_buffer, pslong_buffer2) == 0) {
                 pslong_process = true;
                 PSLongtext = pslong_buffer;
-                rds.stationNameLong = extractUTF8Substring(pslong_buffer, 0, endmarkerLPS, true);         // Make sure PS Long does not exceed 32 characters
+                rds.stationNameLong = extractUTF8Substring(pslong_buffer, 0, endmarkerLPS, true);
                 rds.stationNameLong = trimTrailingSpaces(rds.stationNameLong);
               }
             }
 
-            if (!pslong_process && rds.fastps) {                                                          // Let's get 2 runs of 32 PS characters fast and without refresh
+            if (!pslong_process && rds.fastps) {
               if (offset == 0) packet0long = true;
               if (offset == 4) packet1long = true;
               if (offset == 8) packet2long = true;
@@ -1596,20 +1575,20 @@ void TEF6686::clearRDS(bool fullsearchrds) {
   uint8_t i;
   for (i = 0; i < 8; i++) {
     ps_buffer[i] = 0x20;
-    PStext[i] = L'\0';
+    PStext[i] = 0;
     ptyn_buffer[i] = 0x20;
-    PTYNtext[i] = L'\0';
+    PTYNtext[i] = 0;
   }
   ps_buffer[8] = 0;
   ptyn_buffer[8] = 0;
-  PStext[8] = L'\0';
-  PTYNtext[8] = L'\0';
+  PStext[8] = 0;
+  PTYNtext[8] = 0;
 
   for (i = 0; i < 64; i++) rt_buffer[i] = 0x20;
   rt_buffer[64] = 0;
 
   for (i = 0; i < 128; i++) eRT_buffer[i] = 0x20;
-  eRT_buffer[128] = '\0';
+  eRT_buffer[128] = 0;
 
   for (i = 0; i < 32; i++) {
     rt_buffer32[i] = 0x20;
@@ -1620,9 +1599,6 @@ void TEF6686::clearRDS(bool fullsearchrds) {
   rt_buffer32[32] = 0;
   pslong_buffer[32] = 0;
   //  PSLongtext[32] = L'\0';
-
-  for (i = 0; i < 17; i++) rds.stationType[i] = 0x20;
-  rds.stationType[17] = 0;
 
   for (i = 0; i < 6; i++) rds.picode[i] = 0x20;
   rds.picode[6] = 0;
@@ -1659,12 +1635,10 @@ void TEF6686::clearRDS(bool fullsearchrds) {
     eon[i].tp = false;
     eon[i].taset = false;
     eon[i].ptyset = false;
-    for (int y = 0; y < 5; y++) {
-      eon[i].picode[y] = '\0';
-    }
+    for (int y = 0; y < 5; y++) eon[i].picode[y] = 0;
     for (int j = 0; j < 9; j++) {
-      EONPStext[i][j] = L'\0';
-      eon_buffer[i][j] = '\0';
+      EONPStext[i][j] = 0;
+      eon_buffer[i][j] = 0;
     }
   }
 
@@ -1749,17 +1723,12 @@ void TEF6686::tone(uint16_t time, int16_t amplitude, uint16_t frequency) {
   devTEF_Radio_Set_Wavegen(0, 0, 0);
 }
 
-void TEF6686::I2Sin(bool mode) {
-  devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_Input, 5, mode ? 32 : 0);
-}
-
 String TEF6686::convertToUTF8(const wchar_t* input) {
   String output;
   while (*input) {
     uint32_t unicode = *input;
-    if (unicode < 0x80) {
-      output += (char)unicode;
-    } else if (unicode < 0x800) {
+    if (unicode < 0x80) output += (char)unicode;
+    else if (unicode < 0x800) {
       output += (char)(0xC0 | (unicode >> 6));
       output += (char)(0x80 | (unicode & 0x3F));
     } else if (unicode < 0x10000) {
@@ -1777,7 +1746,7 @@ String TEF6686::convertToUTF8(const wchar_t* input) {
   return output;
 }
 
-String TEF6686::extractUTF8Substring(const String & utf8String, size_t start, size_t length, bool under) {
+String TEF6686::extractUTF8Substring(const String & utf8String, size_t start, size_t length, bool underscore) {
   String substring;
   size_t utf8Length = utf8String.length();
   size_t utf8Index = 0;
@@ -1798,7 +1767,7 @@ String TEF6686::extractUTF8Substring(const String & utf8String, size_t start, si
     charIndex++;
   }
 
-  if (under) {
+  if (underscore) {
     while (substring.length() < length) substring += '_';
   }
 
@@ -1806,12 +1775,12 @@ String TEF6686::extractUTF8Substring(const String & utf8String, size_t start, si
 }
 
 
-void TEF6686::RDScharConverter(const char* input, wchar_t* output, size_t size, bool under) {
+void TEF6686::RDScharConverter(const char* input, wchar_t* output, size_t size, bool underscore) {
   for (size_t i = 0; i < size - 1; i++) {
     char currentChar = input[i];
     switch (currentChar) {
-      case 0x0A: if (under) output[i] = L'_'; else output[i] = L' '; break;
-      case 0x20: if (under) output[i] = L'_'; else output[i] = L' '; break;
+      case 0x0A: if (underscore) output[i] = L'_'; else output[i] = L' '; break;
+      case 0x20: if (underscore) output[i] = L'_'; else output[i] = L' '; break;
       case 0x21 ... 0x5D: output[i] = static_cast<wchar_t>(currentChar); break;
       case 0x5E: output[i] = L'―'; break;
       case 0x5F: output[i] = L'_'; break;
@@ -1984,7 +1953,7 @@ static const char* fixedCalls[] = {"CBLA", "CBFM", "CBOT"};
 bool TEF6686::isFixedCallsign(uint16_t stationID, char* stationIDStr) {
   for (int i = 0; i < sizeof(fixedPI) / sizeof(fixedPI[0]); i++) {
     if (stationID == fixedPI[i]) {
-      strcpy(stationIDStr, fixedCalls[i]);  // Assign fixed callsign
+      strcpy(stationIDStr, fixedCalls[i]);
       return true;
     }
   }
