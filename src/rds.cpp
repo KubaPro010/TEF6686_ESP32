@@ -1,5 +1,3 @@
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wbool-compare"
 #include "rds.h"
 #include "constants.h"
 #include <TimeLib.h>
@@ -76,11 +74,11 @@ void ShowAdvancedRDS() {
       if (xPos2 < -afstringWidth) xPos2 = 0;
       if (xPos2 == 0) {
         if (millis() - aftickerhold >= 2000) {
-          xPos2 --;
+          xPos2--;
           aftickerhold = millis();
         }
       } else {
-        xPos2 --;
+        xPos2--;
         aftickerhold = millis();
       }
       RDSSprite.fillSprite(BackgroundColor);
@@ -219,9 +217,7 @@ void doAF() {
 
       for (byte af_scan = 0; af_scan < radio.af_counter; af_scan++) {
         if (wifi) {
-          if ((radio.af[af_scan].frequency - 8750) / 10 < 0x10) {
-            Udp.print("0");
-          }
+          if ((radio.af[af_scan].frequency - 8750) / 10 < 0x10) Udp.print("0");
           Udp.print(String((radio.af[af_scan].frequency - 8750) / 10, HEX));
         }
       }
@@ -259,10 +255,8 @@ void showECC() {
 }
 
 void readRds() {
-  // Only process RDS on FM bands
   if (band >= BAND_GAP) return;
 
-  // Read RDS data from tuner
   radio.readRDS(showrdserrors);
   RDSstatus = radio.rds.hasRDS;
   ShowRDSLogo(RDSstatus);
@@ -273,16 +267,11 @@ void readRds() {
       // --- RDS dropout (lost signal) ---
       if (radio.rds.correctPI != 0 && !dropout) {
         if (!rdsstatscreen) {
-          if (radio.rds.region == 0) {
-            tftPrint(ACENTER, PIold, 275, advancedRDS ? 75 : 187,
-                     RDSDropoutColor, RDSDropoutColorSmooth, 28);
-          } else {
-            tftPrint(ALEFT, PIold, 240, advancedRDS ? 72 : 184,
-                     RDSDropoutColor, RDSDropoutColorSmooth, 16);
-            tftPrint(ALEFT, stationIDold, 240, advancedRDS ? 89 : 201,
-                     RDSDropoutColor, RDSDropoutColorSmooth, 16);
-            tftPrint( 1, stationStateold, 318, advancedRDS ? 89 : 201,
-                      RDSDropoutColor, RDSDropoutColorSmooth, 16);
+          if (radio.rds.region == 0) tftPrint(ACENTER, PIold, 275, advancedRDS ? 75 : 187, RDSDropoutColor, RDSDropoutColorSmooth, 28);
+          else {
+            tftPrint(ALEFT, PIold, 240, advancedRDS ? 72 : 184, RDSDropoutColor, RDSDropoutColorSmooth, 16);
+            tftPrint(ALEFT, stationIDold, 240, advancedRDS ? 89 : 201, RDSDropoutColor, RDSDropoutColorSmooth, 16);
+            tftPrint( 1, stationStateold, 318, advancedRDS ? 89 : 201, RDSDropoutColor, RDSDropoutColorSmooth, 16);
           }
 
           if (!radio.rds.hasLongPS) {
@@ -292,14 +281,11 @@ void readRds() {
             PSSprite.pushSprite(36, advancedRDS ? 72 : 185);
           }
 
-          tftPrint(ALEFT, PTYold, 34, advancedRDS ? 109 : 163,
-                   RDSDropoutColor, RDSDropoutColorSmooth, 16);
-
+          tftPrint(ALEFT, PTYold, 34, advancedRDS ? 109 : 163, RDSDropoutColor, RDSDropoutColorSmooth, 16);
         }
 
         if (rdsstatscreen && berPercentold != 100) {
-          tftReplace(ARIGHT, String(berPercentold) + "%", "100%",
-                     318, 34, PrimaryColor, PrimaryColorSmooth, BackgroundColor, 16);
+          tftReplace(ARIGHT, String(berPercentold) + "%", "100%", 318, 34, PrimaryColor, PrimaryColorSmooth, BackgroundColor, 16);
           berPercentold = 100;
         }
 
@@ -315,43 +301,29 @@ void readRds() {
       // --- RDS recovery or memory reset ---
       if (dropout || memreset) {
         if (!rdsstatscreen) {
-          if (radio.rds.region == 0) {
-            tftPrint(ACENTER, PIold, 275, advancedRDS ? 75 : 187,
-                     RDSColor, RDSColorSmooth, 28);
-          } else {
-            tftPrint(ALEFT, PIold, 240, advancedRDS ? 72 : 184,
-                     RDSColor, RDSColorSmooth, 16);
-            tftPrint(ALEFT, stationIDold, 240, advancedRDS ? 89 : 201,
-                     RDSColor, RDSColorSmooth, 16);
-            tftPrint( 1, stationStateold, 318, advancedRDS ? 89 : 201,
-                      advancedRDS ? RDSColor : RDSDropoutColor,
-                      advancedRDS ? RDSColorSmooth : RDSDropoutColorSmooth, 16);
+          if (radio.rds.region == 0) tftPrint(ACENTER, PIold, 275, advancedRDS ? 75 : 187, RDSColor, RDSColorSmooth, 28);
+          else {
+            tftPrint(ALEFT, PIold, 240, advancedRDS ? 72 : 184, RDSColor, RDSColorSmooth, 16);
+            tftPrint(ALEFT, stationIDold, 240, advancedRDS ? 89 : 201, RDSColor, RDSColorSmooth, 16);
+            tftPrint( 1, stationStateold, 318, advancedRDS ? 89 : 201, advancedRDS ? RDSColor : RDSDropoutColor, advancedRDS ? RDSColorSmooth : RDSDropoutColorSmooth, 16);
           }
 
-          // PS handling
           if (!radio.rds.hasLongPS) {
             PSSprite.fillSprite(BackgroundColor);
             if ((ps12errorold || ps34errorold || ps56errorold || ps78errorold) && radio.ps_process) {
-              // Mark partial errors
               for (uint8_t i = 0; i < 7; i++) {
-                bool error = (i < 2 && ps12errorold) ||
-                             (i < 4 && ps34errorold) ||
-                             (i < 6 && ps56errorold) || ps78errorold;
-                PSSprite.setTextColor(error ? RDSDropoutColor : RDSColor,
-                                      RDSColorSmooth, false);
-                PSSprite.drawString(radio.rds.stationName.substring(i, i + 1),
-                                    i == 0 ? 0 : lengths[i - 1], 2);
+                bool error = (i < 2 && ps12errorold) || (i < 4 && ps34errorold) || (i < 6 && ps56errorold) || ps78errorold;
+                PSSprite.setTextColor(error ? RDSDropoutColor : RDSColor, RDSColorSmooth, false);
+                PSSprite.drawString(radio.rds.stationName.substring(i, i + 1), i == 0 ? 0 : lengths[i - 1], 2);
               }
             } else {
-              // Print clean PS
               PSSprite.setTextColor(RDSColor, RDSColorSmooth, false);
               PSSprite.drawString(PSold, 0, 2);
             }
             PSSprite.pushSprite(36, advancedRDS ? 72 : 185);
           }
 
-          tftPrint(ALEFT, PTYold, 34, advancedRDS ? 109 : 163,
-                   RDSColor, RDSColorSmooth, 16);
+          tftPrint(ALEFT, PTYold, 34, advancedRDS ? 109 : 163, RDSColor, RDSColorSmooth, 16);
 
           tft.fillCircle(314, 223, 2, GreyoutColor);
           tft.fillCircle(314, 234, 2, GreyoutColor);
@@ -369,17 +341,12 @@ void readRds() {
     // RDS Spy output
     if (RDSstatus && (RDSSPYUSB || RDSSPYTCP)) {
       RDSSPYRDS = F("G:\r\n");
-      uint16_t blocks[4] = {radio.rds.rdsA, radio.rds.rdsB,
-                            radio.rds.rdsC, radio.rds.rdsD
-                           };
-      bool errors[4] = {radio.rds.rdsAerror, radio.rds.rdsBerror,
-                        radio.rds.rdsCerror, radio.rds.rdsDerror
-                       };
+      uint16_t blocks[4] = {radio.rds.rdsA, radio.rds.rdsB, radio.rds.rdsC, radio.rds.rdsD};
+      bool errors[4] = {radio.rds.rdsAerror, radio.rds.rdsBerror, radio.rds.rdsCerror, radio.rds.rdsDerror};
 
       for (uint8_t i = 0; i < 4; i++) {
-        if (errors[i]) {
-          RDSSPYRDS += F("----");
-        } else {
+        if (errors[i]) RDSSPYRDS += F("----");
+        else {
           sprintf(hexbuf, "%04X", blocks[i]); // format word into HEX
           RDSSPYRDS += hexbuf;
         }
@@ -387,23 +354,18 @@ void readRds() {
       RDSSPYRDS += F("\r\n\r\n");
 
       if (RDSSPYRDS != RDSSPYRDSold) {
-        if (RDSSPYUSB) {
-          Serial.print(RDSSPYRDS);
-        } else {
-          RemoteClient.print(RDSSPYRDS);
-        }
+        if (RDSSPYUSB) Serial.print(RDSSPYRDS);
+        else RemoteClient.print(RDSSPYRDS);
         RDSSPYRDSold = RDSSPYRDS;
       }
     }
 
-    // XDRGTK output
     if (RDSstatus && (XDRGTKUSB || XDRGTKTCP)) {
       XDRGTKRDS = F("R");
       sprintf(hexbuf, "%04X", radio.rds.rdsB); XDRGTKRDS += hexbuf;
       sprintf(hexbuf, "%04X", radio.rds.rdsC); XDRGTKRDS += hexbuf;
       sprintf(hexbuf, "%04X", radio.rds.rdsD); XDRGTKRDS += hexbuf;
 
-      // Pack error bits
       uint8_t erroutput = 0;
       erroutput |= ((radio.rds.rdsErr >> 8) & B00110000) >> 4;
       erroutput |= ((radio.rds.rdsErr >> 8) & B00001100);
@@ -518,11 +480,8 @@ void showPI() {
     if (!screenmute) {
       if (advancedRDS) {
         if (radio.rds.region == 0) {
-          if (!RDSstatus) {
-            tftReplace(ACENTER, PIold, radio.rds.picode, 275, 75, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor, 28);
-          } else {
-            tftReplace(ACENTER, PIold, radio.rds.picode, 275, 75, RDSColor, RDSColorSmooth, BackgroundColor, 28);
-          }
+          if (!RDSstatus) tftReplace(ACENTER, PIold, radio.rds.picode, 275, 75, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor, 28);
+          else tftReplace(ACENTER, PIold, radio.rds.picode, 275, 75, RDSColor, RDSColorSmooth, BackgroundColor, 28);
         } else {
           if (!RDSstatus) {
             if (String(radio.rds.picode) != PIold) tftReplace(ALEFT, PIold, radio.rds.picode, 240, 72, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor, 16);
@@ -533,15 +492,11 @@ void showPI() {
           }
           tftReplace(ARIGHT, stationStateold, radio.rds.stationStatetext, 318, 89, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor, 16);
         }
-      } else if (afscreen) {
-        tftReplace(ALEFT, PIold, radio.rds.picode, 30, 201, BWAutoColor, BWAutoColorSmooth, BackgroundColor, 16);
-      } else if (!rdsstatscreen) {
+      } else if (afscreen) tftReplace(ALEFT, PIold, radio.rds.picode, 30, 201, BWAutoColor, BWAutoColorSmooth, BackgroundColor, 16);
+      else if (!rdsstatscreen) {
         if (radio.rds.region == 0) {
-          if (!RDSstatus) {
-            tftReplace(ACENTER, PIold, radio.rds.picode, 275, 187, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor, 28);
-          } else {
-            tftReplace(ACENTER, PIold, radio.rds.picode, 275, 187, RDSColor, RDSColorSmooth, BackgroundColor, 28);
-          }
+          if (!RDSstatus) tftReplace(ACENTER, PIold, radio.rds.picode, 275, 187, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor, 28);
+          else tftReplace(ACENTER, PIold, radio.rds.picode, 275, 187, RDSColor, RDSColorSmooth, BackgroundColor, 28);
         } else {
           if (!RDSstatus) {
             if (String(radio.rds.picode) != PIold || radio.rds.stationIDtext != stationIDold) {
@@ -578,17 +533,11 @@ void showPTY() {
 
     if (!screenmute) {
       if (advancedRDS) {
-        if (!RDSstatus) {
-          tftReplace(ALEFT, PTYold, PTYString, 34, 109, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor, 16);
-        } else {
-          tftReplace(ALEFT, PTYold, PTYString, 34, 109, RDSColor, RDSColorSmooth, BackgroundColor, 16);
-        }
+        if (!RDSstatus) tftReplace(ALEFT, PTYold, PTYString, 34, 109, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor, 16);
+        else tftReplace(ALEFT, PTYold, PTYString, 34, 109, RDSColor, RDSColorSmooth, BackgroundColor, 16);
       } else {
-        if (!RDSstatus) {
-          tftReplace(ALEFT, PTYold, PTYString, 34, 163, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor, 16);
-        } else {
-          tftReplace(ALEFT, PTYold, PTYString, 34, 163, RDSColor, RDSColorSmooth, BackgroundColor, 16);
-        }
+        if (!RDSstatus) tftReplace(ALEFT, PTYold, PTYString, 34, 163, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor, 16);
+        else tftReplace(ALEFT, PTYold, PTYString, 34, 163, RDSColor, RDSColorSmooth, BackgroundColor, 16);
       }
     }
     PTYold = PTYString;
@@ -604,23 +553,12 @@ void showPTY() {
 }
 
 void showPS() {
-  // Check if station name or errors have changed, or long PS should be displayed
-  if ((radio.rds.stationName != PSold) ||
-      (RDSstatus && !(ps12errorold == radio.rds.ps12error ||
-                      ps34errorold == radio.rds.ps34error ||
-                      ps56errorold == radio.rds.ps56error ||
-                      ps78errorold == radio.rds.ps78error)) ||
-      (radio.rds.hasLongPS && showlongps)) {
-
-    // Handle AF screen update
+  if ((radio.rds.stationName != PSold) || (RDSstatus && !(ps12errorold == radio.rds.ps12error || ps34errorold == radio.rds.ps34error || ps56errorold == radio.rds.ps56error || ps78errorold == radio.rds.ps78error)) || (radio.rds.hasLongPS && showlongps)) {
     if (afscreen) {
-      if (!screenmute) {
-        tftReplace(ACENTER, PSold, radio.rds.stationName, 160, 201, BWAutoColor, BWAutoColorSmooth, BackgroundColor, 16);
-      }
+      if (!screenmute) tftReplace(ACENTER, PSold, radio.rds.stationName, 160, 201, BWAutoColor, BWAutoColorSmooth, BackgroundColor, 16);
     } else if (!rdsstatscreen) {
-      // Handle long PS display
       if (radio.rds.hasLongPS && showlongps) {
-        String stationNameLongString = String(radio.rds.stationNameLong) + "     "; // Add trailing spaces for scrolling
+        String stationNameLongString = String(radio.rds.stationNameLong) + "     ";
         if (stationNameLongString != stationNameLongOld) {
           PSLongWidth = PSSprite.textWidth(stationNameLongString); // Measure new width
           stationNameLongOld = stationNameLongString;
@@ -638,12 +576,9 @@ void showPS() {
             if (xPos5 == 0 && millis() - pslongtickerhold >= 2000) {
               xPos5--; // Hold position for 2 seconds before scrolling
               pslongtickerhold = millis();
-            } else {
-              xPos5--; // Scroll
-            }
+            } else xPos5--;
             pslongticker = millis();
 
-            // Draw scrolling PS
             PSSprite.fillSprite(BackgroundColor);
             PSSprite.setTextColor(RDSstatus ? RDSColor : RDSDropoutColor, RDSstatus ? RDSColorSmooth : RDSDropoutColorSmooth, false);
             PSSprite.drawString(stationNameLongString, xPos5, 2);
@@ -651,34 +586,25 @@ void showPS() {
           }
         }
       } else {
-        // Handle normal PS display
         xPos5 = 0;
         PSSprite.fillSprite(BackgroundColor);
 
-        // Calculate widths for individual characters (ensures proper spacing)
         for (int i = 0; i < 7; i++) {
           lengths[i] = PSSprite.textWidth(radio.rds.stationName.substring(0, i + 1));
-          if (i > 0 && lengths[i] <= lengths[i - 1]) {
-            lengths[i] = lengths[i - 1] + 23; // Ensure consistent spacing
-          }
+          if (i > 0 && lengths[i] <= lengths[i - 1]) lengths[i] = lengths[i - 1] + 23;
         }
 
-        // Update error states only when their respective flags are true
         if (ps12errorold) ps12errorold = radio.rds.ps12error;
         if (ps34errorold) ps34errorold = radio.rds.ps34error;
         if (ps56errorold) ps56errorold = radio.rds.ps56error;
         if (ps78errorold) ps78errorold = radio.rds.ps78error;
 
-        // Set text color based on RDS status and error state
         if (!RDSstatus || band > BAND_GAP) {
           PSSprite.setTextColor(RDSDropoutColor, RDSDropoutColorSmooth, false);
           PSSprite.drawString(radio.rds.stationName, 0, 2);
         } else if ((ps12errorold || ps34errorold || ps56errorold || ps78errorold) && radio.ps_process) {
           for (int i = 0; i < 7; i++) {
-            PSSprite.setTextColor((i < 2 && ps12errorold) || (i < 4 && ps34errorold) ||
-                                  (i < 6 && ps56errorold) || ps78errorold ?
-                                  RDSDropoutColor : RDSColor,
-                                  RDSColorSmooth, false);
+            PSSprite.setTextColor((i < 2 && ps12errorold) || (i < 4 && ps34errorold) || (i < 6 && ps56errorold) || ps78errorold ? RDSDropoutColor : RDSColor, RDSColorSmooth, false);
             PSSprite.drawString(radio.rds.stationName.substring(i, i + 1), i == 0 ? 0 : lengths[i - 1], 2);
           }
         } else {
@@ -686,18 +612,11 @@ void showPS() {
           PSSprite.drawString(radio.rds.stationName, 0, 2);
         }
 
-        // Reset PS error flags if the station name changes
-        if (PSold != radio.rds.stationName) {
-          ps12errorold = ps34errorold = ps56errorold = ps78errorold = true;
-        }
+        if (PSold != radio.rds.stationName) ps12errorold = ps34errorold = ps56errorold = ps78errorold = true;
       }
 
-      // Push updated sprite to screen
-      if (!screenmute) {
-        PSSprite.pushSprite(36, advancedRDS ? 72 : 185);
-      }
+      if (!screenmute) PSSprite.pushSprite(36, advancedRDS ? 72 : 185);
 
-      // Handle WiFi update if PS has changed
       if (wifi && radio.rds.stationName.length() > 0 && PSold != radio.rds.stationName) {
         Udp.beginPacket(remoteip, 9030);
         Udp.print("from=TEF_tuner_" + String(stationlistid, DEC) + ";PS=");
@@ -712,87 +631,57 @@ void showPS() {
       }
     }
 
-    // Save the updated station name
     PSold = radio.rds.stationName;
   }
 }
 
 void showCT() {
-  // Temporary string buffers for time and date formatting
-  char timeStr[16];   // Increased buffer size to 16
-  char dateStr[9];    // DD-MM-YY
+  char timeStr[16];
+  char dateStr[9];
   time_t t;
 
-  // Determine the current time source
-  if (radio.rds.hasCT && !dropout && !NTPupdated) {
-    t = radio.rds.time + radio.rds.offset;
-  } else {
+  if (radio.rds.hasCT && !dropout && !NTPupdated) t = radio.rds.time + radio.rds.offset;
+  else {
     t = rtc.getEpoch() + (NTPupdated ? 0 : radio.rds.offset);
 
     // Update RDS time during dropout
-    if (dropout) {
-      radio.rds.time = static_cast<time_t>(rtc.getEpoch());
-    }
+    if (dropout) radio.rds.time = static_cast<time_t>(rtc.getEpoch());
   }
 
-  // Apply the GMT offset only if NTPupdated is true
   if (NTPupdated) {
     t += NTPoffset * 3600; // Convert offset from hours to seconds
-
-    // Apply DST adjustment if autoDST is enabled
-    if (autoDST && isDST(t)) {
-      t += 3600; // Add 1 hour for DST
-    }
+    if (autoDST && isDST(t)) t += 3600;
   }
 
-  // Format the time based on region
   if (clockampm) { // USA region: 12-hour AM/PM format
     int hour = localtime(&t)->tm_hour;
 
-    // Ensure the hour is valid (between 1-12)
     if (hour < 1 || hour > 12) {
-      if (hour == 0) {
-        hour = 12;  // Midnight case
-      } else if (hour > 12) {
-        hour -= 12;  // Convert PM hours
-      }
+      if (hour == 0) hour = 12;
+      else if (hour > 12) hour -= 12;
     }
 
     String ampm = (localtime(&t)->tm_hour >= 12) ? "PM" : "AM";
     snprintf(timeStr, sizeof(timeStr), "%d:%02d %s", hour, localtime(&t)->tm_min, ampm.c_str());
-  } else { // Other regions: 24-hour format
+  } else {
     int hour = localtime(&t)->tm_hour;
-
-    // Ensure the hour is valid (between 0-23)
-    if (hour < 0 || hour > 23) {
-      hour = 0; // Invalid hour, reset to 0
-    }
+    if (hour < 0 || hour > 23) hour = 0;
 
     snprintf(timeStr, sizeof(timeStr), "%02d:%02d", hour, localtime(&t)->tm_min);
   }
 
-  // Store formatted time in rds_clock
   rds_clock = String(timeStr);
 
-  // Format the date as DD-MM-YY
-  if (clockampm) {
-    strftime(dateStr, sizeof(dateStr), "%m-%d-%y", localtime(&t));
-  } else {
-    strftime(dateStr, sizeof(dateStr), "%d-%m-%y", localtime(&t));
-  }
+  if (clockampm) strftime(dateStr, sizeof(dateStr), "%m-%d-%y", localtime(&t));
+  else strftime(dateStr, sizeof(dateStr), "%d-%m-%y", localtime(&t));
   rds_date = String(dateStr);
 
-  // Check if the clock or RDS CT status has changed
   if (!screenmute && showclock && (rds_clock != rds_clockold || rds_date != rds_dateold || hasCTold != radio.rds.hasCT)) {
 
-    // Update RTC if RDS CT is available or NTP was updated
     if ((radio.rds.hasCT && RDSstatus) || NTPupdated) {
       rtcset = true;
-      if (!NTPupdated) {
-        rtc.setTime(radio.rds.time);
-      }
+      if (!NTPupdated) rtc.setTime(radio.rds.time);
 
-      // Display the updated time and date
       tftReplace(ACENTER, rds_clockold, rds_clock, 134, 1, RDSColor, RDSColorSmooth, BackgroundColor, 16);
       tftReplace(ACENTER, rds_dateold, rds_date, 134, 15, RDSColor, RDSColorSmooth, BackgroundColor, 16);
     } else { // Handle dropout scenarios
@@ -808,21 +697,13 @@ void showCT() {
     }
   }
 
-  // Update previous clock, date, and RDS CT status
   rds_clockold = rds_clock;
   rds_dateold = rds_date;
   hasCTold = radio.rds.hasCT;
 }
 
 void showRadioText() {
-  // Build the radio text string
-  String RTString = String(
-                      radio.rds.stationText +
-                      (radio.rds.stationText.length() > 0 ? " " : "") +
-                      radio.rds.stationText32 +
-                      (radio.rds.hasEnhancedRT ? " eRT: " + String(radio.rds.enhancedRTtext) : "") +
-                      "      "
-                    );
+  String RTString = String(radio.rds.stationText + (radio.rds.stationText.length() > 0 ? " " : "") + radio.rds.stationText32 + (radio.rds.hasEnhancedRT ? " eRT: " + String(radio.rds.enhancedRTtext) : "") + "      ");
 
   // Check if RT has changed
   if (radio.rds.hasRT && radio.rds.rtAB != rtABold) {
@@ -891,7 +772,6 @@ void showRadioText() {
     }
   }
 
-  // Update RTold and RadiotextWidth if the string has changed
   if (RTold != RTString) {
     RadiotextWidth = FullLineSprite.textWidth(RTString);
 
@@ -935,13 +815,9 @@ void ShowAFEON() {
         tft.fillRect(2, 48, 316, 150, BackgroundColor);
         for (byte i = 0; i < radio.af_counter; i++) {
           tftPrint(ALEFT, (radio.afmethodB && !radio.af[i].regional && radio.af[i].same) ? "S " : (radio.afmethodB && radio.af[i].regional && radio.af[i].same) ? "M " : (radio.afmethodB && radio.af[i].regional && !radio.af[i].same) ? "R " : "", 10 + (i > 9 ? 54 : 0) + (i > 19 ? 54 : 0) + (i > 29 ? 54 : 0) + (i > 39 ? 54 : 0), 48 + (15 * i) - (i > 9 ? 150 : 0) - (i > 19 ? 150 : 0) - (i > 29 ? 150 : 0) - (i > 39 ? 150 : 0), ActiveColor, ActiveColorSmooth, 16);
-          if (radio.af[i].checked) {
-            tftPrint(ARIGHT, String(radio.af[i].frequency / 100) + "." + String((radio.af[i].frequency % 100) / 10), 55 + (i > 9 ? 54 : 0) + (i > 19 ? 54 : 0) + (i > 29 ? 54 : 0) + (i > 39 ? 54 : 0), 48 + (15 * i) - (i > 9 ? 150 : 0) - (i > 19 ? 150 : 0) - (i > 29 ? 150 : 0) - (i > 39 ? 150 : 0), InsignificantColor, InsignificantColorSmooth, 16);
-          } else if (!radio.af[i].afvalid) {
-            tftPrint(ARIGHT, String(radio.af[i].frequency / 100) + "." + String((radio.af[i].frequency % 100) / 10), 55 + (i > 9 ? 54 : 0) + (i > 19 ? 54 : 0) + (i > 29 ? 54 : 0) + (i > 39 ? 54 : 0), 48 + (15 * i) - (i > 9 ? 150 : 0) - (i > 19 ? 150 : 0) - (i > 29 ? 150 : 0) - (i > 39 ? 150 : 0), SignificantColor, SignificantColorSmooth, 16);
-          } else {
-            tftPrint(ARIGHT, String(radio.af[i].frequency / 100) + "." + String((radio.af[i].frequency % 100) / 10), 55 + (i > 9 ? 54 : 0) + (i > 19 ? 54 : 0) + (i > 29 ? 54 : 0) + (i > 39 ? 54 : 0), 48 + (15 * i) - (i > 9 ? 150 : 0) - (i > 19 ? 150 : 0) - (i > 29 ? 150 : 0) - (i > 39 ? 150 : 0), RDSColor, RDSColorSmooth, 16);
-          }
+          if (radio.af[i].checked) tftPrint(ARIGHT, String(radio.af[i].frequency / 100) + "." + String((radio.af[i].frequency % 100) / 10), 55 + (i > 9 ? 54 : 0) + (i > 19 ? 54 : 0) + (i > 29 ? 54 : 0) + (i > 39 ? 54 : 0), 48 + (15 * i) - (i > 9 ? 150 : 0) - (i > 19 ? 150 : 0) - (i > 29 ? 150 : 0) - (i > 39 ? 150 : 0), InsignificantColor, InsignificantColorSmooth, 16);
+          else if (!radio.af[i].afvalid) tftPrint(ARIGHT, String(radio.af[i].frequency / 100) + "." + String((radio.af[i].frequency % 100) / 10), 55 + (i > 9 ? 54 : 0) + (i > 19 ? 54 : 0) + (i > 29 ? 54 : 0) + (i > 39 ? 54 : 0), 48 + (15 * i) - (i > 9 ? 150 : 0) - (i > 19 ? 150 : 0) - (i > 29 ? 150 : 0) - (i > 39 ? 150 : 0), SignificantColor, SignificantColorSmooth, 16);
+          else tftPrint(ARIGHT, String(radio.af[i].frequency / 100) + "." + String((radio.af[i].frequency % 100) / 10), 55 + (i > 9 ? 54 : 0) + (i > 19 ? 54 : 0) + (i > 29 ? 54 : 0) + (i > 39 ? 54 : 0), 48 + (15 * i) - (i > 9 ? 150 : 0) - (i > 19 ? 150 : 0) - (i > 29 ? 150 : 0) - (i > 39 ? 150 : 0), RDSColor, RDSColorSmooth, 16);
         }
         if (radio.af_counter > 10) tft.drawLine(59, 54, 59, 191, SecondaryColor);
         if (radio.af_counter > 20) tft.drawLine(113, 54, 113, 191, SecondaryColor);
@@ -969,48 +845,27 @@ void ShowAFEON() {
         byte eon_numbers;
         if (afpagenr != 3) {
           if (radio.eon_counter > 9) eon_numbers = 10; else eon_numbers = radio.eon_counter;
-        } else {
-          eon_numbers = radio.eon_counter - 10;
-        }
-
+        } else eon_numbers = radio.eon_counter - 10;
 
         for (byte i = 0; i < eon_numbers; i++) {
-          if (eonpicodeold[i + y] == nullptr) {
-            strcpy(eonpicodeold[i + y], "");
-          }
-          if (eonpsold[i + y] == nullptr) {
-            eonpsold[i + y] = "";
-          }
-          if (mappedfreqold[i + y] == 0) {
-            mappedfreqold[i + y] = 0;
-          }
-          if (mappedfreqold2[i + y] == 0) {
-            mappedfreqold2[i + y] = 0;
-          }
-          if (mappedfreqold3[i + y] == 0) {
-            mappedfreqold3[i + y] = 0;
-          }
-          if (eonptyold[i + y] == 0) {
-            eonptyold[i + y] = 0;
-          }
+          if (eonpicodeold[i + y] == nullptr) strcpy(eonpicodeold[i + y], "");
+          if (eonpsold[i + y] == nullptr) eonpsold[i + y] = "";
+          if (mappedfreqold[i + y] == 0) mappedfreqold[i + y] = 0;
+          if (mappedfreqold2[i + y] == 0) mappedfreqold2[i + y] = 0;
+          if (mappedfreqold3[i + y] == 0) mappedfreqold3[i + y] = 0;
+          if (eonptyold[i + y] == 0) eonptyold[i + y] = 0;
 
-          if (strcmp(eonpicodeold[i + y], radio.eon[i + y].picode) != 0) {
-            tftPrint(ALEFT, eonpicodeold[i + y], 4, 48 + (15 * i), BackgroundColor, BackgroundColor, 16);
-          }
+          if (strcmp(eonpicodeold[i + y], radio.eon[i + y].picode) != 0) tftPrint(ALEFT, eonpicodeold[i + y], 4, 48 + (15 * i), BackgroundColor, BackgroundColor, 16);
           tftPrint(ALEFT, radio.eon[i + y].picode, 4, 48 + (15 * i), RDSColor, RDSColorSmooth, 16);
           strcpy(eonpicodeold[i + y], radio.eon[i + y].picode);
 
           if (radio.eon[i + y].ps.length() > 0) {
             tftPrint(ALEFT, "PS", 46, 32, ActiveColor, ActiveColorSmooth, 16);
 
-            if (strcmp(radio.eon[i + y].ps.c_str(), eonpsold[i + y].c_str()) != 0) {
-              tftPrint(ALEFT, eonpsold[i + y].c_str(), 46, 48 + (15 * i), BackgroundColor, BackgroundColor, 16);
-            }
+            if (strcmp(radio.eon[i + y].ps.c_str(), eonpsold[i + y].c_str()) != 0) tftPrint(ALEFT, eonpsold[i + y].c_str(), 46, 48 + (15 * i), BackgroundColor, BackgroundColor, 16);
             tftPrint(ALEFT, radio.eon[i + y].ps.c_str(), 46, 48 + (15 * i), RDSDropoutColor, RDSDropoutColorSmooth, 16);
             eonpsold[i + y] = radio.eon[i + y].ps;
-          } else {
-            tftPrint(ALEFT, eonpsold[i + y].c_str(), 46, 48 + (15 * i), BackgroundColor, BackgroundColor, 16);
-          }
+          } else tftPrint(ALEFT, eonpsold[i + y].c_str(), 46, 48 + (15 * i), BackgroundColor, BackgroundColor, 16);
 
           if (radio.eon[i + y].mappedfreq > 0) {
             tftPrint(ALEFT, "MF", 119, 32, ActiveColor, ActiveColorSmooth, 16);
@@ -1070,9 +925,7 @@ void ShowAFEON() {
             if (eonptyold[i + y] != radio.eon[i + y].pty) tft.fillRect(290, 48 + (15 * i), 29, 16, BackgroundColor);
             if (radio.eon[i + y].pty != 254) tftPrint(ARIGHT, String(radio.eon[i + y].pty), 310, 48 + (15 * i), RDSColor, RDSColorSmooth, 16);
             eonptyold[i + y] = radio.eon[i + y].pty;
-          } else {
-            tft.fillRect(290, 48 + (15 * i), 29, 16, BackgroundColor);
-          }
+          } else tft.fillRect(290, 48 + (15 * i), 29, 16, BackgroundColor);
 
           if (radio.eon[i + y].ta) tftPrint(ACENTER, "O", 250, 48 + (15 * i), RDSColor, RDSColorSmooth, 16); else tftPrint(ACENTER, "O", 250, 48 + (15 * i), BackgroundColor, BackgroundColor, 16);
           if (radio.eon[i + y].tp) tftPrint(ACENTER, "O", 276, 48 + (15 * i), RDSColor, RDSColorSmooth, 16); else tftPrint(ACENTER, "O", 276, 48 + (15 * i), BackgroundColor, BackgroundColor, 16);
@@ -1093,11 +946,8 @@ void ShowAFEON() {
             if (!aidProcessed) {
               for (int z = 0; z < 4; z++) {
                 uint8_t nibble = (radio.rds.aid[y] >> (4 * (3 - z))) & 0xF;
-                if (nibble < 10) {
-                  id[z] = nibble + '0';
-                } else {
-                  id[z] = nibble - 10 + 'A';
-                }
+                if (nibble < 10) id[z] = nibble + '0';
+                else id[z] = nibble - 10 + 'A';
               }
               id[4] = '\0';
 
@@ -1111,9 +961,7 @@ void ShowAFEON() {
           }
         }
 
-        if (aidProcessed && y < radio.rds.aid_counter - 1) {
-          AIDStringTemp += " | ";
-        }
+        if (aidProcessed && y < radio.rds.aid_counter - 1) AIDStringTemp += " | ";
       }
       aid_counterold = radio.rds.aid_counter;
 
@@ -1156,52 +1004,40 @@ void ShowAFEON() {
 }
 
 void ShowRDSStatistics() {
-  // --- Only update if RDS is active, blocks processed, and no block A-D errors ---
   if (RDSstatus && radio.processed_rdsblocks > 0 &&
       !radio.rds.rdsAerror && !radio.rds.rdsBerror &&
       !radio.rds.rdsCerror && !radio.rds.rdsDerror) {
 
-    // --- Update total processed RDS blocks if changed ---
     if (processed_rdsblocksold[32] != radio.processed_rdsblocks) {
-      tftReplace(ARIGHT, String(processed_rdsblocksold[32]), String(radio.processed_rdsblocks),
-                 318, 222, PrimaryColor, PrimaryColorSmooth, BackgroundColor, 16);
+      tftReplace(ARIGHT, String(processed_rdsblocksold[32]), String(radio.processed_rdsblocks), 318, 222, PrimaryColor, PrimaryColorSmooth, BackgroundColor, 16);
       processed_rdsblocksold[32] = radio.processed_rdsblocks;
     }
 
-    // --- Row Y positions (repeats every 8 groups) ---
     const uint8_t rdsYpos[] PROGMEM = {56, 76, 96, 116, 136, 156, 176, 196};
 
-    uint8_t rb = radio.rdsblock; // current RDS block index
+    uint8_t rb = radio.rdsblock;
 
-    // --- Determine X column positions based on group range ---
     uint16_t xpos, xposPct;
-    if      (rb <= RDS_GROUP_3B )  {
-      xpos =  60;
-      xposPct =  70;
-    }
-    else if (rb <= RDS_GROUP_7B )  {
+    if(rb <= RDS_GROUP_3B) {
+      xpos = 60;
+      xposPct = 70;
+    } else if(rb <= RDS_GROUP_7B) {
       xpos = 140;
       xposPct = 150;
-    }
-    else if (rb <= RDS_GROUP_11B)  {
+    } else if(rb <= RDS_GROUP_11B) {
       xpos = 220;
       xposPct = 230;
-    }
-    else                           {
+    } else {
       xpos = 300;
       xposPct = 310;
     }
 
-    // --- Determine Y row position (wraps every 8 groups) ---
-    uint8_t row  = rb & 0x07;                     // modulo 8
-    uint8_t ypos = pgm_read_byte(&rdsYpos[row]);  // Y position
+    uint8_t row  = rb & 0x07;
+    uint8_t ypos = pgm_read_byte(&rdsYpos[row]);
 
-    // --- Persist last drawn dot between calls ---
-    static int16_t lastX = -1, lastY = -1; // -1 = "none yet"
+    static int16_t lastX = -1, lastY = -1;
 
-    // --- Update only if block counter has changed ---
     if (blockcounterold[rb] != radio.rds.blockcounter[rb]) {
-      // Calculate old and new percentages
       float oldPerc = (blockcounterold[rb] * 100.0f) / processed_rdsblocksold[rb];
       float newPerc = (radio.rds.blockcounter[rb] * 100.0f) / radio.processed_rdsblocks;
 
@@ -1209,58 +1045,33 @@ void ShowRDSStatistics() {
       dtostrf(oldPerc, 0, 1, oldBuf);
       dtostrf(newPerc, 0, 1, newBuf);
 
-      // Draw previous position as "Significant" if different
-      if (lastX >= 0 && (lastX != xpos || lastY != ypos)) {
-        tft.fillCircle(lastX - 55, lastY + 7, 2, SignificantColor);
-      }
+      if (lastX >= 0 && (lastX != xpos || lastY != ypos)) tft.fillCircle(lastX - 55, lastY + 7, 2, SignificantColor);
 
-      // Update percentage display
-      tftReplace(ARIGHT, oldBuf, newBuf, xpos, ypos,
-                 PrimaryColor, PrimaryColorSmooth, BackgroundColor, 16);
-      tftPrint(ACENTER, "%", xposPct, ypos,
-               ActiveColor, ActiveColorSmooth, 16);
+      tftReplace(ARIGHT, oldBuf, newBuf, xpos, ypos, PrimaryColor, PrimaryColorSmooth, BackgroundColor, 16);
+      tftPrint(ACENTER, "%", xposPct, ypos, ActiveColor, ActiveColorSmooth, 16);
 
-      // Draw current dot as "Insignificant"
       tft.fillCircle(xpos - 55, ypos + 7, 2, InsignificantColor);
 
-      // Save current dot for next update
       lastX = xpos;
       lastY = ypos;
 
-      // Store updated block counters
-      blockcounterold[rb]        = radio.rds.blockcounter[rb];
+      blockcounterold[rb] = radio.rds.blockcounter[rb];
       processed_rdsblocksold[rb] = radio.processed_rdsblocks;
     }
 
-    // --- Build HEX string from 16-bit RDS blocks A..D ---
     String HexString;
-    HexString = String(((radio.rds.rdsA >> 12) & 0xF), HEX) +
-                String(((radio.rds.rdsA >> 8)  & 0xF), HEX) +
-                String(((radio.rds.rdsA >> 4)  & 0xF), HEX) +
-                String(( radio.rds.rdsA        & 0xF), HEX) + " ";
+    HexString = String(((radio.rds.rdsA >> 12) & 0xF), HEX) + String(((radio.rds.rdsA >> 8)  & 0xF), HEX) + String(((radio.rds.rdsA >> 4)  & 0xF), HEX) + String((radio.rds.rdsA & 0xF), HEX);
+    HexString += " ";
+    HexString = String(((radio.rds.rdsB >> 12) & 0xF), HEX) + String(((radio.rds.rdsB >> 8)  & 0xF), HEX) + String(((radio.rds.rdsB >> 4)  & 0xF), HEX) + String((radio.rds.rdsB & 0xF), HEX);
+    HexString += " ";
+    HexString = String(((radio.rds.rdsC >> 12) & 0xF), HEX) + String(((radio.rds.rdsC >> 8)  & 0xF), HEX) + String(((radio.rds.rdsC >> 4)  & 0xF), HEX) + String((radio.rds.rdsC & 0xF), HEX);
+    HexString += " ";
+    HexString = String(((radio.rds.rdsD >> 12) & 0xF), HEX) + String(((radio.rds.rdsD >> 8)  & 0xF), HEX) + String(((radio.rds.rdsD >> 4)  & 0xF), HEX) + String((radio.rds.rdsD & 0xF), HEX);
 
-    HexString += String(((radio.rds.rdsB >> 12) & 0xF), HEX) +
-                 String(((radio.rds.rdsB >> 8)  & 0xF), HEX) +
-                 String(((radio.rds.rdsB >> 4)  & 0xF), HEX) +
-                 String(( radio.rds.rdsB        & 0xF), HEX) + " ";
-
-    HexString += String(((radio.rds.rdsC >> 12) & 0xF), HEX) +
-                 String(((radio.rds.rdsC >> 8)  & 0xF), HEX) +
-                 String(((radio.rds.rdsC >> 4)  & 0xF), HEX) +
-                 String(( radio.rds.rdsC        & 0xF), HEX) + " ";
-
-    HexString += String(((radio.rds.rdsD >> 12) & 0xF), HEX) +
-                 String(((radio.rds.rdsD >> 8)  & 0xF), HEX) +
-                 String(((radio.rds.rdsD >> 4)  & 0xF), HEX) +
-                 String(( radio.rds.rdsD        & 0xF), HEX);
-
-    // Uppercase HEX string
     HexString.toUpperCase();
 
-    // Update display if string changed
     if (HexString != HexStringold) {
-      tftReplace(ACENTER, HexStringold, HexString,
-                 160, 222, ActiveColor, ActiveColorSmooth, BackgroundColor, 16);
+      tftReplace(ACENTER, HexStringold, HexString, 160, 222, ActiveColor, ActiveColorSmooth, BackgroundColor, 16);
       HexStringold = HexString;
     }
   }
@@ -1269,20 +1080,14 @@ void ShowRDSStatistics() {
   if (radio.processed_rdsblocks > 0 && !dropout) {
     // Draw A-D error circles (simple error flags)
     const uint8_t xErr[4] = {86, 124, 162, 200};
-    const bool errors[4] = {radio.rds.rdsAerror, radio.rds.rdsBerror,
-                            radio.rds.rdsCerror, radio.rds.rdsDerror
-                           };
+    const bool errors[4] = {radio.rds.rdsAerror, radio.rds.rdsBerror, radio.rds.rdsCerror, radio.rds.rdsDerror};
 
-    for (uint8_t i = 0; i < 4; i++) {
-      tft.fillCircle(xErr[i], 41, 5,
-                     errors[i] ? SignificantColor : InsignificantColor);
-    }
+    for (uint8_t i = 0; i < 4; i++) tft.fillCircle(xErr[i], 41, 5, errors[i] ? SignificantColor : InsignificantColor);
 
-    // --- Advanced error levels (0=clean, 1=small, 2=medium, 3=big) ---
     int errA = (radio.rds.rdsErr >> 14) & 0x03;
-    int errB = ((radio.rds.rdsErr >> 8) & B00110000) >> 4;
-    int errC = ((radio.rds.rdsErr >> 8) & B00001100) >> 2;
-    int errD = (radio.rds.rdsErr & B00000011);
+    int errB = ((radio.rds.rdsErr >> 8) & 48) >> 4;
+    int errC = ((radio.rds.rdsErr >> 8) & 12) >> 2;
+    int errD = (radio.rds.rdsErr & 3);
 
     // Aggressive weights per error level
     const int weights[4] = {0, 2, 6, 12};
@@ -1291,25 +1096,18 @@ void ShowRDSStatistics() {
     int errorBits = weights[errA] + weights[errB] + weights[errC] + weights[errD];
     int totalBits = 4 * 26;  // 104 data bits per RDS group
 
-    // Raw BER estimate
     float ber = (float)errorBits / (float)totalBits;
 
-    // Non-linear boost (sqrt makes small errors show stronger)
     ber = sqrt(ber);
-    if (ber > 1.0) ber = 1.0;  // clamp to 100%
+    if (ber > 1.0) ber = 1.0;
 
-    // Smooth exponential filter
     float alpha = 0.05;
     smoothBER = (1.0 - alpha) * smoothBER + alpha * ber;
 
     int berPercent = (int)(smoothBER * 100.0);
-
-    // Update BER display only if value changed
     if (berPercentold != berPercent) {
-      tftReplace(ARIGHT, String(berPercentold) + "%", String(berPercent) + "%",
-                 318, 34, PrimaryColor, PrimaryColorSmooth, BackgroundColor, 16);
+      tftReplace(ARIGHT, String(berPercentold) + "%", String(berPercent) + "%", 318, 34, PrimaryColor, PrimaryColorSmooth, BackgroundColor, 16);
       berPercentold = berPercent;
     }
   }
 }
-#pragma GCC diagnostic pop

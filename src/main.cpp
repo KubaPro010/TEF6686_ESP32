@@ -69,22 +69,14 @@ bool dynamicPTYold, edgebeep, externaltune;
 bool findMemoryAF;
 bool firstTouchHandled = false;
 bool flashing;
-bool fmsi;
-bool fullsearchrds;
-bool hasafold;
-bool hasCTold;
-bool haseonold;
-bool hasrtplusold;
-bool hastmcold;
-bool initdxscan;
-bool invertdisplay;
-bool leave;
+bool fmsi, fullsearchrds;
+bool hasafold, hasCTold, haseonold;
+bool hasrtplusold, hastmcold;
+bool initdxscan, invertdisplay, leave;
 bool LowLevelInit;
 bool memorystore;
-bool memreset;
-bool memtune;
-bool menu;
-bool menuopen;
+bool memreset, memtune;
+bool menu, menuopen;
 bool mwstepsize;
 #ifdef HAS_AIR_BAND
 bool airstepsize;
@@ -95,10 +87,8 @@ bool optenc;
 bool rdsflagreset;
 bool rdsreset;
 bool rdsstatscreen;
-bool RDSSPYTCP;
-bool RDSSPYUSB;
-bool RDSstatus;
-bool RDSstatusold;
+bool RDSSPYTCP, RDSSPYUSB;
+bool RDSstatus, RDSstatusold;
 bool rdsstereoold;
 bool rotaryaccelerate = true;
 bool rtcset;
@@ -122,8 +112,7 @@ bool SQ;
 bool Stereostatusold;
 bool StereoToggle;
 bool store;
-bool TAold;
-bool TPold;
+bool TAold, TPold;
 bool touchrepeat = false;
 bool touch_detect;
 bool tuned;
@@ -1087,11 +1076,9 @@ void setup() {
   if (TEF != 102 && TEF != 205) SetTunerPatch();
 
   radio.init(TEF);
-  uint16_t device;
-  uint16_t hw;
-  uint16_t sw;
+  uint16_t device, hw, sw;
 
-  radio.getIdentification(device, hw, sw);
+  radio.getIdentification(&device, &hw, &sw);
   if (TEF != (highByte(hw) * 100 + highByte(sw))) SetTunerPatch();
 
   if (lowByte(device) == 14) {
@@ -4404,10 +4391,8 @@ void Seek(bool mode) {
 void SetTunerPatch() {
   if (TEF != 102 && TEF != 205) {
     radio.init(102);
-    uint16_t device;
-    uint16_t hw;
-    uint16_t sw;
-    radio.getIdentification(device, hw, sw);
+    uint16_t device, hw, sw;
+    radio.getIdentification(&device, &hw, &sw);
     TEF = highByte(hw) * 100 + highByte(sw);
     tft.fillScreen(BackgroundColor);
     analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 15, 255));

@@ -335,10 +335,7 @@ String getCurrentDateTime(bool inUTC) {
         currentEpoch += 3600; // Add 1-hour DST offset
       }
     }
-  } else {
-    // Calculate UTC offset in hours when inUTC is true
-    utcOffsetHours = (NTPupdated ? NTPoffset : radio.rds.offset / 3600);
-  }
+  } else utcOffsetHours = (NTPupdated ? NTPoffset : radio.rds.offset / 3600);
 
   // Convert adjusted (or original) time back to struct tm format
   localtime_r(&currentEpoch, &timeInfo);

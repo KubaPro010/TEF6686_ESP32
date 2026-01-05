@@ -909,8 +909,8 @@ void XDRGTKRoutine() {
   if (millis() >= signalstatustimer + 66) {
     if (band > BAND_GAP) DataPrint("Sm");
     else {
-      if (!StereoToggle) DataPrint("SM");
-      else if (Stereostatus) DataPrint("Ss");
+      if(!StereoToggle) DataPrint("SM");
+      else if(Stereostatus) DataPrint("Ss");
       else DataPrint("Sm");
     }
 

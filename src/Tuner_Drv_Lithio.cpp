@@ -1,10 +1,6 @@
 #include "TEF6686.h"
 #include <stdarg.h>
 
-#define High_16bto8b(a) ((uint8_t)((a) >> 8))
-#define Low_16bto8b(a) ((uint8_t)(a ))
-#define Convert8bto16b(a) ((uint16_t)(((uint16_t)(*(a))) << 8 |((uint16_t)(*(a+1)))))
-
 void devTEF_Set_Cmd(TEF_MODULE module, uint8_t cmd, uint16_t len, ...) {
   uint16_t i, temp;
   uint8_t buf[20];
@@ -123,16 +119,6 @@ bool devTEF_Radio_Get_Stereo_Status(uint16_t *status) {
   uint16_t r = devTEF_Get_Cmd(TEF_FM, Cmd_Get_Signal_Status, buf, sizeof(buf));
 
   *status = Convert8bto16b(buf);
-  return r;
-}
-
-bool devTEF_Radio_Get_Identification (uint16_t *device, uint16_t *hw_version, uint16_t *sw_version) {
-  uint8_t buf[6];
-  uint16_t r = devTEF_Get_Cmd(TEF_APPL, Cmd_Get_Identification, buf, sizeof(buf));
-
-  *device = Convert8bto16b(buf);
-  *hw_version = Convert8bto16b(buf + 2);
-  *sw_version = Convert8bto16b(buf + 4);
   return r;
 }
 

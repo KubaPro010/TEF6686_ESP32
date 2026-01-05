@@ -157,8 +157,13 @@ void TEF6686::init(byte TEF) {
   }
 }
 
-void TEF6686::getIdentification(uint16_t &device, uint16_t &hw_version, uint16_t &sw_version) {
-  devTEF_Radio_Get_Identification(&device, &hw_version, &sw_version);
+void TEF6686::getIdentification(uint16_t *device, uint16_t *hw_version, uint16_t *sw_version) {
+  uint8_t buf[6];
+  uint16_t r = devTEF_Get_Cmd(TEF_APPL, Cmd_Get_Identification, buf, sizeof(buf));
+
+  *device = Convert8bto16b(buf);
+  *hw_version = Convert8bto16b(buf + 2);
+  *sw_version = Convert8bto16b(buf + 4);
 }
 
 void TEF6686::power(bool mode) {

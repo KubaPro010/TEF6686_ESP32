@@ -1,6 +1,4 @@
-#ifndef NTP_H
-#define NTP_H
-
+#pragma once
 #include <Arduino.h>
 #include <WiFi.h>
 #include <WiFiClient.h>
@@ -11,7 +9,7 @@
 
 static const char ntpServerName[] = "0.pool.ntp.org";
 static const int localPort = 8944;
-const int NTP_PACKET_SIZE = 48; // NTP time is in the first 48 bytes of message
+const int NTP_PACKET_SIZE = 48;
 
 extern ESP32Time rtc;
 extern WiFiClient RemoteClient;
@@ -25,4 +23,3 @@ extern bool rtcset;
 void sendNTPpacket(IPAddress &address);
 void NTPupdate();
 time_t getNtpTime();
-#endif

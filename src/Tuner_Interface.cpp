@@ -90,9 +90,7 @@ bool Tuner_Table_Write(const unsigned char *tab) {
   if (tab[1] == 0xff) {
     delay(tab[2]);
     return 1;
-  } else {
-    return Tuner_WriteBuffer((unsigned char *)&tab[1], tab[0]);
-  }
+  } else return Tuner_WriteBuffer((unsigned char *)&tab[1], tab[0]);
 }
 
 void Tuner_Reset(void) {
@@ -123,7 +121,6 @@ void Tuner_Patch(byte TEF) {
     case 102:
       Tuner_Patch_Load(pPatchBytes102, PatchSize102);
       break;
-
     case 205:
       Tuner_Patch_Load(pPatchBytes205, PatchSize205);
       break;
@@ -143,7 +140,6 @@ void Tuner_Patch(byte TEF) {
     case 102:
       Tuner_Patch_Load(pLutBytes102, LutSize102);
       break;
-
     case 205:
       Tuner_Patch_Load(pLutBytes205, LutSize205);
       break;

@@ -1,5 +1,8 @@
-#ifndef TUNER_DRV_LITHIO_H
-#define TUNER_DRV_LITHIO_H
+#pragma once
+
+#define High_16bto8b(a) ((uint8_t)((a) >> 8))
+#define Low_16bto8b(a) ((uint8_t)(a ))
+#define Convert8bto16b(a) ((uint16_t)(((uint16_t)(*(a))) << 8 |((uint16_t)(*(a+1)))))
 
 typedef enum {
   TEF_FM                      = 32,
@@ -63,11 +66,11 @@ typedef enum {
 } TEF_APPL_COMMAND;
 
 void devTEF_Set_Cmd(TEF_MODULE module, uint8_t cmd, uint16_t len, ...);
+bool devTEF_Get_Cmd(TEF_MODULE module, uint8_t cmd, uint8_t *receive, uint16_t len);
 void devTEF_Radio_Set_Noiseblanker_AM(uint8_t mode, uint16_t start);
 void devTEF_Radio_Set_Wavegen(bool mode, int16_t amplitude, uint16_t freq);
 void devTEF_Radio_Set_GPIO(uint8_t mode);
 
-bool devTEF_Radio_Get_Identification (uint16_t *device, uint16_t *hw_version, uint16_t *sw_version);
 bool devTEF_Radio_Get_Quality_Status (uint16_t *status, int16_t *level, uint16_t *usn, uint16_t *wam, int16_t *offset, uint16_t *bandwidth, uint16_t *mod, int8_t *snr);
 bool devTEF_Radio_Get_Processing_Status (uint16_t *highcut, uint16_t *stereo, uint16_t *sthiblend, uint8_t *stband_1, uint8_t *stband_2, uint8_t *stband_3, uint8_t *stband_4);
 bool devTEF_Radio_Get_Quality_Status_AM (int16_t *level, uint16_t *noise, uint16_t *cochannel, int16_t *offset, uint16_t *bandwidth, uint16_t *mod, int8_t *snr);
@@ -75,4 +78,3 @@ bool devTEF_APPL_Get_Operation_Status(uint8_t *bootstatus);
 bool devTEF_Radio_Get_Stereo_Status(uint16_t *status);
 bool devTEF_Radio_Get_RDS_Status(uint16_t *status, uint16_t *A_block, uint16_t *B_block, uint16_t *C_block, uint16_t *D_block, uint16_t *dec_error);
 bool devTEF_Radio_Get_RDS_Data(uint16_t *status, uint16_t *A_block, uint16_t *B_block, uint16_t *C_block, uint16_t *D_block, uint16_t *dec_error);
-#endif
