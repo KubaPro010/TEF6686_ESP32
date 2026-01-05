@@ -8,15 +8,15 @@
  * GNU General Public License v3.0 licence, all text here must be included in any redistribution and you should receive a copy of the license file.
  *
  */
- 
+
 #ifndef WC_AP_HTML
 #define WC_AP_HTML ///< Define to stop re-inclusion
 /*! \def char AP_HTTP_HEAD[] PROGMEM
 Start of HTML output
  */
 const char AP_HTTP_HEAD[] PROGMEM            = "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1, user-scalable=no\"/><title>{v}</title>";
-/*! \def AP_HTTP_STYLE[] PROGMEM 
-Style for our access point 
+/*! \def AP_HTTP_STYLE[] PROGMEM
+Style for our access point
 */
 const char AP_HTTP_STYLE[] PROGMEM           = "<style type=\"text/css\">h1 { font-weight: normal; } .msgbox { font-size:1.2rem; line-height: 1.8em; padding: 0.5em; background-color: #ddffff; border-left: 6px solid #ccc; margin-bottom:1em; } .c{text-align:center}div,input{padding:5px;font-size:1em}input{width:95%;margin-top:5px;margin-bottom:10px}body{text-align:center;font-family:verdana;}button{border:0;border-radius:.3rem;background-color:#1fa3ec;color:#fff;line-height:2.6rem;font-size:1.2rem;width:100%}.q{float:right;width:64px;text-align:right}.l{background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAALVBMVEX///8EBwfBwsLw8PAzNjaCg4NTVVUjJiZDRUUUFxdiZGSho6OSk5Pg4eFydHTCjaf3AAAAZElEQVQ4je2NSw7AIAhEBamKn97/uMXEGBvozkWb9C2Zx4xzWykBhFAeYp9gkLyZE0zIMno9n4g19hmdY39scwqVkOXaxph0ZCXQcqxSpgQpONa59wkRDOL93eAXvimwlbPbwwVAegLS1HGfZAAAAABJRU5ErkJggg==) no-repeat left center;background-size:1em;}.cfail,.cok{text-align:center; font-size:1.2rem; line-height: 2em; margin-top: 1em; padding: 0.7em; display:none;} .cfail{color: #FFFFFF;background-color: #ff8433;} .cok{ background-color: #6aff33;}</style>";
 /** Scripts for our page */
@@ -40,18 +40,18 @@ const char AP_HTTP_SCAN_LINK[] PROGMEM       = "<br/><div class=\"c\"><a href=\"
 // https://esprima.org/demo/validate.html
 // https://javascript-minifier.com/
 
-/* Use JavaScript to ping the ESP periodically @ the AP IP address. 
- * If it comes back as an AP again then we know the connection to the WiFi didn't work. 
+/* Use JavaScript to ping the ESP periodically @ the AP IP address.
+ * If it comes back as an AP again then we know the connection to the WiFi didn't work.
  * We wait about 30 seconds to determine this outcome. This isn't 100% foolproof, but should be good enough.
 */
 /*
 <script type="text/javascript">
-function doPing() {        
+function doPing() {
 		//if ( timeout_count > 20 ) {
         if ( attempt_count > 20 ) { // wait about a minute
 			window.clearInterval(myPinger), document.getElementById("conn_ok").style.display = "block"
 		}
-		
+
         var o = new XMLHttpRequest;
         o.onload = function() {
             console.log(this.responseText), document.getElementById("conn_fail").style.display = "block", window.clearInterval(myPinger)
@@ -59,7 +59,7 @@ function doPing() {
             console.log("Timeout Counter is: " + timeout_count++)
         }, o.open("GET", "/foo"), o.timeout = 1000, o.send(null), console.log("Ping counter is: " + attempt_count++)
     }
-	
+
     attempt_count = 0;
     timeout_count = 0;
     var myPinger = window.setInterval(doPing, 3000);

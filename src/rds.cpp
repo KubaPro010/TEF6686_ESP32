@@ -132,12 +132,12 @@ void ShowAdvancedRDS() {
   }
 
   String rtplusstring;
-  if (radio.rds.hasRDSplus) rtplusstring = (radio.rds.rdsplusTag1 != 169 ? String(textUI(radio.rds.rdsplusTag1)) + ": " + String(radio.rds.RTContent1) : "") + (radio.rds.rdsplusTag2 != 169 ? " - " + String(textUI(radio.rds.rdsplusTag2)) + ": " + String(radio.rds.RTContent2) : "") + "        "; else rtplusstring = textUI(89);
-  if (hasrtplusold != radio.rds.hasRDSplus) {
+  if (radio.rds.hasRTplus) rtplusstring = (radio.rds.rdsplusTag1 != 169 ? String(textUI(radio.rds.rdsplusTag1)) + ": " + String(radio.rds.RTContent1) : "") + (radio.rds.rdsplusTag2 != 169 ? " - " + String(textUI(radio.rds.rdsplusTag2)) + ": " + String(radio.rds.RTContent2) : "") + "        "; else rtplusstring = textUI(89);
+  if (hasrtplusold != radio.rds.hasRTplus) {
     if (!screenmute) {
-      if (radio.rds.hasRDSplus) tftPrint(ALEFT, "RT+", 123, 51, RDSColor, RDSColorSmooth, 16); else tftPrint(ALEFT, "RT+", 123, 51, GreyoutColor, BackgroundColor, 16);
+      if (radio.rds.hasRTplus) tftPrint(ALEFT, "RT+", 123, 51, RDSColor, RDSColorSmooth, 16); else tftPrint(ALEFT, "RT+", 123, 51, GreyoutColor, BackgroundColor, 16);
     }
-    hasrtplusold = radio.rds.hasRDSplus;
+    hasrtplusold = radio.rds.hasRTplus;
   }
 
   if (rtplusstring != rtplusstringold) {
@@ -172,11 +172,11 @@ void ShowAdvancedRDS() {
     }
   }
 
-  if (TPold != radio.rds.hasTP) {
+  if (TPold != radio.rds.TP) {
     if (!screenmute) {
-      if (radio.rds.hasTP) tftPrint(ALEFT, "TP", 2, 51, RDSColor, RDSColorSmooth, 16); else tftPrint(ALEFT, "TP", 2, 51, GreyoutColor, BackgroundColor, 16);
+      if (radio.rds.TP) tftPrint(ALEFT, "TP", 2, 51, RDSColor, RDSColorSmooth, 16); else tftPrint(ALEFT, "TP", 2, 51, GreyoutColor, BackgroundColor, 16);
     }
-    TPold = radio.rds.hasTP;
+    TPold = radio.rds.TP;
   }
 
   if (TAold != radio.rds.hasTA) {
@@ -193,10 +193,10 @@ void ShowAdvancedRDS() {
     afmethodBold = radio.afmethodB;
   }
 
-  if (rdsblockold != radio.rdsblock) {
+  if (rdsblockold != radio.rdsgroup) {
     if (rdsblockold < 33) tft.fillCircle((6 * rdsblockold) + 10, 133, 2, SignificantColor);
-    if (radio.rdsblock < 33) tft.fillCircle((6 * radio.rdsblock) + 10, 133, 2, InsignificantColor);
-    rdsblockold = radio.rdsblock;
+    if (radio.rdsgroup < 33) tft.fillCircle((6 * radio.rdsgroup) + 10, 133, 2, InsignificantColor);
+    rdsblockold = radio.rdsgroup;
   }
 
   if (hastmcold != radio.rds.hasTMC) {
@@ -527,9 +527,9 @@ void showPI() {
 
 void showPTY() {
   if (strcmp(radio.rds.stationType, programTypePrevious)) {
-    String PTYString = String(radio.rds.stationTypeCode) + "/" + (radio.rds.region != 0 ? radio.rds.stationType : textUI(228 + radio.rds.stationTypeCode));
+    String PTYString = String(radio.rds.PTY) + "/" + (radio.rds.region != 0 ? radio.rds.stationType : textUI(228 + radio.rds.PTY));
 
-    if (radio.rds.stationTypeCode == 32) PTYString = "";
+    if (radio.rds.PTY == 32) PTYString = "";
 
     if (!screenmute) {
       if (advancedRDS) {
@@ -545,7 +545,7 @@ void showPTY() {
     if (wifi) {
       Udp.beginPacket(remoteip, 9030);
       Udp.print("from=TEF_tuner_" + String(stationlistid, DEC) + ";PTY=");
-      Udp.print(String(radio.rds.stationTypeCode, HEX));
+      Udp.print(String(radio.rds.PTY, HEX));
       Udp.endPacket();
     }
     strcpy(programTypePrevious, radio.rds.stationType);
@@ -1015,7 +1015,7 @@ void ShowRDSStatistics() {
 
     const uint8_t rdsYpos[] PROGMEM = {56, 76, 96, 116, 136, 156, 176, 196};
 
-    uint8_t rb = radio.rdsblock;
+    uint8_t rb = radio.rdsgroup;
 
     uint16_t xpos, xposPct;
     if(rb <= RDS_GROUP_3B) {

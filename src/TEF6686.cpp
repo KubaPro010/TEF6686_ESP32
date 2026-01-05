@@ -159,7 +159,7 @@ void TEF6686::init(byte TEF) {
 
 void TEF6686::getIdentification(uint16_t *device, uint16_t *hw_version, uint16_t *sw_version) {
   uint8_t buf[6];
-  uint16_t r = devTEF_Get_Cmd(TEF_APPL, Cmd_Get_Identification, buf, sizeof(buf));
+  devTEF_Get_Cmd(TEF_APPL, Cmd_Get_Identification, buf, sizeof(buf));
 
   *device = Convert8bto16b(buf);
   *hw_version = Convert8bto16b(buf + 2);
@@ -363,10 +363,8 @@ void TEF6686::getStatusAM(int16_t &level, uint16_t &noise, uint16_t &cochannel, 
 }
 
 void TEF6686::readRDS(byte showrdserrors) {
-  uint8_t offset;
-  if (rds.filter && ps_process) {
-    devTEF_Radio_Get_RDS_Status(&rds.rdsStat, &rds.rdsA, &rds.rdsB, &rds.rdsC, &rds.rdsD, &rds.rdsErr);
-  } else {
+  if (rds.filter && ps_process) devTEF_Radio_Get_RDS_Status(&rds.rdsStat, &rds.rdsA, &rds.rdsB, &rds.rdsC, &rds.rdsD, &rds.rdsErr);
+  else {
     if (millis() >= rdstimer + 87) {
       rdstimer += 87;
       devTEF_Radio_Get_RDS_Data(&rds.rdsStat, &rds.rdsA, &rds.rdsB, &rds.rdsC, &rds.rdsD, &rds.rdsErr);
@@ -378,14 +376,11 @@ void TEF6686::readRDS(byte showrdserrors) {
   }
 
   if (bitRead(rds.rdsStat, 9)) {
-    rds.hasRDS = true;                                                                            // RDS decoder synchronized and data available
+    rds.hasRDS = true;
     bitStartTime = 0;
   } else {
-    if (bitStartTime == 0) {
-      bitStartTime = millis();
-    } else if (millis() - bitStartTime >= 87) {
-      rds.hasRDS = false;
-    }
+    if (bitStartTime == 0) bitStartTime = millis();
+    else if (millis() - bitStartTime >= 87) rds.hasRDS = false;
   }
 
   rdsAerrorThreshold = (((rds.rdsErr >> 14) & 0x03) > showrdserrors);
@@ -394,12 +389,11 @@ void TEF6686::readRDS(byte showrdserrors) {
   rdsDerrorThreshold = (((rds.rdsErr >> 8) & 0x03) > showrdserrors);
 
   if (bitRead(rds.rdsStat, 9) && (rds.rdsA != previous_rdsA || rds.rdsB != previous_rdsB || rds.rdsC != previous_rdsC || rds.rdsD != previous_rdsD)) {
-    rds.rdsAerror = (((rds.rdsErr >> 14) & 0x03) > 1);                                                                 // We have all data to decode... let's go...
+    rds.rdsAerror = (((rds.rdsErr >> 14) & 0x03) > 1);
     rds.rdsBerror = (((rds.rdsErr >> 12) & 0x03) > 1);
     rds.rdsCerror = (((rds.rdsErr >> 10) & 0x03) > 1);
     rds.rdsDerror = (((rds.rdsErr >> 8) & 0x03) > 1);
 
-    //PI decoder
     if (!rdsAerrorThreshold && afreset) {
       rds.correctPI = rds.rdsA;
       afreset = false;
@@ -413,11 +407,8 @@ void TEF6686::readRDS(byte showrdserrors) {
         rds.picode[2] = (rds.rdsA >> 4) & 0xF;
         rds.picode[3] = rds.rdsA & 0xF;
         for (int i = 0; i < 4; i++) {
-          if (rds.picode[i] < 10) {
-            rds.picode[i] += '0';
-          } else {
-            rds.picode[i] += 'A' - 10;
-          }
+          if (rds.picode[i] < 10) rds.picode[i] += '0';
+          else rds.picode[i] += 'A' - 10;
         }
       }
 
@@ -438,7 +429,6 @@ void TEF6686::readRDS(byte showrdserrors) {
 
       if (strncmp(rds.picode, "0000", 4) == 0 && rds.rdsB == 0 && rds.stationName.length() == 0) memset(rds.picode, 0, sizeof(rds.picode));
 
-
       // USA Station callsign decoder
       if ((rds.region == 1 ? ps_process : true) && rds.correctPI != 0 && rds.region > 0 && correctPIold != rds.correctPI) {
         bool foundMatch = false;
@@ -446,27 +436,16 @@ void TEF6686::readRDS(byte showrdserrors) {
 
         if (rds.region == 1 && SPIFFS.begin(true)) {
           delay(5);
-          if (currentfreq2 < 9000) {
-            file = SPIFFS.open("/USA_87-90.csv");
-          } else if (currentfreq2 > 9000 && currentfreq2 < 9200) {
-            file = SPIFFS.open("/USA_90-92.csv");
-          } else if (currentfreq2 > 9200 && currentfreq2 < 9400) {
-            file = SPIFFS.open("/USA_92-94.csv");
-          } else if (currentfreq2 > 9400 && currentfreq2 < 9600) {
-            file = SPIFFS.open("/USA_94-96.csv");
-          } else if (currentfreq2 > 9600 && currentfreq2 < 9800) {
-            file = SPIFFS.open("/USA_96-98.csv");
-          } else if (currentfreq2 > 9800 && currentfreq2 < 10000) {
-            file = SPIFFS.open("/USA_98-100.csv");
-          } else if (currentfreq2 > 10000 && currentfreq2 < 10200) {
-            file = SPIFFS.open("/USA_100-102.csv");
-          } else if (currentfreq2 > 10200 && currentfreq2 < 10400) {
-            file = SPIFFS.open("/USA_102-104.csv");
-          } else if (currentfreq2 > 10400 && currentfreq2 < 10600) {
-            file = SPIFFS.open("/USA_104-106.csv");
-          } else if (currentfreq2 > 10600) {
-            file = SPIFFS.open("/USA_106-108.csv");
-          }
+          if (currentfreq2 < 9000) file = SPIFFS.open("/USA_87-90.csv");
+          else if (currentfreq2 > 9000 && currentfreq2 < 9200) file = SPIFFS.open("/USA_90-92.csv");
+          else if (currentfreq2 > 9200 && currentfreq2 < 9400) file = SPIFFS.open("/USA_92-94.csv");
+          else if (currentfreq2 > 9400 && currentfreq2 < 9600) file = SPIFFS.open("/USA_94-96.csv");
+          else if (currentfreq2 > 9600 && currentfreq2 < 9800) file = SPIFFS.open("/USA_96-98.csv");
+          else if (currentfreq2 > 9800 && currentfreq2 < 10000) file = SPIFFS.open("/USA_98-100.csv");
+          else if (currentfreq2 > 10000 && currentfreq2 < 10200) file = SPIFFS.open("/USA_100-102.csv");
+          else if (currentfreq2 > 10200 && currentfreq2 < 10400) file = SPIFFS.open("/USA_102-104.csv");
+          else if (currentfreq2 > 10400 && currentfreq2 < 10600) file = SPIFFS.open("/USA_104-106.csv");
+          else if (currentfreq2 > 10600) file = SPIFFS.open("/USA_106-108.csv");
 
           delay(5);
           if (file) {
@@ -562,43 +541,48 @@ void TEF6686::readRDS(byte showrdserrors) {
       }
     }
 
-    if (!rds.rdsBerror || showrdserrors == 3) rdsblock = rds.rdsB >> 11; else return;
-    rds.blockcounter[rdsblock]++;
+    if(rdsBerrorThreshold) goto end;
+
+    rds.TP = (bitRead(rds.rdsB, 10));
+    rds.PTY = (rds.rdsB >> 5) & 0x1F;
+    strcpy(rds.stationType, rds.region == 0 ? PTY_EU[rds.PTY] : PTY_USA[rds.PTY]);
+
+    if (!rds.rdsBerror || showrdserrors == 3) rdsgroup = rds.rdsB >> 11; else return;
+    rds.blockcounter[rdsgroup]++;
     processed_rdsblocks++;
 
-    switch (rdsblock) {
+    switch (rdsgroup) {
       case RDS_GROUP_0A:
       case RDS_GROUP_0B:
         {
-          //PS decoder
-          if (showrdserrors == 3 || (!rdsBerrorThreshold && (!rdsDerrorThreshold))) {
-            offset = rds.rdsB & 0x03;                                                           // Let's get the character offset for PS
+          if (showrdserrors == 3 || !rdsDerrorThreshold) {
+            uint8_t segment = rds.rdsB & 0x03;
 
-            switch (offset) {
+            switch (segment) {
               case 0: if (((rds.rdsErr >> 8) & 0x03) > 1) rds.ps12error = true; else rds.ps12error = false; break;
               case 1: if (((rds.rdsErr >> 8) & 0x03) > 1) rds.ps34error = true; else rds.ps34error = false; break;
               case 2: if (((rds.rdsErr >> 8) & 0x03) > 1) rds.ps56error = true; else rds.ps56error = false; break;
               case 3: if (((rds.rdsErr >> 8) & 0x03) > 1) rds.ps78error = true; else rds.ps78error = false; break;
             }
 
-            ps_buffer2[(offset * 2) + 0] = ps_buffer[(offset * 2) + 0];                         // Make a copy of the PS buffer
-            ps_buffer2[(offset * 2) + 1] = ps_buffer[(offset * 2) + 1];
+            ps_buffer2[(segment * 2) + 0] = ps_buffer[(segment * 2) + 0];                         // Make a copy of the PS buffer
+            ps_buffer2[(segment * 2) + 1] = ps_buffer[(segment * 2) + 1];
             ps_buffer2[8] = '\0';                                                               // Endmarker
 
-            ps_buffer[(offset * 2)  + 0] = rds.rdsD >> 8;                                       // First character of segment
-            ps_buffer[(offset * 2)  + 1] = rds.rdsD & 0xFF;                                     // Second character of segment
+            ps_buffer[(segment * 2)  + 0] = rds.rdsD >> 8;                                       // First character of segment
+            ps_buffer[(segment * 2)  + 1] = rds.rdsD & 0xFF;                                     // Second character of segment
             ps_buffer[8] = '\0';                                                                // Endmarker
 
             if (ps_process || rds.fastps == 0) {
-              if (offset == 0) {
+              if (segment == 0) {
                 packet0 = true;
                 packet1 = false;
                 packet2 = false;
                 packet3 = false;
               }
-              if (offset == 1) packet1 = true;
-              if (offset == 2) packet2 = true;
-              if (offset == 3) packet3 = true;
+              if (segment == 1) packet1 = true;
+              if (segment == 2) packet2 = true;
+              if (segment == 3) packet3 = true;
             }
 
             if (packet0 && packet1 && packet2 && packet3 && (ps_process || (rds.fastps == 0 && rds.fastps != 2))) { // Last chars are received
@@ -615,198 +599,186 @@ void TEF6686::readRDS(byte showrdserrors) {
             }
 
             if ((!ps_process && rds.fastps > 0 && rds.fastps != 2) || rds.fastps == 2) {                            // Let's get 2 runs of 8 PS characters fast and without refresh
-              if (offset == 0) packet0 = true;
-              if (offset == 1) packet1 = true;
-              if (offset == 2) packet2 = true;
-              if (offset == 3) packet3 = true;
+              if (segment == 0) packet0 = true;
+              if (segment == 1) packet1 = true;
+              if (segment == 2) packet2 = true;
+              if (segment == 3) packet3 = true;
               RDScharConverter(ps_buffer, PStext, sizeof(PStext) / sizeof(wchar_t), (underscore > 0 ? true : false));                          // Convert 8 bit ASCII to 16 bit ASCII
               String utf8String = convertToUTF8(PStext);                                                            // Convert RDS characterset to ASCII
               rds.stationName = extractUTF8Substring(utf8String, 0, 8, (underscore > 0 ? true : false));
               if (packet0 && packet1 && packet2 && packet3) ps_process = true;                                      // OK, we had one runs, now let's go the idle PS writing
             }
 
-            if (offset == 0) rds.hasDynamicPTY = bitRead(rds.rdsB, 2) & 0x1F;                   // Dynamic PTY flag
-            if (offset == 1) rds.hasCompressed = bitRead(rds.rdsB, 2) & 0x1F;                   // Compressed flag
-            if (offset == 2) rds.hasArtificialhead = bitRead(rds.rdsB, 2) & 0x1F;               // Artificial head flag
-            if (offset == 3) rds.hasStereo = bitRead(rds.rdsB, 2) & 0x1F;                       // Stereo flag
+            if(segment == 0) rds.hasDynamicPTY = bitRead(rds.rdsB, 2) & 0x1F;
+            else if(segment == 1) rds.hasCompressed = bitRead(rds.rdsB, 2) & 0x1F;
+            else if(segment == 2) rds.hasArtificialhead = bitRead(rds.rdsB, 2) & 0x1F;
+            else if(segment == 3) rds.hasStereo = bitRead(rds.rdsB, 2) & 0x1F;
           }
 
-          if (!rdsBerrorThreshold) {
-            rds.stationTypeCode = (rds.rdsB >> 5) & 0x1F;                                       // Get 5 PTY bits from Block B
-            if (rds.region == 0) strcpy(rds.stationType, PTY_EU[rds.stationTypeCode]); else strcpy(rds.stationType, PTY_USA[rds.stationTypeCode]);
+          rds.hasTA = (bitRead(rds.rdsB, 4));
 
-            rds.hasTA = (bitRead(rds.rdsB, 4));                                                 // Read TA flag
-          }
-
-          rds.hasTP = (bitRead(rds.rdsB, 10));                                                  // Read TP flag
-
-          if (!rdsCerrorThreshold) {
+          if (!rdsCerrorThreshold && rdsgroup == RDS_GROUP_0A && rds.rdsC != rdsCold) {
             //AF decoder
-            if (rdsblock == 0 && rds.rdsC != rdsCold) {                                         // Only when in GROUP 0A
-
-              if ((rds.rdsC >> 8) > 224 && (rds.rdsC >> 8) < 250) {
-                afinit = true;  // AF detected
-                rds.hasAF = true;
-              }
-
-              if (afinit) {
-                if ((rds.rdsC >> 8) > 224 && (rds.rdsC >> 8) < 250 && ((rds.rdsC & 0xFF) * 10 + 8750) == currentfreq && rds.hasAF) {
-                  if (afmethodBtrigger) afmethodB = true;                                       // Check for AF method B
-                  afmethodBprobe = true;
-                  af_counterb = (rds.rdsC >> 8) - 224;
-                  af_number = (rds.rdsC >> 8) - 224;
-                  af_counterbcheck = 1;
-                  doublecounter = 0;
-                  doubletestfreq = (rds.rdsC & 0xFF) * 10 + 8750;
-                } else if ((rds.rdsC >> 8) > 224 && (rds.rdsC >> 8) < 250 && ((rds.rdsC & 0xFF) * 10 + 8750) != currentfreq && rds.hasAF) {
-                  afmethodBprobe = false;
-                  afmethodBtrigger = true;
-                  af_counterb = 0;
-                  af_number = (rds.rdsC >> 8) - 224;
-                  af_counterbcheck = 0;
-                  doublecounter = 0;
-                  doubletestfreq = (rds.rdsC & 0xFF) * 10 + 8750;
-                }
-
-                if (((rds.rdsC >> 8) > 0 && (rds.rdsC >> 8) < 205) && ((rds.rdsC >> 8) > 0 && (rds.rdsC >> 8) < 205)) {
-                  if (afmethodBprobe) af_counterbcheck += 2;
-                }
-
-                if ((rds.rdsB >> 11) == 0 && af_counter < 50) {
-                  uint16_t buffer0;
-                  uint16_t buffer1;
-
-                  if ((rds.rdsC >> 8) > 0 && (rds.rdsC >> 8) < 205) buffer0 = (rds.rdsC >> 8) * 10 + 8750; else buffer0 = 0;
-                  if ((rds.rdsC & 0xFF) > 0 && (rds.rdsC & 0xFF) < 205) buffer1 = (rds.rdsC & 0xFF) * 10 + 8750; else buffer1 = 0;
-
-                  if (((rds.rdsC >> 8) > 0 && (rds.rdsC >> 8) < 205) && (buffer0 == doubletestfreq || buffer1 == doubletestfreq)) doublecounter++;
-                  if (doublecounter > (af_number / 2)) afmethodB = true;                        // If signed frequency also appears more than once in the AF list, AF Method B detected
-
-                  if (afmethodBprobe && af_counterbcheck > af_counterb) afmethodBprobe = false; // If more than counter received disable probe flag
-
-                  if (afmethodBprobe) {                                                         // Check for Reg. flags
-                    if (buffer1 == currentfreq && buffer0 > buffer1) {
-                      for (int x = 0; x < af_counter; x++) {
-                        if (af[x].frequency == buffer0 && !af[x].regional) {
-                          af[x].regional = true;
-                          af_updatecounter++;
-                          break;
-                        }
-                      }
-                    } else if (buffer1 == currentfreq && buffer0 < buffer1) {
-                      for (int x = 0; x < af_counter; x++) {
-                        if (af[x].frequency == buffer0 && !af[x].same) {
-                          af[x].same = true;
-                          af_updatecounter++;
-                          break;
-                        }
-                      }
-                    }
-
-                    if (buffer0 == currentfreq && buffer0 > buffer1) {
-                      for (int x = 0; x < af_counter; x++) {
-                        if (af[x].frequency == buffer1 && !af[x].regional) {
-                          af[x].regional = true;
-                          af_updatecounter++;
-                          break;
-                        }
-                      }
-                    } else if (buffer0 == currentfreq && buffer0 < buffer1) {
-                      for (int x = 0; x < af_counter; x++) {
-                        if (af[x].frequency == buffer1 && !af[x].same) {
-                          af[x].same = true;
-                          af_updatecounter++;
-                          break;
-                        }
-                      }
-                    }
-                  }
-
-                  if (buffer0 != currentfreq && buffer1 != currentfreq && afmethodB && afmethodBprobe) {
-                    afmethodBprobe = false;                                                     // Remove faulty Reg. flags
-                    for (int x = 0; x < af_counter; x++) {
-                      if (af[x].frequency == buffer0 || af[x].frequency == buffer1) {
-                        if (af[x].same) {
-                          af[x].same = false;
-                          af_updatecounter++;
-                        }
-                        if (af[x].regional) {
-                          af[x].regional = false;
-                          af_updatecounter++;
-                        }
-                      }
-                      break;
-                    }
-                  }
-
-                  bool isValuePresent = false;
-                  for (int i = 0; i < 50; i++) {                                                // Check if already in list
-                    if ((rds.sortaf && (buffer0 == currentfreq)) || buffer0 == 0 || af[i].frequency == buffer0) {
-                      isValuePresent = true;
-                      break;
-                    }
-                  }
-
-                  if (!isValuePresent) {                                                        // Add frequency to list
-                    af[af_counter].frequency = buffer0;
-                    if (af_counter < 50) af_counter++;
-                    af_updatecounter++;
-                  }
-
-                  isValuePresent = false;
-                  for (int i = 0; i < 50; i++) {                                                // Check if already in list
-                    if ((rds.sortaf && (buffer1 == currentfreq)) || buffer1 == 0 || af[i].frequency == buffer1) {
-                      isValuePresent = true;
-                      break;
-                    }
-                  }
-
-                  if (!isValuePresent) {
-                    af[af_counter].frequency = buffer1;                                         // Add frequency to list
-                    if (af_counter < 50) af_counter++;
-                    af_updatecounter++;
-                  }
-
-                  if (rds.sortaf) {                                                             // Sort AF list (low to high)
-                    for (int i = 0; i < 50; i++) {
-                      for (int j = 0; j < 50 - i; j++) {
-                        if (af[j].frequency == 0) continue;
-
-                        if (af[j].frequency > af[j + 1].frequency && af[j + 1].frequency != 0) {
-                          uint16_t temp = af[j].frequency;
-                          bool temp3 = af[j].afvalid;
-                          bool temp4 = af[j].checked;
-                          bool temp5 = af[j].regional;
-                          bool temp6 = af[j].same;
-                          af[j].frequency = af[j + 1].frequency;
-                          af[j].afvalid = af[j + 1].afvalid;
-                          af[j].checked = af[j + 1].checked;
-                          af[j].regional = af[j + 1].regional;
-                          af[j].same = af[j + 1].same;
-                          af[j + 1].frequency = temp;
-                          af[j + 1].afvalid = temp3;
-                          af[j + 1].checked = temp4;
-                          af[j + 1].regional = temp5;
-                          af[j + 1].same = temp6;
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-              rdsCold = rds.rdsC;
+            if ((rds.rdsC >> 8) > 224 && (rds.rdsC >> 8) < 250) {
+              afinit = true;  // AF detected
+              rds.hasAF = true;
             }
+
+            if (afinit) {
+              if ((rds.rdsC >> 8) > 224 && (rds.rdsC >> 8) < 250 && ((rds.rdsC & 0xFF) * 10 + 8750) == currentfreq && rds.hasAF) {
+                if (afmethodBtrigger) afmethodB = true;
+                afmethodBprobe = true;
+                af_counterb = (rds.rdsC >> 8) - 224;
+                af_number = (rds.rdsC >> 8) - 224;
+                af_counterbcheck = 1;
+                doublecounter = 0;
+                doubletestfreq = (rds.rdsC & 0xFF) * 10 + 8750;
+              } else if ((rds.rdsC >> 8) > 224 && (rds.rdsC >> 8) < 250 && ((rds.rdsC & 0xFF) * 10 + 8750) != currentfreq && rds.hasAF) {
+                afmethodBprobe = false;
+                afmethodBtrigger = true;
+                af_counterb = 0;
+                af_number = (rds.rdsC >> 8) - 224;
+                af_counterbcheck = 0;
+                doublecounter = 0;
+                doubletestfreq = (rds.rdsC & 0xFF) * 10 + 8750;
+              }
+
+              if (((rds.rdsC >> 8) > 0 && (rds.rdsC >> 8) < 205) && ((rds.rdsC >> 8) > 0 && (rds.rdsC >> 8) < 205)) {
+                if (afmethodBprobe) af_counterbcheck += 2;
+              }
+
+              if ((rds.rdsB >> 11) == 0 && af_counter < 50) {
+                uint16_t buffer0;
+                uint16_t buffer1;
+
+                if ((rds.rdsC >> 8) > 0 && (rds.rdsC >> 8) < 205) buffer0 = (rds.rdsC >> 8) * 10 + 8750; else buffer0 = 0;
+                if ((rds.rdsC & 0xFF) > 0 && (rds.rdsC & 0xFF) < 205) buffer1 = (rds.rdsC & 0xFF) * 10 + 8750; else buffer1 = 0;
+
+                if (((rds.rdsC >> 8) > 0 && (rds.rdsC >> 8) < 205) && (buffer0 == doubletestfreq || buffer1 == doubletestfreq)) doublecounter++;
+                if (doublecounter > (af_number / 2)) afmethodB = true;                        // If signed frequency also appears more than once in the AF list, AF Method B detected
+
+                if (afmethodBprobe && af_counterbcheck > af_counterb) afmethodBprobe = false; // If more than counter received disable probe flag
+
+                if (afmethodBprobe) {                                                         // Check for Reg. flags
+                  if (buffer1 == currentfreq && buffer0 > buffer1) {
+                    for (int x = 0; x < af_counter; x++) {
+                      if (af[x].frequency == buffer0 && !af[x].regional) {
+                        af[x].regional = true;
+                        af_updatecounter++;
+                        break;
+                      }
+                    }
+                  } else if (buffer1 == currentfreq && buffer0 < buffer1) {
+                    for (int x = 0; x < af_counter; x++) {
+                      if (af[x].frequency == buffer0 && !af[x].same) {
+                        af[x].same = true;
+                        af_updatecounter++;
+                        break;
+                      }
+                    }
+                  }
+
+                  if (buffer0 == currentfreq && buffer0 > buffer1) {
+                    for (int x = 0; x < af_counter; x++) {
+                      if (af[x].frequency == buffer1 && !af[x].regional) {
+                        af[x].regional = true;
+                        af_updatecounter++;
+                        break;
+                      }
+                    }
+                  } else if (buffer0 == currentfreq && buffer0 < buffer1) {
+                    for (int x = 0; x < af_counter; x++) {
+                      if (af[x].frequency == buffer1 && !af[x].same) {
+                        af[x].same = true;
+                        af_updatecounter++;
+                        break;
+                      }
+                    }
+                  }
+                }
+
+                if (buffer0 != currentfreq && buffer1 != currentfreq && afmethodB && afmethodBprobe) {
+                  afmethodBprobe = false;                                                     // Remove faulty Reg. flags
+                  for (int x = 0; x < af_counter; x++) {
+                    if (af[x].frequency == buffer0 || af[x].frequency == buffer1) {
+                      if (af[x].same) {
+                        af[x].same = false;
+                        af_updatecounter++;
+                      }
+                      if (af[x].regional) {
+                        af[x].regional = false;
+                        af_updatecounter++;
+                      }
+                    }
+                    break;
+                  }
+                }
+
+                bool isValuePresent = false;
+                for (int i = 0; i < 50; i++) {                                                // Check if already in list
+                  if ((rds.sortaf && (buffer0 == currentfreq)) || buffer0 == 0 || af[i].frequency == buffer0) {
+                    isValuePresent = true;
+                    break;
+                  }
+                }
+
+                if (!isValuePresent) {                                                        // Add frequency to list
+                  af[af_counter].frequency = buffer0;
+                  if (af_counter < 50) af_counter++;
+                  af_updatecounter++;
+                }
+
+                isValuePresent = false;
+                for (int i = 0; i < 50; i++) {                                                // Check if already in list
+                  if ((rds.sortaf && (buffer1 == currentfreq)) || buffer1 == 0 || af[i].frequency == buffer1) {
+                    isValuePresent = true;
+                    break;
+                  }
+                }
+
+                if (!isValuePresent) {
+                  af[af_counter].frequency = buffer1;                                         // Add frequency to list
+                  if (af_counter < 50) af_counter++;
+                  af_updatecounter++;
+                }
+
+                if (rds.sortaf) {                                                             // Sort AF list (low to high)
+                  for (int i = 0; i < 50; i++) {
+                    for (int j = 0; j < 50 - i; j++) {
+                      if (af[j].frequency == 0) continue;
+
+                      if (af[j].frequency > af[j + 1].frequency && af[j + 1].frequency != 0) {
+                        uint16_t temp = af[j].frequency;
+                        bool temp3 = af[j].afvalid;
+                        bool temp4 = af[j].checked;
+                        bool temp5 = af[j].regional;
+                        bool temp6 = af[j].same;
+                        af[j].frequency = af[j + 1].frequency;
+                        af[j].afvalid = af[j + 1].afvalid;
+                        af[j].checked = af[j + 1].checked;
+                        af[j].regional = af[j + 1].regional;
+                        af[j].same = af[j + 1].same;
+                        af[j + 1].frequency = temp;
+                        af[j + 1].afvalid = temp3;
+                        af[j + 1].checked = temp4;
+                        af[j + 1].regional = temp5;
+                        af[j + 1].same = temp6;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            rdsCold = rds.rdsC;
           }
-        } break;
+      } break;
 
-      case RDS_GROUP_1A:
-      case RDS_GROUP_1B: {
-          if (!rdsCerrorThreshold) {
-            if (((rds.rdsC >> 12) & 0x07) == 0 && rdsblock == RDS_GROUP_1A) {                               // ECC code readout
-              rds.ECC = rds.rdsC & 0xff;
-              rds.hasECC = true;
+      case RDS_GROUP_1A: {
+          if (!rdsCerrorThreshold && ((rds.rdsC >> 12) & 0x07) == 0) {
+            rds.ECC = rds.rdsC & 0xff;
+            rds.hasECC = true;
 
-              switch (rds.picode[0]) {
+            switch (rds.picode[0]) {
                 case '1': {
                     if (rds.ECC == 160) rds.ECCtext = ECCtext[226];
                     if (rds.ECC == 162) rds.ECCtext = ECCtext[129];
@@ -1114,17 +1086,13 @@ void TEF6686::readRDS(byte showrdserrors) {
                     break;
                   }
               }
-            }
           }
-
-          if (rds.rdsC >> 12 == 1 && rdsblock == RDS_GROUP_1A) rds.hasTMC = true;               // TMC flag
-        } break;
+      } break;
 
       case RDS_GROUP_2A: {
-          if (showrdserrors == 3 || (!rdsBerrorThreshold && !rdsCerrorThreshold && !rdsDerrorThreshold)) {
-            // RT decoder (64 characters)
+          if (showrdserrors == 3 || !(rdsCerrorThreshold && rdsDerrorThreshold)) {
             rds.hasRT = true;
-            rds.rtAB = (bitRead(rds.rdsB, 4));                                                  // Get AB flag
+            rds.rtAB = (bitRead(rds.rdsB, 4));
 
             if (initab) {
               rtABold = rds.rtAB;
@@ -1139,19 +1107,16 @@ void TEF6686::readRDS(byte showrdserrors) {
               }
             }
 
-            if (rds.rtAB != rtABold) {                                                          // Erase old RT, because of AB change
+            if (rds.rtAB != rtABold) {
               initrt = false;
               if (rds.rtbuffer) {
                 char rt_buffer_temp[129];
-                bool found = false;
                 strcpy(rt_buffer_temp, rt_buffer);
 
                 for (int i = 0; i < 129; i++) {
-                  if (rt_buffer_temp[i] == 0x0D) {
-                    found = true;
-                  }
-                  if (found) {
+                  if (rt_buffer_temp[i] == '\r') {
                     rt_buffer_temp[i] = '\0';
+                    break;
                   }
                 }
 
@@ -1162,31 +1127,25 @@ void TEF6686::readRDS(byte showrdserrors) {
                 rds.stationText = trimTrailingSpaces(rds.stationText);                            // Trim empty spaces at the end
               }
 
-              for (byte i = 0; i < 64; i++) {
-                rt_buffer[i] = 0x20;
-              }
+              for (byte i = 0; i < 64; i++) rt_buffer[i] = 0x20;
               rt_buffer[64] = '\0';
               rtABold = rds.rtAB;
             }
 
-            offset = (rds.rdsB & 0xf) * 4;                                                      // Get RT character segment
-            rt_buffer[offset + 0] = rds.rdsC >> 8;                                              // First character of segment
-            rt_buffer[offset + 1] = rds.rdsC & 0xff;                                            // Second character of segment
-            rt_buffer[offset + 2] = rds.rdsD >> 8;                                              // Thirth character of segment
-            rt_buffer[offset + 3] = rds.rdsD & 0xff;                                            // Fourth character of segment
-
+            uint8_t segment = (rds.rdsB & 0xf) * 4;
+            rt_buffer[segment + 0] = rds.rdsC >> 8;
+            rt_buffer[segment + 1] = rds.rdsC & 0xff;
+            rt_buffer[segment + 2] = rds.rdsD >> 8;
+            rt_buffer[segment + 3] = rds.rdsD & 0xff;
 
             if (initrt || !rds.rtbuffer) {
               char rt_buffer_temp[129];
-              bool found = false;
               strcpy(rt_buffer_temp, rt_buffer);
 
               for (int i = 0; i < 129; i++) {
-                if (rt_buffer_temp[i] == 0x0D) {
-                  found = true;
-                }
-                if (found) {
+                if (rt_buffer_temp[i] == '\r') {
                   rt_buffer_temp[i] = '\0';
+                  break;
                 }
               }
 
@@ -1199,7 +1158,7 @@ void TEF6686::readRDS(byte showrdserrors) {
 
             for (int i = 0; i < 64; i++) rt_buffer2[i] = rt_buffer[i];
           }
-        } break;
+      } break;
 
       case RDS_GROUP_2B: {
           if (showrdserrors == 3 || (!rdsBerrorThreshold && !rdsDerrorThreshold)) {
@@ -1215,9 +1174,9 @@ void TEF6686::readRDS(byte showrdserrors) {
               rtAB32old = rds.rtAB32;
             }
 
-            offset = (rds.rdsB & 0xf) * 2;                                                      // Get RT character segment
-            rt_buffer32[offset + 0] = rds.rdsD >> 8;                                            // First character of segment
-            rt_buffer32[offset + 1] = rds.rdsD & 0xff;                                          // Second character of segment
+            uint16_t segment = (rds.rdsB & 0xf) * 2;                                                      // Get RT character segment
+            rt_buffer32[segment + 0] = rds.rdsD >> 8;                                            // First character of segment
+            rt_buffer32[segment + 1] = rds.rdsD & 0xff;                                          // Second character of segment
 
             byte endmarkerRT32 = 32;
             for (byte i = 0; i < endmarkerRT32; i++) {
@@ -1229,15 +1188,12 @@ void TEF6686::readRDS(byte showrdserrors) {
 
 
             char rt_buffer_temp[129];
-            bool found = false;
             strcpy(rt_buffer_temp, rt_buffer32);
 
             for (int i = 0; i < 129; i++) {
-              if (rt_buffer_temp[i] == 0x0D) {
-                found = true;
-              }
-              if (found) {
+              if (rt_buffer_temp[i] == '\r') {
                 rt_buffer_temp[i] = '\0';
+                break;
               }
             }
 
@@ -1266,25 +1222,22 @@ void TEF6686::readRDS(byte showrdserrors) {
               rds.aid_counter++;
             }
 
-            if (rds.rdsD == 0xCD46) {                                                           // Check for TMC application
-              rds.hasTMC = true;                                                                // TMC flag
+            if (rds.rdsD == 0xCD46) rds.hasTMC = true;
+
+            if (rds.rdsD == 0x4BD7) {
+              rds.hasRTplus = true;
+              rtplusblock = ((rds.rdsB & 0x1F) >> 1) * 2;
             }
 
-            // RT+ init
-            if (rds.rdsD == 0x4BD7) {                                                           // Check for RT+ application
-              rds.hasRDSplus = true;                                                            // Set flag
-              rtplusblock = ((rds.rdsB & 0x1F) >> 1) * 2;                                       // Get RT+ Block
+            if (rds.rdsD == 0x0093) {
+              rds.hasDABAF = true;
+              DABAFblock = ((rds.rdsB & 0x1F) >> 1) * 2;
             }
 
-            if (rds.rdsD == 0x0093) {                                                           // Check for DAB+ AF application
-              rds.hasDABAF = true;                                                              // Set flag
-              DABAFblock = ((rds.rdsB & 0x1F) >> 1) * 2;                                        // Get DAB AF Block
-            }
-
-            if (rds.rdsD == 0x6552) {                                                           // Check for Enhanced RT application
-              _hasEnhancedRT = true;                                                            // Set flag
-              eRTblock = ((rds.rdsB & 0x1F) >> 1) * 2;                                          // Get eRT block
-              eRTcoding = bitRead(rds.rdsC, 0);                                                 // 0 = UCS-2, 1 = UTF-8
+            if (rds.rdsD == 0x6552) {
+              _hasEnhancedRT = true;
+              eRTblock = ((rds.rdsB & 0x1F) >> 1) * 2;
+              eRTcoding = bitRead(rds.rdsC, 0);
             }
           }
         } break;
@@ -1292,11 +1245,8 @@ void TEF6686::readRDS(byte showrdserrors) {
       case RDS_GROUP_4A: {
           if (!rdsBerrorThreshold && !rdsCerrorThreshold && !rdsDerrorThreshold && rds.ctupdate && (rds.PICTlock == rds.rdsA || rds.PICTlock == 0)) {
             // CT
-            uint32_t mjd;
-            mjd = (rds.rdsB & 0x03);
-            mjd <<= 15;
-            mjd += ((rds.rdsC >> 1) & 0x7FFF);
-            uint16_t hour, minute, day = 1, month = 1, year = 2020;  // Set default values for day, month, and year
+            uint32_t mjd = (rds.rdsB & 0x03) << 15 | ((rds.rdsC >> 1) & 0x7FFF);;
+            uint16_t hour, minute, day = 5, month = 1, year = 2026;
             int32_t timeoffset;
 
             long J, C, Y, M;
@@ -1313,14 +1263,13 @@ void TEF6686::readRDS(byte showrdserrors) {
             if ((M +  2 - (12 * J)) < 13) month = M +  2 - (12 * J);
             if ((100 * (C - 49) + Y + J) > 2022) year = 100 * (C - 49) + Y + J;
 
-            hour = ((rds.rdsD >> 12) & 0x000f);
-            hour += ((rds.rdsC << 4) & 0x0010);
+            hour = ((rds.rdsD >> 12) & 0xf) | ((rds.rdsC << 4) & 0x10);
             timeoffset = rds.rdsD & 0x001f;
             if (bitRead(rds.rdsD, 5)) timeoffset *= -1;
             timeoffset *= 1800;
             minute = (rds.rdsD & 0x0fc0) >> 6;
 
-            if (year < 2024 || hour > 23 || minute > 59 || timeoffset > 55800 || timeoffset < -55800) break;
+            if (year < 2026 || hour > 23 || minute > 59 || timeoffset > 55800 || timeoffset < -55800) break;
 
             struct tm tm;
             tm.tm_year = year - 1900;
@@ -1340,9 +1289,7 @@ void TEF6686::readRDS(byte showrdserrors) {
               rds.hasCT = true;
               rds.time = rdstime;
               rds.offset = timeoffset;
-            } else {
-              rds.hasCT = false;
-            }
+            } else rds.hasCT = false;
             lastrdstime = rdstime;
             lasttimeoffset = timeoffset;
           }
@@ -1351,16 +1298,16 @@ void TEF6686::readRDS(byte showrdserrors) {
       case RDS_GROUP_10A: {
           if (!rdsCerrorThreshold && !rdsDerrorThreshold) {
             // PTYN
-            offset = bitRead(rds.rdsB, 0);                                                        // Get char offset
+            uint8_t segment = bitRead(rds.rdsB, 0);
             if (rds.rdsC != 0 && rds.rdsD != 0) {
-              ptyn_buffer[(offset * 4) + 0] = rds.rdsC >> 8;                                      // Get position 1 and 5
-              ptyn_buffer[(offset * 4) + 1] = rds.rdsC & 0xFF;                                    // Get position 2 and 6
-              ptyn_buffer[(offset * 4) + 2] = rds.rdsD >> 8;                                      // Get position 3 and 7
-              ptyn_buffer[(offset * 4) + 3] = rds.rdsD & 0xFF;                                    // Get position 4 and 8
+              ptyn_buffer[(segment * 4) + 0] = rds.rdsC >> 8;
+              ptyn_buffer[(segment * 4) + 1] = rds.rdsC & 0xFF;
+              ptyn_buffer[(segment * 4) + 2] = rds.rdsD >> 8;
+              ptyn_buffer[(segment * 4) + 3] = rds.rdsD & 0xFF;
               for (byte i = 0; i < 8; i++) PTYNtext[i] = L'\0';
-              RDScharConverter(ptyn_buffer, PTYNtext, sizeof(PTYNtext) / sizeof(wchar_t), false); // Convert 8 bit ASCII to 16 bit ASCII
-              String utf8String = convertToUTF8(PTYNtext);                                        // Convert RDS characterset to ASCII
-              rds.PTYN = extractUTF8Substring(utf8String, 0, 8, false);                           // Make sure text is not longer than 8 chars
+              RDScharConverter(ptyn_buffer, PTYNtext, sizeof(PTYNtext) / sizeof(wchar_t), false);
+              String utf8String = convertToUTF8(PTYNtext);
+              rds.PTYN = extractUTF8Substring(utf8String, 0, 8, false);
               rds.hasPTYN = true;
             }
           }
@@ -1373,9 +1320,9 @@ void TEF6686::readRDS(byte showrdserrors) {
       case RDS_GROUP_9A:
       case RDS_GROUP_11A:
       case RDS_GROUP_12A:
-      case RDS_GROUP_13A:   {
+      case RDS_GROUP_13A: {
           // RT+ decoding
-          if ((!rdsBerrorThreshold && !rdsCerrorThreshold && !rdsDerrorThreshold) && rtplusblock == rdsblock && rds.hasRDSplus) {
+          if ((!rdsBerrorThreshold && !rdsCerrorThreshold && !rdsDerrorThreshold) && rtplusblock == rdsgroup && rds.hasRTplus) {
             rds.rdsplusTag1 = ((rds.rdsB & 0x07) << 3) + (rds.rdsC >> 13);                      // Are we in the right RT+ block and is all ok to go?
             rds.rdsplusTag2 = ((rds.rdsC & 0x01) << 5) + (rds.rdsD >> 11);
             uint16_t start_marker_1 = (rds.rdsC >> 7) & 0x3F;
@@ -1428,8 +1375,8 @@ void TEF6686::readRDS(byte showrdserrors) {
           }
 
           // eRT decoding
-          if ((!rdsBerrorThreshold && !rdsCerrorThreshold && !rdsDerrorThreshold) && eRTblock == rdsblock && _hasEnhancedRT) {
-            offset = (rds.rdsB & 0x1f) * 4;
+          if ((!rdsBerrorThreshold && !rdsCerrorThreshold && !rdsDerrorThreshold) && eRTblock == rdsgroup && _hasEnhancedRT) {
+            uint8_t offset = (rds.rdsB & 0x1f) * 4;
             eRT_buffer[offset + 0] = rds.rdsC >> 8;                                             // First character of segment
             eRT_buffer[offset + 1] = rds.rdsC & 0xff;                                           // Second character of segment
             eRT_buffer[offset + 2] = rds.rdsD >> 8;                                             // Thirth character of segment
@@ -1454,9 +1401,9 @@ void TEF6686::readRDS(byte showrdserrors) {
           }
 
 
-          if (!rdsBerrorThreshold && rdsblock == 16 && (bitRead(rds.rdsB, 15))) rds.hasTMC = true;  // TMC flag
+          if (!rdsBerrorThreshold && rdsgroup == 16 && (bitRead(rds.rdsB, 15))) rds.hasTMC = true;  // TMC flag
 
-          if ((!rdsBerrorThreshold && !rdsCerrorThreshold && !rdsDerrorThreshold) && DABAFblock == rdsblock && rds.hasDABAF) {
+          if ((!rdsBerrorThreshold && !rdsCerrorThreshold && !rdsDerrorThreshold) && DABAFblock == rdsgroup && rds.hasDABAF) {
             rds.dabaffreq = (rds.rdsC * 16);
 
             for (size_t i = 0; i < sizeof(DABfrequencyTable) / sizeof(DABfrequencyTable[0]); ++i) {
@@ -1468,11 +1415,8 @@ void TEF6686::readRDS(byte showrdserrors) {
             rds.dabafeid[2] = (rds.rdsD >> 4) & 0xF;
             rds.dabafeid[3] = rds.rdsD & 0xF;
             for (int i = 0; i < 4; i++) {
-              if (rds.dabafeid[i] < 10) {
-                rds.dabafeid[i] += '0';                                                         // Add ASCII offset for decimal digits
-              } else {
-                rds.dabafeid[i] += 'A' - 10;                                                    // Add ASCII offset for hexadecimal letters A-F
-              }
+              if (rds.dabafeid[i] < 10) rds.dabafeid[i] += '0';
+              else rds.dabafeid[i] += 'A' - 10;
             }
             rds.dabafeid[4] = 0;
           }
@@ -1501,21 +1445,16 @@ void TEF6686::readRDS(byte showrdserrors) {
               eon[eon_counter].picode[2] = (rds.rdsD >> 4) & 0xF;
               eon[eon_counter].picode[3] = rds.rdsD & 0xF;
               for (int j = 0; j < 4; j++) {
-                if (eon[eon_counter].picode[j] < 10) {
-                  eon[eon_counter].picode[j] += '0';                                            // Add ASCII offset for decimal digits
-                } else {
-                  eon[eon_counter].picode[j] += 'A' - 10;                                       // Add ASCII offset for hexadecimal letters A-F
-                }
+                if (eon[eon_counter].picode[j] < 10) eon[eon_counter].picode[j] += '0';
+                else eon[eon_counter].picode[j] += 'A' - 10;
               }
 
               eon[eon_counter].pi = rds.rdsD;                                                   // Store PI on next array
               if (eon_counter < 20) eon_counter++;
               eonIndex = eon_counter - 1;
-            } else {
-              eonIndex = i;
-            }
+            } else eonIndex = i;
 
-            offset = rds.rdsB & 0x0F;  // Read offset
+            uint8_t offset = rds.rdsB & 0x0F;  // Read offset
 
             if (offset < 4 && eon[eonIndex].pi == rds.rdsD) {
               eon_buffer[eonIndex][(offset * 2)  + 0] = rds.rdsC >> 8;                          // First character of segment
@@ -1583,7 +1522,7 @@ void TEF6686::readRDS(byte showrdserrors) {
       case RDS_GROUP_15A: {
           if (showrdserrors == 3 || (!rdsBerrorThreshold && !rdsCerrorThreshold && !rdsDerrorThreshold)) {
             if (pslong_process && rds.stationNameLong.length() > 0) rds.hasLongPS = true;
-            offset = (rds.rdsB & 0xf) * 4;                                                                // Get Long PS character segment
+            uint8_t offset = (rds.rdsB & 0xf) * 4;                                                                // Get Long PS character segment
 
             pslong_buffer2[offset + 0] = pslong_buffer[offset + 0];                                       // Copy PS long buffer
             pslong_buffer2[offset + 1] = pslong_buffer[offset + 1];
@@ -1630,6 +1569,7 @@ void TEF6686::readRDS(byte showrdserrors) {
         }
         break;
     }
+  end:
     previous_rdsA = rds.rdsA;
     previous_rdsB = rds.rdsB;
     previous_rdsC = rds.rdsC;
@@ -1737,17 +1677,17 @@ void TEF6686::clearRDS(bool fullsearchrds) {
 
   for (i = 0; i < 10; i++) rds.aid[i] = 0;
 
-  rdsblock = 254;
+  rdsgroup = 254;
   processed_rdsblocks = 0;
   piold = 0;
   rds.correctPI = 0;
   rds.ECC = 254;
-  rds.stationTypeCode = 32;
+  rds.PTY = 32;
   rds.dabaffreq = 0;
   rds.hasECC = false;
   rds.hasRT = false;
   rds.hasRDS = false;
-  rds.hasTP = false;
+  rds.TP = false;
   rds.hasAF = false;
   rds.hasTA = false;
   rds.hasEON = false;
@@ -1756,7 +1696,7 @@ void TEF6686::clearRDS(bool fullsearchrds) {
   rds.hasAID = false;
   rds.hasPTYN = false;
   rds.hasLongPS = false;
-  rds.hasRDSplus = false;
+  rds.hasRTplus = false;
   rds.hasDABAF = false;
   rds.hasEnhancedRT = false;
   rt_process = false;
@@ -2040,6 +1980,7 @@ String TEF6686::ucs2ToUtf8(const char* ucs2Input) {
   return utf8Output;
 }
 
+static const char* fixedCalls[] = {"CBLA", "CBFM", "CBOT"};
 bool TEF6686::isFixedCallsign(uint16_t stationID, char* stationIDStr) {
   for (int i = 0; i < sizeof(fixedPI) / sizeof(fixedPI[0]); i++) {
     if (stationID == fixedPI[i]) {

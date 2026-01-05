@@ -1296,7 +1296,7 @@ void ShowOneLine(byte position, byte item, bool selected) {
           FullLineSprite.setTextDatum(TR_DATUM);
           FullLineSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
           switch (scancancel) {
-            case OFF: FullLineSprite.drawString(textUI(30), 298, 2); break;
+            case SCAN_CANCEL: FullLineSprite.drawString(textUI(30), 298, 2); break;
             case CORRECTPI: FullLineSprite.drawString(textUI(220), 298, 2); break;
             case SIGNAL: FullLineSprite.drawString(textUI(221), 298, 2); break;
           }
@@ -2408,7 +2408,7 @@ void ShowOneButton(byte position, byte item, bool selected) {
 
           PSSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
           switch (scancancel) {
-            case OFF: PSSprite.drawString(textUI(30), 75, 15); break;
+            case 0: PSSprite.drawString(textUI(30), 75, 15); break;
             case CORRECTPI: PSSprite.drawString(textUI(220), 75, 15); break;
             case SIGNAL: PSSprite.drawString(textUI(221), 75, 15); break;
           }
@@ -4375,7 +4375,7 @@ void MenuUpDown(bool dir) {
             }
 
             switch (scancancel) {
-              case OFF:  OneBigLineSprite.drawString(textUI(30), 135, 0); break;
+              case SCAN_CANCEL:  OneBigLineSprite.drawString(textUI(30), 135, 0); break;
               case CORRECTPI: OneBigLineSprite.drawString(textUI(220), 135, 0); break;
               case SIGNAL: OneBigLineSprite.drawString(textUI(221), 135, 0); break;
             }
@@ -4657,7 +4657,8 @@ void DoMenu() {
             tftPrint(ARIGHT, "marsel90-1", 145, 185, PrimaryColor, PrimaryColorSmooth, 16);
             tftPrint(ALEFT, "lawendel", 155, 185, PrimaryColor, PrimaryColorSmooth, 16);
             tftPrint(ARIGHT, "KB8U", 145, 200, PrimaryColor, PrimaryColorSmooth, 16);
-            tftPrint(ACENTER, "github.com/PE5PVB/TEF6686_ESP32", 155, 215, ActiveColor, ActiveColorSmooth, 16);
+            tftPrint(ALEFT, "KubaPro010", 155, 200, PrimaryColor, PrimaryColorSmooth, 16);
+            tftPrint(ACENTER, "github.com/KubaPro010/TEF6686_ESP32", 155, 215, ActiveColor, ActiveColorSmooth, 16);
             if (hardwaremodel == PORTABLE_TOUCH_ILI9341) {
               tft.fillRoundRect(240, 36, 60, 40, 6, FrameColor);
               tft.drawRoundRect(240, 36, 60, 40, 6, ActiveColor);
@@ -5470,7 +5471,7 @@ void DoMenu() {
             Infoboxprint(textUI(219));
 
             switch (scancancel) {
-              case OFF:  OneBigLineSprite.drawString(textUI(30), 135, 0); break;
+              case SCAN_CANCEL:  OneBigLineSprite.drawString(textUI(30), 135, 0); break;
               case CORRECTPI: OneBigLineSprite.drawString(textUI(220), 135, 0); break;
               case SIGNAL: OneBigLineSprite.drawString(textUI(221), 135, 0); break;
             }

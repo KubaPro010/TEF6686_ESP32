@@ -1,0 +1,17 @@
+{
+  "name": "Hash",
+  "version": "1.0",
+  "description": "Generate Hash from data",
+  "authors":
+  [
+    {
+        "name": "Markus Sattler",
+        "maintainer": true
+    }
+  ],
+  "frameworks": "arduino",
+  "platforms": "espressif8266, espressif32",
+  "build": {
+    "flags": ["-Wno-unused-function"]
+  }
+}

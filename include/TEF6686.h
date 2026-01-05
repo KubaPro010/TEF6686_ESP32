@@ -21,7 +21,6 @@ enum RDS_GROUPS {
 
 // Fixed PI/callsign combinations for Canada
 static const uint16_t fixedPI[] = {0x4C10, 0x4C11, 0x4C12};
-static const char* fixedCalls[] = {"CBLA", "CBFM", "CBOT"};
 
 static const char* const PTY_EU[] {
   "None",
@@ -433,11 +432,9 @@ const DABFrequencyLabel DABfrequencyTable[] = {
   {1490624,  "LW"}
 };
 
-#pragma GCC diagnostic pop
-
 typedef struct _rds_ {
   byte region;
-  byte stationTypeCode;
+  byte PTY;
   String stationName;
   String stationText;
   String stationText32;
@@ -480,7 +477,7 @@ typedef struct _rds_ {
   bool hasLongPS;
   bool hasRT;
   bool hasEnhancedRT;
-  bool hasTP;
+  bool TP;
   bool hasTA;
   bool hasEON;
   bool hasAID;
@@ -490,7 +487,7 @@ typedef struct _rds_ {
   bool hasPTYN;
   bool rtAB;
   bool rtAB32;
-  bool hasRDSplus;
+  bool hasRTplus;
   bool filter;
   bool rdsreset;
   bool pierrors;
@@ -590,7 +587,7 @@ class TEF6686 {
     uint8_t af_counter;
     uint8_t eon_counter;
     uint8_t logbook_counter;
-    uint8_t rdsblock;
+    uint8_t rdsgroup;
     unsigned long processed_rdsblocks;
     bool mute;
     bool afmethodB;

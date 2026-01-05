@@ -5110,17 +5110,12 @@ void StoreMemoryPos(uint8_t _pos) {
   EEPROM.writeByte(_pos + EE_PRESETS_BAND_START, band);
   EEPROM.writeByte(_pos + EE_PRESET_BW_START, BWset);
   EEPROM.writeByte(_pos + EE_PRESET_MS_START, StereoToggle);
-  if (band == BAND_FM) {//todo air
-    EEPROM.writeUInt((_pos * 4) + EE_PRESETS_FREQUENCY_START, frequency);
-  } else if (band == BAND_OIRT) {
-    EEPROM.writeUInt((_pos * 4) + EE_PRESETS_FREQUENCY_START, frequency_OIRT);
-  } else if (band == BAND_LW) {
-    EEPROM.writeUInt((_pos * 4) + EE_PRESETS_FREQUENCY_START, frequency_LW);
-  } else if (band == BAND_MW) {
-    EEPROM.writeUInt((_pos * 4) + EE_PRESETS_FREQUENCY_START, frequency_MW);
-  } else {
-    EEPROM.writeUInt((_pos * 4) + EE_PRESETS_FREQUENCY_START, frequency_SW);
-  }
+
+  if (band == BAND_FM) EEPROM.writeUInt((_pos * 4) + EE_PRESETS_FREQUENCY_START, frequency);
+  else if (band == BAND_OIRT) EEPROM.writeUInt((_pos * 4) + EE_PRESETS_FREQUENCY_START, frequency_OIRT);
+  else if (band == BAND_LW) EEPROM.writeUInt((_pos * 4) + EE_PRESETS_FREQUENCY_START, frequency_LW);
+  else if (band == BAND_MW) EEPROM.writeUInt((_pos * 4) + EE_PRESETS_FREQUENCY_START, frequency_MW);
+  else EEPROM.writeUInt((_pos * 4) + EE_PRESETS_FREQUENCY_START, frequency_SW);
 
   presets[_pos].band = band;
   presets[_pos].bw = BWset;
@@ -5144,17 +5139,11 @@ void StoreMemoryPos(uint8_t _pos) {
 
   EEPROM.commit();
 
-  if (band == BAND_FM) {//todo air
-    presets[_pos].frequency = frequency;
-  } else if (band == BAND_OIRT) {
-    presets[_pos].frequency = frequency_OIRT;
-  } else if (band == BAND_LW) {
-    presets[_pos].frequency = frequency_LW;
-  } else if (band == BAND_MW) {
-    presets[_pos].frequency = frequency_MW;
-  } else {
-    presets[_pos].frequency = frequency_SW;
-  }
+  if (band == BAND_FM) presets[_pos].frequency = frequency;
+  else if (band == BAND_OIRT) presets[_pos].frequency = frequency_OIRT;
+  else if (band == BAND_LW) presets[_pos].frequency = frequency_LW;
+  else if (band == BAND_MW) presets[_pos].frequency = frequency_MW;
+  else presets[_pos].frequency = frequency_SW;
 }
 
 void ClearMemoryRange(uint8_t start, uint8_t stop) {
@@ -5180,9 +5169,7 @@ void ClearMemoryRange(uint8_t start, uint8_t stop) {
   }
 }
 
-byte numval[16] = {
-  2, 3, 127, 5, 6, 0, 9, 13, 8, 7, 4, 1, 0, 0, 0, 0
-};
+byte numval[16] = {2, 3, 127, 5, 6, 0, 9, 13, 8, 7, 4, 1, 0, 0, 0, 0};
 
 int GetNum() {
   int16_t temp;
@@ -5201,12 +5188,11 @@ int GetNum() {
     for (int i = 0; i < 16; i++) {
       if ((temp & 0x01) == 0) {
         num = numval[i];
-        cnt ++;
+        cnt++;
       }
       temp >>= 1;
     }
-    if (cnt == 1)
-      return num;
+    if (cnt == 1) return num;
   }
 
   return -1;
