@@ -162,54 +162,56 @@ void TEF6686::getIdentification(uint16_t &device, uint16_t &hw_version, uint16_t
 }
 
 void TEF6686::power(bool mode) {
-  devTEF_APPL_Set_OperationMode(mode);
+  devTEF_Set_Cmd(TEF_APPL, Cmd_Set_OperationMode, 5, mode);
   if (mode == 0) devTEF_Set_Cmd(TEF_FM, Cmd_Tune_To, 7, 1, 10000);
 }
 
 void TEF6686::extendBW(bool yesno) {
-  devTEF_Radio_Extend_BW(yesno);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Bandwidth_Options, 5, (yesno ? 400 : 950));
 }
 
 void TEF6686::SetFreq(uint16_t frequency) {
-  devTEF_Radio_Tune_To(frequency);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Tune_To, 7, 4, frequency);
   currentfreq = ((frequency + 5) / 10) * 10;
   currentfreq2 = frequency;
 }
 
 void TEF6686::SetFreqAM(uint16_t frequency) {
-  devTEF_Radio_Tune_AM (frequency);
+  devTEF_Set_Cmd(TEF_AM, Cmd_Tune_To, 7, 1, frequency);
 }
 
 void TEF6686::SetFreqAIR(uint16_t frequency) {
-  devTEF_Radio_Tune_AM (10700);
+  devTEF_Set_Cmd(TEF_AM, Cmd_Tune_To, 7, 1, 10700);
 }
 
 void TEF6686::setOffset(int8_t offset) {
-  devTEF_Radio_Set_LevelOffset(offset * 10);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_LevelOffset, 5, (offset * 10) - 70);
 }
 
 void TEF6686::setAMOffset(int8_t offset) {
-  devTEF_Radio_Set_AMLevelOffset(offset * 10);
+  devTEF_Set_Cmd(TEF_AM, Cmd_Set_LevelOffset, 5, (offset * 10) - 70);
 }
 
 void TEF6686::setFMBandw(uint16_t bandwidth) {
-  devTEF_Radio_Set_Bandwidth(0, bandwidth * 10);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Bandwidth, 7, 0, bandwidth);
 }
 
 void TEF6686::setAMBandw(uint16_t bandwidth) {
-  devTEF_Radio_Set_BandwidthAM(0, bandwidth * 10);
+  devTEF_Set_Cmd(TEF_AM, Cmd_Set_Bandwidth, 7, 0, bandwidth * 10);
 }
 
 void TEF6686::setAMCoChannel(uint16_t start, uint8_t level) {
-  if (start == 0) devTEF_Radio_Set_CoChannel_AM(0, start * 10, level); else devTEF_Radio_Set_CoChannel_AM(1, start * 10, level);
+  uint8_t mode = 1;
+  if(start == 0) mode = 0;
+  devTEF_Set_Cmd(TEF_AM, Cmd_Set_CoChannelDet, 11, mode, 2, start * 10, 1000, level);
 }
 
 void TEF6686::setSoftmuteAM(uint8_t mode) {
-  devTEF_Radio_Set_Softmute_Max_AM(mode);
+  devTEF_Set_Cmd(TEF_AM, Cmd_Set_Softmute_Max, 7, mode, 250);
 }
 
 void TEF6686::setSoftmuteFM(uint8_t mode) {
-  devTEF_Radio_Set_Softmute_Max_FM(mode);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Softmute_Max, 7, mode, 200);
 }
 
 void TEF6686::setAMNoiseBlanker(uint16_t start) {
@@ -217,19 +219,19 @@ void TEF6686::setAMNoiseBlanker(uint16_t start) {
 }
 
 void TEF6686::setAMAttenuation(uint16_t start) {
-  devTEF_Radio_Set_Attenuator_AM(start * 10);
+  devTEF_Set_Cmd(TEF_AM, Cmd_Set_Antenna, 5, start * 10);
 }
 
 void TEF6686::setFMABandw() {
-  devTEF_Radio_Set_Bandwidth(1, 3110);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Bandwidth, 7, 1, 3110);
 }
 
 void TEF6686::setiMS(bool mph) {
-  devTEF_Radio_Set_MphSuppression(mph);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_MphSuppression, 5, mph);
 }
 
 void TEF6686::setEQ(bool eq) {
-  devTEF_Radio_Set_ChannelEqualizer(eq);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_ChannelEqualizer, 5, eq);
 }
 
 bool TEF6686::getStereoStatus() {
@@ -240,109 +242,109 @@ bool TEF6686::getStereoStatus() {
 }
 
 void TEF6686::setMono(bool mono) {
-  devTEF_Radio_Set_Stereo_Min(mono);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Stereo_Min, 7, mono ? 2 : 0);
 }
 
 void TEF6686::setVolume(int8_t volume) {
-  devTEF_Audio_Set_Volume(volume);
+  devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_Volume, 5, volume * 10);
 }
 
 void TEF6686::setMute() {
   mute = true;
-  if (mpxmode) devTEF_Radio_Specials(0);
-  devTEF_Audio_Set_Mute(1);
+  if (mpxmode) devTEF_Set_Cmd(TEF_FM, Cmd_Set_Specials, 5, 0);
+  devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_Mute, 5, 1);
 }
 
 void TEF6686::setUnMute() {
   mute = false;
-  if (mpxmode) devTEF_Radio_Specials(1);
-  devTEF_Audio_Set_Mute(0);
+  if (mpxmode) devTEF_Set_Cmd(TEF_FM, Cmd_Set_Specials, 5, 1);
+  devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_Mute, 5, 0);
 }
 
 void TEF6686::setAGC(uint8_t agc) {
-  devTEF_Radio_Set_RFAGC(agc);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_RFAGC, 7, agc * 10, 0);
 }
 
 void TEF6686::setAMAGC(uint8_t agc) {
-  devTEF_Radio_Set_AMRFAGC(agc);
+  devTEF_Set_Cmd(TEF_AM, Cmd_Set_RFAGC, 7, agc * 10, 0);
 }
 
 void TEF6686::setDeemphasis(uint8_t timeconstant) {
   switch (timeconstant) {
-    case 1: devTEF_Radio_Set_Deemphasis(500); break;
-    case 2: devTEF_Radio_Set_Deemphasis(750); break;
-    default: devTEF_Radio_Set_Deemphasis(0); break;
+    case 1: devTEF_Set_Cmd(TEF_FM, Cmd_Set_Deemphasis, 5, 500); break;
+    case 2: devTEF_Set_Cmd(TEF_FM, Cmd_Set_Deemphasis, 5, 750); break;
+    default: devTEF_Set_Cmd(TEF_FM, Cmd_Set_Deemphasis, 5, 0); break;
   }
 }
 
 void TEF6686::setAudio(uint8_t audio) {
-  devTEF_Radio_Specials(audio);
-  if (audio == 0) mpxmode = false; else mpxmode = true;
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Specials, 5, audio);
+  mpxmode = (audio != 0);
 }
 
 void TEF6686::setFMSI(uint8_t mode) {
-  if (mode == 1) devTEF_APPL_Set_StereoImprovement(0);
-  if (mode == 2) devTEF_APPL_Set_StereoImprovement(1);
+  if(mode > 2) mode = 2;
+  if(mode < 1) mode = 1;
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_StereoImprovement, 5, mode-1);
 }
 
 void TEF6686::setFMSI_Time(uint16_t attack, uint16_t decay) {
-  devTEF_APPL_Set_StereoBandBlend_Time(attack, decay);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_StBandBlend_Time, 7, attack, decay);
 }
 
 void TEF6686::setFMSI_Gain(uint16_t band1, uint16_t band2, uint16_t band3, uint16_t band4) {
-  devTEF_APPL_Set_StereoBandBlend_Gain(band1 * 10, band2 * 10, band3 * 10, band4 * 10);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_StBandBlend_Gain, 11, band1 * 10, band2 * 10, band3 * 10, band4 * 10);
 }
 
 void TEF6686::setFMSI_Bias(int16_t band1, int16_t band2, int16_t band3, int16_t band4) {
-  devTEF_APPL_Set_StereoBandBlend_Bias(band1 - 250, band2 - 250, band3 - 250, band4 - 250);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_StBandBlend_Bias, 11, band1 - 250, band2 - 250, band3 - 250, band4 - 250);
 }
 
-
 void TEF6686::setFMNoiseBlanker(uint16_t start) {
-  if (start == 0) devTEF_Radio_Set_NoisBlanker(0, 1000); else devTEF_Radio_Set_NoisBlanker(1, start * 10);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_NoiseBlanker, 7, (start == 0) ? 0 : 1, (start == 0) ? 1000 : (start * 10));
 }
 
 void TEF6686::setStereoLevel(uint8_t start) {
   if (start == 0) {
-    devTEF_Radio_Set_Stereo_Level(0, start * 10, 60);
-    devTEF_Radio_Set_Stereo_Noise(0, 240, 200);
-    devTEF_Radio_Set_Stereo_Mph(0, 240, 200);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Stereo_Level, 9, 0, start * 10, 60);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Stereo_Noise, 9, 0, 240, 200);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Stereo_Mph, 9, 0, 240, 200);
   } else {
-    devTEF_Radio_Set_Stereo_Level(3, start * 10, 60);
-    devTEF_Radio_Set_Stereo_Noise(3, 240, 200);
-    devTEF_Radio_Set_Stereo_Mph(3, 240, 200);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Stereo_Level, 9, 3, start * 10, 60);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Stereo_Noise, 9, 3, 240, 200);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Stereo_Mph, 9, 3, 240, 200);
   }
 }
 
 void TEF6686::setHighCutOffset(uint8_t start) {
   if (start == 0) {
-    devTEF_Radio_Set_Highcut_Level(0, start * 10, 300);
-    devTEF_Radio_Set_Highcut_Noise(0, 360, 300);
-    devTEF_Radio_Set_Highcut_Mph(0, 360, 300);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Level, 9, 0, start * 10, 300);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Noise, 9, 0, 360, 300);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Mph, 9, 0, 360, 300);
   } else {
-    devTEF_Radio_Set_Highcut_Level(3, start * 10, 300);
-    devTEF_Radio_Set_Highcut_Noise(3, 360, 300);
-    devTEF_Radio_Set_Highcut_Mph(3, 360, 300);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Level, 9, 3, start * 10, 300);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Noise, 9, 3, 360, 300);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Mph, 9, 3, 360, 300);
   }
 }
 
 void TEF6686::setHighCutLevel(uint16_t limit) {
-  devTEF_Radio_Set_Highcut_Max(1, limit * 100);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Max, 7, 1, limit * 100);
 }
 
 void TEF6686::setStHiBlendLevel(uint16_t limit) {
-  devTEF_Radio_Set_StHiBlend_Max(1, limit * 100);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Max, 7, 1, limit * 100);
 }
 
 void TEF6686::setStHiBlendOffset(uint8_t start) {
   if (start == 0) {
-    devTEF_Radio_Set_StHiBlend_Level(0, start * 10, 300);
-    devTEF_Radio_Set_StHiBlend_Noise(0, 360, 300);
-    devTEF_Radio_Set_StHiBlend_Mph(0, 360, 300);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Level, 9, 0, start * 10, 300);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Noise, 9, 0, 360, 300);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Mph, 9, 0, 360, 300);
   } else {
-    devTEF_Radio_Set_StHiBlend_Level(3, start * 10, 300);
-    devTEF_Radio_Set_StHiBlend_Noise(3, 360, 300);
-    devTEF_Radio_Set_StHiBlend_Mph(3, 360, 300);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Level, 9, 3, start * 10, 300);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Noise, 9, 3, 360, 300);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Mph, 9, 3, 360, 300);
   }
 }
 
@@ -1630,8 +1632,8 @@ void TEF6686::readRDS(byte showrdserrors) {
   }
 }
 
-void TEF6686::clearRDS (bool fullsearchrds) {
-  devTEF_Radio_Set_RDS(fullsearchrds);
+void TEF6686::clearRDS(bool fullsearchrds) {
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_RDS, 9, fullsearchrds ? 3 : 1, 1, 0);
   rds.piBuffer.clear();
   rds.stationName = "";
   rds.stationText = "";
@@ -1796,14 +1798,14 @@ void TEF6686::clearRDS (bool fullsearchrds) {
 }
 
 void TEF6686::tone(uint16_t time, int16_t amplitude, uint16_t frequency) {
-  devTEF_Audio_Set_Mute(0);
+  devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_Mute, 5, 0);
   devTEF_Radio_Set_Wavegen(1, amplitude, frequency);
   delay(time);
   devTEF_Radio_Set_Wavegen(0, 0, 0);
 }
 
 void TEF6686::I2Sin(bool mode) {
-  devTEF_Radio_Set_I2S_Input(mode);
+  devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_Input, 5, mode ? 32 : 0);
 }
 
 String TEF6686::convertToUTF8(const wchar_t* input) {
