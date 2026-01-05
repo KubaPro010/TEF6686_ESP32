@@ -1,7 +1,4 @@
-#ifndef LANGUAGE_H
-#define LANGUAGE_H
-
-// [number of languages][number of texts]
+#pragma once
 
 static const char* const myLanguage[22][301] PROGMEM = {
   { "English", // English
@@ -6670,4 +6667,3 @@ static const char* const myLanguage[22][301] PROGMEM = {
     "Kanada" // 300
   }
 };
-#endif

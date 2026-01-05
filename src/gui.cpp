@@ -2956,7 +2956,7 @@ void BuildAdvancedRDS() {
   tft.drawLine(66, 30, 66, 0, FrameColor);
   tft.drawLine(105, 30, 105, 0, FrameColor);
   tft.drawLine(162, 30, 162, 0, FrameColor);
-  tft.drawLine(210, 30, 210, 217, FrameColor);
+  tft.drawLine(210, 30, 210, 193, FrameColor);
   tft.drawLine(248, 30, 248, 0, FrameColor);
 
   tftPrint(ALEFT, "ERRORS", 3, 34, ActiveColor, ActiveColorSmooth, 16);
@@ -2972,14 +2972,13 @@ void BuildAdvancedRDS() {
   tftPrint(ALEFT, "PTY", 3, 109, ActiveColor, ActiveColorSmooth, 16);
   tftPrint(ALEFT, "RT+", 3, 147, ActiveColor, ActiveColorSmooth, 16);
   tftPrint(ALEFT, "EON", 3, 174, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ALEFT, "AF", 3, 199, ActiveColor, ActiveColorSmooth, 16);
+  tftPrint(ALEFT, "ECC", 3, 199, ActiveColor, ActiveColorSmooth, 16);
   tftPrint(ALEFT, "RT", 3, 222, ActiveColor, ActiveColorSmooth, 16);
 
   tftPrint(ALEFT, "A:", 66, 34, ActiveColor, ActiveColorSmooth, 16);
   tftPrint(ALEFT, "B:", 104, 34, ActiveColor, ActiveColorSmooth, 16);
   tftPrint(ALEFT, "C:", 142, 34, ActiveColor, ActiveColorSmooth, 16);
   tftPrint(ALEFT, "D:", 180, 34, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ALEFT, "ECC", 214, 199, ActiveColor, ActiveColorSmooth, 16);
   tftPrint(ARIGHT, "Dynamic PTY", 300, 130, ActiveColor, ActiveColorSmooth, 16);
   tftPrint(ARIGHT, "Artificial head", 300, 145, ActiveColor, ActiveColorSmooth, 16);
   tftPrint(ARIGHT, "Compressed", 300, 160, ActiveColor, ActiveColorSmooth, 16);

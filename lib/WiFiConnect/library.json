@@ -1,0 +1,15 @@
+{
+  "name": "WifiConnect",
+  "version": "1.0",
+  "description": "A WiFi Manager for ESP8266 or ESP32",
+  "authors":
+  [
+    {
+        "name": "Stuart Blair",
+        "email": "stuart@bfam.co.uk",
+        "maintainer": true
+    }
+  ],
+  "frameworks": "arduino",
+  "platforms": "espressif8266, espressif32"
+}

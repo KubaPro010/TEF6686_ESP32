@@ -1,5 +1,4 @@
-#ifndef TEF6686_H
-#define TEF6686_H
+#pragma once
 
 #include "Arduino.h"
 #include "Tuner_Drv_Lithio.h"
@@ -19,7 +18,6 @@ enum RDS_GROUPS {
   RDS_GROUP_12A, RDS_GROUP_12B, RDS_GROUP_13A, RDS_GROUP_13B, RDS_GROUP_14A, RDS_GROUP_14B, RDS_GROUP_15A, RDS_GROUP_15B
 };
 
-// Fixed PI/callsign combinations for Canada
 static const uint16_t fixedPI[] = {0x4C10, 0x4C11, 0x4C12};
 
 static const char* const PTY_EU[] {
@@ -33,8 +31,8 @@ static const char* const PTY_EU[] {
   "Culture",
   "Science",
   "Varied",
-  "Pop Music",
-  "Rock Music",
+  "Pop",
+  "Rock",
   "Easy Listening",
   "Light Classical",
   "Serious Classical",
@@ -47,15 +45,15 @@ static const char* const PTY_EU[] {
   "Phone-In",
   "Travel",
   "Leisure",
-  "Jazz Music",
-  "Country Music",
+  "Jazz",
+  "Country",
   "National Music",
-  "Oldies Music",
-  "Folk Music",
+  "Oldies",
+  "Folk",
   "Documentary",
   "Alarm Test",
   "Alarm!!!",
-  " "
+  "Receiver fault"
 };
 
 static const char* const PTY_USA[] {
@@ -86,12 +84,12 @@ static const char* const PTY_USA[] {
   "Spanish Talk",
   "Spanish Music",
   "Hip Hop",
-  " ",
-  " ",
+  "Unknown",
+  "Unknown",
   "Weather",
   "Emergency Test",
   "EMERGENCY!",
-  " "
+  "Receiver fault"
 };
 
 static const uint16_t oda_app_ids[] {
@@ -105,45 +103,46 @@ static const uint16_t oda_app_ids[] {
 };
 
 static const char* const ECCtext[] {
-  "Germany", // 0
-  "Greece", // 1
-  "Morocco", // 2
-  "Moldova", // 3
-  "Algeria", // 4
-  "Cyprus", // 5
-  "Czech R.", // 6
+  "Federal Republic of Germany", // 0
+  "Hellenic Republic (Greece)", // 1
+  "Kingdom of Morroco", // 2
+  "Republic of Moldova", // 3
+  "People's Democratic Republic of Algeria", // 4
+  "Republic of Cyprus", // 5
+  "Czech Republic", // 6
   "Ireland", // 7
-  "Estonia", // 8
-  "Andorra", // 9
-  "San Marino", // 10
-  "Poland", // 11
-  "Turkey", // 12
-  "Israel", // 13
-  "Switzerl.", // 14
-  "Vatican", // 15
-  "Macedonia", // 16
-  "Italy", // 17
-  "Jordan", // 18
-  "Slovakia", // 19
-  "Belgium", // 20
-  "Finland", // 21
-  "Syria", // 22
-  "Serbia", // 23
+  "Republic of Estonia", // 8
+  "Principality of Andorra", // 9
+  "Republic of San Marino", // 10
+  "Republic of Poland", // 11
+  "Republic of Turkey", // 12
+  "State of Israel", // 13
+  "Swiss Confederation", // 14
+  "Vatican City State", // 15
+  "The former Yugoslav Republic of Macedonia", // 16
+  "Italian Republic", // 17
+  "Hashemite Kingdom of Jordan", // 18
+  "Slovak Republic", // 19
+  "Kingdom of Belgium", // 20
+  "Republic of Finland", // 21
+  "Syrian Arab Republic", // 22
+  "Republic of Serbia", // 23
   "Ukraine", // 24
-  "Russia", // 25
-  "Luxemb.", // 26
-  "Tunisia", // 27
-  "Palestine", // 28
-  "Bulgaria", // 29
-  "Madeira", // 30
-  "Netherl.", // 31
-  "Portugal", // 32
-  "Albania", // 33
-  "Denmark", // 34
-  "Liechtst.", // 35
-  "Latvia", // 36
-  "Slovenia", // 37
-  "Austria", // 38
+  "Russian Federation", // 25
+  "Grand Duchy of Luxembourg", // 26
+  "Republic of Tunisia", // 27
+  "State of Palestine", // 28
+  "Republic of Bulgaria", // 29
+  "Republic of Portugal (Madeira)", // 30
+  "Kingdom of the Netherlands", // 31
+  "Republic of Portugal", // 32
+  "Republic of Albania", // 33
+  "Kingdom of Denmark", // 34
+  "Principality of Liechtenstein", // 35
+  "Republic of Latvia", // 36
+  "Republic of Slovenia", // 37
+  "Federal Republic of Austria", // 38
+  // TODO after this
   "Gibraltar", // 39
   "Iceland", // 40
   "Lebanon", // 41
@@ -653,4 +652,3 @@ class TEF6686 {
     time_t lastrdstime;
     int32_t lasttimeoffset;
 };
-#endif

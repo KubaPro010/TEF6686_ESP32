@@ -12,8 +12,8 @@ using fs::FS;
 #include <WebServer.h>
 #include <SPIFFS.h>
 #include "NTPupdate.h"
-#include "WiFiConnect.h"
-#include "WiFiConnectParam.h"
+#include <WiFiConnect.h>
+#include <WiFiConnectParam.h>
 #include "FONT16.h"
 #include "FONT16_CHS.h"
 #include "FONT28.h"
@@ -43,8 +43,8 @@ using fs::FS;
 #define TOUCHIRQ        33
 #define EXT_IRQ         14
 
-#define DYNAMIC_SPI_SPEED   // uncomment to enable dynamic SPI Speed https://github.com/ohmytime/TFT_eSPI_DynamicSpeed
-//#define HAS_AIR_BAND        // uncomment to enable Air Band(Make sure you have Air Band extend board)
+#define DYNAMIC_SPI_SPEED
+//#define HAS_AIR_BAND
 
 #ifdef ARS
 TFT_eSPI tft = TFT_eSPI(320, 240);
@@ -1633,7 +1633,6 @@ void GetData() {
     if (!afscreen && !rdsstatscreen) {
       if (!screenmute) ShowErrors();
       showPTY();
-      showECC();
       showRadioText();
       if (millis() >= tuningtimer + 200) doAF();
     }

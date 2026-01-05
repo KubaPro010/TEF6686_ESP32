@@ -49,8 +49,6 @@ void ShowAdvancedRDS() {
     }
   }
 
-  String afstring;
-  if (radio.rds.hasAF && radio.af_counter > 0) for (byte i = 0; i < radio.af_counter; i++) afstring += String(radio.af[i].frequency / 100) + "." + String((radio.af[i].frequency % 100) / 10) + (i == radio.af_counter - 1 ? "        " : " | "); else afstring = textUI(87);
   if (hasafold != radio.rds.hasAF) {
     if (!screenmute) {
       if (radio.rds.hasAF) tftPrint(ALEFT, "AF", 50, 51, RDSColor, RDSColorSmooth, 16); else tftPrint(ALEFT, "AF", 50, 51, GreyoutColor, BackgroundColor, 16);
@@ -58,36 +56,27 @@ void ShowAdvancedRDS() {
     hasafold = radio.rds.hasAF;
   }
 
-  if (afstring != afstringold) {
-    afstringWidth = RDSSprite.textWidth(afstring);
-    afstringold = afstring;
-  }
-
-  if (RDSSprite.textWidth(radio.trimTrailingSpaces(afstring)) < 165) {
-    xPos2 = 0;
-    RDSSprite.fillSprite(BackgroundColor);
-    if (RDSstatus) RDSSprite.setTextColor(RDSColor, RDSColorSmooth, false); else RDSSprite.setTextColor(RDSDropoutColor, RDSDropoutColorSmooth, false);
-    RDSSprite.drawString(afstring, xPos2, 2);
-    RDSSprite.pushSprite(35, 197);
-  } else {
-    if (millis() - afticker >= 5) {
-      if (xPos2 < -afstringWidth) xPos2 = 0;
-      if (xPos2 == 0) {
-        if (millis() - aftickerhold >= 2000) {
-          xPos2--;
-          aftickerhold = millis();
+  if (ECCold != radio.rds.ECC) {
+    if (advancedRDS) {
+      if (!screenmute) {
+        if (radio.rds.hasECC) ECCString = (radio.rds.ECCtext.length() == 0 ? textUI(73) : radio.rds.ECCtext); else ECCString = "N/A";
+        if (ECCString != ECColdString) {
+          tftPrint(ALEFT, "N/A", 35, 199, BackgroundColor, BackgroundColor, 16);
+          tftPrint(ALEFT, ECColdString, 35, 199, BackgroundColor, BackgroundColor, 16);
         }
-      } else {
-        xPos2--;
-        aftickerhold = millis();
+        tftPrint(ALEFT, ECCString, 35, 199, RDSColor, RDSColorSmooth, 16);
       }
-      RDSSprite.fillSprite(BackgroundColor);
-      if (RDSstatus) RDSSprite.setTextColor(RDSColor, RDSColorSmooth, false); else RDSSprite.setTextColor(RDSDropoutColor, RDSDropoutColorSmooth, false);
-      RDSSprite.drawString(afstring, xPos2, 2);
-      RDSSprite.drawString(afstring, xPos2 + afstringWidth, 2);
-      RDSSprite.pushSprite(35, 197);
-      afticker = millis();
+      ECColdString = ECCString;
     }
+
+    if (wifi) {
+      Udp.beginPacket(remoteip, 9030);
+      Udp.print("from=TEF_tuner_" + String(stationlistid, DEC) + ";ECC=");
+      if (radio.rds.ECC < 0x10) Udp.print("0");
+      Udp.print(String(radio.rds.ECC, HEX));
+      Udp.endPacket();
+    }
+    ECCold = radio.rds.ECC;
   }
 
   String eonstring;
@@ -229,31 +218,6 @@ void doAF() {
   }
 }
 
-void showECC() {
-  if (ECCold != radio.rds.ECC) {
-    if (advancedRDS) {
-      if (!screenmute) {
-        if (radio.rds.hasECC) ECCString = (radio.rds.ECCtext.length() == 0 ? textUI(73) : radio.rds.ECCtext); else ECCString = "N/A";
-        if (ECCString != ECColdString) {
-          tftPrint(ALEFT, "N/A", 242, 199, BackgroundColor, BackgroundColor, 16);
-          tftPrint(ALEFT, ECColdString, 242, 199, BackgroundColor, BackgroundColor, 16);
-        }
-        tftPrint(ALEFT, ECCString, 242, 199, RDSColor, RDSColorSmooth, 16);
-      }
-      ECColdString = ECCString;
-    }
-
-    if (wifi) {
-      Udp.beginPacket(remoteip, 9030);
-      Udp.print("from=TEF_tuner_" + String(stationlistid, DEC) + ";ECC=");
-      if (radio.rds.ECC < 0x10) Udp.print("0");
-      Udp.print(String(radio.rds.ECC, HEX));
-      Udp.endPacket();
-    }
-    ECCold = radio.rds.ECC;
-  }
-}
-
 void readRds() {
   if (band >= BAND_GAP) return;
 
@@ -261,10 +225,8 @@ void readRds() {
   RDSstatus = radio.rds.hasRDS;
   ShowRDSLogo(RDSstatus);
 
-  // Handle RDS dropout / recovery only when screen is active
   if (!screenmute && !afscreen) {
     if (!RDSstatus) {
-      // --- RDS dropout (lost signal) ---
       if (radio.rds.correctPI != 0 && !dropout) {
         if (!rdsstatscreen) {
           if (radio.rds.region == 0) tftPrint(ACENTER, PIold, 275, advancedRDS ? 75 : 187, RDSDropoutColor, RDSDropoutColorSmooth, 28);
@@ -334,9 +296,8 @@ void readRds() {
     }
   }
 
-  // --- Data output for RDS Spy / XDRGTK ---
   if (bitRead(radio.rds.rdsStat, 9)) {
-    char hexbuf[5];  // buffer for 4-digit HEX
+    char hexbuf[5];
 
     // RDS Spy output
     if (RDSstatus && (RDSSPYUSB || RDSSPYTCP)) {

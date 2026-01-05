@@ -142,7 +142,6 @@ extern TFT_eSprite PSSprite;
 
 void ShowAdvancedRDS();
 void readRds();
-void showECC();
 void doAF();
 void showPI();
 void showPTY();
