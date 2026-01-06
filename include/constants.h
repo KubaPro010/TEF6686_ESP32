@@ -1,3 +1,5 @@
+#pragma once
+
 #define VERSION "v2.20.5b"
 
 #define REVERSE                     false

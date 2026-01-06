@@ -1,5 +1,4 @@
-#ifndef RDS_PI_BUFFER_H
-#define RDS_PI_BUFFER_H
+#pragma once
 
 #include <stdint.h>
 
@@ -26,5 +25,3 @@ private:
 
     State getState(uint16_t value);
 };
-
-#endif

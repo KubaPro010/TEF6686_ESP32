@@ -1,5 +1,4 @@
-#ifndef COMMS_H
-#define COMMS_H
+#pragma once
 
 #include <Arduino.h>
 #include <TFT_eSPI.h>
@@ -162,4 +161,3 @@ extern void TuneDown();
 extern void ShowTuneMode();
 extern const char* textUI(uint16_t number);
 extern void saveData();
-#endif

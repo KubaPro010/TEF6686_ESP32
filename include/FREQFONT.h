@@ -1,3 +1,4 @@
+#pragma once
 #include <pgmspace.h>
 
 const uint8_t FREQFONT0[] PROGMEM = { // Classic

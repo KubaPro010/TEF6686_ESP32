@@ -1,5 +1,4 @@
-#ifndef GUI_H
-#define GUI_H
+#pragma once
 
 #include <Arduino.h>
 #include <TFT_eSPI.h>
@@ -264,4 +263,3 @@ extern uint8_t doAutoMemory(uint16_t startfreq, uint16_t stopfreq, uint8_t start
 extern void ClearMemoryRange(uint8_t start, uint8_t stop);
 extern bool handleCreateNewLogbook();
 extern const char* textUI(uint16_t number);
-#endif

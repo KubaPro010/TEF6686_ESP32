@@ -1,3 +1,4 @@
+#pragma once
 #include <pgmspace.h>
 
 const uint8_t FONT28_CHS[] PROGMEM = {
