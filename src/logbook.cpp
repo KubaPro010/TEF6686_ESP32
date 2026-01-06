@@ -320,7 +320,6 @@ bool isDST(time_t t) {
   }
 
   if (month > 3 && month < 10) return true;
-
   return false;
 }
 
@@ -390,9 +389,7 @@ void sendUDPlog() {
 
   String AF = "";
   if (radio.rds.hasAF && radio.af_counter > 0) {
-    for (byte i = 0; i < radio.af_counter; i++) {
-      AF += String(radio.af[i].frequency / 100) + "." + String((radio.af[i].frequency % 100) / 10) + (i == radio.af_counter - 1 ? "" : ";");
-    }
+    for (byte i = 0; i < radio.af_counter; i++) AF += String(radio.af[i].frequency / 100) + "." + String((radio.af[i].frequency % 100) / 10) + (i == radio.af_counter - 1 ? "" : ";");
   }
 
   String EON = "";
@@ -419,24 +416,12 @@ void sendUDPlog() {
   if (radio.rds.hasRTplus) RTPLUS += radio.rds.RTContent1 + ";" + radio.rds.RTContent2;
 
   // Construct the data row to send via UDP
-  String row = CHIP + "," +
-               VERSION + "," +
-               String(scandxmode) + "," +
-               currentDateTime + "," +
-               frequencyFormatted + "," +
-               String(radio.rds.picode).substring(0, 4) + "," +
-               signal + "," +
-               String(radio.getStereoStatus()) + "," +
-               String(radio.rds.hasTA) + "," +
-               String(radio.rds.TP) + "," +
-               String(radio.rds.hasTMC) + "," +
-               String(radio.rds.PTY) + "," +
-               ECC + "," +
-               stationName + "," +
-               radioTextModified + "," +
-               AF + "," +
-               EON + "," +
-               RTPLUS + "\n";
+  String row = CHIP + "," + VERSION + "," + String(scandxmode) + "," +
+               currentDateTime + "," + frequencyFormatted + "," + String(radio.rds.picode).substring(0, 4) + "," +
+               signal + "," + String(radio.getStereoStatus()) + "," + String(radio.rds.hasTA) + "," +
+               String(radio.rds.TP) + "," + String(radio.rds.hasTMC) + "," + String(radio.rds.PTY) + "," +
+               ECC + "," + stationName + "," + radioTextModified + "," +
+               AF + "," + EON + "," + RTPLUS + "\n";
 
   // Send the data via UDP if it's new
   if (UDPlogold != row) {
