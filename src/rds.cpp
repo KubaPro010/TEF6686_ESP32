@@ -1,6 +1,7 @@
 #include "rds.h"
 #include "constants.h"
 #include <TimeLib.h>
+#include "utils.h"
 
 String HexStringold;
 float smoothBER = 0;
@@ -551,7 +552,7 @@ void showPS() {
         }
 
         // Handle scrolling logic for long PS
-        if (PSSprite.textWidth(radio.trimTrailingSpaces(radio.rds.stationNameLong)) < 150) {
+        if (PSSprite.textWidth(trimTrailingSpaces(radio.rds.stationNameLong)) < 150) {
           xPos5 = 0;
           PSSprite.fillSprite(BackgroundColor);
           PSSprite.setTextColor(RDSstatus ? RDSColor : RDSDropoutColor, RDSstatus ? RDSColorSmooth : RDSDropoutColorSmooth, false);
@@ -703,7 +704,7 @@ void showRadioText() {
     if (radio.rds.hasRT &&
         (radio.rds.stationText.length() > 0 || radio.rds.stationText32.length() > 0)) {
 
-      if (RDSSprite.textWidth(radio.trimTrailingSpaces(RTString)) < 270) {
+      if (RDSSprite.textWidth(trimTrailingSpaces(RTString)) < 270) {
         xPos = 0;
         FullLineSprite.fillSprite(BackgroundColor);
         FullLineSprite.setTextDatum(TL_DATUM);
@@ -958,7 +959,7 @@ void ShowAFEON() {
       }
     }
 
-    if (FullLineSprite.textWidth(radio.trimTrailingSpaces(AIDString)) < 270) {
+    if (FullLineSprite.textWidth(trimTrailingSpaces(AIDString)) < 270) {
       xPos = 0;
       FullLineSprite.fillSprite(BackgroundColor);
       FullLineSprite.setTextColor(ActiveColor, ActiveColorSmooth, false);

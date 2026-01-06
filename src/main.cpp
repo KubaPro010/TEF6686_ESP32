@@ -1244,7 +1244,7 @@ void loop() {
     }
 
     if (!scanholdflag) delay(100);
-    radio.getStatus(SStatus, USN, WAM, OStatus, BW, MStatus, CN);
+    radio.getStatus(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus, &CN);
 
     if (!initdxscan) {
       switch (scancancel) {
@@ -1446,8 +1446,8 @@ void loop() {
     if (millis() >= lowsignaltimer + 300) {
       lowsignaltimer = millis();
       if (af || (!screenmute || (screenmute && (XDRGTKTCP || XDRGTKUSB)))) {
-        if (band < BAND_GAP) radio.getStatus(SStatus, USN, WAM, OStatus, BW, MStatus, CN);
-        else radio.getStatusAM(SStatus, USN, WAM, OStatus, BW, MStatus, CN);
+        if (band < BAND_GAP) radio.getStatus(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus, &CN);
+        else radio.getStatusAM(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus, &CN);
       }
       if (!BWtune && !menu) {
         doSquelch();
@@ -1457,8 +1457,8 @@ void loop() {
 
   } else {
     if (af || (!screenmute || (screenmute && (XDRGTKTCP || XDRGTKUSB)))) {
-      if (band < BAND_GAP) radio.getStatus(SStatus, USN, WAM, OStatus, BW, MStatus, CN);
-      else radio.getStatusAM(SStatus, USN, WAM, OStatus, BW, MStatus, CN);
+      if (band < BAND_GAP) radio.getStatus(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus, &CN);
+      else radio.getStatusAM(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus, &CN);
     }
     if (!BWtune && !menu) {
       doSquelch();
@@ -3892,7 +3892,7 @@ void Seek(bool mode) {
   }
 
   if (band < BAND_GAP) {
-    radio.getStatus(SStatus, USN, WAM, OStatus, BW, MStatus, CN);
+    radio.getStatus(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus, &CN);
     if ((USN < fmscansens * 30) && (WAM < 230) && (OStatus < 80 && OStatus > -80) && (!usesquelch || (Squelch < SStatus || Squelch == 920))) {
       seek = false;
       radio.setUnMute();
@@ -3904,7 +3904,7 @@ void Seek(bool mode) {
       if (RDSSPYTCP) RemoteClient.print("G:\r\nRESET-------\r\n\r\n");
     }
   } else {
-    radio.getStatusAM(SStatus, USN, WAM, OStatus, BW, MStatus, CN);
+    radio.getStatusAM(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus, &CN);
     if ((USN < amscansens * 30) && (OStatus < 2 && OStatus > -2) && (!usesquelch || (Squelch < SStatus || Squelch == 920))) {
       seek = false;
       radio.setUnMute();
@@ -4482,9 +4482,7 @@ uint8_t doAutoMemory(uint16_t startfreq, uint16_t stopfreq, uint8_t startmem, ui
   tftPrint(ARIGHT, textUI(272), 120, 155, ActiveColor, ActiveColorSmooth, 16);
 
   for (frequency = startfreq * 10; frequency <= stopfreq * 10; frequency += 10) {
-    if (stopScanning) {
-      break;
-    }
+    if (stopScanning) break;
 
     currentIteration++;
     percent = (currentIteration * 100) / totalIterations;
@@ -4492,7 +4490,7 @@ uint8_t doAutoMemory(uint16_t startfreq, uint16_t stopfreq, uint8_t startmem, ui
     radio.SetFreq(frequency);
     radio.clearRDS(fullsearchrds);
     delay(50);
-    radio.getStatus(SStatus, USN, WAM, OStatus, BW, MStatus, CN);
+    radio.getStatus(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus, &CN);
     if ((USN < fmscansens * 30) && (WAM < 230) && (OStatus < 80 && OStatus > -80)) {
       for (byte y = 0; y < 20; y++) {
         delay(50);

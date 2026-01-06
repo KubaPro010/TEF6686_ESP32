@@ -9,7 +9,7 @@ void Communication() {
     if (wifi) {
       int packetSize = Udp.parsePacket();
       if (packetSize > 0) {
-        char packetBuffer[packetSize + 1];  // +1 for null getStatus
+        char packetBuffer[packetSize + 1];
         Udp.read(packetBuffer, packetSize);
         packetBuffer[packetSize] = '\0';  // Ensure valid string
         Udp.endPacket();
@@ -815,7 +815,7 @@ void XDRGTKRoutine() {
               delay(5);
               DataPrint(String(freq_scan * 10, DEC));
               DataPrint(" = ");
-              if (band < BAND_GAP) radio.getStatus(SStatus, USN, WAM, OStatus, BW, MStatus, CN); else  radio.getStatusAM(SStatus, USN, WAM, OStatus, BW, MStatus, CN);
+              if (band < BAND_GAP) radio.getStatus(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus, &CN); else  radio.getStatusAM(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus, &CN);
               DataPrint(String((SStatus / 10) + 10, DEC));
               DataPrint(", ");
             }

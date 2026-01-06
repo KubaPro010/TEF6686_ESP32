@@ -539,8 +539,8 @@ class TEF6686 {
     void SetFreq(uint16_t frequency);
     void SetFreqAM(uint16_t frequency);
     void getProcessing(uint16_t &highcut, uint16_t &stereo, uint16_t &sthiblend, uint8_t &stband_1, uint8_t &stband_2, uint8_t &stband_3, uint8_t &stband_4);
-    void getStatus(int16_t &level, uint16_t &USN, uint16_t &WAM, int16_t &offset, uint16_t &bandwidth, uint16_t &modulation, int8_t &snr);
-    void getStatusAM(int16_t &level, uint16_t &noise, uint16_t &cochannel, int16_t &offset, uint16_t &bandwidth, uint16_t &modulation, int8_t &snr);
+    void getStatus(int16_t *level, uint16_t *USN, uint16_t *WAM, int16_t *offset, uint16_t *bandwidth, uint16_t *modulation, int8_t *snr);
+    void getStatusAM(int16_t *level, uint16_t *noise, uint16_t *cochannel, int16_t *offset, uint16_t *bandwidth, uint16_t *modulation, int8_t *snr);
     void getIdentification(uint16_t *device, uint16_t *hw_version, uint16_t *sw_version);
     void setSoftmuteFM(uint8_t mode);
     void setSoftmuteAM(uint8_t mode);
@@ -579,7 +579,6 @@ class TEF6686 {
     void tone(uint16_t time, int16_t amplitude, uint16_t frequency);
     void extendBW(bool yesno);
     uint16_t getBlockA(void);
-    String trimTrailingSpaces(String str);
     uint8_t af_counter;
     uint8_t eon_counter;
     uint8_t logbook_counter;
@@ -593,9 +592,6 @@ class TEF6686 {
 
   private:
     void RDScharConverter(const char* input, wchar_t* output, size_t size, bool under);
-    String convertToUTF8(const wchar_t* input);
-    String extractUTF8Substring(const String& utf8String, size_t start, size_t length, bool under);
-    String ucs2ToUtf8(const char* ucs2Input);
     bool isFixedCallsign(uint16_t stationID, char* stationIDStr);
     String PSLongtext;
     char ps_buffer[9];
