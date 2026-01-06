@@ -1035,8 +1035,8 @@ void setup() {
   if (TEF != 102 && TEF != 205) SetTunerPatch();
 
   radio.init(TEF);
-  uint16_t device, hw, sw;
 
+  uint16_t device, hw, sw;
   radio.getIdentification(&device, &hw, &sw);
   if (TEF != (highByte(hw) * 100 + highByte(sw))) SetTunerPatch();
 
@@ -1088,7 +1088,7 @@ void setup() {
     Udp.stop();
     tft.fillRect(184, 230, 16, 6, SignificantColor);
   }
-  delay(1500);
+  delay(1000);
 
   radio.setVolume(VolSet);
   radio.setOffset(LevelOffset);
@@ -1389,11 +1389,8 @@ void loop() {
         tftPrint(ALEFT, "100", 160, 144, ActiveColor, ActiveColorSmooth, 16);
         tftPrint(ACENTER, "A", 7, 128, ActiveColor, ActiveColorSmooth, 16);
         for (byte segments = 0; segments < 94; segments++) {
-          if (segments > 54) {
-            if (((segments - 53) % 10) == 0) tft.fillRect(16 + (2 * segments), 141, 2, 2, BarSignificantColor);
-          } else {
-            if (((segments + 1) % 6) == 0) tft.fillRect(16 + (2 * segments), 141, 2, 2, ModBarInsignificantColor);
-          }
+          if (segments > 54 && (((segments - 53) % 10) == 0)) tft.fillRect(16 + (2 * segments), 141, 2, 2, BarSignificantColor);
+          else if(((segments + 1) % 6) == 0) tft.fillRect(16 + (2 * segments), 141, 2, 2, ModBarInsignificantColor);
         }
       }
       if (radio.rds.region == 0) tftPrint(ALEFT, "PI", 212, 193, ActiveColor, ActiveColorSmooth, 16);
@@ -2654,14 +2651,12 @@ void KeyUp() {
           case TUNE_MAN:
             TuneUp();
             break;
-
           case TUNE_AUTO:
             direction = true;
             seek = true;
             seekinit = true;
             Seek(direction);
             break;
-
           case TUNE_MEM:
             memorypos++;
             if (memorypos > EE_PRESETS_CNT - 1) memorypos = 0;
@@ -2816,7 +2811,6 @@ void DoMemoryPosTune() {
 #endif
   radio.clearRDS(fullsearchrds);
 
-  // Process empty stations
   if (IsStationEmpty()) {
     memoryposstatus = MEM_DARK;
     return;
@@ -3725,9 +3719,9 @@ void TuneUp() {
     }
   }
   if (stepsize == 1) temp = 1;
-  if (stepsize == 2) temp = 10;
-  if (stepsize == 3) temp = 100;
-  if (stepsize == 4) temp = 1000;
+  else if (stepsize == 2) temp = 10;
+  else if (stepsize == 3) temp = 100;
+  else if (stepsize == 4) temp = 1000;
   if (rotaryaccelerate && rotarycounter > 2) temp *= 2;
 
   if (band == BAND_FM) {
@@ -3817,9 +3811,9 @@ void TuneDown() {
     }
   }
   if (stepsize == 1) temp = 1;
-  if (stepsize == 2) temp = 10;
-  if (stepsize == 3) temp = 100;
-  if (stepsize == 4) temp = 1000;
+  else if (stepsize == 2) temp = 10;
+  else if (stepsize == 3) temp = 100;
+  else if (stepsize == 4) temp = 1000;
   if (rotaryaccelerate && rotarycounter > 2) temp *= 2;
 
   if (band == BAND_FM) {
@@ -3919,12 +3913,10 @@ void read_encoder() {
     if (millis() - rotarytimer >= 15) {
       rotarycounteraccelerator = 2;  // Steady fast
       rotarycounter = 0;
-    }
-    if (millis() - rotarytimer >= 30) {
+    } else if (millis() - rotarytimer >= 30) {
       rotarycounteraccelerator = 4;
       rotarycounter = 0;
-    }
-    if (millis() - rotarytimer >= 45) {
+    } else if (millis() - rotarytimer >= 45) {
       rotarycounteraccelerator = 6;  // Quick flicks
       rotarycounter = 0;
     }
@@ -3999,7 +3991,7 @@ void MuteScreen(bool setting) {
 
 void DefaultSettings() {
   EEPROM.writeByte(EE_BYTE_CHECKBYTE, EE_CHECKBYTE_VALUE);
-  EEPROM.writeUInt(EE_UINT16_FREQUENCY_FM, 10000);
+  EEPROM.writeUInt(EE_UINT16_FREQUENCY_FM, 9500);
   EEPROM.writeUInt(EE_UINT16_FREQUENCY_OIRT, FREQ_FM_OIRT_START);
   EEPROM.writeByte(EE_BYTE_VOLSET, 0);
   EEPROM.writeUInt(EE_UINT16_CONVERTERSET, 0);
@@ -4143,10 +4135,10 @@ void tftReplace(int8_t offset, const String & textold, const String & text, int1
   const uint8_t *selectedFont = nullptr;
   if (language == LANGUAGE_CHS) {
     if (fontsize == 16) selectedFont = FONT16_CHS;
-    if (fontsize == 28) selectedFont = FONT28_CHS;
+    else if (fontsize == 28) selectedFont = FONT28_CHS;
   } else {
     if (fontsize == 16) selectedFont = FONT16;
-    if (fontsize == 28) selectedFont = FONT28;
+    else if (fontsize == 28) selectedFont = FONT28;
   }
   if (fontsize == 48) selectedFont = FONT48;
 
@@ -4179,10 +4171,10 @@ void tftPrint(int8_t offset, const String & text, int16_t x, int16_t y, int colo
   const uint8_t *selectedFont = nullptr;
   if (language == LANGUAGE_CHS) {
     if (fontsize == 16) selectedFont = FONT16_CHS;
-    if (fontsize == 28) selectedFont = FONT28_CHS;
+    else if (fontsize == 28) selectedFont = FONT28_CHS;
   } else {
     if (fontsize == 16) selectedFont = FONT16;
-    if (fontsize == 28) selectedFont = FONT28;
+    else if (fontsize == 28) selectedFont = FONT28;
   }
 
   if (fontsize == 48) selectedFont = FONT48;
@@ -4224,7 +4216,6 @@ void UpdateFonts(byte mode) {
         OneBigLineSprite.loadFont(FONT28);
       }
       break;
-
     case 1:
       FullLineSprite.unloadFont();
       OneBigLineSprite.unloadFont();

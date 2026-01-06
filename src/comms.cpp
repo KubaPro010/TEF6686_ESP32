@@ -11,7 +11,7 @@ void Communication() {
       if (packetSize > 0) {
         char packetBuffer[packetSize + 1];
         Udp.read(packetBuffer, packetSize);
-        packetBuffer[packetSize] = '\0';  // Ensure valid string
+        packetBuffer[packetSize] = '\0';
         Udp.endPacket();
 
         String packet = String(packetBuffer);
@@ -28,23 +28,24 @@ void Communication() {
           char command = packet.charAt(1);
           switch (command) {
             case 'U':
-            case 'D':
+            case 'D': {
               tunemode = TUNE_MAN;
               ShowTuneMode();
               if (command == 'U') TuneUp(); else TuneDown();
               ShowFreq(0);
               break;
+            }
 
             case '>':
-            case '<':
+            case '<': {
               if (command == '>') direction = true; else direction = false;
               Seek(direction);
               ShowFreq(0);
               break;
+            }
 
-            case 'T':
-              uint16_t freqtemp;
-              freqtemp = packet.substring(2).toInt();
+            case 'T': {
+              uint16_t freqtemp = packet.substring(2).toInt();
               if (BAND_FM) freqtemp -= ConverterSet * 1000;
               if (seek) seek = false;
               radio.clearRDS(fullsearchrds);
@@ -74,11 +75,12 @@ void Communication() {
               }
               ShowFreq(0);
               break;
+            }
 
-            case 'S': if (!scandxmode) startFMDXScan(); break;
-            case 'E': if (scandxmode) cancelDXScan(); break;
+            case 'S': {if (!scandxmode) startFMDXScan(); break;}
+            case 'E': {if (scandxmode) cancelDXScan(); break;}
 
-            case 'R': radio.clearRDS(fullsearchrds); break;
+            case 'R': {radio.clearRDS(fullsearchrds); break;}
           }
           return;
         }
@@ -168,8 +170,6 @@ void Communication() {
         passwordcrypt();
         RemoteClient.print(saltkey + "\n");
       }
-    } else {
-      if (Server.hasClient()) Server.available().stop();
     }
 
     if (wificonnected && !RemoteClient.connected()) {
@@ -195,9 +195,7 @@ void Communication() {
           RemoteClient.print("o1,0\n");
           RemoteClient.print("G" + String(!EQset) + String(!iMSset) + "\n");
           store = true;
-        } else {
-          RemoteClient.print("a0\n");
-        }
+        } else RemoteClient.print("a0\n");
       }
     }
 

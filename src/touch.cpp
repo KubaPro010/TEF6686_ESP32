@@ -14,8 +14,8 @@ void doTouchEvent(uint16_t x, uint16_t y) {
         ModeButtonPress();
         return;
       }
-      if (menuopen) {                                                     // Menu navigation
-        if (x > 18 && x < 78 && y > 150 && y < 190) KeyDown();            // ---------------
+      if (menuopen) {
+        if (x > 18 && x < 78 && y > 150 && y < 190) KeyDown();
         if (x > 240 && x < 300 && y > 150 && y < 190) KeyUp();
         if ((x > 240 && x < 300 && y > 40 && y < 80) || (x > 130 && x < 190 && y > 150 && y < 190)) {
           touchrepeat = false;
@@ -93,18 +93,18 @@ void doTouchEvent(uint16_t x, uint16_t y) {
       }
     }
 
-    if (!menu && !BWtune) {                                               // All pages except menu
-      if (x > 30 && x < 65 && y > 0 && y < 30 && band < BAND_GAP) {       // ---------------------
-        doStereoToggle();                                                 // Stereo toggle
+    if (!menu && !BWtune) {
+      if (x > 30 && x < 65 && y > 0 && y < 30 && band < BAND_GAP) {
+        doStereoToggle();
         return;
       } else if (x > 155 && x < 250 && y > 0 && y < 30) {
-        BuildBWSelector();                                                // Set bandwidth
+        BuildBWSelector();
         BWtune = true;
         return;
       }
     }
 
-    if (BWtune) {                                                         // BW menu
+    if (BWtune) {
       if (y > 35 && y < 65) {
         if (x > 7 && x < 77) BWtemp = 1;
         if (x > 87 && x < 157) BWtemp = 2;
@@ -177,26 +177,26 @@ void doTouchEvent(uint16_t x, uint16_t y) {
       return;
     }
 
-    if (!BWtune && !menu && !advancedRDS && !seek && !afscreen) {         // Normal radio mode
-      if (x > 0 && x < 320 && y > 180 && y < 240 && band < BAND_GAP) {    // -----------------
+    if (!BWtune && !menu && !advancedRDS && !seek && !afscreen) {        
+      if (x > 0 && x < 320 && y > 180 && y < 240 && band < BAND_GAP) {  
         leave = true;
-        BuildAdvancedRDS();                                               // Switch to Advanced RDS View
+        BuildAdvancedRDS();                                             
         return;
       } else if (x > 60 && x < 240 && y > 40 && y < 100) {
-        doBandToggle();                                                   // Toggle bands
+        doBandToggle();                                               
         return;
       } else if (x > 0 && x < 30 && y > 25 && y < 90) {
-        doTuneMode();                                                     // Toggle tune mode
+        doTuneMode();                                                  
         return;
       } else if (x > 250 && x < 320 && y > 50 && y < 80) {
-        toggleiMSEQ();                                                    // Toggle iMQ/EQ
+        toggleiMSEQ();                                             
       }
     }
 
-    if (!BWtune && !menu && advancedRDS && !seek && !afscreen) {          // Advanced RDS mode
-      if (x > 0 && x < 320 && y > 120 && y < 170) {                       // -----------------
+    if (!BWtune && !menu && advancedRDS && !seek && !afscreen) {        
+      if (x > 0 && x < 320 && y > 120 && y < 170) {                        
         leave = true;
-        BuildDisplay();                                                   // Switch to normal radio view
+        BuildDisplay();                                        
         SelectBand();
         return;
       } else if (x > 0 && x < 320 && y > 180 && y < 240) {
