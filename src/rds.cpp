@@ -5,7 +5,7 @@
 String HexStringold;
 float smoothBER = 0;
 
-int RadiotextWidth, PSLongWidth, AIDWidth, afstringWidth, eonstringWidth, rtplusstringWidth, lengths[7];
+int RadiotextWidth, PSLongWidth, AIDWidth, afstringWidth, eccstringWidth, eonstringWidth, rtplusstringWidth, lengths[7];
 String afstringold, eonstringold, rtplusstringold, stationNameLongOld, AIDStringold;
 bool rtABold, ps12errorold, ps34errorold, ps56errorold, ps78errorold;
 
@@ -57,17 +57,42 @@ void ShowAdvancedRDS() {
   }
 
   if (ECCold != radio.rds.ECC) {
-    if (advancedRDS) {
-      if (!screenmute) {
-        if (radio.rds.hasECC) ECCString = (radio.rds.ECCtext.length() == 0 ? textUI(73) : radio.rds.ECCtext); else ECCString = "N/A";
-        if (ECCString != ECColdString) {
-          tftPrint(ALEFT, "N/A", 35, 199, BackgroundColor, BackgroundColor, 16);
-          tftPrint(ALEFT, ECColdString, 35, 199, BackgroundColor, BackgroundColor, 16);
-        }
-        tftPrint(ALEFT, ECCString, 35, 199, RDSColor, RDSColorSmooth, 16);
+    if (!screenmute) {
+      if (radio.rds.hasECC) ECCString = (radio.rds.ECCtext.length() == 0 ? textUI(73) : radio.rds.ECCtext); else ECCString = "N/A";
+      if (ECCString != ECColdString) {
+        tftPrint(ALEFT, "N/A", 35, 199, BackgroundColor, BackgroundColor, 16);
+        tftPrint(ALEFT, ECColdString, 35, 199, BackgroundColor, BackgroundColor, 16);
+        eccstringWidth = RDSSprite.textWidth(ECCString);
       }
-      ECColdString = ECCString;
+
+      if (eccstringWidth < 270) {
+        xPos6 = 0;
+        RDSSprite.fillSprite(BackgroundColor);
+        if (RDSstatus) RDSSprite.setTextColor(RDSColor, RDSColorSmooth, false); else RDSSprite.setTextColor(RDSDropoutColor, RDSDropoutColorSmooth, false);
+        RDSSprite.drawString(ECCString, xPos6, 2);
+        RDSSprite.pushSprite(35, 199);
+      } else {
+        if (millis() - eccticker >= 5) {
+          if (xPos6 < -eccstringWidth) xPos6 = 0;
+          if (xPos6 == 0) {
+            if (millis() - ecctickerhold >= 2000) {
+              xPos6--;
+              ecctickerhold = millis();
+            }
+          } else {
+            xPos6--;
+            ecctickerhold = millis();
+          }
+          RDSSprite.fillSprite(BackgroundColor);
+          if (RDSstatus) RDSSprite.setTextColor(RDSColor, RDSColorSmooth, false); else RDSSprite.setTextColor(RDSDropoutColor, RDSDropoutColorSmooth, false);
+          RDSSprite.drawString(ECCString, xPos6, 2);
+          RDSSprite.drawString(ECCString, xPos6 + eccstringWidth, 2);
+          RDSSprite.pushSprite(35, 199);
+          eccticker = millis();
+        }
+      }
     }
+    ECColdString = ECCString;
 
     if (wifi) {
       Udp.beginPacket(remoteip, 9030);
@@ -1023,11 +1048,11 @@ void ShowRDSStatistics() {
     String HexString;
     HexString = String(((radio.rds.rdsA >> 12) & 0xF), HEX) + String(((radio.rds.rdsA >> 8)  & 0xF), HEX) + String(((radio.rds.rdsA >> 4)  & 0xF), HEX) + String((radio.rds.rdsA & 0xF), HEX);
     HexString += " ";
-    HexString = String(((radio.rds.rdsB >> 12) & 0xF), HEX) + String(((radio.rds.rdsB >> 8)  & 0xF), HEX) + String(((radio.rds.rdsB >> 4)  & 0xF), HEX) + String((radio.rds.rdsB & 0xF), HEX);
+    HexString += String(((radio.rds.rdsB >> 12) & 0xF), HEX) + String(((radio.rds.rdsB >> 8)  & 0xF), HEX) + String(((radio.rds.rdsB >> 4)  & 0xF), HEX) + String((radio.rds.rdsB & 0xF), HEX);
     HexString += " ";
-    HexString = String(((radio.rds.rdsC >> 12) & 0xF), HEX) + String(((radio.rds.rdsC >> 8)  & 0xF), HEX) + String(((radio.rds.rdsC >> 4)  & 0xF), HEX) + String((radio.rds.rdsC & 0xF), HEX);
+    HexString += String(((radio.rds.rdsC >> 12) & 0xF), HEX) + String(((radio.rds.rdsC >> 8)  & 0xF), HEX) + String(((radio.rds.rdsC >> 4)  & 0xF), HEX) + String((radio.rds.rdsC & 0xF), HEX);
     HexString += " ";
-    HexString = String(((radio.rds.rdsD >> 12) & 0xF), HEX) + String(((radio.rds.rdsD >> 8)  & 0xF), HEX) + String(((radio.rds.rdsD >> 4)  & 0xF), HEX) + String((radio.rds.rdsD & 0xF), HEX);
+    HexString += String(((radio.rds.rdsD >> 12) & 0xF), HEX) + String(((radio.rds.rdsD >> 8)  & 0xF), HEX) + String(((radio.rds.rdsD >> 4)  & 0xF), HEX) + String((radio.rds.rdsD & 0xF), HEX);
 
     HexString.toUpperCase();
 

@@ -759,7 +759,7 @@ static const char* const myLanguage[22][301] PROGMEM = {
     "Częstotliwość", // 149
     "Strona domowa", // 150
     "Podkanał", // 151
-    "Gorąca linia", // 152
+    "Infolinia", // 152
     "Telefon do studia", // 153
     "Telefon", // 154
     "SMS do studia", // 155

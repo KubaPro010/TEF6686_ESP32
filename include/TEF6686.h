@@ -142,196 +142,196 @@ static const char* const ECCtext[] {
   "Republic of Latvia", // 36
   "Republic of Slovenia", // 37
   "Federal Republic of Austria", // 38
-  // TODO after this
-  "Gibraltar", // 39
-  "Iceland", // 40
-  "Lebanon", // 41
+  "United Kingdom of Great Britain and Northern Ireland (Gibraltar)", // 39
+  "Republic of Iceland", // 40
+  "Republic of Lebanon", // 41
   "Hungary", // 42
-  "Iraq", // 43
-  "Monaco", // 44
-  "Malta", // 45
-  "U.K.", // 46
-  "Lithuania", // 47
-  "Croatia", // 48
+  "Republic of Iraq", // 43
+  "Principality of Monaco", // 44
+  "Republic of Malta", // 45
+  "United Kingdom of Great Britain and Northern Ireland", // 46
+  "Republic of Lithuania", // 47
+  "Republic of Croatia", // 48
   "Libya", // 49
-  "Canaries", // 50
+  "Kingdom of Spain (Canary Islands)", // 50
   "Romania", // 51
-  "Spain", // 52
-  "Sweden", // 53
-  "Egypt", // 54
-  "France", // 55
-  "Norway", // 56
-  "Belarus", // 57
-  "Bosnia H.", // 58
-  "Monteneg.", // 59
-  "Armenia", // 60
-  "Azerbaijan", // 61
-  "Kosovo", // 62
-  "Kyrgystan", // 63
-  "Turkmenis.", // 64
-  "Tajikistan", // 65
-  "Uzbekistan", // 66
-  "Malawi", // 67
-  "Mali", // 68
-  "Mauritania", // 69
-  "Mauritius", // 70
+  "Kingdom of Spain", // 52
+  "Kingdom of Sweden", // 53
+  "Arab Republic of Egypt", // 54
+  "Republic of France", // 55
+  "Kingdom of Norway", // 56
+  "Republic of Belarus", // 57
+  "Bosnia and Herzegovina", // 58
+  "Montenegro", // 59
+  "Republic of Armenia", // 60
+  "Republic of Azerbaijan", // 61
+  "Republic of Kosovo", // 62
+  "Kyrgyz Republic", // 63
+  "Turkmenistan", // 64
+  "Republic of Tajikistan", // 65
+  "Republic of Uzbekistan", // 66
+  "Republic of Malawi", // 67
+  "Republic of Mali", // 68
+  "Islamic Republic of Mauritania", // 69
+  "Republic of Mauritius", // 70
   "Mongolia", // 71
-  "Mozambiq.", // 72
-  "Namibia", // 73
-  "Niger", // 74
-  "Nigeria", // 75
-  "Oman", // 76
-  "Qatar", // 77
-  "Rwanda", // 78
-  "Sao Tome", // 79
-  "Saudi Ara.", // 80
-  "Senegal", // 81
-  "Seychel.", // 82
-  "S. Leone", // 83
-  "Somalia", // 84
-  "S. Africa", // 85
-  "S. Sudan", // 86
-  "Sudan", // 87
-  "Swaziland", // 88
-  "Tanzania", // 89
-  "Togo", // 90
-  "Uganda", // 91
-  "W. Sahara", // 92
-  "Yemen", // 93
-  "Zambia", // 94
-  "Zimbabwe", // 95
-  "Angola", // 96
-  "Ascn. Isl.", // 97
-  "Bahrein", // 98
-  "Benin", // 99
-  "Botswana", // 100
-  "Burkina F.", // 101
-  "Burundi", // 102
-  "Cabinda", // 103
-  "Cameroon", // 104
-  "Cape Ver.", // 105
-  "Centr. Af.", // 106
-  "Chad", // 107
-  "Comoros", // 108
-  "D. Congo", // 109
-  "Congo", // 110
-  "Cote d'l.", // 111
-  "Djibouti", // 112
-  "E. Guinea", // 113
-  "Eritrea", // 114
-  "Ethiopia", // 115
-  "Gabon", // 116
-  "Gambia", // 117
+  "Republic of Mozambique", // 72
+  "Republic of Namibia", // 73
+  "Republic of the Niger", // 74
+  "Federal Republic of Nigeria", // 75
+  "Sultanate of Oman", // 76
+  "State of Qatar", // 77
+  "Republic of Rwanda", // 78
+  "Democratic Republic of Sao Tome and Principe", // 79
+  "Kingdom of Saudi Arabia", // 80
+  "Republic of Senegal", // 81
+  "Republic of Seychelles", // 82
+  "Republic of Sierra Leone", // 83
+  "Federal Republic of Somalia", // 84
+  "Republic of South Africa", // 85
+  "Republic of South Sudan", // 86
+  "Republic of the Sudan", // 87
+  "Kingdom of Swaziland", // 88
+  "United Republic of Tanzania", // 89
+  "Republic of Togo", // 90
+  "Republic of Uganda", // 91
+  "Polisario Front / Kingdom of Morocco (Western Sahara)", // 92
+  "Republic of Yemen", // 93
+  "Republic of Zambia", // 94
+  "Republic of Zimbabwe", // 95
+  "Republic of Angola", // 96
+  "United Kingdom of Great Britain and Northern Ireland (Ascension Island)", // 97
+  "Kingdom of Bahrain", // 98
+  "Republic of Benin", // 99
+  "Republic of Botswana", // 100
+  "Burkina Faso", // 101
+  "Republic of Burundi", // 102
+  "Republic of Cabinda / Republic of Angola", // 103
+  "Republic of Cameroon", // 104
+  "Republic of Cabo Verde (Cape Verde)", // 105
+  "Central African Republic", // 106
+  "Republic of Chad", // 107
+  "Union of the Comoros", // 108
+  "Democratic Republic of the Congo", // 109
+  "Republic of the Congo", // 110
+  "Republic of Côte d'Ivoire (Ivory Coast)", // 111
+  "Republic of Djibouti", // 112
+  "Republic of Equatorial Guinea", // 113
+  "State of Eritrea", // 114
+  "Federal Democratic Republic of Ethiopia", // 115
+  "Gabonese Republic", // 116
+  "Islamic Republic of the Gambia", // 117
   "Georgia", // 118
-  "Ghana", // 119
-  "Guinea", // 120
-  "Guinea-B.", // 121
-  "Kazakh.", // 122
-  "Kenya", // 123
-  "Kuwait", // 124
-  "Lesotho", // 125
-  "Liberia", // 126
-  "Madagas.", // 127
-  "U.Arab.E.", // 128
-  "Anguilla", // 129
-  "Antigua.", // 130
-  "Argentina", // 131
-  "Aruba", // 132
+  "Republic of Ghana", // 119
+  "Republic of Guinea", // 120
+  "Republic of Guinea-Bissau", // 121
+  "Republic of Kazakhstan", // 122
+  "Republic of Kenya", // 123
+  "State of Kuwait", // 124
+  "Kingdom of Lesotho", // 125
+  "Republic of Liberia", // 126
+  "Republic of Madagascar", // 127
+  "United Arab Emirates", // 128
+  "United Kingdom of Great Britain and Northern Ireland (Anguilla)", // 129
+  "Antigua and Barbuda", // 130
+  "Republic of Argentina", // 131
+  "Kingdom of the Netherlands (Aruba)", // 132
   "Barbados", // 133
   "Belize", // 134
-  "Bermuda", // 135
-  "Bolivia", // 136
-  "Brazil", // 137
+  "United Kingdom of Great Britain and Northern Ireland (Bermuda)", // 135
+  "Plurinational State of Bolivia", // 136
+  "Federative Republic of Brazil", // 137
   "Canada", // 138
-  "Cayman I.", // 139
-  "Chile", // 140
-  "Colombia", // 141
-  "Costa R.", // 142
-  "Cuba", // 143
-  "Dominica", // 144
-  "Domini. R", // 145
-  "El Salvad.", // 146
-  "Equador", // 147
-  "Falkland", // 148
-  "Greenland", // 149
+  "United Kingdom of Great Britain and Northern Ireland (Cayman Islands)", // 139
+  "Republic of Chile", // 140
+  "Republic of Colombia", // 141
+  "Republic of Costa Rica", // 142
+  "Republic of Cuba", // 143
+  "Commonwealth of Dominica", // 144
+  "Dominican Republic", // 145
+  "Republic of El Salvador", // 146
+  "Republic of Ecuador", // 147
+  "United Kingdom of Great Britain and Northern Ireland (Falkland Islands)", // 148
+  "Kingdom of Denmark (Greenland)", // 149
   "Grenada", // 150
-  "Guadeloupe", // 151
-  "Guatemala", // 152
-  "Guyana", // 153
-  "Haiti", // 154
-  "Honduras", // 155
+  "Republic of France (Guadeloupe)", // 151
+  "Republic of Guatemala", // 152
+  "Republic of Guyana", // 153
+  "Republic of Haiti", // 154
+  "Republic of Honduras", // 155
   "Jamaica", // 156
-  "Martinique", // 157
-  "Mexico", // 158
-  "Montserrat", // 159
-  "Nether. A.", // 160
-  "Nicaragua", // 161
-  "Panama", // 162
-  "Paraguay", // 163
-  "Peru", // 164
-  "Puerto R.", // 165
-  "St. Kitts", // 166
-  "St. Lucia", // 167
-  "St. P.& M.", // 168
-  "St.Vincent", // 169
-  "Suriname", // 170
-  "T & T", // 171
-  "Turks & C.", // 172
-  "U.S.A.", // 173
-  "Uruguay", // 174
-  "Venezuela", // 175
-  "Virgin UK", // 176
-  "Virgin USA", // 177
-  "Afganist.", // 178
-  "Aus. ACT", // 179
-  "Aus. NSW", // 180
-  "Aus. VIC", // 181
-  "Aus. QLD", // 182
-  "Aus. SA", // 183
-  "Aus. WA", // 184
-  "Aus. TAS", // 185
-  "Aus. NT", // 186
-  "Bhutan", // 187
-  "Brunei D.", // 188
-  "Cambodia", // 189
-  "China", // 190
-  "Fiji", // 191
-  "Hong Kong", // 192
-  "India", // 193
-  "Indonesia", // 194
-  "Iran", // 195
+  "Republic of France (Martinique)", // 157
+  "United Mexican States", // 158
+  "United Kingdom of Great Britain and Northern Ireland (Montserrat)", // 159
+  "Netherlands Antilles (does not exist)", // 160
+  "Republic of Nicaragua", // 161
+  "Republic of Panama", // 162
+  "Republic of Paraguay", // 163
+  "Republic of Peru", // 164
+  "United States of America (Puerto Rico)", // 165
+  "Saint Kitts and Nevis", // 166
+  "Saint Lucia", // 167
+  "Republic of France (Saint Pierre and Miquelon)", // 168
+  "Saint Vincent and the Grenadines", // 169
+  "Republic of Suriname", // 170
+  "Republic of Trinidad and Tobago", // 171
+  "United Kingdom of Great Britain and Northern Ireland (Turks and Caicos Islands)", // 172
+  "United States of America", // 173
+  "Oriental Republic of Uruguay", // 174
+  "Bolivarian Republic of Venezuela", // 175
+  "United Kingdom of Great Britain and Northern Ireland (Virgin Islands)", // 176
+  "United States of America (Virgin Islands)", // 177
+  "Islamic Republic of Afghanistan", // 178
+  "Commonwealth of Australia - Capital Territory", // 179
+  "Commonwealth of Australia - New South Wales", // 180
+  "Commonwealth of Australia - Victoria", // 181
+  "Commonwealth of Australia - Queensland", // 182
+  "Commonwealth of Australia - South Australia", // 183
+  "Commonwealth of Australia - Western Australia", // 184
+  "Commonwealth of Australia - Tasmania", // 185
+  "Commonwealth of Australia - Northern Territory", // 186
+  "Kingdom of Bhutan", // 187
+  "Negara Brunei Darussalam", // 188
+  "Kingdom of Cambodia", // 189
+  "People's Republic of China", // 190
+  "Republic of Fiji", // 191
+  "People's Republic of China (Hong Kong)", // 192
+  "Republic of India", // 193
+  "Republic of Indonesia", // 194
+  "Islamic Republic of Iran", // 195
   "Japan", // 196
-  "Kiribati", // 197
-  "N. Korea", // 198
-  "S. Korea", // 199
-  "Laos", // 200
-  "Macao", // 201
+  "Republic of Kiribati", // 197
+  "Democratic People's Republic of Korea (North Korea)", // 198
+  "Republic of Korea (South Korea)", // 199
+  "Lao People's Democratic Republic", // 200
+  "People's Republic of China (Macao)", // 201
   "Malaysia", // 202
-  "Maldives", // 203
-  "Marshall I", // 204
-  "Micronesia", // 205
-  "Myanmar", // 206
-  "Nauru", // 207
-  "Nepal", // 208
-  "N.Zealand", // 209
-  "Pakistan", // 210
-  "Papua N.G", // 211
-  "Philippin.", // 212
-  "Samoa", // 213
-  "Singapore", // 214
-  "Solomon I.", // 215
-  "Sri Lanka", // 216
-  "Taiwan", // 217
-  "Thailand", // 218
-  "Tonga", // 219
-  "Vanuatu", // 220
-  "Vietnam", // 221
-  "Bahamas", // 222
-  "BM or BR", // 223
-  "EC or BR", // 224
-  "AN or BR", // 225
-  "USA/VI/ PR", // 226
-  "Bangladesh" // 227
+  "Republic of Maldives", // 203
+  "United States of America (Marshall Islands)", // 204
+  "Federated States of Micronesia", // 205
+  "Republic of the Union of Myanmar", // 206
+  "Republic of Nauru", // 207
+  "Federal Democratic Republic of Nepal", // 208
+  "New Zealand", // 209
+  "Islamic Republic of Pakistan", // 210
+  "Independent State of Papua New Guinea", // 211
+  "Republic of the Philippines", // 212
+  "Independent State of Samoa", // 213
+  "Republic of Singapore", // 214
+  "Solomon Islands", // 215
+  "Democratic Socialist Republic of Sri Lanka", // 216
+  "Republic of China (Taiwan)", // 217
+  "Kingdom of Thailand", // 218
+  "Kingdom of Tonga", // 219
+  "Republic of Vanuatu", // 220
+  "Socialist Republic of Viet Nam", // 221
+  "Commonwealth of the Bahamas", // 222
+  "United Kingdom of Great Britain and Northern Ireland (Bermuda) / Federative Republic of Brazil", // 223
+  "Federative Republic of Brazil / Republic of Ecuador", // 224
+  "Netherlands Antilles (does not exist) / Federative Republic of Brazil", // 225
+  "United States of America", // 226
+  "People's Republic of Bangladesh", // 227
+  "Republic of West Poland" // 228 - doesn't exist, YET, we don't want a fucking pimp for president here
 };
 
 static const char* const oda_app_names[] {
