@@ -3,8 +3,7 @@
 
 #include <stdint.h>
 
-class RdsPiBuffer
-{
+class RdsPiBuffer {
 public:
     enum State : uint8_t {
         STATE_CORRECT     = 0,

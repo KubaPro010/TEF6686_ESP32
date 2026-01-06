@@ -384,8 +384,7 @@ void Communication() {
       int symPos = data_str.indexOf("*F");
       if (symPos >= 5) {
         String freq = data_str.substring(0, symPos);
-        freq = freq.substring(0, freq.length() - 1);
-        frequency = freq.toInt();
+        frequency = freq.substring(0, freq.length() - 1).toInt();
         if (scandxmode) cancelDXScan();
         radio.SetFreq(frequency);
         if (afscreen) BuildAdvancedRDS();
@@ -407,9 +406,8 @@ void XDRGTKRoutine() {
   if (XDRGTKUSB) {
     while (Serial.available() > 0) {
       char c = Serial.read();
-      if (buff_pos < 16 && c != '\n') {
-        buff[buff_pos++] = c;
-      } else {
+      if (buff_pos < 16 && c != '\n') buff[buff_pos++] = c;
+      else {
         buff[buff_pos] = '\0';
         buff_pos = 0;
         XDRGTKdata = true;
@@ -421,9 +419,8 @@ void XDRGTKRoutine() {
   if (XDRGTKTCP && RemoteClient.available() > 0) {
     while (RemoteClient.available() > 0) {
       char c = RemoteClient.read();
-      if (buff_pos < 16 && c != '\n') {
-        buff[buff_pos++] = c;
-      } else {
+      if (buff_pos < 16 && c != '\n') buff[buff_pos++] = c;
+      else {
         buff[buff_pos] = '\0';
         buff_pos = 0;
         XDRGTKdata = true;
@@ -921,8 +918,7 @@ void XDRGTKRoutine() {
 
 void passwordcrypt() {
   int generated = 0;
-  while (generated < 16)
-  {
+  while (generated < 16) {
     byte randomValue = random(0, 26);
     char letter = randomValue + 'a';
     if (randomValue > 26) letter = (randomValue - 26);
