@@ -44,7 +44,6 @@ using fs::FS;
 #define EXT_IRQ         14
 
 #define DYNAMIC_SPI_SPEED
-//#define HAS_AIR_BAND
 
 #ifdef ARS
 TFT_eSPI tft = TFT_eSPI(320, 240);
@@ -78,9 +77,6 @@ bool memorystore;
 bool memreset, memtune;
 bool menu, menuopen;
 bool mwstepsize;
-#ifdef HAS_AIR_BAND
-bool airstepsize;
-#endif
 bool nobattery;
 bool NTPupdated;
 bool optenc;
@@ -355,11 +351,6 @@ unsigned int frequency_MIBand_75M;
 unsigned int frequency_MIBand_90M;
 unsigned int frequency_MW;
 unsigned int frequency_SW;
-#ifdef HAS_AIR_BAND
-unsigned int frequency_AIR;
-unsigned int AIRHighEdgeSet;
-unsigned int AIRLowEdgeSet;
-#endif
 unsigned int frequencyold;
 unsigned int HighEdgeOIRTSet;
 unsigned int HighEdgeSet;
@@ -435,29 +426,19 @@ WebServer webserver(80);
 
 #pragma region helpers
 void Round30K(unsigned int freq) {
-  if (freq % FREQ_OIRT_STEP_30K == 1) {
-    frequency_OIRT = (freq + 1);
-  } else if (freq % FREQ_OIRT_STEP_30K == 0) {
-    frequency_OIRT = (freq - 1);
-  }
+  if (freq % FREQ_OIRT_STEP_30K == 1) frequency_OIRT = (freq + 1);
+  else if (freq % FREQ_OIRT_STEP_30K == 0) frequency_OIRT = (freq - 1);
 }
 
 void Round50K(unsigned int freq) {
-  if (freq % 10 < 3) {
-    frequency = (freq - freq % 10);
-  } else if (freq % 10 > 2 && freq % 10 < 8) {
-    frequency = (freq - (freq % 10 - 5));
-  } else if (freq % 10 > 7) {
-    frequency = (freq - (freq % 10) + 10);
-  }
+  if (freq % 10 < 3) frequency = (freq - freq % 10);
+  else if (freq % 10 > 2 && freq % 10 < 8) frequency = (freq - (freq % 10 - 5));
+  else if (freq % 10 > 7) frequency = (freq - (freq % 10) + 10);
 }
 
 void Round100K(unsigned int freq) {
-  if (freq % 10 < 5) {
-    frequency = (freq - freq % 10);
-  } else {
-    frequency = (freq - (freq % 10) + 10);
-  }
+  if (freq % 10 < 5) frequency = (freq - freq % 10);
+  else frequency = (freq - (freq % 10) + 10);
 }
 
 void Round200K(unsigned int freq) {
@@ -470,13 +451,9 @@ void Round200K(unsigned int freq) {
 }
 
 void Round5K(unsigned int freqAM) {
-  if (freqAM % 10 < 3) {
-    frequency_AM = (freqAM - freqAM % 10);
-  } else if (freqAM % 10 > 2 && freqAM % 10 < 8) {
-    frequency_AM = (freqAM - (freqAM % 10 - 5));
-  } else if (freqAM % 10 > 7) {
-    frequency_AM = (freqAM - (freqAM % 10) + 10);
-  }
+  if (freqAM % 10 < 3) frequency_AM = (freqAM - freqAM % 10);
+  else if (freqAM % 10 > 2 && freqAM % 10 < 8) frequency_AM = (freqAM - (freqAM % 10 - 5));
+  else if (freqAM % 10 > 7) frequency_AM = (freqAM - (freqAM % 10) + 10);
 }
 
 void Touch_IRQ_Handler() {
@@ -488,9 +465,6 @@ void StoreFrequency() {
     case BAND_LW: freqold = frequency_LW; frequency_AM = frequency_LW; break;
     case BAND_MW: freqold = frequency_MW; frequency_AM = frequency_MW; break;
     case BAND_SW: freqold = frequency_SW; frequency_AM = frequency_SW; break;
-#ifdef HAS_AIR_BAND
-    case BAND_AIR: freqold = frequency_AIR; frequency_AM = frequency_AIR; break;
-#endif
   }
   EEPROM.writeUInt(EE_UINT16_FREQUENCY_FM, frequency);
   EEPROM.writeUInt(EE_UINT16_FREQUENCY_OIRT, frequency_OIRT);
@@ -499,9 +473,6 @@ void StoreFrequency() {
   EEPROM.writeUInt(EE_UINT16_FREQUENCY_LW, frequency_LW);
   EEPROM.writeUInt(EE_UINT16_FREQUENCY_MW, frequency_MW);
   EEPROM.writeUInt(EE_UINT16_FREQUENCY_SW, frequency_SW);
-#ifdef HAS_AIR_BAND
-  EEPROM.writeUInt(EE_UINT16_FREQUENCY_AIR, frequency_AIR);
-#endif
   EEPROM.commit();
 }
 
@@ -672,7 +643,7 @@ void updateSWMIBand() {
 }
 
 void updateCodetect() {
-  if (band > BAND_GAP && band != BAND_AIR) {
+  if (band > BAND_GAP) {
     if (WAM) tftPrint(ALEFT, "CO", 50, 61, PrimaryColor, PrimaryColorSmooth, 16);
     else tftPrint(ALEFT, "CO", 50, 61, BackgroundColor, BackgroundColor, 16);
   }
@@ -758,9 +729,6 @@ void setup() {
   frequency_LW = EEPROM.readUInt(EE_UINT16_FREQUENCY_LW);
   frequency_MW = EEPROM.readUInt(EE_UINT16_FREQUENCY_MW);
   frequency_SW = EEPROM.readUInt(EE_UINT16_FREQUENCY_SW);
-#ifdef HAS_AIR_BAND
-  frequency_AIR = EEPROM.readUInt(EE_UINT16_FREQUENCY_AIR);
-#endif
   XDRGTK_key = EEPROM.readString(EE_STRING_XDRGTK_KEY);
   usesquelch = EEPROM.readByte(EE_BYTE_USESQUELCH);
   showmodulation = EEPROM.readByte(EE_BYTE_SHOWMODULATION);
@@ -791,9 +759,6 @@ void setup() {
   radio.rds.fastps = EEPROM.readByte(EE_BYTE_FASTPS);
   tot = EEPROM.readByte(EE_BYTE_TOT);
   mwstepsize = EEPROM.readByte(EE_BYTE_MWREGION);
-#ifdef HAS_AIR_BAND
-  airstepsize = EEPROM.readByte(EE_BYTE_AIRSTEPSIZE);
-#endif
   spispeed = EEPROM.readByte(EE_BYTE_SPISPEED);
   amscansens = EEPROM.readByte(EE_BYTE_AMSCANSENS);
   fmscansens = EEPROM.readByte(EE_BYTE_FMSCANSENS);
@@ -854,12 +819,8 @@ void setup() {
   for (int i = 0; i < EE_PRESETS_CNT; i++) presets[i].ms = EEPROM.readByte(i + EE_PRESET_MS_START);
 
   for (int i = 0; i < EE_PRESETS_CNT; i++) {
-    for (int y = 0; y < 9; y++) {
-      presets[i].RDSPS[y] = EEPROM.readByte((i * 9) + y + EE_PRESETS_RDSPS_START);
-    }
-    for (int y = 0; y < 5; y++) {
-      presets[i].RDSPI[y] = EEPROM.readByte((i * 5) + y + EE_PRESETS_RDSPI_START);
-    }
+    for (int y = 0; y < 9; y++) presets[i].RDSPS[y] = EEPROM.readByte((i * 9) + y + EE_PRESETS_RDSPS_START);
+    for (int y = 0; y < 5; y++) presets[i].RDSPI[y] = EEPROM.readByte((i * 5) + y + EE_PRESETS_RDSPI_START);
   }
 
   if (USBmode) Serial.begin(19200); else Serial.begin(115200);
@@ -1132,7 +1093,7 @@ void setup() {
   radio.setVolume(VolSet);
   radio.setOffset(LevelOffset);
   radio.setAMOffset(AMLevelOffset);
-  if (band > BAND_GAP && band != BAND_AIR) {
+  if (band > BAND_GAP) {
     radio.setAMCoChannel(amcodect, amcodectcount);
     radio.setAMAttenuation(amgain);
   }
@@ -1205,9 +1166,7 @@ void loop() {
           doTouchEvent(x, y);
           firstTouchHandled = true;
           lastTouchTime = millis();
-        } else if (touchrepeat) {
-          if (millis() - lastTouchTime >= 500) doTouchEvent(x, y);
-        }
+        } else if (touchrepeat && millis() - lastTouchTime >= 500) doTouchEvent(x, y);
       }
     } else {
       firstTouchHandled = false;
@@ -1357,9 +1316,7 @@ void loop() {
           tft.drawBitmap(249, 4, Speaker, 28, 24, GreyoutColor);
         }
         findMemoryAF = false;
-      } else {
-        frequency = radio.TestAF();
-      }
+      } else frequency = radio.TestAF();
       if (freqold != frequency) {
         ShowFreq(0);
         dropout = true;
@@ -1439,9 +1396,8 @@ void loop() {
           }
         }
       }
-      if (radio.rds.region == 0) {
-        tftPrint(ALEFT, "PI", 212, 193, ActiveColor, ActiveColorSmooth, 16);
-      } else {
+      if (radio.rds.region == 0) tftPrint(ALEFT, "PI", 212, 193, ActiveColor, ActiveColorSmooth, 16);
+      else {
         tftPrint(ALEFT, "PI", 212, 184, ActiveColor, ActiveColorSmooth, 16);
         tftPrint(ALEFT, "ID", 212, 201, ActiveColor, ActiveColorSmooth, 16);
       }
@@ -1472,9 +1428,8 @@ void loop() {
           tftPrint(ACENTER, "A", 7, 128, GreyoutColor, BackgroundColor, 16);
           tft.fillRect(16, 133, 187, 6, GreyoutColor);
         }
-        if (radio.rds.region == 0) {
-          tftPrint(ALEFT, "PI", 212, 193, GreyoutColor, BackgroundColor, 16);
-        } else {
+        if (radio.rds.region == 0) tftPrint(ALEFT, "PI", 212, 193, GreyoutColor, BackgroundColor, 16);
+        else {
           tftPrint(ALEFT, "PI", 212, 184, GreyoutColor, BackgroundColor, 16);
           tftPrint(ALEFT, "ID", 212, 201, GreyoutColor, BackgroundColor, 16);
         }
@@ -1491,11 +1446,8 @@ void loop() {
     if (millis() >= lowsignaltimer + 300) {
       lowsignaltimer = millis();
       if (af || (!screenmute || (screenmute && (XDRGTKTCP || XDRGTKUSB)))) {
-        if (band < BAND_GAP) {
-          radio.getStatus(SStatus, USN, WAM, OStatus, BW, MStatus, CN);
-        } else {
-          radio.getStatusAM(SStatus, USN, WAM, OStatus, BW, MStatus, CN);
-        }
+        if (band < BAND_GAP) radio.getStatus(SStatus, USN, WAM, OStatus, BW, MStatus, CN);
+        else radio.getStatusAM(SStatus, USN, WAM, OStatus, BW, MStatus, CN);
       }
       if (!BWtune && !menu) {
         doSquelch();
@@ -1716,34 +1668,6 @@ void doBandSelectionFM() {
 }
 
 void CheckBandForbiddenAM() {
-#ifdef HAS_AIR_BAND
-  switch (band) {
-    case BAND_LW:
-      if (bandAM == AM_BAND_MW_SW_AIR || bandAM == AM_BAND_MW_SW || bandAM == AM_BAND_MW_AIR || bandAM == AM_BAND_SW_AIR || bandAM == AM_BAND_MW || bandAM == AM_BAND_SW || bandAM == AM_BAND_AIR)
-        bandforbidden = 1;
-      else
-        bandforbidden = 0;
-      break;
-    case BAND_MW:
-      if (bandAM == AM_BAND_LW_SW_AIR || bandAM == AM_BAND_LW_SW || bandAM == AM_BAND_LW_AIR || bandAM == AM_BAND_SW_AIR || bandAM == AM_BAND_LW || bandAM == AM_BAND_SW || bandAM == AM_BAND_AIR)
-        bandforbidden = 1;
-      else
-        bandforbidden = 0;
-      break;
-    case BAND_SW:
-      if (bandAM == AM_BAND_LW_MW_AIR || bandAM == AM_BAND_LW_MW || bandAM == AM_BAND_LW_AIR || bandAM == AM_BAND_MW_AIR || bandAM == AM_BAND_LW || bandAM == AM_BAND_MW || bandAM == AM_BAND_AIR)
-        bandforbidden = 1;
-      else
-        bandforbidden = 0;
-      break;
-    case BAND_AIR:
-      if (bandAM == AM_BAND_LW_MW_SW || bandAM == AM_BAND_LW_MW || bandAM == AM_BAND_LW_SW || bandAM == AM_BAND_MW_SW || bandAM == AM_BAND_LW || bandAM == AM_BAND_MW || bandAM == AM_BAND_SW)
-        bandforbidden = 1;
-      else
-        bandforbidden = 0;
-      break;
-  }
-#else
   switch (band) {
     case BAND_LW:
       if (bandAM == AM_BAND_MW_SW || bandAM == AM_BAND_MW || bandAM == AM_BAND_SW) bandforbidden = 1;
@@ -1758,102 +1682,11 @@ void CheckBandForbiddenAM() {
       else bandforbidden = 0;
       break;
   }
-#endif
 }
 
 void doBandSelectionAM() {
   if (band < BAND_GAP) return;
 
-#ifdef HAS_AIR_BAND  // has air band
-  switch (bandAM) {
-    case AM_BAND_ALL:
-      break;
-    case AM_BAND_LW_MW_SW:
-      if (band == BAND_AIR) {
-        band = BAND_LW;
-        SelectBand();
-      }
-      break;
-    case AM_BAND_LW_MW_AIR:
-      if (band == BAND_SW) {
-        band = BAND_LW;
-        SelectBand();
-      }
-      break;
-    case AM_BAND_LW_SW_AIR:
-      if (band == BAND_MW) {
-        band = BAND_LW;
-        SelectBand();
-      }
-      break;
-    case AM_BAND_MW_SW_AIR:
-      if (band == BAND_LW) {
-        band = BAND_MW;
-        SelectBand();
-      }
-      break;
-    case AM_BAND_LW_MW:
-      if (band == BAND_SW || band == BAND_AIR) {
-        band = BAND_LW;
-        SelectBand();
-      }
-      break;
-    case AM_BAND_LW_SW:
-      if (band == BAND_MW || band == BAND_AIR) {
-        band = BAND_LW;
-        SelectBand();
-      }
-      break;
-    case AM_BAND_LW_AIR:
-      if (band == BAND_MW || band == BAND_SW) {
-        band = BAND_LW;
-        SelectBand();
-      }
-      break;
-    case AM_BAND_MW_SW:
-      if (band == BAND_LW || band == BAND_AIR) {
-        band = BAND_MW;
-        SelectBand();
-      }
-      break;
-    case AM_BAND_MW_AIR:
-      if (band == BAND_LW || band == BAND_SW) {
-        band = BAND_MW;
-        SelectBand();
-      }
-      break;
-    case AM_BAND_SW_AIR:
-      if (band == BAND_LW || band == BAND_MW) {
-        band = BAND_SW;
-        SelectBand();
-      }
-      break;
-    case AM_BAND_LW:
-      if (band != BAND_LW) {
-        band = BAND_LW;
-        SelectBand();
-      }
-      break;
-    case AM_BAND_MW:
-      if (band != BAND_MW) {
-        band = BAND_MW;
-        SelectBand();
-      }
-      break;
-    case AM_BAND_SW:
-      if (band != BAND_SW) {
-        band = BAND_SW;
-        SelectBand();
-      }
-      break;
-    case AM_BAND_AIR:
-      if (band != BAND_AIR) {
-        band = BAND_AIR;
-        SelectBand();
-      }
-      break;
-  }
-#else  // has no air band
   switch (bandAM) {
     case AM_BAND_ALL:
       break;
@@ -1898,31 +1731,14 @@ void doBandSelectionAM() {
       SelectBand();
       break;
   }
-#endif
 }
 
 void FMjumptoAM() {
-#ifdef HAS_AIR_BAND
-  if (bandAM == AM_BAND_ALL || bandAM == AM_BAND_LW_MW_AIR || bandAM == AM_BAND_LW_SW_AIR || bandAM == AM_BAND_LW_MW || bandAM == AM_BAND_LW_SW || bandAM == AM_BAND_LW_AIR || bandAM == AM_BAND_LW) {
-    band = BAND_LW;
-    if (stepsize > 3) stepsize = 3;
-  } else if (bandAM == AM_BAND_MW_SW || bandAM == AM_BAND_MW_AIR || bandAM == AM_BAND_MW) {
-    band = BAND_MW;
-  } else if (bandAM == AM_BAND_SW_AIR || bandAM == AM_BAND_SW) {
-    band = BAND_SW;
-  } else if (bandAM == AM_BAND_AIR) {
-    band = BAND_AIR;
-  }
-#else
   if (bandAM == AM_BAND_ALL || bandAM == AM_BAND_LW_MW || bandAM == AM_BAND_LW_SW || bandAM == AM_BAND_LW) {
     band = BAND_LW;
     if (stepsize > 3) stepsize = 3;
-  } else if (bandAM == AM_BAND_MW_SW || bandAM == AM_BAND_MW) {
-    band = BAND_MW;
-  } else if (bandAM == AM_BAND_SW) {
-    band = BAND_SW;
-  }
-#endif
+  } else if (bandAM == AM_BAND_MW_SW || bandAM == AM_BAND_MW) band = BAND_MW;
+  else if (bandAM == AM_BAND_SW) band = BAND_SW;
 }
 
 void AMjumptoFM() {
@@ -1933,26 +1749,6 @@ void AMjumptoFM() {
 
 void ToggleBand(byte nowBand) {
   switch (nowBand) {
-#ifdef HAS_AIR_BAND
-    case BAND_LW:
-      if (bandAM == AM_BAND_LW_MW_SW || bandAM == AM_BAND_LW_MW_AIR || bandAM == AM_BAND_LW_MW || bandAM == AM_BAND_ALL) band = BAND_MW;
-      else if (bandAM == AM_BAND_LW_SW_AIR || bandAM == AM_BAND_LW_SW) band = BAND_SW;
-      else if (bandAM == AM_BAND_LW_MW_AIR || bandAM == AM_BAND_LW_SW_AIR || bandAM == AM_BAND_LW_AIR) band = BAND_AIR;
-      else if (bandAM == AM_BAND_LW || bandAM == AM_BAND_NONE) AMjumptoFM();
-      break;
-    case BAND_MW:
-      if (bandAM == AM_BAND_LW_MW_SW || bandAM == AM_BAND_MW_SW_AIR || bandAM == AM_BAND_MW_SW || bandAM == AM_BAND_ALL) band = BAND_SW;
-      else if (bandAM == AM_BAND_LW_MW_AIR || bandAM == AM_BAND_MW_AIR) band = BAND_AIR;
-      else if (bandAM == AM_BAND_MW || bandAM == AM_BAND_NONE) AMjumptoFM();
-      break;
-    case BAND_SW:
-      if (bandAM == AM_BAND_LW_SW_AIR || bandAM == AM_BAND_MW_SW_AIR || bandAM == AM_BAND_SW_AIR || bandAM == AM_BAND_ALL) band = BAND_AIR;
-      else if (bandAM == AM_BAND_LW_MW_SW || bandAM == AM_BAND_LW_SW || bandAM == AM_BAND_MW_SW || bandAM == AM_BAND_SW || bandAM == AM_BAND_NONE) AMjumptoFM();
-      break;
-    case BAND_AIR:
-      AMjumptoFM();
-      break;
-#else  // has no air band
     case BAND_LW:
       if (bandAM == AM_BAND_LW_MW || bandAM == AM_BAND_ALL) band = BAND_MW;
       else if (bandAM == AM_BAND_LW_SW) band = BAND_SW;
@@ -1977,7 +1773,6 @@ void ToggleBand(byte nowBand) {
         else if (bandAM == AM_BAND_SW || bandAM == AM_BAND_NONE) AMjumptoFM();
       }
       break;
-#endif
     case BAND_OIRT:
       if(bandFM == FM_BAND_ALL || bandFM == FM_BAND_FM) band = BAND_FM;
       else if(bandFM == FM_BAND_OIRT && bandAM != AM_BAND_NONE) FMjumptoAM();
@@ -2433,28 +2228,16 @@ void SelectBand() {
       case BAND_LW: freqold = frequency_LW; frequency_AM = frequency_LW; break;
       case BAND_MW: freqold = frequency_MW; frequency_AM = frequency_MW; break;
       case BAND_SW: freqold = frequency_SW; frequency_AM = frequency_SW; break;
-#ifdef HAS_AIR_BAND
-      case BAND_AIR: freqold = frequency_AIR; frequency_AM = frequency_AIR; break;
-#endif
     }
     LimitAMFrequency();
     if (!externaltune && tunemode != TUNE_MEM) CheckBandForbiddenAM();
-#ifdef HAS_AIR_BAND
-    if (band == BAND_AIR) {
-      radio.SetFreqAIR(10700);
-    } else {
-      radio.SetFreqAM(frequency_AM);
-    }
-#else
     radio.SetFreqAM(frequency_AM);
-#endif
     radio.setAMAttenuation(amgain);
     radio.setAMCoChannel(amcodect, amcodectcount);
     doBW();
     if (!screenmute) {
-      if (radio.rds.region == 0) {
-        tftPrint(ALEFT, "PI", 212, 193, GreyoutColor, BackgroundColor, 16);
-      } else {
+      if (radio.rds.region == 0) tftPrint(ALEFT, "PI", 212, 193, GreyoutColor, BackgroundColor, 16);
+      else {
         tftPrint(ALEFT, "PI", 212, 184, GreyoutColor, BackgroundColor, 16);
         tftPrint(ALEFT, "ID", 212, 201, GreyoutColor, BackgroundColor, 16);
       }
@@ -2468,9 +2251,6 @@ void SelectBand() {
       tft.fillRoundRect(287, 57, 30, 18, 2, GreyoutColor);
       tftPrint(ACENTER, "EQ", 301, 59, BackgroundColor, GreyoutColor, 16);
       tftReplace(ALEFT, "MHz", "kHz", 258, 76, ActiveColor, ActiveColorSmooth, BackgroundColor, 28);
-      // todo
-      // if (band == AM_BAND_AIR) tftPrint(ALEFT, "MHz", 258, 76, ActiveColor, ActiveColorSmooth, 28);
-      // else tftPrint(ALEFT, "KHz", 258, 76, ActiveColor, ActiveColorSmooth, 28);
     }
   } else {
     if (tunemode == TUNE_MI_BAND) tunemode = TUNE_MAN;
@@ -2520,20 +2300,12 @@ void SelectBand() {
     tftPrint(ALEFT, textUI(105), 70, 32, BackgroundColor, BackgroundColor, 16);
     tftPrint(ALEFT, textUI(106), 70, 32, BackgroundColor, BackgroundColor, 16);
 
-#ifdef HAS_AIR_BAND
-    tftPrint(ALEFT, textUI(223), 70, 32, BackgroundColor, BackgroundColor, 16);
-#endif
-
     switch (band) {
       case BAND_LW: tftPrint(ALEFT, textUI(102), 70, 32, (bandforbidden ? GreyoutColor : PrimaryColor), (bandforbidden ? BackgroundColor : PrimaryColorSmooth), 16); break;
       case BAND_MW: tftPrint(ALEFT, textUI(103), 70, 32, (bandforbidden ? GreyoutColor : PrimaryColor), (bandforbidden ? BackgroundColor : PrimaryColorSmooth), 16); break;
       case BAND_SW: tftPrint(ALEFT, textUI(104), 70, 32, (bandforbidden ? GreyoutColor : PrimaryColor), (bandforbidden ? BackgroundColor : PrimaryColorSmooth), 16); break;
       case BAND_FM: tftPrint(ALEFT, textUI(105), 70, 32, (bandforbidden ? GreyoutColor : PrimaryColor), (bandforbidden ? BackgroundColor : PrimaryColorSmooth), 16); break;
       case BAND_OIRT: tftPrint(ALEFT, textUI(106), 70, 32, (bandforbidden ? GreyoutColor : PrimaryColor), (bandforbidden ? BackgroundColor : PrimaryColorSmooth), 16); break;
-
-#ifdef HAS_AIR_BAND
-      case BAND_AIR: tftPrint(ALEFT, textUI(223), 70, 32, (bandforbidden ? GreyoutColor : PrimaryColor), (bandforbidden ? BackgroundColor : PrimaryColorSmooth), 16); break;
-#endif
     }
   }
   leave = false;
@@ -2718,7 +2490,7 @@ void ShowStepSize() {
   }
 }
 
-void RoundStep() {//todo air
+void RoundStep() {
   if (band == BAND_FM) {
     unsigned int freq = frequency;
     switch (fmdefaultstepsize) {
@@ -3076,13 +2848,6 @@ void DoMemoryPosTune() {
       frequency_SW = presets[memorypos].frequency;
       radio.SetFreqAM(frequency_SW);
       break;
-#ifdef HAS_AIR_BAND
-    case BAND_AIR:
-      frequency_AIR = presets[memorypos].frequency;
-      // radio.SetFreq(frequency_AIR); // todo
-      radio.SetFreqAM(10700); // todo
-      break;
-#endif
   }
 
   if (band == BAND_FM || band == BAND_OIRT) {
@@ -3141,9 +2906,6 @@ void ShowFreq(int mode) {
       case BAND_LW: frequency_AM = frequency_LW; break;
       case BAND_MW: frequency_AM = frequency_MW; break;
       case BAND_SW: frequency_AM = frequency_SW; break;
-#ifdef HAS_AIR_BAND
-      case BAND_AIR: frequency_AM = frequency_AIR; break; // todo air
-#endif
     }
 
     if (!screenmute) {
@@ -3159,8 +2921,7 @@ void ShowFreq(int mode) {
 
       FrequencySprite.setTextDatum(TR_DATUM);
       FrequencySprite.setTextColor(FreqColor, FreqColorSmooth, false);
-      if (band == BAND_AIR) FrequencySprite.drawString(String(frequency_AM / 1000) + "." + String(frequency_AM % 1000) + " ", 218, -6);
-      else FrequencySprite.drawString(String(frequency_AM) + " ", 218, -6);
+      FrequencySprite.drawString(String(frequency_AM) + " ", 218, -6);
       FrequencySprite.unloadFont();
       FrequencySprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
       FrequencySprite.setTextDatum(TL_DATUM);
@@ -3952,13 +3713,6 @@ void TuneUp() {
         temp = FREQ_SW_STEP_5K;
         frequency_AM = (frequency_AM / FREQ_SW_STEP_5K) * FREQ_SW_STEP_5K;
       }
-#ifdef HAS_AIR_BAND
-      else if (frequency_AM < AIRHighEdgeSet && frequency_AM > AIRLowEdgeSet) {
-
-        if (airstepsize == 0) temp = FREQ_AIR_STEP_25K;
-        else temp = FREQ_AIR_STEP_8K33;
-      }
-#endif
     } else {
       if (band == BAND_OIRT) temp = FREQ_OIRT_STEP_30K;
       else {
@@ -4025,17 +3779,6 @@ void TuneUp() {
     radio.SetFreqAM(frequency_AM);
     frequency_SW = frequency_AM;
   }
-#ifdef HAS_AIR_BAND
-  else if (band == BAND_AIR) {
-    frequency_AM += temp;
-    if (frequency_AIR > AIRHighEdgeSet) {
-      frequency_AM = AIRLowEdgeSet;
-      EdgeBeeper();
-    }
-    radio.SetFreqAM(frequency_AM);
-    frequency_AIR = frequency_AM;
-  }
-#endif
   radio.clearRDS(fullsearchrds);
   if (RDSSPYUSB) Serial.print("G:\r\nRESET-------\r\n\r\n");
   if (RDSSPYTCP) RemoteClient.print("G:\r\nRESET-------\r\n\r\n");
@@ -4362,11 +4105,6 @@ void DefaultSettings() {
   EEPROM.writeByte(EE_BYTE_CLOCKAMPM, 0);
   EEPROM.writeUInt(EE_UINT16_PICTLOCK, 0);
 
-#ifdef HAS_AIR_BAND
-  EEPROM.writeUInt(EE_UINT16_FREQUENCY_AIR, 135350);
-  EEPROM.writeByte(EE_BYTE_AIRSTEPSIZE, 0);
-#endif
-
 #ifdef DYNAMIC_SPI_SPEED
   EEPROM.writeByte(EE_BYTE_SPISPEED, 7);
 #else
@@ -4572,9 +4310,6 @@ void saveData() {
   EEPROM.writeByte(EE_BYTE_FASTPS, radio.rds.fastps);
   EEPROM.writeByte(EE_BYTE_TOT, tot);
   EEPROM.writeByte(EE_BYTE_MWREGION, mwstepsize);
-#ifdef HAS_AIR_BAND
-  EEPROM.writeByte(EE_BYTE_AIRSTEPSIZE, airstepsize);
-#endif
   EEPROM.writeByte(EE_BYTE_SPISPEED, spispeed);
   EEPROM.writeByte(EE_BYTE_AMSCANSENS, amscansens);
   EEPROM.writeByte(EE_BYTE_FMSCANSENS, fmscansens);

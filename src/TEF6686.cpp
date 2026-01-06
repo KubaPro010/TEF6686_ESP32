@@ -167,10 +167,6 @@ void TEF6686::SetFreqAM(uint16_t frequency) {
   devTEF_Set_Cmd(TEF_AM, Cmd_Tune_To, 7, 1, frequency);
 }
 
-void TEF6686::SetFreqAIR(uint16_t frequency) {
-  devTEF_Set_Cmd(TEF_AM, Cmd_Tune_To, 7, 1, 10700);
-}
-
 void TEF6686::setOffset(int8_t offset) {
   devTEF_Set_Cmd(TEF_FM, Cmd_Set_LevelOffset, 5, (offset * 10) - 70);
 }

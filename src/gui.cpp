@@ -1448,27 +1448,6 @@ void ShowOneLine(byte position, byte item, bool selected) {
 
           FullLineSprite.setTextDatum(TR_DATUM);
           FullLineSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
-#ifdef HAS_AIR_BAND
-          switch (bandAM) {
-            case AM_BAND_ALL: FullLineSprite.drawString(textUI(102) + String(",") + textUI(103) + String(",") + textUI(104) + String(",") + textUI(223), 298, 2); break;
-            case AM_BAND_LW_MW_SW: FullLineSprite.drawString(textUI(102) + String(",") + textUI(103) + String(",") + textUI(104), 298, 2); break;
-            case AM_BAND_LW_MW_AIR: FullLineSprite.drawString(textUI(102) + String(",") + textUI(103) + String(",") + textUI(223), 298, 2); break;
-            case AM_BAND_LW_SW_AIR: FullLineSprite.drawString(textUI(102) + String(",") + textUI(104) + String(",") + textUI(223), 298, 2); break;
-            case AM_BAND_MW_SW_AIR: FullLineSprite.drawString(textUI(103) + String(",") + textUI(104) + String(",") + textUI(223), 298, 2); break;
-            case AM_BAND_LW_MW: FullLineSprite.drawString(textUI(102) + String(",") + textUI(103), 298, 2); break;
-            case AM_BAND_LW_SW: FullLineSprite.drawString(textUI(102) + String(",") + textUI(104), 298, 2); break;
-            case AM_BAND_LW_AIR: FullLineSprite.drawString(textUI(102) + String(",") + textUI(223), 298, 2); break;
-            case AM_BAND_MW_SW: FullLineSprite.drawString(textUI(103) + String(",") + textUI(104), 298, 2); break;
-            case AM_BAND_MW_AIR: FullLineSprite.drawString(textUI(103) + String(",") + textUI(223), 298, 2); break;
-            case AM_BAND_SW_AIR: FullLineSprite.drawString(textUI(104) + String(",") + textUI(223), 298, 2); break;
-            case AM_BAND_LW: FullLineSprite.drawString(textUI(102), 298, 2); break;
-            case AM_BAND_MW: FullLineSprite.drawString(textUI(103), 298, 2); break;
-            case AM_BAND_SW: FullLineSprite.drawString(textUI(104), 298, 2); break;
-            case AM_BAND_AIR: FullLineSprite.drawString(textUI(223), 298, 2); break;
-            case AM_BAND_NONE: FullLineSprite.drawString(textUI(83), 298, 2); break;
-          }
-          break;
-#else
           switch (bandAM) {
             case AM_BAND_ALL: FullLineSprite.drawString(textUI(102) + String(",") + textUI(103) + String(",") + textUI(104), 298, 2); break;
             case AM_BAND_LW_MW: FullLineSprite.drawString(textUI(102) + String(",") + textUI(103), 298, 2); break;
@@ -1480,8 +1459,6 @@ void ShowOneLine(byte position, byte item, bool selected) {
             case AM_BAND_NONE: FullLineSprite.drawString(textUI(83), 298, 2); break;
           }
           break;
-#endif
-
         case DISPLAYSETTINGS:
           FullLineSprite.setTextDatum(TL_DATUM);
           FullLineSprite.setTextColor(ActiveColor, ActiveColorSmooth, false);
@@ -2569,27 +2546,6 @@ void ShowOneButton(byte position, byte item, bool selected) {
           PSSprite.drawString(shortLine(removeNewline(textUI(101))), 75, 1);
 
           PSSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
-#ifdef HAS_AIR_BAND
-          switch (bandAM) {
-            case AM_BAND_ALL: PSSprite.drawString(textUI(102) + String(",") + textUI(103) + String(",") + textUI(104) + String(",") + textUI(223), 75, 15); break;
-            case AM_BAND_LW_MW_SW: PSSprite.drawString(textUI(102) + String(",") + textUI(103) + String(",") + textUI(104), 75, 15); break;
-            case AM_BAND_LW_MW_AIR: PSSprite.drawString(textUI(102) + String(",") + textUI(103) + String(",") + textUI(223), 75, 15); break;
-            case AM_BAND_LW_SW_AIR: PSSprite.drawString(textUI(102) + String(",") + textUI(104) + String(",") + textUI(223), 75, 15); break;
-            case AM_BAND_MW_SW_AIR: PSSprite.drawString(textUI(103) + String(",") + textUI(104) + String(",") + textUI(223), 75, 15); break;
-            case AM_BAND_LW_MW: PSSprite.drawString(textUI(102) + String(",") + textUI(103), 75, 15); break;
-            case AM_BAND_LW_SW: PSSprite.drawString(textUI(102) + String(",") + textUI(104), 75, 15); break;
-            case AM_BAND_LW_AIR: PSSprite.drawString(textUI(102) + String(",") + textUI(223), 75, 15); break;
-            case AM_BAND_MW_SW: PSSprite.drawString(textUI(103) + String(",") + textUI(104), 75, 15); break;
-            case AM_BAND_MW_AIR: PSSprite.drawString(textUI(103) + String(",") + textUI(223), 75, 15); break;
-            case AM_BAND_SW_AIR: PSSprite.drawString(textUI(104) + String(",") + textUI(223), 75, 15); break;
-            case AM_BAND_LW: PSSprite.drawString(textUI(102), 75, 15); break;
-            case AM_BAND_MW: PSSprite.drawString(textUI(103), 75, 15); break;
-            case AM_BAND_SW: PSSprite.drawString(textUI(104), 75, 15); break;
-            case AM_BAND_AIR: PSSprite.drawString(textUI(223), 75, 15); break;
-            case AM_BAND_NONE: PSSprite.drawString(textUI(83), 75, 15); break;
-          }
-          break;
-#else
           switch (bandAM) {
             case AM_BAND_ALL: PSSprite.drawString(textUI(102) + String(",") + textUI(103) + String(",") + textUI(104), 75, 15); break;
             case AM_BAND_LW_MW: PSSprite.drawString(textUI(102) + String(",") + textUI(103), 75, 15); break;
@@ -2601,8 +2557,6 @@ void ShowOneButton(byte position, byte item, bool selected) {
             case AM_BAND_NONE: PSSprite.drawString(textUI(83), 75, 15); break;
           }
           break;
-#endif
-
         case DISPLAYSETTINGS:
           PSSprite.setTextDatum(TC_DATUM);
           PSSprite.setTextColor(ActiveColor, ActiveColorSmooth, false);
@@ -3374,27 +3328,6 @@ void MenuUpDown(bool dir) {
               bandAM--;
               if (bandAM > AM_BAND_CNT) bandAM = AM_BAND_NONE;
             }
-
-#ifdef HAS_AIR_BAND
-            switch (bandAM) {
-              case AM_BAND_ALL: OneBigLineSprite.drawString(textUI(102) + String(",") + textUI(103) + String(",") + textUI(104) + String(",") + textUI(223), 135, 0); break;
-              case AM_BAND_LW_MW_SW: OneBigLineSprite.drawString(textUI(102) + String(",") + textUI(103) + String(",") + textUI(104), 135, 0); break;
-              case AM_BAND_LW_MW_AIR: OneBigLineSprite.drawString(textUI(102) + String(",") + textUI(103) + String(",") + textUI(223), 135, 0); break;
-              case AM_BAND_LW_SW_AIR: OneBigLineSprite.drawString(textUI(102) + String(",") + textUI(104) + String(",") + textUI(223), 135, 0); break;
-              case AM_BAND_MW_SW_AIR: OneBigLineSprite.drawString(textUI(103) + String(",") + textUI(104) + String(",") + textUI(223), 135, 0); break;
-              case AM_BAND_LW_MW: OneBigLineSprite.drawString(textUI(102) + String(",") + textUI(103), 135, 0); break;
-              case AM_BAND_LW_SW: OneBigLineSprite.drawString(textUI(102) + String(",") + textUI(104), 135, 0); break;
-              case AM_BAND_LW_AIR: OneBigLineSprite.drawString(textUI(102) + String(",") + textUI(223), 135, 0); break;
-              case AM_BAND_MW_SW: OneBigLineSprite.drawString(textUI(103) + String(",") + textUI(104), 135, 0); break;
-              case AM_BAND_MW_AIR: OneBigLineSprite.drawString(textUI(103) + String(",") + textUI(223), 135, 0); break;
-              case AM_BAND_SW_AIR: OneBigLineSprite.drawString(textUI(104) + String(",") + textUI(223), 135, 0); break;
-              case AM_BAND_LW: OneBigLineSprite.drawString(textUI(102), 135, 0); break;
-              case AM_BAND_MW: OneBigLineSprite.drawString(textUI(103), 135, 0); break;
-              case AM_BAND_SW: OneBigLineSprite.drawString(textUI(104), 135, 0); break;
-              case AM_BAND_AIR: OneBigLineSprite.drawString(textUI(223), 135, 0); break;
-              case AM_BAND_NONE: OneBigLineSprite.drawString(textUI(83), 135, 0); break;
-            }
-#else
             switch (bandAM) {
               case AM_BAND_ALL: OneBigLineSprite.drawString(textUI(102) + String(",") + textUI(103) + String(",") + textUI(104), 135, 0); break;
               case AM_BAND_LW_MW: OneBigLineSprite.drawString(textUI(102) + String(",") + textUI(103), 135, 0); break;
@@ -3405,7 +3338,6 @@ void MenuUpDown(bool dir) {
               case AM_BAND_SW: OneBigLineSprite.drawString(textUI(104), 135, 0); break;
               case AM_BAND_NONE: OneBigLineSprite.drawString(textUI(83), 135, 0); break;
             }
-#endif
             OneBigLineSprite.pushSprite(24, 118);
             break;
 
@@ -4749,27 +4681,6 @@ void DoMenu() {
 
           case ITEM8:
             Infoboxprint(textUI(101));
-
-#ifdef HAS_AIR_BAND
-            switch (bandAM) {
-              case AM_BAND_ALL: OneBigLineSprite.drawString(textUI(102) + String(",") + textUI(103) + String(",") + textUI(104) + String(",") + textUI(223), 135, 0); break;
-              case AM_BAND_LW_MW_SW: OneBigLineSprite.drawString(textUI(102) + String(",") + textUI(103) + String(",") + textUI(104), 135, 0); break;
-              case AM_BAND_LW_MW_AIR: OneBigLineSprite.drawString(textUI(102) + String(",") + textUI(103) + String(",") + textUI(223), 135, 0); break;
-              case AM_BAND_LW_SW_AIR: OneBigLineSprite.drawString(textUI(102) + String(",") + textUI(104) + String(",") + textUI(223), 135, 0); break;
-              case AM_BAND_MW_SW_AIR: OneBigLineSprite.drawString(textUI(103) + String(",") + textUI(104) + String(",") + textUI(223), 135, 0); break;
-              case AM_BAND_LW_MW: OneBigLineSprite.drawString(textUI(102) + String(",") + textUI(103), 135, 0); break;
-              case AM_BAND_LW_SW: OneBigLineSprite.drawString(textUI(102) + String(",") + textUI(104), 135, 0); break;
-              case AM_BAND_LW_AIR: OneBigLineSprite.drawString(textUI(102) + String(",") + textUI(223), 135, 0); break;
-              case AM_BAND_MW_SW: OneBigLineSprite.drawString(textUI(103) + String(",") + textUI(104), 135, 0); break;
-              case AM_BAND_MW_AIR: OneBigLineSprite.drawString(textUI(103) + String(",") + textUI(223), 135, 0); break;
-              case AM_BAND_SW_AIR: OneBigLineSprite.drawString(textUI(104) + String(",") + textUI(223), 135, 0); break;
-              case AM_BAND_LW: OneBigLineSprite.drawString(textUI(102), 135, 0); break;
-              case AM_BAND_MW: OneBigLineSprite.drawString(textUI(103), 135, 0); break;
-              case AM_BAND_SW: OneBigLineSprite.drawString(textUI(104), 135, 0); break;
-              case AM_BAND_AIR: OneBigLineSprite.drawString(textUI(223), 135, 0); break;
-              case AM_BAND_NONE: OneBigLineSprite.drawString(textUI(83), 135, 0); break;
-            }
-#else
             switch (bandAM) {
               case AM_BAND_ALL: OneBigLineSprite.drawString(textUI(102) + String(",") + textUI(103) + String(",") + textUI(104), 135, 0); break;
               case AM_BAND_LW_MW: OneBigLineSprite.drawString(textUI(102) + String(",") + textUI(103), 135, 0); break;
@@ -4780,7 +4691,6 @@ void DoMenu() {
               case AM_BAND_SW: OneBigLineSprite.drawString(textUI(104), 135, 0); break;
               case AM_BAND_NONE: OneBigLineSprite.drawString(textUI(83), 135, 0); break;
             }
-#endif
             OneBigLineSprite.pushSprite(24, 118);
             break;
 

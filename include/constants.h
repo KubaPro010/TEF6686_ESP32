@@ -36,10 +36,6 @@
 #define FREQ_MW_STEP_9K             9
 #define FREQ_MW_STEP_10K            10
 #define FREQ_SW_STEP_5K             5
-#ifdef HAS_AIR_BAND
-#define FREQ_AIR_STEP_25K           25
-#define FREQ_AIR_STEP_8K33          8.33
-#endif
 #define FREQ_OIRT_STEP_30K          3
 #define FREQ_FM_STEP_50K            5
 #define FREQ_FM_STEP_100K           10
@@ -55,11 +51,6 @@
 #define FREQ_SW_LOW_EDGE_MAX        (FREQ_SW_160M_START)
 #define FREQ_SW_HIGH_EDGE_MIN       (FREQ_SW_11M_END)
 #define FREQ_SW_HIGH_EDGE_MAX       (FREQ_SW_END)
-
-#ifdef HAS_AIR_BAND
-#define FREQ_AIR_LOW_EDGE_MIN       108000
-#define FREQ_AIR_HIGH_EDGE_MIN      137000
-#endif
 
 #define FREQ_FM_OIRT_START          6500   // use values of 1/10 * kHz
 #define FREQ_FM_OIRT_END            7400   // use values of 1/10 * kHz
@@ -225,11 +216,7 @@
 #define EE_PRESETS_CNT                99    // When set > 99 change the complete EEPROM adressing!
 #define EE_CHECKBYTE_VALUE            20     // 0 ~ 255,add new entry, change for new value
 #define EE_PRESETS_FREQUENCY          0     // Default value when memory channel should be skipped!
-#ifdef HAS_AIR_BAND
-#define EE_TOTAL_CNT                  2292  // Total occupied eeprom bytes
-#else
 #define EE_TOTAL_CNT                  2287  // Total occupied eeprom bytes
-#endif
 
 #define EE_PRESETS_BAND_START         0     // 99 * 1 byte
 #define EE_PRESET_BW_START            99    // 99 * 1 byte
@@ -351,10 +338,6 @@
 #define EE_BYTE_CLOCKAMPM             2278
 #define EE_UINT16_LOGCOUNTER          2279
 #define EE_UINT16_PICTLOCK            2283
-#ifdef HAS_AIR_BAND
-#define EE_BYTE_AIRSTEPSIZE           2287
-#define EE_UINT16_FREQUENCY_AIR       2288
-#endif
 // End of EEPROM index defines
 
 // Memory channel database
@@ -382,31 +365,18 @@ enum SCAN_CANCEL {
 };
 
 enum RADIO_BAND {
-  BAND_OIRT = 0, BAND_FM, BAND_GAP, BAND_LW, BAND_MW, BAND_SW, BAND_AIR
+  BAND_OIRT = 0, BAND_FM, BAND_GAP, BAND_LW, BAND_MW, BAND_SW, BAND_NONEXISTENT
 };
-
-#ifndef HAS_AIR_BAND
-enum RADIO_AM_BAND_SELECTION {
-  AM_BAND_ALL = 0, AM_BAND_LW_MW, AM_BAND_LW_SW, AM_BAND_MW_SW,
-  AM_BAND_LW, AM_BAND_MW, AM_BAND_SW, AM_BAND_NONE,
-  AM_BAND_CNT
-};
-#else
-// Toggle: LW -> MW -> SW -> AIR
-enum RADIO_AM_BAND_SELECTION {
-  AM_BAND_ALL = 0,
-  AM_BAND_LW_MW_SW, AM_BAND_LW_MW_AIR, AM_BAND_LW_SW_AIR, AM_BAND_MW_SW_AIR,
-  AM_BAND_LW_MW, AM_BAND_LW_SW, AM_BAND_LW_AIR,
-  AM_BAND_MW_SW, AM_BAND_MW_AIR,
-  AM_BAND_SW_AIR,
-  AM_BAND_LW, AM_BAND_MW, AM_BAND_SW, AM_BAND_AIR, AM_BAND_NONE,
-  AM_BAND_CNT
-};
-#endif 
 
 enum RADIO_FM_BAND_SELECTION {
   FM_BAND_ALL = 0, FM_BAND_OIRT, FM_BAND_FM, FM_BAND_NONE,
   FM_BAND_CNT
+};
+
+enum RADIO_AM_BAND_SELECTION {
+  AM_BAND_ALL = 0, AM_BAND_LW_MW, AM_BAND_LW_SW, AM_BAND_MW_SW,
+  AM_BAND_LW, AM_BAND_MW, AM_BAND_SW, AM_BAND_NONE,
+  AM_BAND_CNT
 };
 
 enum RADIO_TUNE_MODE {
