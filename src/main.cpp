@@ -4010,22 +4010,24 @@ void Seek(bool mode) {
 
 void read_encoder() {
   if (!digitalRead(ROTARY_PIN_A) || !digitalRead(ROTARY_PIN_B)) {
-    if (millis() - rotarytimer >= 15) {
-      rotarycounteraccelerator = 2;  // Steady fast
+    uint32_t dt = millis() - rotarytimer;
+    if (dt >= 45) {
+      rotarycounteraccelerator = 6;
       rotarycounter = 0;
-    } else if (millis() - rotarytimer >= 30) {
+    } else if (dt >= 30) {
       rotarycounteraccelerator = 4;
       rotarycounter = 0;
-    } else if (millis() - rotarytimer >= 45) {
-      rotarycounteraccelerator = 6;  // Quick flicks
+    } else if (dt >= 15) {
+      rotarycounteraccelerator = 2;
       rotarycounter = 0;
     }
   }
 
-  static uint8_t old_AB = 3 << 2;
+  static uint8_t old_AB = 3;
   static int8_t encval = 0;
   static const int8_t enc_states[] = {0, -1, 1, 0, 1, 0, 0, -1, -1, 0, 0, 1, 0, 1, -1, 0};
 
+  old_AB <<= 2;
   if (digitalRead(ROTARY_PIN_A)) old_AB |= 0x02;
   if (digitalRead(ROTARY_PIN_B)) old_AB |= 0x01;
   encval += enc_states[( old_AB & 0x0f )];
