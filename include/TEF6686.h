@@ -4,6 +4,7 @@
 #include "Tuner_Drv_Lithio.h"
 #include "Tuner_Interface.h"
 #include "RdsPiBuffer.hpp"
+#include "change_detector.h"
 
 extern const unsigned char tuner_init_tab[] PROGMEM;
 extern const unsigned char tuner_init_tab9216[] PROGMEM;
@@ -367,7 +368,7 @@ static const char* const oda_app_names[] {
   "To warn people in case of disasters or emergency",
   "Personal weather station",
   "Hybradio RDS-Net (for testing use, only)",
-  "RDS2 – 9 bit AF lists ODA",
+  "RDS2 - 9 bit AF lists ODA",
   "Enhanced RadioText / eRT",
   "Warning receiver",
   "Enhanced early warning system",
@@ -479,13 +480,13 @@ typedef struct _rds_ {
   bool hasTA;
   bool hasEON;
   bool hasAID;
-  bool hasTMC;
+  Detector<bool, 1> hasTMC{false};
   bool hasAF;
   bool hasCT;
   bool hasPTYN;
   bool rtAB;
   bool rtAB32;
-  bool hasRTplus;
+  Detector<bool, 1> hasRTplus{false};
   bool filter;
   bool rdsreset;
   bool pierrors;
@@ -529,7 +530,7 @@ typedef struct _logbook_ {
 
 class TEF6686 {
   public:
-    af_  af[51];
+    af_ af[51];
     eon_ eon[21];
     rds_ rds;
     logbook_ logbook[22];

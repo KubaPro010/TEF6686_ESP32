@@ -2984,7 +2984,6 @@ void BuildAdvancedRDS() {
   af_counterold = 254;
   TAold = false;
   TPold = false;
-  hastmcold = false;
   dynamicPTYold = false;
   artheadold = false;
   compressedold = false;
@@ -2992,7 +2991,6 @@ void BuildAdvancedRDS() {
   hasafold = false;
   haseonold = false;
   BWreset = true;
-  hasrtplusold = false;
   afmethodBold = false;
   rds_clockold = "";
   dropout = false;
@@ -3108,7 +3106,6 @@ void BuildDisplay() {
   batteryold = 6;
   batteryVold = 0;
   vPerold = 0;
-  hasrtplusold = false;
   TAold = false;
   TPold = false;
   haseonold = false;

@@ -48,7 +48,6 @@ extern bool firstTouchHandled;
 extern bool flashing;
 extern bool fmsi, fullsearchrds;
 extern bool hasafold, hasCTold, haseonold;
-extern bool hasrtplusold, hastmcold;
 extern bool initdxscan, invertdisplay, leave;
 extern bool LowLevelInit;
 extern bool memorystore;

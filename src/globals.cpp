@@ -29,7 +29,6 @@ bool firstTouchHandled = false;
 bool flashing;
 bool fmsi, fullsearchrds;
 bool hasafold, hasCTold, haseonold;
-bool hasrtplusold, hastmcold;
 bool initdxscan, invertdisplay, leave;
 bool LowLevelInit;
 bool memorystore;

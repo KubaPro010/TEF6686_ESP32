@@ -147,12 +147,11 @@ void ShowAdvancedRDS() {
   }
 
   String rtplusstring;
-  if (radio.rds.hasRTplus) rtplusstring = (radio.rds.rdsplusTag1 != 169 ? String(textUI(radio.rds.rdsplusTag1)) + ": " + String(radio.rds.RTContent1) : "") + (radio.rds.rdsplusTag2 != 169 ? " - " + String(textUI(radio.rds.rdsplusTag2)) + ": " + String(radio.rds.RTContent2) : "") + "        "; else rtplusstring = textUI(89);
-  if (hasrtplusold != radio.rds.hasRTplus) {
+  if (radio.rds.hasRTplus.get()) rtplusstring = (radio.rds.rdsplusTag1 != 169 ? String(textUI(radio.rds.rdsplusTag1)) + ": " + String(radio.rds.RTContent1) : "") + (radio.rds.rdsplusTag2 != 169 ? " - " + String(textUI(radio.rds.rdsplusTag2)) + ": " + String(radio.rds.RTContent2) : "") + "        "; else rtplusstring = textUI(89);
+  if (radio.rds.hasRTplus.changed(0)) {
     if (!screenmute) {
-      if (radio.rds.hasRTplus) tftPrint(ALEFT, "RT+", 123, 51, RDSColor, RDSColorSmooth, 16); else tftPrint(ALEFT, "RT+", 123, 51, GreyoutColor, BackgroundColor, 16);
+      if (radio.rds.hasRTplus.get()) tftPrint(ALEFT, "RT+", 123, 51, RDSColor, RDSColorSmooth, 16); else tftPrint(ALEFT, "RT+", 123, 51, GreyoutColor, BackgroundColor, 16);
     }
-    hasrtplusold = radio.rds.hasRTplus;
   }
 
   if (rtplusstring != rtplusstringold) {
@@ -214,11 +213,10 @@ void ShowAdvancedRDS() {
     rdsblockold = radio.rdsgroup;
   }
 
-  if (hastmcold != radio.rds.hasTMC) {
+  if (radio.rds.hasTMC.changed(0)) {
     if (!screenmute) {
-      if (radio.rds.hasTMC) tftPrint(ALEFT, "TMC", 88, 51, RDSColor, RDSColorSmooth, 16); else tftPrint(ALEFT, "TMC", 88, 51, GreyoutColor, BackgroundColor, 16);
+      if (radio.rds.hasTMC.get()) tftPrint(ALEFT, "TMC", 88, 51, RDSColor, RDSColorSmooth, 16); else tftPrint(ALEFT, "TMC", 88, 51, GreyoutColor, BackgroundColor, 16);
     }
-    hastmcold = radio.rds.hasTMC;
   }
 
   rdsreset = false;
