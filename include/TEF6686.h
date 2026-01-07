@@ -461,7 +461,7 @@ typedef struct _rds_ {
   uint32_t dabaffreq;
   byte aid_counter;
   byte fastps;
-  Detector<unsigned int, 1> ECC;
+  Detector<unsigned int, 1> ECC{0};
   bool rdsAerror;
   bool rdsBerror;
   bool rdsCerror;

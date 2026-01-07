@@ -13,6 +13,7 @@
 #include "WiFiConnect.h"
 #include "WiFiConnectParam.h"
 #include "ESP32Time.h"
+#include "scrolling_text.h"
 
 #define ROTARY_PIN_A    34
 #define ROTARY_PIN_B    36
@@ -245,9 +246,6 @@ extern int XDRBWset;
 extern int XDRBWsetold;
 extern int xPos;
 extern int xPos2;
-extern int xPos3;
-extern int xPos4;
-extern int xPos5;
 extern int16_t OStatus;
 extern int16_t SAvg;
 extern int16_t SAvg2;
@@ -397,3 +395,7 @@ extern WiFiServer Server;
 extern WiFiClient RemoteClient;
 extern WiFiUDP Udp;
 extern WebServer webserver;
+
+extern ScrollingTextDisplay rtplusDisplay;
+extern ScrollingTextDisplay eonDisplay;
+extern ScrollingTextDisplay eccDisplay;

@@ -609,10 +609,9 @@ void BuildAFScreen() {
   dropout = false;
   rdsreset = true;
   xPos = 0;
-  xPos2 = 0;
-  xPos3 = 0;
-  xPos4 = 0;
-  xPos5 = 0;
+  rtplusDisplay.reset();
+  eonDisplay.reset();
+  eccDisplay.reset();
   for (byte i = 0; i < 20; i++) {
     mappedfreqold[i] = 0;
     mappedfreqold2[i] = 0;
@@ -2994,10 +2993,10 @@ void BuildAdvancedRDS() {
   rdsreset = true;
   ShowMemoryPos();
   xPos = 0;
+  rtplusDisplay.reset();
+  eonDisplay.reset();
+  eccDisplay.reset();
   xPos2 = 0;
-  xPos3 = 0;
-  xPos4 = 0;
-  xPos5 = 0;
 }
 
 void BuildDisplay() {
@@ -3114,10 +3113,10 @@ void BuildDisplay() {
   BWreset = true;
   dropout = false;
   xPos = 0;
+  rtplusDisplay.reset();
+  eonDisplay.reset();
+  eccDisplay.reset();
   xPos2 = 0;
-  xPos3 = 0;
-  xPos4 = 0;
-  xPos5 = 0;
   MPold = 99;
   USold = 99;
 }

@@ -66,32 +66,7 @@ void ShowAdvancedRDS() {
         eccstringWidth = RDSSprite.textWidth(ECCString);
       }
 
-      if (eccstringWidth < 270) {
-        xPos2 = 0;
-        RDSSprite.fillSprite(BackgroundColor);
-        if (RDSstatus) RDSSprite.setTextColor(RDSColor, RDSColorSmooth, false); else RDSSprite.setTextColor(RDSDropoutColor, RDSDropoutColorSmooth, false);
-        RDSSprite.drawString(ECCString, xPos2, 2);
-        RDSSprite.pushSprite(35, 199);
-      } else {
-        if (millis() - eccticker >= 5) {
-          if (xPos2 < -eccstringWidth) xPos2 = 0;
-          if (xPos2 == 0) {
-            if (millis() - ecctickerhold >= 2000) {
-              xPos2--;
-              ecctickerhold = millis();
-            }
-          } else {
-            xPos2--;
-            ecctickerhold = millis();
-          }
-          RDSSprite.fillSprite(BackgroundColor);
-          if (RDSstatus) RDSSprite.setTextColor(RDSColor, RDSColorSmooth, false); else RDSSprite.setTextColor(RDSDropoutColor, RDSDropoutColorSmooth, false);
-          RDSSprite.drawString(ECCString, xPos2, 2);
-          RDSSprite.drawString(ECCString, xPos2 + eccstringWidth, 2);
-          RDSSprite.pushSprite(35, 199);
-          eccticker = millis();
-        }
-      }
+      eccDisplay.update(ECCString, eccstringWidth, RDSstatus, RDSColor, RDSColorSmooth, RDSDropoutColor, RDSDropoutColorSmooth);
     }
     ECColdString = ECCString;
 
@@ -118,32 +93,7 @@ void ShowAdvancedRDS() {
     eonstringold = eonstring;
   }
 
-  if (eonstringWidth < 165) {
-    xPos3 = 0;
-    RDSSprite.fillSprite(BackgroundColor);
-    if (RDSstatus) RDSSprite.setTextColor(RDSColor, RDSColorSmooth, false); else RDSSprite.setTextColor(RDSDropoutColor, RDSDropoutColorSmooth, false);
-    RDSSprite.drawString(eonstring, xPos3, 2);
-    RDSSprite.pushSprite(35, 172);
-  } else {
-    if (millis() - eonticker >= 5) {
-      if (xPos3 < -eonstringWidth) xPos3 = 0;
-      if (xPos3 == 0) {
-        if (millis() - eontickerhold >= 2000) {
-          xPos3--;
-          eontickerhold = millis();
-        }
-      } else {
-        xPos3--;
-        eontickerhold = millis();
-      }
-      RDSSprite.fillSprite(BackgroundColor);
-      if (RDSstatus) RDSSprite.setTextColor(RDSColor, RDSColorSmooth, false); else RDSSprite.setTextColor(RDSDropoutColor, RDSDropoutColorSmooth, false);
-      RDSSprite.drawString(eonstring, xPos3, 2);
-      RDSSprite.drawString(eonstring, xPos3 + eonstringWidth, 2);
-      RDSSprite.pushSprite(35, 172);
-      eonticker = millis();
-    }
-  }
+  eonDisplay.update(eonstring, eonstringWidth, RDSstatus, RDSColor, RDSColorSmooth, RDSDropoutColor, RDSDropoutColorSmooth);
 
   String rtplusstring;
   if (radio.rds.hasRTplus.get()) rtplusstring = (radio.rds.rdsplusTag1 != 169 ? String(textUI(radio.rds.rdsplusTag1)) + ": " + String(radio.rds.RTContent1) : "") + (radio.rds.rdsplusTag2 != 169 ? " - " + String(textUI(radio.rds.rdsplusTag2)) + ": " + String(radio.rds.RTContent2) : "") + "        "; else rtplusstring = textUI(89);
@@ -158,32 +108,7 @@ void ShowAdvancedRDS() {
     rtplusstringold = rtplusstring;
   }
 
-  if (rtplusstringWidth < 165) {
-    xPos4 = 0;
-    RDSSprite.fillSprite(BackgroundColor);
-    if (RDSstatus) RDSSprite.setTextColor(RDSColor, RDSColorSmooth, false); else RDSSprite.setTextColor(RDSDropoutColor, RDSDropoutColorSmooth, false);
-    RDSSprite.drawString(rtplusstring, xPos4, 2);
-    RDSSprite.pushSprite(35, 146);
-  } else {
-    if (millis() - rtplusticker >= 5) {
-      if (xPos4 < -rtplusstringWidth) xPos4 = 0;
-      if (xPos4 == 0) {
-        if (millis() - rtplustickerhold >= 2000) {
-          xPos4 --;
-          rtplustickerhold = millis();
-        }
-      } else {
-        xPos4 --;
-        rtplustickerhold = millis();
-      }
-      RDSSprite.fillSprite(BackgroundColor);
-      if (RDSstatus) RDSSprite.setTextColor(RDSColor, RDSColorSmooth, false); else RDSSprite.setTextColor(RDSDropoutColor, RDSDropoutColorSmooth, false);
-      RDSSprite.drawString(rtplusstring, xPos4, 2);
-      RDSSprite.drawString(rtplusstring, xPos4 + rtplusstringWidth, 2);
-      RDSSprite.pushSprite(35, 146);
-      rtplusticker = millis();
-    }
-  }
+  rtplusDisplay.update(rtplusstring, rtplusstringWidth, RDSstatus, RDSColor, RDSColorSmooth, RDSDropoutColor, RDSDropoutColorSmooth);
 
   if (TPold != radio.rds.TP) {
     if (!screenmute) {
@@ -547,30 +472,30 @@ void showPS() {
 
         // Handle scrolling logic for long PS
         if (PSSprite.textWidth(trimTrailingSpaces(radio.rds.stationNameLong)) < 150) {
-            xPos5 = 0;
+            xPos2 = 0;
             PSSprite.fillSprite(BackgroundColor);
             PSSprite.setTextColor(RDSstatus ? RDSColor : RDSDropoutColor, RDSstatus ? RDSColorSmooth : RDSDropoutColorSmooth, false);
-            PSSprite.drawString(stationNameLongString, xPos5, 2);
+            PSSprite.drawString(stationNameLongString, xPos2, 2);
         } else {
           if (millis() - pslongticker >= 5) {
-            if (xPos5 == 0 && millis() - pslongtickerhold < 2000) {
+            if (xPos2 == 0 && millis() - pslongtickerhold < 2000) {
                 // Hold at position 0
             } else {
-                xPos5--;
+                xPos2--;
                 pslongtickerhold = millis();
             }
             
-            if (xPos5 < -PSLongWidth) xPos5 = 0;
+            if (xPos2 < -PSLongWidth) xPos2 = 0;
             pslongticker = millis();
           }
           
           PSSprite.fillSprite(BackgroundColor);
           PSSprite.setTextColor(RDSstatus ? RDSColor : RDSDropoutColor, RDSstatus ? RDSColorSmooth : RDSDropoutColorSmooth, false);
-          PSSprite.drawString(stationNameLongString, xPos5 + 8, 2);
-          PSSprite.drawString(stationNameLongString, xPos5 + PSLongWidth, 2);
+          PSSprite.drawString(stationNameLongString, xPos2 + 8, 2);
+          PSSprite.drawString(stationNameLongString, xPos2 + PSLongWidth, 2);
         }
       } else {
-        xPos5 = 0;
+        xPos2 = 0;
         PSSprite.fillSprite(BackgroundColor);
 
         for (int i = 0; i < 7; i++) {

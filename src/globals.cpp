@@ -226,9 +226,6 @@ int XDRBWset;
 int XDRBWsetold;
 int xPos;
 int xPos2;
-int xPos3;
-int xPos4;
-int xPos5;
 int16_t OStatus;
 int16_t SAvg;
 int16_t SAvg2;
@@ -378,3 +375,7 @@ WiFiServer Server(7373);
 WiFiClient RemoteClient;
 WiFiUDP Udp;
 WebServer webserver(80);
+
+ScrollingTextDisplay rtplusDisplay(&RDSSprite, 146, 165, BackgroundColor);
+ScrollingTextDisplay eonDisplay(&RDSSprite, 172, 165, BackgroundColor);
+ScrollingTextDisplay eccDisplay(&RDSSprite, 199, 270, BackgroundColor);
