@@ -60,15 +60,9 @@ void ShowAdvancedRDS() {
   if (radio.rds.ECC.changed(0)) {
     if (!screenmute) {
       if (radio.rds.hasECC) ECCString = (radio.rds.ECCtext.length() == 0 ? textUI(73) : radio.rds.ECCtext); else ECCString = "N/A";
-      if (ECCString != ECColdString) {
-        tftPrint(ALEFT, "N/A", 35, 199, BackgroundColor, BackgroundColor, 16);
-        tftPrint(ALEFT, ECColdString, 35, 199, BackgroundColor, BackgroundColor, 16);
-        eccstringWidth = RDSSprite.textWidth(ECCString);
-      }
-
-      eccDisplay.update(ECCString, eccstringWidth, RDSstatus, RDSColor, RDSColorSmooth, RDSDropoutColor, RDSDropoutColorSmooth);
+      tftPrint(ALEFT, "N/A", 35, 199, BackgroundColor, BackgroundColor, 16);
+      eccstringWidth = RDSSprite.textWidth(ECCString);
     }
-    ECColdString = ECCString;
 
     if (wifi) {
       Udp.beginPacket(remoteip, 9030);
@@ -78,6 +72,7 @@ void ShowAdvancedRDS() {
       Udp.endPacket();
     }
   }
+  if(!screenmute) eccDisplay.update(ECCString, eccstringWidth, RDSstatus, RDSColor, RDSColorSmooth, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor);
 
   String eonstring;
   if (radio.eon_counter > 0) for (byte i = 0; i < radio.eon_counter; i++) eonstring += String(radio.eon[i].picode) + (radio.eon[i].ps.length() > 0 ? String(": " + String(radio.eon[i].ps)) : "") + (radio.eon[i].mappedfreq > 0 ? String(" " + String(radio.eon[i].mappedfreq / 100) + "." + String((radio.eon[i].mappedfreq % 100) / 10))  : "") + (radio.eon[i].mappedfreq2 > 0 ? String(" / " + String(radio.eon[i].mappedfreq2 / 100) + "." + String((radio.eon[i].mappedfreq2 % 100) / 10))  : "") + (radio.eon[i].mappedfreq3 > 0 ? String(" /  " + String(radio.eon[i].mappedfreq3 / 100) + "." + String((radio.eon[i].mappedfreq3 % 100) / 10))  : "") + (i == radio.eon_counter - 1 ? "        " : " | "); else eonstring = textUI(88);
@@ -93,7 +88,7 @@ void ShowAdvancedRDS() {
     eonstringold = eonstring;
   }
 
-  eonDisplay.update(eonstring, eonstringWidth, RDSstatus, RDSColor, RDSColorSmooth, RDSDropoutColor, RDSDropoutColorSmooth);
+  if(!screenmute) eonDisplay.update(eonstring, eonstringWidth, RDSstatus, RDSColor, RDSColorSmooth, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor);
 
   String rtplusstring;
   if (radio.rds.hasRTplus.get()) rtplusstring = (radio.rds.rdsplusTag1 != 169 ? String(textUI(radio.rds.rdsplusTag1)) + ": " + String(radio.rds.RTContent1) : "") + (radio.rds.rdsplusTag2 != 169 ? " - " + String(textUI(radio.rds.rdsplusTag2)) + ": " + String(radio.rds.RTContent2) : "") + "        "; else rtplusstring = textUI(89);
@@ -108,7 +103,7 @@ void ShowAdvancedRDS() {
     rtplusstringold = rtplusstring;
   }
 
-  rtplusDisplay.update(rtplusstring, rtplusstringWidth, RDSstatus, RDSColor, RDSColorSmooth, RDSDropoutColor, RDSDropoutColorSmooth);
+  if(!screenmute) rtplusDisplay.update(rtplusstring, rtplusstringWidth, RDSstatus, RDSColor, RDSColorSmooth, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor);
 
   if (TPold != radio.rds.TP) {
     if (!screenmute) {

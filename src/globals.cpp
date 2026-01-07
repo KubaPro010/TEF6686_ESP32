@@ -376,6 +376,6 @@ WiFiClient RemoteClient;
 WiFiUDP Udp;
 WebServer webserver(80);
 
-ScrollingTextDisplay rtplusDisplay(&RDSSprite, 146, 165, BackgroundColor);
-ScrollingTextDisplay eonDisplay(&RDSSprite, 172, 165, BackgroundColor);
-ScrollingTextDisplay eccDisplay(&RDSSprite, 199, 270, BackgroundColor);
+ScrollingTextDisplay rtplusDisplay(&RDSSprite, 146, 170);
+ScrollingTextDisplay eonDisplay(&RDSSprite, 172, 170);
+ScrollingTextDisplay eccDisplay(&FullLineSprite, 199, 270);
