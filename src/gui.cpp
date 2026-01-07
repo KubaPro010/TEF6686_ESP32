@@ -1,6 +1,4 @@
 #include "gui.h"
-#include "constants.h"
-#include <WiFi.h>
 #include <Wire.h>
 #include <EEPROM.h>
 #include <cstring>
@@ -3219,7 +3217,8 @@ void MenuUpDown(bool dir) {
               switch (tot) {
                 case 0: tot = 15; break;
                 case 15: tot = 30; break;
-                case 30: tot = 60; break;
+                case 30: tot = 45; break;
+                case 45: tot = 60; break;
                 case 60: tot = 90; break;
                 default: tot = 0; break;
               }
@@ -3227,7 +3226,8 @@ void MenuUpDown(bool dir) {
               switch (tot) {
                 case 15: tot = 0; break;
                 case 30: tot = 15; break;
-                case 60: tot = 30; break;
+                case 45: tot = 30; break;
+                case 60: tot = 45; break;
                 case 90: tot = 60; break;
                 default: tot = 90; break;
               }
@@ -5586,18 +5586,6 @@ void Infoboxprint(const char* input) {
   }
 }
 
-String removeNewline(String inputString) {
-  String outputString = "";
-  for (int i = 0; i < inputString.length(); i++) {
-    if (inputString[i] == '\n') {
-      outputString += ' ';
-    } else {
-      outputString += inputString[i];
-    }
-  }
-  return outputString;
-}
-
 void drawButton(const char* text, byte button_number, bool active, bool selected) {
   const int buttonWidth = 70;
   const int buttonHeight = 30;
@@ -5628,7 +5616,7 @@ void drawButton(const char* text, byte button_number, bool active, bool selected
 
 
   // Draw the button fill
-  tft.pushImage (x, y, 70, 30, (CurrentTheme == 7 ? bwselector_wo : bwselector));
+  tft.pushImage(x, y, 70, 30, (CurrentTheme == 7 ? bwselector_wo : bwselector));
 
 
   // Draw the small line at the bottom (narrower, centered, and 3px up)
@@ -5644,17 +5632,13 @@ void drawButton(const char* text, byte button_number, bool active, bool selected
 
 String shortLine(String text) {
   String tempText = text;
-
-  if (PSSprite.textWidth(tempText + "...") > 155) { // Include "..." in width check
+  if (PSSprite.textWidth(tempText + "...") > 155) {
     while (PSSprite.textWidth(tempText + "...") > 155 && tempText.length() > 0) {
-      // Safely remove the last UTF-8 character
       int lastCharIndex = tempText.length() - 1;
-      while (lastCharIndex > 0 && (tempText[lastCharIndex] & 0xC0) == 0x80) {
-        lastCharIndex--; // Skip over continuation bytes
-      }
-      tempText = tempText.substring(0, lastCharIndex); // Remove last character
+      while (lastCharIndex > 0 && (tempText[lastCharIndex] & 0xC0) == 0x80) lastCharIndex--;
+      tempText = tempText.substring(0, lastCharIndex);
     }
-    text = tempText + "..."; // Add "..." to the truncated text
+    text = tempText + "...";
   }
   return text;
 }

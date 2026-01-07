@@ -127,3 +127,12 @@ String extractUTF8Substring(const String & utf8String, size_t start, size_t leng
 
   return substring;
 }
+
+String removeNewline(String inputString) {
+  String outputString = "";
+  for (int i = 0; i < inputString.length(); i++) {
+    if (inputString[i] == '\n') outputString += ' ';
+    else outputString += inputString[i];
+  }
+  return outputString;
+}

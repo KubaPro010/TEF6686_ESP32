@@ -15,3 +15,4 @@ String convertToUTF8(const wchar_t* input);
 String trimTrailingSpaces(String str);
 String ucs2ToUtf8(const char* ucs2Input);
 String extractUTF8Substring(const String & utf8String, size_t start, size_t length, bool underscore);
+String removeNewline(String inputString);

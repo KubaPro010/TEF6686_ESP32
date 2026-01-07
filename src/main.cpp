@@ -1,19 +1,14 @@
 #pragma region includes
 #include "soc/soc.h"
 #include "soc/rtc_cntl_reg.h"
-#include <WiFiClient.h>
 #include <EEPROM.h>
 #include <Wire.h>
-#include <TimeLib.h>
-#include <TFT_eSPI.h>
 #include <Hash.h>
 #include <FS.h>
+#include <TimeLib.h>
 using fs::FS;
-#include <WebServer.h>
 #include <SPIFFS.h>
 #include "NTPupdate.h"
-#include <WiFiConnect.h>
-#include <WiFiConnectParam.h>
 #include "FONT16.h"
 #include "FONT16_CHS.h"
 #include "FONT28.h"
@@ -29,403 +24,7 @@ using fs::FS;
 #include "touch.h"
 #include "logbook.h"
 #include "utils.h"
-#pragma endregion
-
-#define ROTARY_PIN_A    34
-#define ROTARY_PIN_B    36
-#define ROTARY_BUTTON   39
-#define PIN_POT         35
-#define BATTERY_PIN     13
-#define BANDBUTTON       4
-#define BWBUTTON        25
-#define MODEBUTTON      26
-#define CONTRASTPIN     2
-#define STANDBYLED      19
-#define SMETERPIN       27
-#define TOUCHIRQ        33
-#define EXT_IRQ         14
-
-#define DYNAMIC_SPI_SPEED
-
-#pragma region global definitions
-#ifdef ARS
-TFT_eSPI tft = TFT_eSPI(320, 240);
-#else
-TFT_eSPI tft = TFT_eSPI(240, 320);
-#endif
-
-#ifdef DYNAMIC_SPI_SPEED
-bool dynamicspi = true;
-#else
-bool dynamicspi = false;
-#endif
-
-bool advancedRDS, afmethodBold, afpage;
-bool afscreen, aftest, artheadold;
-bool autoDST, autolog, autologged;
-bool autosquelch = true, batterydetect = true, beepresetstart;
-bool beepresetstop, BWreset, bwtouchtune;
-bool BWtune, change, clockampm;
-bool compressedold, direction, dropout;
-bool dynamicPTYold, edgebeep, externaltune;
-bool findMemoryAF;
-bool firstTouchHandled = false;
-bool flashing;
-bool fmsi, fullsearchrds;
-bool hasafold, hasCTold, haseonold;
-bool hasrtplusold, hastmcold;
-bool initdxscan, invertdisplay, leave;
-bool LowLevelInit;
-bool memorystore;
-bool memreset, memtune;
-bool menu, menuopen;
-bool mwstepsize;
-bool nobattery;
-bool NTPupdated;
-bool optenc;
-bool rdsflagreset;
-bool rdsreset;
-bool rdsstatscreen;
-bool RDSSPYTCP, RDSSPYUSB;
-bool RDSstatus, RDSstatusold;
-bool rdsstereoold;
-bool rotaryaccelerate = true;
-bool rtcset;
-bool scandxmode;
-bool scanholdflag;
-bool scanholdonsignal;
-bool scanmem;
-bool scanmute;
-bool screenmute;
-bool screensavertriggered = false;
-bool seek;
-bool seekinit;
-bool setextendbw;
-bool setupmode;
-bool showclock;
-bool showlongps;
-bool usesquelch;
-bool softmuteam;
-bool softmutefm;
-bool SQ;
-bool Stereostatusold;
-bool StereoToggle;
-bool store;
-bool TAold, TPold;
-bool touchrepeat = false;
-bool touch_detect;
-bool tuned;
-bool USBmode;
-bool XDRGTKdata;
-bool XDRGTKMuteScreen;
-bool XDRGTKTCP, XDRGTKUSB;
-bool XDRMute, XDRScan;
-bool wifi, wificonnected;
-byte af_counterold;
-byte aid_counterold;
-byte af;
-byte afpagenr;
-byte amagc;
-byte amnb;
-byte amscansens;
-byte audiomode;
-byte band;
-byte bandAM;
-byte bandFM;
-byte bandforbidden;
-byte battery;
-byte batteryold;
-byte batteryoptions;
-byte BWset;
-byte BWsettemp;
-byte BWsetAM;
-byte BWsetFM;
-byte BWsetRecall;
-byte BWtemp;
-byte charwidth = 8;
-byte chipmodel;
-byte hardwaremodel;
-byte ContrastSet;
-byte CurrentSkin;
-byte CurrentTheme;
-byte displayflip;
-byte ECCold;
-byte eonptyold[20];
-byte EQset;
-byte fmagc;
-byte fmscansens;
-byte fmdefaultstepsize;
-byte fmnb;
-byte fmdeemphasis;
-byte freqfont;
-byte amcodect;
-byte amcodectcount;
-byte amgain;
-byte freqoldcount;
-byte HighCutLevel;
-byte HighCutOffset;
-byte items[10] = {10, static_cast<byte>(dynamicspi ? 10 : 9), 7, 10, 10, 10, 9, 10, 10, 9};
-byte iMSEQ;
-byte iMSset;
-byte language;
-byte longbandpress;
-byte memdoublepi;
-byte memorypos;
-byte memoryposold;
-byte memoryposstatus;
-byte mempionly;
-byte memstartpos;
-byte memstoppos;
-byte menuitem;
-byte menupage;
-byte poweroptions;
-byte rdsblockold;
-byte rdsqualityold;
-byte rotarymode;
-byte touchrotating;
-byte scancancel;
-byte scanstart;
-byte scanstop;
-byte scanhold;
-byte scanmodeold;
-byte screensaverOptions[5] = {0, 3, 10, 30, 60};
-byte screensaverset;
-byte showmodulation;
-byte showrdserrors;
-byte showSWMIBand;
-byte submenu;
-byte stationlistid;
-byte nowToggleSWMIBand = 1;
-byte stepsize;
-byte StereoLevel;
-byte subnetclient;
-byte TEF, tot, tunemode;
-byte unit, spispeed, programTypePrevious;
-char buff[16];
-char eonpicodeold[20][6];
-const uint8_t* currentFont = nullptr;
-float vPerold;
-int ActiveColor;
-int ActiveColorSmooth;
-int AGC;
-int AMLevelOffset;
-int BackgroundColor;
-int BackgroundColor1;
-int BackgroundColor2;
-int BackgroundColor3;
-int BackgroundColor4;
-int BackgroundColor5;
-int BarSignificantColor;
-int BarInsignificantColor;
-int BatteryValueColor;
-int BatteryValueColorSmooth;
-int batupdatetimer;
-int berPercentold;
-int BWAutoColor;
-int BWAutoColorSmooth;
-int BWOld;
-int bwupdatetimer;
-int DisplayedSegments;
-int ForceMono;
-int FrameColor;
-int FreqColor;
-int FreqColorSmooth;
-int freq_in = 0;
-int freqold;
-int GreyoutColor;
-int InsignificantColor;
-int InsignificantColorSmooth;
-int menuoption = ITEM1;
-int ModBarInsignificantColor;
-int ModBarSignificantColor;
-int MStatusold;
-int offsetupdatetimer;
-int OStatusold;
-int peakholdold;
-int peakholdtimer;
-int PrimaryColor;
-int PrimaryColorSmooth;
-int RDSColor, RDSColorSmooth;
-int RDSDropoutColor, RDSDropoutColorSmooth;
-int SignificantColor;
-int SignificantColorSmooth;
-int StereoColor;
-int StereoColorSmooth;
-int WifiColorHigh;
-int WifiColorLow;
-int SquelchShow;
-int rotary;
-int rotarycounter;
-int rotarycounteraccelerator;
-int rssi;
-int rssiold = 200;
-int scanner_filter;
-int SecondaryColor;
-int SecondaryColorSmooth;
-int SNRupdatetimer;
-int Sqstatusold;
-int Squelch;
-int Squelchold;
-int SStatusold;
-int Stereostatus;
-int volume;
-int XDRBWset;
-int XDRBWsetold;
-int xPos;
-int xPos2;
-int xPos3;
-int xPos4;
-int xPos5;
-int xPos6;
-int16_t OStatus;
-int16_t SAvg;
-int16_t SAvg2;
-int16_t SAvg3;
-int16_t SAvg4;
-int16_t SAvg5;
-int16_t SStatus;
-int16_t MP;
-int16_t US;
-int8_t MPold = 0;
-int8_t USold = 0;
-int8_t LevelOffset;
-int8_t LowLevelSet;
-int8_t NTPoffset;
-int8_t CN;
-int8_t CNold;
-int8_t VolSet;
-float batteryVold;
-IPAddress remoteip;
-String AIDString;
-String cryptedpassword;
-String ECColdString;
-String ECCString;
-String eonpsold[20];
-String PIold;
-String PSold;
-String ptynold = " ";
-String PTYold;
-String rds_clock;
-String rds_clockold;
-String rds_date;
-String rds_dateold;
-String RDSSPYRDS;
-String RDSSPYRDSold;
-String RTold;
-String salt;
-String saltkey = "                ";
-String stationIDold;
-String stationStateold;
-String StereoStatusCommand;
-String StereoStatusCommandold;
-String SWMIBandstring = String();
-String SWMIBandstringold = String();
-String XDRGTK_key;
-String XDRGTKRDS;
-String XDRGTKRDSold;
-uint16_t BW;
-uint16_t MStatus;
-uint16_t SWMIBandPos;
-uint16_t SWMIBandPosold;
-uint16_t TouchCalData[5];
-uint16_t USN;
-uint16_t WAM;
-uint8_t buff_pos;
-unsigned int ConverterSet;
-unsigned int freq_scan;
-unsigned int frequency;
-unsigned int frequency_OIRT;
-unsigned int frequency_AM;
-unsigned int frequency_LW;
-unsigned int frequency_MIBand_11M;
-unsigned int frequency_MIBand_120M;
-unsigned int frequency_MIBand_13M;
-unsigned int frequency_MIBand_15M;
-unsigned int frequency_MIBand_160M;
-unsigned int frequency_MIBand_16M;
-unsigned int frequency_MIBand_19M;
-unsigned int frequency_MIBand_22M;
-unsigned int frequency_MIBand_25M;
-unsigned int frequency_MIBand_31M;
-unsigned int frequency_MIBand_41M;
-unsigned int frequency_MIBand_49M;
-unsigned int frequency_MIBand_60M;
-unsigned int frequency_MIBand_75M;
-unsigned int frequency_MIBand_90M;
-unsigned int frequency_MW;
-unsigned int frequency_SW;
-unsigned int frequencyold;
-unsigned int HighEdgeOIRTSet;
-unsigned int HighEdgeSet;
-unsigned int LowEdgeOIRTSet;
-unsigned int logcounter;
-unsigned int LowEdgeSet;
-unsigned int LWHighEdgeSet;
-unsigned int LWLowEdgeSet;
-unsigned int mappedfreqold[20];
-unsigned int mappedfreqold2[20];
-unsigned int mappedfreqold3[20];
-unsigned int memstartfreq;
-unsigned int memstopfreq;
-unsigned int MWHighEdgeSet;
-unsigned int MWLowEdgeSet;
-unsigned int scanner_end;
-unsigned int scanner_start;
-unsigned int scanner_step;
-unsigned int SWHighEdgeSet;
-unsigned int SWLowEdgeSet;
-unsigned long afticker;
-unsigned long aftickerhold;
-unsigned long aftimer;
-unsigned long autosquelchtimer;
-unsigned long blockcounterold[33];
-unsigned long eccticker;
-unsigned long ecctickerhold;
-unsigned long eonticker;
-unsigned long eontickerhold;
-unsigned long flashingtimer;
-unsigned long keypadtimer;
-unsigned long lastTouchTime = 0;
-unsigned long lowsignaltimer;
-unsigned long ModulationpreviousMillis;
-unsigned long ModulationpeakPreviousMillis;
-unsigned long NTPtimer;
-unsigned long peakholdmillis;
-unsigned long processed_rdsblocksold[33];
-unsigned long pslongticker;
-unsigned long pslongtickerhold;
-unsigned long rtplusticker;
-unsigned long rtplustickerhold;
-unsigned long rtticker;
-unsigned long rttickerhold;
-unsigned long rotarytimer;
-unsigned long scantimer;
-unsigned long screensavertimer;
-unsigned long signalstatustimer;
-unsigned long tottimer;
-unsigned long tuningtimer;
-unsigned long udplogtimer;
-unsigned long udptimer;
-const size_t language_totalnumber = sizeof(myLanguage) / sizeof(myLanguage[0]);
-const size_t language_entrynumber = sizeof(myLanguage[0]) / sizeof(myLanguage[0][0]);
-
-mem presets[EE_PRESETS_CNT];
-TEF6686 radio;
-ESP32Time rtc(0);
-
-TFT_eSprite FrequencySprite = TFT_eSprite(&tft);
-TFT_eSprite RDSSprite = TFT_eSprite(&tft);
-TFT_eSprite SquelchSprite = TFT_eSprite(&tft);
-TFT_eSprite FullLineSprite = TFT_eSprite(&tft);
-TFT_eSprite OneBigLineSprite = TFT_eSprite(&tft);
-TFT_eSprite SignalSprite = TFT_eSprite(&tft);
-TFT_eSprite PSSprite = TFT_eSprite(&tft);
-
-WiFiConnect wc;
-WiFiServer Server(7373);
-WiFiClient RemoteClient;
-WiFiUDP Udp;
-WebServer webserver(80);
+#include "globals.h"
 #pragma endregion
 
 #pragma region to move
@@ -2019,7 +1618,7 @@ void setup() {
   tft.fillRect(152, 230, 16, 6, GreyoutColor);
   tft.fillRect(184, 230, 16, 6, GreyoutColor);
 
-  tft.pushImage (78, 34, 163, 84, openradiologo);
+  tft.pushImage(78, 34, 163, 84, openradiologo);
   tft.drawBitmap(130, 124, TEFLogo, 59, 23, ActiveColor);
 
   for (int x = 0; x <= ContrastSet; x++) {
@@ -2030,9 +1629,7 @@ void setup() {
   tft.fillRect(120, 230, 16, 6, PrimaryColor);
 
   TEF = EEPROM.readByte(EE_BYTE_TEF);
-
   if (TEF != 102 && TEF != 205) SetTunerPatch();
-
   radio.init(TEF);
 
   uint16_t device, hw, sw;
@@ -2169,10 +1766,8 @@ void loop() {
 
   Communication();
 
-  if (tot != 0) {
-    unsigned long totprobe = tot * 60000;
-    if (millis() >= tottimer + totprobe) deepSleep();
-  }
+  // tottimer is like the time of the last interaction
+  if (tot != 0 && millis() >= tottimer + (tot * 60000)) deepSleep();
 
   if (freq_in != 0 && millis() >= keypadtimer + 2000) {
     freq_in = 0;

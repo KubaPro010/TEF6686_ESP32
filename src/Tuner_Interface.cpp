@@ -1,9 +1,7 @@
-#include "TEF6686.h"
+#include "globals.h"
 #include "Tuner_Patch_Lithio_V102_p224.h"
 #include "Tuner_Patch_Lithio_V205_p512.h"
 #include <Wire.h>
-
-bool Data_Accelerator = false;
 
 const unsigned char tuner_init_tab[] PROGMEM = {
   9, 0x20, 0x36, 0x01, 0x00, 0x00, 0x01, 0x68, 0x01, 0x2C,

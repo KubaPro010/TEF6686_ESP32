@@ -1,5 +1,4 @@
 #include "comms.h"
-#include "constants.h"
 #include <EEPROM.h>
 
 extern mem presets[];

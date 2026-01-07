@@ -6,6 +6,7 @@
 #include "TEF6686.h"
 #include <WiFi.h>
 #include <ESP32Time.h>
+#include "globals.h"
 
 extern bool advancedRDS;
 extern bool afmethodBold;
@@ -31,7 +32,6 @@ extern bool NTPupdated;
 extern bool rdsreset;
 extern bool RDSSPYTCP;
 extern bool RDSSPYUSB;
-extern bool RDSstatus;
 extern bool rdsstatscreen;
 extern bool rdsstereoold;
 extern bool rtcset;

@@ -1,5 +1,4 @@
 #include "logbook.h"
-#include "constants.h"
 #include <EEPROM.h>
 
 String UDPlogold = "";
