@@ -3159,7 +3159,6 @@ void ShowFreq(int mode) {
 
   if (spispeed == 7) setAutoSpeedSPI();
   rdsreset = true;
-  ECCold = 253;
   afmethodBold = false;
   aid_counterold = 0;
   dropout = false;

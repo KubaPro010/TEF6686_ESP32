@@ -434,7 +434,7 @@ const DABFrequencyLabel DABfrequencyTable[] = {
 
 typedef struct _rds_ {
   byte region;
-  byte PTY;
+  Detector<byte, 1> PTY{0};
   String stationName;
   String stationText;
   String stationText32;
@@ -461,7 +461,7 @@ typedef struct _rds_ {
   uint32_t dabaffreq;
   byte aid_counter;
   byte fastps;
-  unsigned int ECC;
+  Detector<unsigned int, 1> ECC;
   bool rdsAerror;
   bool rdsBerror;
   bool rdsCerror;

@@ -225,11 +225,11 @@ byte addRowToCSV() {
   String TA = radio.rds.hasTA ? "•" : " ";
   String TP = radio.rds.TP ? "•" : " ";
   String Stereo = radio.getStereoStatus() ? "•" : " ";
-  String pty = String(radio.rds.PTY);
+  String pty = String(radio.rds.PTY.get());
   String ECC = "--";
   if (radio.rds.hasECC) {
     char eccBuffer[3];
-    snprintf(eccBuffer, sizeof(eccBuffer), "%02X", radio.rds.ECC);  // Format ECC as uppercase 2-digit hex
+    snprintf(eccBuffer, sizeof(eccBuffer), "%02X", radio.rds.ECC.get());  // Format ECC as uppercase 2-digit hex
     ECC = String(eccBuffer);
   }
 
@@ -382,7 +382,7 @@ void sendUDPlog() {
   String ECC = "";
   if (radio.rds.hasECC) {
     char eccBuffer[3];
-    snprintf(eccBuffer, sizeof(eccBuffer), "%02X", radio.rds.ECC);
+    snprintf(eccBuffer, sizeof(eccBuffer), "%02X", radio.rds.ECC.get());
     ECC = String(eccBuffer);
   }
 
@@ -418,7 +418,7 @@ void sendUDPlog() {
   String row = CHIP + "," + VERSION + "," + String(scandxmode) + "," +
                currentDateTime + "," + frequencyFormatted + "," + String(radio.rds.picode).substring(0, 4) + "," +
                signal + "," + String(radio.getStereoStatus()) + "," + String(radio.rds.hasTA) + "," +
-               String(radio.rds.TP) + "," + String(radio.rds.hasTMC.get()) + "," + String(radio.rds.PTY) + "," +
+               String(radio.rds.TP) + "," + String(radio.rds.hasTMC.get()) + "," + String(radio.rds.PTY.get()) + "," +
                ECC + "," + stationName + "," + radioTextModified + "," +
                AF + "," + EON + "," + RTPLUS + "\n";
 

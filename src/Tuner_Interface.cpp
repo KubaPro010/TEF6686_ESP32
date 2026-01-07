@@ -55,16 +55,16 @@ bool Tuner_WriteBuffer(unsigned char *buf, uint16_t len) {
   for (uint16_t i = 0; i < len; i++) Wire.write(buf[i]);
   uint8_t r = Wire.endTransmission();
   if (!Data_Accelerator) delay(2);
-  return (r == 0) ? 1 : 0;
+  return (r == 0) ? true : false;
 }
 
 bool Tuner_ReadBuffer(unsigned char *buf, uint16_t len) {
   Wire.requestFrom(0x64, len);
   if (Wire.available() == len) {
     for (uint16_t i = 0; i < len; i++) buf[i] = Wire.read();
-    return 1;
+    return true;
   }
-  return 0;
+  return false;
 }
 
 static void Tuner_Patch_Load(const unsigned char *pLutBytes, uint16_t size) {
@@ -87,7 +87,7 @@ static void Tuner_Patch_Load(const unsigned char *pLutBytes, uint16_t size) {
 bool Tuner_Table_Write(const unsigned char *tab) {
   if (tab[1] == 0xff) {
     delay(tab[2]);
-    return 1;
+    return true;
   } else return Tuner_WriteBuffer((unsigned char *)&tab[1], tab[0]);
 }
 

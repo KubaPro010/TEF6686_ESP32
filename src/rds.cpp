@@ -57,7 +57,7 @@ void ShowAdvancedRDS() {
     hasafold = radio.rds.hasAF;
   }
 
-  if (ECCold != radio.rds.ECC) {
+  if (radio.rds.ECC.changed(0)) {
     if (!screenmute) {
       if (radio.rds.hasECC) ECCString = (radio.rds.ECCtext.length() == 0 ? textUI(73) : radio.rds.ECCtext); else ECCString = "N/A";
       if (ECCString != ECColdString) {
@@ -67,27 +67,27 @@ void ShowAdvancedRDS() {
       }
 
       if (eccstringWidth < 270) {
-        xPos6 = 0;
+        xPos2 = 0;
         RDSSprite.fillSprite(BackgroundColor);
         if (RDSstatus) RDSSprite.setTextColor(RDSColor, RDSColorSmooth, false); else RDSSprite.setTextColor(RDSDropoutColor, RDSDropoutColorSmooth, false);
-        RDSSprite.drawString(ECCString, xPos6, 2);
+        RDSSprite.drawString(ECCString, xPos2, 2);
         RDSSprite.pushSprite(35, 199);
       } else {
         if (millis() - eccticker >= 5) {
-          if (xPos6 < -eccstringWidth) xPos6 = 0;
-          if (xPos6 == 0) {
+          if (xPos2 < -eccstringWidth) xPos2 = 0;
+          if (xPos2 == 0) {
             if (millis() - ecctickerhold >= 2000) {
-              xPos6--;
+              xPos2--;
               ecctickerhold = millis();
             }
           } else {
-            xPos6--;
+            xPos2--;
             ecctickerhold = millis();
           }
           RDSSprite.fillSprite(BackgroundColor);
           if (RDSstatus) RDSSprite.setTextColor(RDSColor, RDSColorSmooth, false); else RDSSprite.setTextColor(RDSDropoutColor, RDSDropoutColorSmooth, false);
-          RDSSprite.drawString(ECCString, xPos6, 2);
-          RDSSprite.drawString(ECCString, xPos6 + eccstringWidth, 2);
+          RDSSprite.drawString(ECCString, xPos2, 2);
+          RDSSprite.drawString(ECCString, xPos2 + eccstringWidth, 2);
           RDSSprite.pushSprite(35, 199);
           eccticker = millis();
         }
@@ -98,11 +98,10 @@ void ShowAdvancedRDS() {
     if (wifi) {
       Udp.beginPacket(remoteip, 9030);
       Udp.print("from=TEF_tuner_" + String(stationlistid, DEC) + ";ECC=");
-      if (radio.rds.ECC < 0x10) Udp.print("0");
-      Udp.print(String(radio.rds.ECC, HEX));
+      if (radio.rds.ECC.get() < 0x10) Udp.print("0");
+      Udp.print(String(radio.rds.ECC.get(), HEX));
       Udp.endPacket();
     }
-    ECCold = radio.rds.ECC;
   }
 
   String eonstring;
@@ -130,11 +129,11 @@ void ShowAdvancedRDS() {
       if (xPos3 < -eonstringWidth) xPos3 = 0;
       if (xPos3 == 0) {
         if (millis() - eontickerhold >= 2000) {
-          xPos3 --;
+          xPos3--;
           eontickerhold = millis();
         }
       } else {
-        xPos3 --;
+        xPos3--;
         eontickerhold = millis();
       }
       RDSSprite.fillSprite(BackgroundColor);
@@ -511,10 +510,8 @@ void showPI() {
 }
 
 void showPTY() {
-  if(radio.rds.PTY != programTypePrevious) {
-    String PTYString = String(radio.rds.PTY) + "/" + (radio.rds.region != 0 ? (radio.rds.region == 0 ? PTY_EU[radio.rds.PTY] : PTY_USA[radio.rds.PTY]) : textUI(228 + radio.rds.PTY));
-
-    if (radio.rds.PTY == 32) PTYString = "";
+  if(radio.rds.PTY.changed(0)) {
+    String PTYString = String(radio.rds.PTY.get()) + "/" + (radio.rds.region != 0 ? (radio.rds.region == 0 ? PTY_EU[radio.rds.PTY.get()] : PTY_USA[radio.rds.PTY.get()]) : textUI(228 + radio.rds.PTY.get()));
 
     if (!screenmute) {
       if (advancedRDS) {
@@ -530,10 +527,9 @@ void showPTY() {
     if (wifi) {
       Udp.beginPacket(remoteip, 9030);
       Udp.print("from=TEF_tuner_" + String(stationlistid, DEC) + ";PTY=");
-      Udp.print(String(radio.rds.PTY, HEX));
+      Udp.print(String(radio.rds.PTY.get(), HEX));
       Udp.endPacket();
     }
-    programTypePrevious = radio.rds.PTY;
   }
 }
 
@@ -551,24 +547,27 @@ void showPS() {
 
         // Handle scrolling logic for long PS
         if (PSSprite.textWidth(trimTrailingSpaces(radio.rds.stationNameLong)) < 150) {
-          xPos5 = 0;
-          PSSprite.fillSprite(BackgroundColor);
-          PSSprite.setTextColor(RDSstatus ? RDSColor : RDSDropoutColor, RDSstatus ? RDSColorSmooth : RDSDropoutColorSmooth, false);
-          PSSprite.drawString(stationNameLongString, xPos5, 2);
-        } else {
-          if (millis() - pslongticker >= 5) {
-            if (xPos5 < -PSLongWidth) xPos5 = 0; // Reset position if fully scrolled
-            if (xPos5 == 0 && millis() - pslongtickerhold >= 2000) {
-              xPos5--; // Hold position for 2 seconds before scrolling
-              pslongtickerhold = millis();
-            } else xPos5--;
-            pslongticker = millis();
-
+            xPos5 = 0;
             PSSprite.fillSprite(BackgroundColor);
             PSSprite.setTextColor(RDSstatus ? RDSColor : RDSDropoutColor, RDSstatus ? RDSColorSmooth : RDSDropoutColorSmooth, false);
             PSSprite.drawString(stationNameLongString, xPos5, 2);
-            PSSprite.drawString(stationNameLongString, xPos5 + PSLongWidth, 2);
+        } else {
+          if (millis() - pslongticker >= 5) {
+            if (xPos5 == 0 && millis() - pslongtickerhold < 2000) {
+                // Hold at position 0
+            } else {
+                xPos5--;
+                pslongtickerhold = millis();
+            }
+            
+            if (xPos5 < -PSLongWidth) xPos5 = 0;
+            pslongticker = millis();
           }
+          
+          PSSprite.fillSprite(BackgroundColor);
+          PSSprite.setTextColor(RDSstatus ? RDSColor : RDSDropoutColor, RDSstatus ? RDSColorSmooth : RDSDropoutColorSmooth, false);
+          PSSprite.drawString(stationNameLongString, xPos5 + 8, 2);
+          PSSprite.drawString(stationNameLongString, xPos5 + PSLongWidth, 2);
         }
       } else {
         xPos5 = 0;
@@ -690,15 +689,13 @@ void showCT() {
 void showRadioText() {
   String RTString = String(radio.rds.stationText + (radio.rds.stationText.length() > 0 ? " " : "") + radio.rds.stationText32 + (radio.rds.hasEnhancedRT ? " eRT: " + String(radio.rds.enhancedRTtext) : "") + "      ");
 
-  // Check if RT has changed
   if (radio.rds.hasRT && radio.rds.rtAB != rtABold) {
-    xPos = 0; // Reset ticker position
-    rttickerhold = millis(); // Hold the ticker momentarily
-    rtABold = radio.rds.rtAB; // Update old AB status
+    xPos = 0;
+    rttickerhold = millis();
+    rtABold = radio.rds.rtAB;
   }
 
   if (!screenmute) {
-    // Display RDS information if RT is available
     if (radio.rds.hasRT &&
         (radio.rds.stationText.length() > 0 || radio.rds.stationText32.length() > 0)) {
 
