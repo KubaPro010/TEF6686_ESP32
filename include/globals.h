@@ -297,7 +297,7 @@ extern uint16_t WAM;
 extern uint8_t buff_pos;
 extern unsigned int ConverterSet;
 extern unsigned int freq_scan;
-extern Detector<unsigned int, 1> frequency;
+extern unsigned int frequency;
 extern unsigned int frequency_OIRT;
 extern unsigned int frequency_AM;
 extern unsigned int frequency_LW;

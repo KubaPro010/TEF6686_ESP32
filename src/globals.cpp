@@ -277,7 +277,7 @@ uint16_t WAM;
 uint8_t buff_pos;
 unsigned int ConverterSet;
 unsigned int freq_scan;
-Detector<unsigned int, 1> frequency{0};
+unsigned int frequency;
 unsigned int frequency_OIRT;
 unsigned int frequency_AM;
 unsigned int frequency_LW;
