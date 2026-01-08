@@ -23,30 +23,26 @@ void ShowAdvancedRDS() {
     dynamicPTYold = radio.rds.hasDynamicPTY;
   }
 
-  if (radio.rds.hasArtificialhead != artheadold) {
+  if (radio.rds.hasArtificialhead.changed(0)) {
     if (radio.rds.hasArtificialhead) tft.fillCircle(310, 153, 5, InsignificantColor); else tft.fillCircle(310, 153, 5, SignificantColor);
-    artheadold = radio.rds.hasArtificialhead;
   }
 
-  if (radio.rds.hasCompressed != compressedold) {
+  if (radio.rds.hasCompressed.changed(0)) {
     if (radio.rds.hasCompressed) tft.fillCircle(310, 168, 5, InsignificantColor); else tft.fillCircle(310, 168, 5, SignificantColor);
-    compressedold = radio.rds.hasCompressed;
   }
 
-  if (radio.rds.hasStereo != rdsstereoold) {
+  if (radio.rds.hasStereo.changed(0)) {
     if (radio.rds.hasStereo) tft.fillCircle(310, 183, 5, InsignificantColor); else tft.fillCircle(310, 183, 5, SignificantColor);
-    rdsstereoold = radio.rds.hasStereo;
   }
 
-  if (ptynold != radio.rds.PTYN || rdsreset) {
+  if (radio.rds.PTYN.changed(0) || rdsreset) {
     if (!screenmute) {
-      if (ptynold != "PTYN N/A" || radio.rds.hasPTYN) {
+      if (radio.rds.PTYN.getPrev() != "PTYN N/A" || radio.rds.hasPTYN) {
         tftPrint(ALEFT, "PTYN N/A", 216, 109, BackgroundColor, BackgroundColor, 16);
-        tftPrint(ALEFT, ptynold, 216, 109, BackgroundColor, BackgroundColor, 16);
+        tftPrint(ALEFT, radio.rds.PTYN.getPrev(), 216, 109, BackgroundColor, BackgroundColor, 16);
       }
       if (!radio.rds.hasPTYN) radio.rds.PTYN = "PTYN N/A";
       tftPrint(ALEFT, String(radio.rds.PTYN), 216, 109, RDSColor, RDSColorSmooth, 16);
-      ptynold = radio.rds.PTYN;
     }
   }
 
@@ -65,8 +61,8 @@ void ShowAdvancedRDS() {
     if (wifi) {
       Udp.beginPacket(remoteip, 9030);
       Udp.print("from=TEF_tuner_" + String(stationlistid, DEC) + ";ECC=");
-      if (radio.rds.ECC.get() < 0x10) Udp.print("0");
-      Udp.print(String(radio.rds.ECC.get(), HEX));
+      if (radio.rds.ECC < 0x10) Udp.print("0");
+      Udp.print(String(radio.rds.ECC, HEX));
       Udp.endPacket();
     }
   }
@@ -83,27 +79,21 @@ void ShowAdvancedRDS() {
   if(!screenmute) eonDisplay.update(eonstring, RDSstatus, RDSColor, RDSColorSmooth, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor);
 
   String rtplusstring;
-  if (radio.rds.hasRTplus.get()) rtplusstring = (radio.rds.rdsplusTag1 != 169 ? String(textUI(radio.rds.rdsplusTag1)) + ": " + String(radio.rds.RTContent1) : "") + (radio.rds.rdsplusTag2 != 169 ? " - " + String(textUI(radio.rds.rdsplusTag2)) + ": " + String(radio.rds.RTContent2) : "") + "        "; else rtplusstring = textUI(89);
+  if (radio.rds.hasRTplus) rtplusstring = (radio.rds.rdsplusTag1 != 169 ? String(textUI(radio.rds.rdsplusTag1)) + ": " + String(radio.rds.RTContent1) : "") + (radio.rds.rdsplusTag2 != 169 ? " - " + String(textUI(radio.rds.rdsplusTag2)) + ": " + String(radio.rds.RTContent2) : "") + "        "; else rtplusstring = textUI(89);
   if (radio.rds.hasRTplus.changed(0)) {
     if (!screenmute) {
-      if (radio.rds.hasRTplus.get()) tftPrint(ALEFT, "RT+", 123, 51, RDSColor, RDSColorSmooth, 16); else tftPrint(ALEFT, "RT+", 123, 51, GreyoutColor, BackgroundColor, 16);
+      if (radio.rds.hasRTplus) tftPrint(ALEFT, "RT+", 123, 51, RDSColor, RDSColorSmooth, 16); else tftPrint(ALEFT, "RT+", 123, 51, GreyoutColor, BackgroundColor, 16);
     }
   }
 
   if(!screenmute) rtplusDisplay.update(rtplusstring, RDSstatus, RDSColor, RDSColorSmooth, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor);
 
-  if (TPold != radio.rds.TP) {
-    if (!screenmute) {
-      if (radio.rds.TP) tftPrint(ALEFT, "TP", 2, 51, RDSColor, RDSColorSmooth, 16); else tftPrint(ALEFT, "TP", 2, 51, GreyoutColor, BackgroundColor, 16);
-    }
-    TPold = radio.rds.TP;
+  if (radio.rds.TP.changed(0) && !screenmute) {
+    if (radio.rds.TP) tftPrint(ALEFT, "TP", 2, 51, RDSColor, RDSColorSmooth, 16); else tftPrint(ALEFT, "TP", 2, 51, GreyoutColor, BackgroundColor, 16);
   }
 
-  if (TAold != radio.rds.hasTA) {
-    if (!screenmute) {
-      if (radio.rds.hasTA) tftPrint(ALEFT, "TA", 24, 51, RDSColor, RDSColorSmooth, 16); else tftPrint(ALEFT, "TA", 24, 51, GreyoutColor, BackgroundColor, 16);
-    }
-    TAold = radio.rds.hasTA;
+  if (radio.rds.TA.changed(0) && !screenmute) {
+    if (radio.rds.TA) tftPrint(ALEFT, "TA", 24, 51, RDSColor, RDSColorSmooth, 16); else tftPrint(ALEFT, "TA", 24, 51, GreyoutColor, BackgroundColor, 16);
   }
 
   if (afmethodBold != radio.afmethodB || rdsreset) {
@@ -121,7 +111,7 @@ void ShowAdvancedRDS() {
 
   if (radio.rds.hasTMC.changed(0)) {
     if (!screenmute) {
-      if (radio.rds.hasTMC.get()) tftPrint(ALEFT, "TMC", 88, 51, RDSColor, RDSColorSmooth, 16); else tftPrint(ALEFT, "TMC", 88, 51, GreyoutColor, BackgroundColor, 16);
+      if (radio.rds.hasTMC) tftPrint(ALEFT, "TMC", 88, 51, RDSColor, RDSColorSmooth, 16); else tftPrint(ALEFT, "TMC", 88, 51, GreyoutColor, BackgroundColor, 16);
     }
   }
 
@@ -266,7 +256,7 @@ void readRds() {
       XDRGTKRDS += hexbuf;
       XDRGTKRDS += '\n';
 
-      if (XDRGTKRDS != XDRGTKRDSold) {
+      if (XDRGTKRDS.changed(0)) {
         uint8_t piError = radio.rds.rdsErr >> 14;
         if (piError < 3) {
           uint8_t piState = radio.rds.piBuffer.add(radio.rds.rdsA, piError);
@@ -278,8 +268,9 @@ void readRds() {
             DataPrint(F("\n"));
           }
         }
-        XDRGTKRDSold = XDRGTKRDS;
-        XDRGTKRDS.toUpperCase();
+        String upper_buffer = XDRGTKRDS;
+        upper_buffer.toUpperCase();
+        XDRGTKRDS.amend(upper_buffer);
         DataPrint(XDRGTKRDS);
       }
     }
@@ -418,7 +409,7 @@ void showPI() {
 
 void showPTY() {
   if(radio.rds.PTY.changed(0)) {
-    String PTYString = String(radio.rds.PTY.get()) + "/" + (radio.rds.region != 0 ? (radio.rds.region == 0 ? PTY_EU[radio.rds.PTY.get()] : PTY_USA[radio.rds.PTY.get()]) : textUI(228 + radio.rds.PTY.get()));
+    String PTYString = String(radio.rds.PTY) + "/" + (radio.rds.region != 0 ? (radio.rds.region == 0 ? PTY_EU[radio.rds.PTY] : PTY_USA[radio.rds.PTY]) : textUI(228 + radio.rds.PTY));
 
     if (!screenmute) {
       if (advancedRDS) {
@@ -434,7 +425,7 @@ void showPTY() {
     if (wifi) {
       Udp.beginPacket(remoteip, 9030);
       Udp.print("from=TEF_tuner_" + String(stationlistid, DEC) + ";PTY=");
-      Udp.print(String(radio.rds.PTY.get(), HEX));
+      Udp.print(String(radio.rds.PTY, HEX));
       Udp.endPacket();
     }
   }
@@ -567,7 +558,7 @@ void showCT() {
   else strftime(dateStr, sizeof(dateStr), "%d-%m-%y", localtime(&t));
   rds_date = String(dateStr);
 
-  if (!screenmute && showclock && (rds_clock != rds_clockold || rds_date != rds_dateold || hasCTold != radio.rds.hasCT)) {
+  if (!screenmute && showclock && (rds_clock != rds_clockold || rds_date != rds_dateold || radio.rds.hasCT.changed(0))) {
 
     if ((radio.rds.hasCT && RDSstatus) || NTPupdated) {
       rtcset = true;
@@ -590,7 +581,6 @@ void showCT() {
 
   rds_clockold = rds_clock;
   rds_dateold = rds_date;
-  hasCTold = radio.rds.hasCT;
 }
 
 void showRadioText() {

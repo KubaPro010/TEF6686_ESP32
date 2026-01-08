@@ -534,8 +534,8 @@ void TEF6686::readRDS(byte showrdserrors) {
     rdsgroup = rds.rdsB >> 11; // Includes version bit as LSB, better for the switch statement
     if(bitRead(rds.rdsStat, 12) && (rdsgroup & 1) == 0) goto end; // Modulation says type B, but data says otherwise? Dunno what to treat it as, thus skip
 
-    rds.TP = (bitRead(rds.rdsB, 10));
-    rds.PTY.set((rds.rdsB >> 5) & 0x1F);
+    rds.TP = bitRead(rds.rdsB, 10);
+    rds.PTY = ((rds.rdsB >> 5) & 0x1F);
 
     rds.blockcounter[rdsgroup]++;
     processed_rdsblocks++;
@@ -599,12 +599,12 @@ void TEF6686::readRDS(byte showrdserrors) {
             }
 
             if(segment == 0) rds.hasDynamicPTY = bitRead(rds.rdsB, 2) & 0x1F;
-            else if(segment == 1) rds.hasCompressed = bitRead(rds.rdsB, 2) & 0x1F;
-            else if(segment == 2) rds.hasArtificialhead = bitRead(rds.rdsB, 2) & 0x1F;
-            else if(segment == 3) rds.hasStereo = bitRead(rds.rdsB, 2) & 0x1F;
+            else if(segment == 1) rds.hasCompressed = (bitRead(rds.rdsB, 2) & 0x1F);
+            else if(segment == 2) rds.hasArtificialhead = (bitRead(rds.rdsB, 2) & 0x1F);
+            else if(segment == 3) rds.hasStereo = (bitRead(rds.rdsB, 2) & 0x1F);
           }
 
-          rds.hasTA = (bitRead(rds.rdsB, 4));
+          rds.TA = bitRead(rds.rdsB, 4);
 
           if (!rdsCerrorThreshold && rdsgroup == RDS_GROUP_0A && rds.rdsC != rdsCold) {
             if ((rds.rdsC >> 8) > 224 && (rds.rdsC >> 8) < 250) {
@@ -760,297 +760,297 @@ void TEF6686::readRDS(byte showrdserrors) {
 
       case RDS_GROUP_1A: {
           if (!rdsCerrorThreshold && ((rds.rdsC >> 12) & 0x07) == 0) {
-            rds.ECC.set(rds.rdsC & 0xff);
+            rds.ECC = (rds.rdsC & 0xff);
             rds.hasECC = true;
 
             switch (rds.picode[0]) {
                 case '1': {
-                    if (rds.ECC.get() == 0xA0) rds.ECCtext = ECCtext[226];
-                    else if (rds.ECC.get() == 0xA2) rds.ECCtext = ECCtext[129];
-                    else if (rds.ECC.get() == 0xA3) rds.ECCtext = ECCtext[136];
-                    else if (rds.ECC.get() == 0xA4) rds.ECCtext = ECCtext[152];
-                    else if (rds.ECC.get() == 0xD0) rds.ECCtext = ECCtext[104];
-                    else if (rds.ECC.get() == 0xD1) rds.ECCtext = ECCtext[73];
-                    else if (rds.ECC.get() == 0xD2) rds.ECCtext = ECCtext[83];
-                    else if (rds.ECC.get() == 0xE0) rds.ECCtext = ECCtext[0];
-                    else if (rds.ECC.get() == 0xE1) rds.ECCtext = ECCtext[1];
-                    else if (rds.ECC.get() == 0xE2) rds.ECCtext = ECCtext[2];
-                    else if (rds.ECC.get() == 0xE3) rds.ECCtext = ECCtext[59];
-                    else if (rds.ECC.get() == 0xE4) rds.ECCtext = ECCtext[3];
-                    else if (rds.ECC.get() == 0xF0) rds.ECCtext = ECCtext[179];
-                    else if (rds.ECC.get() == 0xF1) rds.ECCtext = ECCtext[197];
-                    else if (rds.ECC.get() == 0xF2) rds.ECCtext = ECCtext[124];
-                    else if (rds.ECC.get() == 0xF3) rds.ECCtext = ECCtext[200];
+                    if (rds.ECC == 0xA0) rds.ECCtext = ECCtext[226];
+                    else if (rds.ECC == 0xA2) rds.ECCtext = ECCtext[129];
+                    else if (rds.ECC == 0xA3) rds.ECCtext = ECCtext[136];
+                    else if (rds.ECC == 0xA4) rds.ECCtext = ECCtext[152];
+                    else if (rds.ECC == 0xD0) rds.ECCtext = ECCtext[104];
+                    else if (rds.ECC == 0xD1) rds.ECCtext = ECCtext[73];
+                    else if (rds.ECC == 0xD2) rds.ECCtext = ECCtext[83];
+                    else if (rds.ECC == 0xE0) rds.ECCtext = ECCtext[0];
+                    else if (rds.ECC == 0xE1) rds.ECCtext = ECCtext[1];
+                    else if (rds.ECC == 0xE2) rds.ECCtext = ECCtext[2];
+                    else if (rds.ECC == 0xE3) rds.ECCtext = ECCtext[59];
+                    else if (rds.ECC == 0xE4) rds.ECCtext = ECCtext[3];
+                    else if (rds.ECC == 0xF0) rds.ECCtext = ECCtext[179];
+                    else if (rds.ECC == 0xF1) rds.ECCtext = ECCtext[197];
+                    else if (rds.ECC == 0xF2) rds.ECCtext = ECCtext[124];
+                    else if (rds.ECC == 0xF3) rds.ECCtext = ECCtext[200];
                     break;
                   }
                 case '2': {
-                    if (rds.ECC.get() == 0xA0) rds.ECCtext = ECCtext[226];
-                    else if (rds.ECC.get() == 0xA2) rds.ECCtext = ECCtext[130];
-                    else if (rds.ECC.get() == 0xA3) rds.ECCtext = ECCtext[141];
-                    else if (rds.ECC.get() == 0xA4) rds.ECCtext = ECCtext[155];
-                    else if (rds.ECC.get() == 0xD0) rds.ECCtext = ECCtext[106];
-                    else if (rds.ECC.get() == 0xD1) rds.ECCtext = ECCtext[126];
-                    else if (rds.ECC.get() == 0xD2) rds.ECCtext = ECCtext[95];
-                    else if (rds.ECC.get() == 0xE0) rds.ECCtext = ECCtext[4];
-                    else if (rds.ECC.get() == 0xE1) rds.ECCtext = ECCtext[5];
-                    else if (rds.ECC.get() == 0xE2) rds.ECCtext = ECCtext[6];
-                    else if (rds.ECC.get() == 0xE3) rds.ECCtext = ECCtext[7];
-                    else if (rds.ECC.get() == 0xE4) rds.ECCtext = ECCtext[8];
-                    else if (rds.ECC.get() == 0xF0) rds.ECCtext = ECCtext[180];
-                    else if (rds.ECC.get() == 0xF1) rds.ECCtext = ECCtext[187];
-                    else if (rds.ECC.get() == 0xF2) rds.ECCtext = ECCtext[77];
-                    else if (rds.ECC.get() == 0xF3) rds.ECCtext = ECCtext[218];
+                    if (rds.ECC == 0xA0) rds.ECCtext = ECCtext[226];
+                    else if (rds.ECC == 0xA2) rds.ECCtext = ECCtext[130];
+                    else if (rds.ECC == 0xA3) rds.ECCtext = ECCtext[141];
+                    else if (rds.ECC == 0xA4) rds.ECCtext = ECCtext[155];
+                    else if (rds.ECC == 0xD0) rds.ECCtext = ECCtext[106];
+                    else if (rds.ECC == 0xD1) rds.ECCtext = ECCtext[126];
+                    else if (rds.ECC == 0xD2) rds.ECCtext = ECCtext[95];
+                    else if (rds.ECC == 0xE0) rds.ECCtext = ECCtext[4];
+                    else if (rds.ECC == 0xE1) rds.ECCtext = ECCtext[5];
+                    else if (rds.ECC == 0xE2) rds.ECCtext = ECCtext[6];
+                    else if (rds.ECC == 0xE3) rds.ECCtext = ECCtext[7];
+                    else if (rds.ECC == 0xE4) rds.ECCtext = ECCtext[8];
+                    else if (rds.ECC == 0xF0) rds.ECCtext = ECCtext[180];
+                    else if (rds.ECC == 0xF1) rds.ECCtext = ECCtext[187];
+                    else if (rds.ECC == 0xF2) rds.ECCtext = ECCtext[77];
+                    else if (rds.ECC == 0xF3) rds.ECCtext = ECCtext[218];
                     break;
                   }
                 case '3': {
-                    if (rds.ECC.get() == 0xA0) rds.ECCtext = ECCtext[226];
-                    else if (rds.ECC.get() == 0xA2) rds.ECCtext = ECCtext[224];
-                    else if (rds.ECC.get() == 0xA3) rds.ECCtext = ECCtext[156];
-                    else if (rds.ECC.get() == 0xA4) rds.ECCtext = ECCtext[132];
-                    else if (rds.ECC.get() == 0xD0) rds.ECCtext = ECCtext[112];
-                    else if (rds.ECC.get() == 0xD1) rds.ECCtext = ECCtext[119];
-                    else if (rds.ECC.get() == 0xD2) rds.ECCtext = ECCtext[72];
-                    else if (rds.ECC.get() == 0xD3) rds.ECCtext = ECCtext[92];
-                    else if (rds.ECC.get() == 0xE0) rds.ECCtext = ECCtext[9];
-                    else if (rds.ECC.get() == 0xE1) rds.ECCtext = ECCtext[10];
-                    else if (rds.ECC.get() == 0xE2) rds.ECCtext = ECCtext[11];
-                    else if (rds.ECC.get() == 0xE3) rds.ECCtext = ECCtext[12];
-                    else if (rds.ECC.get() == 0xE4) rds.ECCtext = ECCtext[16];
-                    else if (rds.ECC.get() == 0xE5) rds.ECCtext = ECCtext[63];
-                    else if (rds.ECC.get() == 0xE6) rds.ECCtext = ECCtext[228];
-                    else if (rds.ECC.get() == 0xF0) rds.ECCtext = ECCtext[181];
-                    else if (rds.ECC.get() == 0xF1) rds.ECCtext = ECCtext[227];
-                    else if (rds.ECC.get() == 0xF2) rds.ECCtext = ECCtext[189];
-                    else if (rds.ECC.get() == 0xF3) rds.ECCtext = ECCtext[219];
+                    if (rds.ECC == 0xA0) rds.ECCtext = ECCtext[226];
+                    else if (rds.ECC == 0xA2) rds.ECCtext = ECCtext[224];
+                    else if (rds.ECC == 0xA3) rds.ECCtext = ECCtext[156];
+                    else if (rds.ECC == 0xA4) rds.ECCtext = ECCtext[132];
+                    else if (rds.ECC == 0xD0) rds.ECCtext = ECCtext[112];
+                    else if (rds.ECC == 0xD1) rds.ECCtext = ECCtext[119];
+                    else if (rds.ECC == 0xD2) rds.ECCtext = ECCtext[72];
+                    else if (rds.ECC == 0xD3) rds.ECCtext = ECCtext[92];
+                    else if (rds.ECC == 0xE0) rds.ECCtext = ECCtext[9];
+                    else if (rds.ECC == 0xE1) rds.ECCtext = ECCtext[10];
+                    else if (rds.ECC == 0xE2) rds.ECCtext = ECCtext[11];
+                    else if (rds.ECC == 0xE3) rds.ECCtext = ECCtext[12];
+                    else if (rds.ECC == 0xE4) rds.ECCtext = ECCtext[16];
+                    else if (rds.ECC == 0xE5) rds.ECCtext = ECCtext[63];
+                    else if (rds.ECC == 0xE6) rds.ECCtext = ECCtext[228];
+                    else if (rds.ECC == 0xF0) rds.ECCtext = ECCtext[181];
+                    else if (rds.ECC == 0xF1) rds.ECCtext = ECCtext[227];
+                    else if (rds.ECC == 0xF2) rds.ECCtext = ECCtext[189];
+                    else if (rds.ECC == 0xF3) rds.ECCtext = ECCtext[219];
                     break;
                   }
                 case '4': {
-                    if (rds.ECC.get() == 0xA0) rds.ECCtext = ECCtext[226];
-                    else if (rds.ECC.get() == 0xA2) rds.ECCtext = ECCtext[148];
-                    else if (rds.ECC.get() == 0xA3) rds.ECCtext = ECCtext[157];
-                    else if (rds.ECC.get() == 0xD0) rds.ECCtext = ECCtext[127];
-                    else if (rds.ECC.get() == 0xD1) rds.ECCtext = ECCtext[69];
-                    else if (rds.ECC.get() == 0xD2) rds.ECCtext = ECCtext[91];
-                    else if (rds.ECC.get() == 0xD3) rds.ECCtext = ECCtext[103];
-                    else if (rds.ECC.get() == 0xE0) rds.ECCtext = ECCtext[13];
-                    else if (rds.ECC.get() == 0xE1) rds.ECCtext = ECCtext[14];
-                    else if (rds.ECC.get() == 0xE2) rds.ECCtext = ECCtext[15];
-                    else if (rds.ECC.get() == 0xF0) rds.ECCtext = ECCtext[182];
-                    else if (rds.ECC.get() == 0xF1) rds.ECCtext = ECCtext[210];
-                    else if (rds.ECC.get() == 0xF2) rds.ECCtext = ECCtext[213];
+                    if (rds.ECC == 0xA0) rds.ECCtext = ECCtext[226];
+                    else if (rds.ECC == 0xA2) rds.ECCtext = ECCtext[148];
+                    else if (rds.ECC == 0xA3) rds.ECCtext = ECCtext[157];
+                    else if (rds.ECC == 0xD0) rds.ECCtext = ECCtext[127];
+                    else if (rds.ECC == 0xD1) rds.ECCtext = ECCtext[69];
+                    else if (rds.ECC == 0xD2) rds.ECCtext = ECCtext[91];
+                    else if (rds.ECC == 0xD3) rds.ECCtext = ECCtext[103];
+                    else if (rds.ECC == 0xE0) rds.ECCtext = ECCtext[13];
+                    else if (rds.ECC == 0xE1) rds.ECCtext = ECCtext[14];
+                    else if (rds.ECC == 0xE2) rds.ECCtext = ECCtext[15];
+                    else if (rds.ECC == 0xF0) rds.ECCtext = ECCtext[182];
+                    else if (rds.ECC == 0xF1) rds.ECCtext = ECCtext[210];
+                    else if (rds.ECC == 0xF2) rds.ECCtext = ECCtext[213];
                     break;
                   }
                 case '5': {
-                    if (rds.ECC.get() == 0xA0) rds.ECCtext = ECCtext[226];
-                    else if (rds.ECC.get() == 0xA2) rds.ECCtext = ECCtext[133];
-                    else if (rds.ECC.get() == 0xA4) rds.ECCtext = ECCtext[159];
-                    else if (rds.ECC.get() == 0xD0) rds.ECCtext = ECCtext[68];
-                    else if (rds.ECC.get() == 0xD1) rds.ECCtext = ECCtext[79];
-                    else if (rds.ECC.get() == 0xD2) rds.ECCtext = ECCtext[88];
-                    else if (rds.ECC.get() == 0xD3) rds.ECCtext = ECCtext[78];
-                    else if (rds.ECC.get() == 0xE0) rds.ECCtext = ECCtext[17];
-                    else if (rds.ECC.get() == 0xE1) rds.ECCtext = ECCtext[18];
-                    else if (rds.ECC.get() == 0xE2) rds.ECCtext = ECCtext[19];
-                    else if (rds.ECC.get() == 0xE3) rds.ECCtext = ECCtext[65];
-                    else if (rds.ECC.get() == 0xF0) rds.ECCtext = ECCtext[183];
-                    else if (rds.ECC.get() == 0xF1) rds.ECCtext = ECCtext[191];
-                    else if (rds.ECC.get() == 0xF2) rds.ECCtext = ECCtext[193];
+                    if (rds.ECC == 0xA0) rds.ECCtext = ECCtext[226];
+                    else if (rds.ECC == 0xA2) rds.ECCtext = ECCtext[133];
+                    else if (rds.ECC == 0xA4) rds.ECCtext = ECCtext[159];
+                    else if (rds.ECC == 0xD0) rds.ECCtext = ECCtext[68];
+                    else if (rds.ECC == 0xD1) rds.ECCtext = ECCtext[79];
+                    else if (rds.ECC == 0xD2) rds.ECCtext = ECCtext[88];
+                    else if (rds.ECC == 0xD3) rds.ECCtext = ECCtext[78];
+                    else if (rds.ECC == 0xE0) rds.ECCtext = ECCtext[17];
+                    else if (rds.ECC == 0xE1) rds.ECCtext = ECCtext[18];
+                    else if (rds.ECC == 0xE2) rds.ECCtext = ECCtext[19];
+                    else if (rds.ECC == 0xE3) rds.ECCtext = ECCtext[65];
+                    else if (rds.ECC == 0xF0) rds.ECCtext = ECCtext[183];
+                    else if (rds.ECC == 0xF1) rds.ECCtext = ECCtext[191];
+                    else if (rds.ECC == 0xF2) rds.ECCtext = ECCtext[193];
                     break;
                   }
                 case '6': {
-                    if (rds.ECC.get() == 0xA0) rds.ECCtext = ECCtext[226];
-                    else if (rds.ECC.get() == 0xA2) rds.ECCtext = ECCtext[134];
-                    else if (rds.ECC.get() == 0xA3) rds.ECCtext = ECCtext[163];
-                    else if (rds.ECC.get() == 0xA4) rds.ECCtext = ECCtext[171];
-                    else if (rds.ECC.get() == 0xD0) rds.ECCtext = ECCtext[96];
-                    else if (rds.ECC.get() == 0xD1) rds.ECCtext = ECCtext[105];
-                    else if (rds.ECC.get() == 0xD2) rds.ECCtext = ECCtext[123];
-                    else if (rds.ECC.get() == 0xD3) rds.ECCtext = ECCtext[125];
-                    else if (rds.ECC.get() == 0xE0) rds.ECCtext = ECCtext[20];
-                    else if (rds.ECC.get() == 0xE1) rds.ECCtext = ECCtext[21];
-                    else if (rds.ECC.get() == 0xE2) rds.ECCtext = ECCtext[22];
-                    else if (rds.ECC.get() == 0xE3) rds.ECCtext = ECCtext[24];
-                    else if (rds.ECC.get() == 0xF0) rds.ECCtext = ECCtext[184];
-                    else if (rds.ECC.get() == 0xF1) rds.ECCtext = ECCtext[76];
-                    else if (rds.ECC.get() == 0xF2) rds.ECCtext = ECCtext[201];
+                    if (rds.ECC == 0xA0) rds.ECCtext = ECCtext[226];
+                    else if (rds.ECC == 0xA2) rds.ECCtext = ECCtext[134];
+                    else if (rds.ECC == 0xA3) rds.ECCtext = ECCtext[163];
+                    else if (rds.ECC == 0xA4) rds.ECCtext = ECCtext[171];
+                    else if (rds.ECC == 0xD0) rds.ECCtext = ECCtext[96];
+                    else if (rds.ECC == 0xD1) rds.ECCtext = ECCtext[105];
+                    else if (rds.ECC == 0xD2) rds.ECCtext = ECCtext[123];
+                    else if (rds.ECC == 0xD3) rds.ECCtext = ECCtext[125];
+                    else if (rds.ECC == 0xE0) rds.ECCtext = ECCtext[20];
+                    else if (rds.ECC == 0xE1) rds.ECCtext = ECCtext[21];
+                    else if (rds.ECC == 0xE2) rds.ECCtext = ECCtext[22];
+                    else if (rds.ECC == 0xE3) rds.ECCtext = ECCtext[24];
+                    else if (rds.ECC == 0xF0) rds.ECCtext = ECCtext[184];
+                    else if (rds.ECC == 0xF1) rds.ECCtext = ECCtext[76];
+                    else if (rds.ECC == 0xF2) rds.ECCtext = ECCtext[201];
                     break;
                   }
                 case '7': {
-                    if (rds.ECC.get() == 0xA0) rds.ECCtext = ECCtext[226];
-                    else if (rds.ECC.get() == 0xA2) rds.ECCtext = ECCtext[139];
-                    else if (rds.ECC.get() == 0xA3) rds.ECCtext = ECCtext[161];
-                    else if (rds.ECC.get() == 0xA4) rds.ECCtext = ECCtext[164];
-                    else if (rds.ECC.get() == 0xD0) rds.ECCtext = ECCtext[113];
-                    else if (rds.ECC.get() == 0xD1) rds.ECCtext = ECCtext[81];
-                    else if (rds.ECC.get() == 0xD2) rds.ECCtext = ECCtext[84];
-                    else if (rds.ECC.get() == 0xE0) rds.ECCtext = ECCtext[25];
-                    else if (rds.ECC.get() == 0xE1) rds.ECCtext = ECCtext[26];
-                    else if (rds.ECC.get() == 0xE2) rds.ECCtext = ECCtext[27];
-                    else if (rds.ECC.get() == 0xE4) rds.ECCtext = ECCtext[62];
-                    else if (rds.ECC.get() == 0xF0) rds.ECCtext = ECCtext[185];
-                    else if (rds.ECC.get() == 0xF1) rds.ECCtext = ECCtext[207];
-                    else if (rds.ECC.get() == 0xF2) rds.ECCtext = ECCtext[221];
+                    if (rds.ECC == 0xA0) rds.ECCtext = ECCtext[226];
+                    else if (rds.ECC == 0xA2) rds.ECCtext = ECCtext[139];
+                    else if (rds.ECC == 0xA3) rds.ECCtext = ECCtext[161];
+                    else if (rds.ECC == 0xA4) rds.ECCtext = ECCtext[164];
+                    else if (rds.ECC == 0xD0) rds.ECCtext = ECCtext[113];
+                    else if (rds.ECC == 0xD1) rds.ECCtext = ECCtext[81];
+                    else if (rds.ECC == 0xD2) rds.ECCtext = ECCtext[84];
+                    else if (rds.ECC == 0xE0) rds.ECCtext = ECCtext[25];
+                    else if (rds.ECC == 0xE1) rds.ECCtext = ECCtext[26];
+                    else if (rds.ECC == 0xE2) rds.ECCtext = ECCtext[27];
+                    else if (rds.ECC == 0xE4) rds.ECCtext = ECCtext[62];
+                    else if (rds.ECC == 0xF0) rds.ECCtext = ECCtext[185];
+                    else if (rds.ECC == 0xF1) rds.ECCtext = ECCtext[207];
+                    else if (rds.ECC == 0xF2) rds.ECCtext = ECCtext[221];
                     break;
                   }
                 case '8': {
-                    if (rds.ECC.get() == 0xA0) rds.ECCtext = ECCtext[226];
-                    else if (rds.ECC.get() == 0xA2) rds.ECCtext = ECCtext[142];
-                    else if (rds.ECC.get() == 0xA4) rds.ECCtext = ECCtext[170];
-                    else if (rds.ECC.get() == 0xD0) rds.ECCtext = ECCtext[116];
-                    else if (rds.ECC.get() == 0xD1) rds.ECCtext = ECCtext[117];
-                    else if (rds.ECC.get() == 0xD2) rds.ECCtext = ECCtext[74];
-                    else if (rds.ECC.get() == 0xD3) rds.ECCtext = ECCtext[82];
-                    else if (rds.ECC.get() == 0xE0) rds.ECCtext = ECCtext[28];
-                    else if (rds.ECC.get() == 0xE1) rds.ECCtext = ECCtext[29];
-                    else if (rds.ECC.get() == 0xE2) rds.ECCtext = ECCtext[30];
-                    else if (rds.ECC.get() == 0xE3) rds.ECCtext = ECCtext[31];
-                    else if (rds.ECC.get() == 0xE4) rds.ECCtext = ECCtext[32];
-                    else if (rds.ECC.get() == 0xF0) rds.ECCtext = ECCtext[186];
-                    else if (rds.ECC.get() == 0xF1) rds.ECCtext = ECCtext[195];
-                    else if (rds.ECC.get() == 0xF2) rds.ECCtext = ECCtext[212];
-                    else if (rds.ECC.get() == 0xF3) rds.ECCtext = ECCtext[190];
+                    if (rds.ECC == 0xA0) rds.ECCtext = ECCtext[226];
+                    else if (rds.ECC == 0xA2) rds.ECCtext = ECCtext[142];
+                    else if (rds.ECC == 0xA4) rds.ECCtext = ECCtext[170];
+                    else if (rds.ECC == 0xD0) rds.ECCtext = ECCtext[116];
+                    else if (rds.ECC == 0xD1) rds.ECCtext = ECCtext[117];
+                    else if (rds.ECC == 0xD2) rds.ECCtext = ECCtext[74];
+                    else if (rds.ECC == 0xD3) rds.ECCtext = ECCtext[82];
+                    else if (rds.ECC == 0xE0) rds.ECCtext = ECCtext[28];
+                    else if (rds.ECC == 0xE1) rds.ECCtext = ECCtext[29];
+                    else if (rds.ECC == 0xE2) rds.ECCtext = ECCtext[30];
+                    else if (rds.ECC == 0xE3) rds.ECCtext = ECCtext[31];
+                    else if (rds.ECC == 0xE4) rds.ECCtext = ECCtext[32];
+                    else if (rds.ECC == 0xF0) rds.ECCtext = ECCtext[186];
+                    else if (rds.ECC == 0xF1) rds.ECCtext = ECCtext[195];
+                    else if (rds.ECC == 0xF2) rds.ECCtext = ECCtext[212];
+                    else if (rds.ECC == 0xF3) rds.ECCtext = ECCtext[190];
                     break;
                   }
                 case '9': {
-                    if (rds.ECC.get() == 0xA0) rds.ECCtext = ECCtext[226];
-                    else if (rds.ECC.get() == 0xA2) rds.ECCtext = ECCtext[143];
-                    else if (rds.ECC.get() == 0xA3) rds.ECCtext = ECCtext[162];
-                    else if (rds.ECC.get() == 0xA4) rds.ECCtext = ECCtext[174];
-                    else if (rds.ECC.get() == 0xD0) rds.ECCtext = ECCtext[120];
-                    else if (rds.ECC.get() == 0xD1) rds.ECCtext = ECCtext[102];
-                    else if (rds.ECC.get() == 0xD2) rds.ECCtext = ECCtext[107];
-                    else if (rds.ECC.get() == 0xE0) rds.ECCtext = ECCtext[33];
-                    else if (rds.ECC.get() == 0xE1) rds.ECCtext = ECCtext[34];
-                    else if (rds.ECC.get() == 0xE2) rds.ECCtext = ECCtext[35];
-                    else if (rds.ECC.get() == 0xE3) rds.ECCtext = ECCtext[36];
-                    else if (rds.ECC.get() == 0xE4) rds.ECCtext = ECCtext[37];
-                    else if (rds.ECC.get() == 0xF0) rds.ECCtext = ECCtext[80];
-                    else if (rds.ECC.get() == 0xF1) rds.ECCtext = ECCtext[209];
-                    else if (rds.ECC.get() == 0xF2) rds.ECCtext = ECCtext[196];
-                    else if (rds.ECC.get() == 0xF3) rds.ECCtext = ECCtext[211];
-                    else if (rds.ECC.get() == 0xF4) rds.ECCtext = ECCtext[190];
+                    if (rds.ECC == 0xA0) rds.ECCtext = ECCtext[226];
+                    else if (rds.ECC == 0xA2) rds.ECCtext = ECCtext[143];
+                    else if (rds.ECC == 0xA3) rds.ECCtext = ECCtext[162];
+                    else if (rds.ECC == 0xA4) rds.ECCtext = ECCtext[174];
+                    else if (rds.ECC == 0xD0) rds.ECCtext = ECCtext[120];
+                    else if (rds.ECC == 0xD1) rds.ECCtext = ECCtext[102];
+                    else if (rds.ECC == 0xD2) rds.ECCtext = ECCtext[107];
+                    else if (rds.ECC == 0xE0) rds.ECCtext = ECCtext[33];
+                    else if (rds.ECC == 0xE1) rds.ECCtext = ECCtext[34];
+                    else if (rds.ECC == 0xE2) rds.ECCtext = ECCtext[35];
+                    else if (rds.ECC == 0xE3) rds.ECCtext = ECCtext[36];
+                    else if (rds.ECC == 0xE4) rds.ECCtext = ECCtext[37];
+                    else if (rds.ECC == 0xF0) rds.ECCtext = ECCtext[80];
+                    else if (rds.ECC == 0xF1) rds.ECCtext = ECCtext[209];
+                    else if (rds.ECC == 0xF2) rds.ECCtext = ECCtext[196];
+                    else if (rds.ECC == 0xF3) rds.ECCtext = ECCtext[211];
+                    else if (rds.ECC == 0xF4) rds.ECCtext = ECCtext[190];
                     break;
                   }
                 case 'A': {
-                    if (rds.ECC.get() == 0xA0) rds.ECCtext = ECCtext[226];
-                    else if (rds.ECC.get() == 0xA2) rds.ECCtext = ECCtext[131];
-                    else if (rds.ECC.get() == 0xA3) rds.ECCtext = ECCtext[144];
-                    else if (rds.ECC.get() == 0xA4) rds.ECCtext = ECCtext[166];
-                    else if (rds.ECC.get() == 0xD0) rds.ECCtext = ECCtext[85];
-                    else if (rds.ECC.get() == 0xD1) rds.ECCtext = ECCtext[97];
-                    else if (rds.ECC.get() == 0xD2) rds.ECCtext = ECCtext[121];
-                    else if (rds.ECC.get() == 0xD3) rds.ECCtext = ECCtext[70];
-                    else if (rds.ECC.get() == 0xD4) rds.ECCtext = ECCtext[86];
-                    else if (rds.ECC.get() == 0xE0) rds.ECCtext = ECCtext[38];
-                    else if (rds.ECC.get() == 0xE1) rds.ECCtext = ECCtext[39];
-                    else if (rds.ECC.get() == 0xE2) rds.ECCtext = ECCtext[40];
-                    else if (rds.ECC.get() == 0xE3) rds.ECCtext = ECCtext[41];
-                    else if (rds.ECC.get() == 0xE4) rds.ECCtext = ECCtext[60];
-                    else if (rds.ECC.get() == 0xF0) rds.ECCtext = ECCtext[178];
-                    else if (rds.ECC.get() == 0xF1) rds.ECCtext = ECCtext[215];
-                    else if (rds.ECC.get() == 0xF2) rds.ECCtext = ECCtext[214];
+                    if (rds.ECC == 0xA0) rds.ECCtext = ECCtext[226];
+                    else if (rds.ECC == 0xA2) rds.ECCtext = ECCtext[131];
+                    else if (rds.ECC == 0xA3) rds.ECCtext = ECCtext[144];
+                    else if (rds.ECC == 0xA4) rds.ECCtext = ECCtext[166];
+                    else if (rds.ECC == 0xD0) rds.ECCtext = ECCtext[85];
+                    else if (rds.ECC == 0xD1) rds.ECCtext = ECCtext[97];
+                    else if (rds.ECC == 0xD2) rds.ECCtext = ECCtext[121];
+                    else if (rds.ECC == 0xD3) rds.ECCtext = ECCtext[70];
+                    else if (rds.ECC == 0xD4) rds.ECCtext = ECCtext[86];
+                    else if (rds.ECC == 0xE0) rds.ECCtext = ECCtext[38];
+                    else if (rds.ECC == 0xE1) rds.ECCtext = ECCtext[39];
+                    else if (rds.ECC == 0xE2) rds.ECCtext = ECCtext[40];
+                    else if (rds.ECC == 0xE3) rds.ECCtext = ECCtext[41];
+                    else if (rds.ECC == 0xE4) rds.ECCtext = ECCtext[60];
+                    else if (rds.ECC == 0xF0) rds.ECCtext = ECCtext[178];
+                    else if (rds.ECC == 0xF1) rds.ECCtext = ECCtext[215];
+                    else if (rds.ECC == 0xF2) rds.ECCtext = ECCtext[214];
                     break;
                   }
                 case 'B': {
-                    if (rds.ECC.get() == 0xA0) rds.ECCtext = ECCtext[226];
-                    else if (rds.ECC.get() == 0xA1) rds.ECCtext = ECCtext[138];
-                    else if (rds.ECC.get() == 0xA2) rds.ECCtext = ECCtext[137];
-                    else if (rds.ECC.get() == 0xA3) rds.ECCtext = ECCtext[145];
-                    else if (rds.ECC.get() == 0xA4) rds.ECCtext = ECCtext[167];
-                    else if (rds.ECC.get() == 0xA5) rds.ECCtext = ECCtext[158];
-                    else if (rds.ECC.get() == 0xD0) rds.ECCtext = ECCtext[101];
-                    else if (rds.ECC.get() == 0xD1) rds.ECCtext = ECCtext[100];
-                    else if (rds.ECC.get() == 0xD2) rds.ECCtext = ECCtext[109];
-                    else if (rds.ECC.get() == 0xE0) rds.ECCtext = ECCtext[42];
-                    else if (rds.ECC.get() == 0xE1) rds.ECCtext = ECCtext[43];
-                    else if (rds.ECC.get() == 0xE2) rds.ECCtext = ECCtext[44];
-                    else if (rds.ECC.get() == 0xE3) rds.ECCtext = ECCtext[61];
-                    else if (rds.ECC.get() == 0xE4) rds.ECCtext = ECCtext[66];
-                    else if (rds.ECC.get() == 0xF0) rds.ECCtext = ECCtext[206];
-                    else if (rds.ECC.get() == 0xF1) rds.ECCtext = ECCtext[188];
-                    else if (rds.ECC.get() == 0xF2) rds.ECCtext = ECCtext[203];
-                    else if (rds.ECC.get() == 0xF3) rds.ECCtext = ECCtext[93];
-                    else if (rds.ECC.get() == 0xF4) rds.ECCtext = ECCtext[204];
+                    if (rds.ECC == 0xA0) rds.ECCtext = ECCtext[226];
+                    else if (rds.ECC == 0xA1) rds.ECCtext = ECCtext[138];
+                    else if (rds.ECC == 0xA2) rds.ECCtext = ECCtext[137];
+                    else if (rds.ECC == 0xA3) rds.ECCtext = ECCtext[145];
+                    else if (rds.ECC == 0xA4) rds.ECCtext = ECCtext[167];
+                    else if (rds.ECC == 0xA5) rds.ECCtext = ECCtext[158];
+                    else if (rds.ECC == 0xD0) rds.ECCtext = ECCtext[101];
+                    else if (rds.ECC == 0xD1) rds.ECCtext = ECCtext[100];
+                    else if (rds.ECC == 0xD2) rds.ECCtext = ECCtext[109];
+                    else if (rds.ECC == 0xE0) rds.ECCtext = ECCtext[42];
+                    else if (rds.ECC == 0xE1) rds.ECCtext = ECCtext[43];
+                    else if (rds.ECC == 0xE2) rds.ECCtext = ECCtext[44];
+                    else if (rds.ECC == 0xE3) rds.ECCtext = ECCtext[61];
+                    else if (rds.ECC == 0xE4) rds.ECCtext = ECCtext[66];
+                    else if (rds.ECC == 0xF0) rds.ECCtext = ECCtext[206];
+                    else if (rds.ECC == 0xF1) rds.ECCtext = ECCtext[188];
+                    else if (rds.ECC == 0xF2) rds.ECCtext = ECCtext[203];
+                    else if (rds.ECC == 0xF3) rds.ECCtext = ECCtext[93];
+                    else if (rds.ECC == 0xF4) rds.ECCtext = ECCtext[204];
                     break;
                   }
                 case 'C': {
-                    if (rds.ECC.get() == 0xA1) rds.ECCtext = ECCtext[138];
-                    else if (rds.ECC.get() == 0xA2) rds.ECCtext = ECCtext[223];
-                    else if (rds.ECC.get() == 0xA3) rds.ECCtext = ECCtext[140];
-                    else if (rds.ECC.get() == 0xA4) rds.ECCtext = ECCtext[146];
-                    else if (rds.ECC.get() == 0xA5) rds.ECCtext = ECCtext[169];
-                    else if (rds.ECC.get() == 0xD0) rds.ECCtext = ECCtext[110];
-                    else if (rds.ECC.get() == 0xD1) rds.ECCtext = ECCtext[108];
-                    else if (rds.ECC.get() == 0xD2) rds.ECCtext = ECCtext[111];
-                    else if (rds.ECC.get() == 0xD3) rds.ECCtext = ECCtext[87];
-                    else if (rds.ECC.get() == 0xE0) rds.ECCtext = ECCtext[45];
-                    else if (rds.ECC.get() == 0xE1) rds.ECCtext = ECCtext[46];
-                    else if (rds.ECC.get() == 0xE2) rds.ECCtext = ECCtext[47];
-                    else if (rds.ECC.get() == 0xE3) rds.ECCtext = ECCtext[48];
-                    else if (rds.ECC.get() == 0xE4) rds.ECCtext = ECCtext[118];
-                    else if (rds.ECC.get() == 0xF0) rds.ECCtext = ECCtext[190];
-                    else if (rds.ECC.get() == 0xF1) rds.ECCtext = ECCtext[216];
-                    else if (rds.ECC.get() == 0xF2) rds.ECCtext = ECCtext[194];
+                    if (rds.ECC == 0xA1) rds.ECCtext = ECCtext[138];
+                    else if (rds.ECC == 0xA2) rds.ECCtext = ECCtext[223];
+                    else if (rds.ECC == 0xA3) rds.ECCtext = ECCtext[140];
+                    else if (rds.ECC == 0xA4) rds.ECCtext = ECCtext[146];
+                    else if (rds.ECC == 0xA5) rds.ECCtext = ECCtext[169];
+                    else if (rds.ECC == 0xD0) rds.ECCtext = ECCtext[110];
+                    else if (rds.ECC == 0xD1) rds.ECCtext = ECCtext[108];
+                    else if (rds.ECC == 0xD2) rds.ECCtext = ECCtext[111];
+                    else if (rds.ECC == 0xD3) rds.ECCtext = ECCtext[87];
+                    else if (rds.ECC == 0xE0) rds.ECCtext = ECCtext[45];
+                    else if (rds.ECC == 0xE1) rds.ECCtext = ECCtext[46];
+                    else if (rds.ECC == 0xE2) rds.ECCtext = ECCtext[47];
+                    else if (rds.ECC == 0xE3) rds.ECCtext = ECCtext[48];
+                    else if (rds.ECC == 0xE4) rds.ECCtext = ECCtext[118];
+                    else if (rds.ECC == 0xF0) rds.ECCtext = ECCtext[190];
+                    else if (rds.ECC == 0xF1) rds.ECCtext = ECCtext[216];
+                    else if (rds.ECC == 0xF2) rds.ECCtext = ECCtext[194];
                     break;
                   }
                 case 'D': {
-                    if (rds.ECC.get() == 0xA0) rds.ECCtext = ECCtext[226];
-                    else if (rds.ECC.get() == 0xA1) rds.ECCtext = ECCtext[138];
-                    else if (rds.ECC.get() == 0xA2) rds.ECCtext = ECCtext[225];
-                    else if (rds.ECC.get() == 0xA3) rds.ECCtext = ECCtext[150];
-                    else if (rds.ECC.get() == 0xA4) rds.ECCtext = ECCtext[154];
-                    else if (rds.ECC.get() == 0xA5) rds.ECCtext = ECCtext[158];
-                    else if (rds.ECC.get() == 0xD0) rds.ECCtext = ECCtext[90];
-                    else if (rds.ECC.get() == 0xD1) rds.ECCtext = ECCtext[89];
-                    else if (rds.ECC.get() == 0xE0) rds.ECCtext = ECCtext[0];
-                    else if (rds.ECC.get() == 0xE1) rds.ECCtext = ECCtext[49];
-                    else if (rds.ECC.get() == 0xE2) rds.ECCtext = ECCtext[23];
-                    else if (rds.ECC.get() == 0xE3) rds.ECCtext = ECCtext[122];
-                    else if (rds.ECC.get() == 0xF0) rds.ECCtext = ECCtext[198];
-                    else if (rds.ECC.get() == 0xF1) rds.ECCtext = ECCtext[217];
-                    else if (rds.ECC.get() == 0xF2) rds.ECCtext = ECCtext[128];
+                    if (rds.ECC == 0xA0) rds.ECCtext = ECCtext[226];
+                    else if (rds.ECC == 0xA1) rds.ECCtext = ECCtext[138];
+                    else if (rds.ECC == 0xA2) rds.ECCtext = ECCtext[225];
+                    else if (rds.ECC == 0xA3) rds.ECCtext = ECCtext[150];
+                    else if (rds.ECC == 0xA4) rds.ECCtext = ECCtext[154];
+                    else if (rds.ECC == 0xA5) rds.ECCtext = ECCtext[158];
+                    else if (rds.ECC == 0xD0) rds.ECCtext = ECCtext[90];
+                    else if (rds.ECC == 0xD1) rds.ECCtext = ECCtext[89];
+                    else if (rds.ECC == 0xE0) rds.ECCtext = ECCtext[0];
+                    else if (rds.ECC == 0xE1) rds.ECCtext = ECCtext[49];
+                    else if (rds.ECC == 0xE2) rds.ECCtext = ECCtext[23];
+                    else if (rds.ECC == 0xE3) rds.ECCtext = ECCtext[122];
+                    else if (rds.ECC == 0xF0) rds.ECCtext = ECCtext[198];
+                    else if (rds.ECC == 0xF1) rds.ECCtext = ECCtext[217];
+                    else if (rds.ECC == 0xF2) rds.ECCtext = ECCtext[128];
                     break;
                   }
                 case 'E': {
-                    if (rds.ECC.get() == 0xA0) rds.ECCtext = ECCtext[226];
-                    else if (rds.ECC.get() == 0xA1) rds.ECCtext = ECCtext[138];
-                    else if (rds.ECC.get() == 0xA2) rds.ECCtext = ECCtext[151];
-                    else if (rds.ECC.get() == 0xA3) rds.ECCtext = ECCtext[172];
-                    else if (rds.ECC.get() == 0xA4) rds.ECCtext = ECCtext[175];
-                    else if (rds.ECC.get() == 0xA5) rds.ECCtext = ECCtext[158];
-                    else if (rds.ECC.get() == 0xD0) rds.ECCtext = ECCtext[99];
-                    else if (rds.ECC.get() == 0xD1) rds.ECCtext = ECCtext[115];
-                    else if (rds.ECC.get() == 0xD2) rds.ECCtext = ECCtext[94];
-                    else if (rds.ECC.get() == 0xE0) rds.ECCtext = ECCtext[50];
-                    else if (rds.ECC.get() == 0xE1) rds.ECCtext = ECCtext[51];
-                    else if (rds.ECC.get() == 0xE2) rds.ECCtext = ECCtext[52];
-                    else if (rds.ECC.get() == 0xE3) rds.ECCtext = ECCtext[53];
-                    else if (rds.ECC.get() == 0xE4) rds.ECCtext = ECCtext[64];
-                    else if (rds.ECC.get() == 0xF0) rds.ECCtext = ECCtext[98];
-                    else if (rds.ECC.get() == 0xF1) rds.ECCtext = ECCtext[199];
-                    else if (rds.ECC.get() == 0xF2) rds.ECCtext = ECCtext[208];
-                    else if (rds.ECC.get() == 0xF3) rds.ECCtext = ECCtext[205];
+                    if (rds.ECC == 0xA0) rds.ECCtext = ECCtext[226];
+                    else if (rds.ECC == 0xA1) rds.ECCtext = ECCtext[138];
+                    else if (rds.ECC == 0xA2) rds.ECCtext = ECCtext[151];
+                    else if (rds.ECC == 0xA3) rds.ECCtext = ECCtext[172];
+                    else if (rds.ECC == 0xA4) rds.ECCtext = ECCtext[175];
+                    else if (rds.ECC == 0xA5) rds.ECCtext = ECCtext[158];
+                    else if (rds.ECC == 0xD0) rds.ECCtext = ECCtext[99];
+                    else if (rds.ECC == 0xD1) rds.ECCtext = ECCtext[115];
+                    else if (rds.ECC == 0xD2) rds.ECCtext = ECCtext[94];
+                    else if (rds.ECC == 0xE0) rds.ECCtext = ECCtext[50];
+                    else if (rds.ECC == 0xE1) rds.ECCtext = ECCtext[51];
+                    else if (rds.ECC == 0xE2) rds.ECCtext = ECCtext[52];
+                    else if (rds.ECC == 0xE3) rds.ECCtext = ECCtext[53];
+                    else if (rds.ECC == 0xE4) rds.ECCtext = ECCtext[64];
+                    else if (rds.ECC == 0xF0) rds.ECCtext = ECCtext[98];
+                    else if (rds.ECC == 0xF1) rds.ECCtext = ECCtext[199];
+                    else if (rds.ECC == 0xF2) rds.ECCtext = ECCtext[208];
+                    else if (rds.ECC == 0xF3) rds.ECCtext = ECCtext[205];
                     break;
                   }
                 case 'F': {
-                    if (rds.ECC.get() == 0xA1) rds.ECCtext = ECCtext[149];
-                    else if (rds.ECC.get() == 0xA2) rds.ECCtext = ECCtext[222];
-                    else if (rds.ECC.get() == 0xA3) rds.ECCtext = ECCtext[153];
-                    else if (rds.ECC.get() == 0xA4) rds.ECCtext = ECCtext[176];
-                    else if (rds.ECC.get() == 0xA5) rds.ECCtext = ECCtext[158];
-                    else if (rds.ECC.get() == 0xA6) rds.ECCtext = ECCtext[168];
-                    else if (rds.ECC.get() == 0xD0) rds.ECCtext = ECCtext[67];
-                    else if (rds.ECC.get() == 0xD1) rds.ECCtext = ECCtext[75];
-                    else if (rds.ECC.get() == 0xD2) rds.ECCtext = ECCtext[114];
-                    else if (rds.ECC.get() == 0xE0) rds.ECCtext = ECCtext[54];
-                    else if (rds.ECC.get() == 0xE1) rds.ECCtext = ECCtext[55];
-                    else if (rds.ECC.get() == 0xE2) rds.ECCtext = ECCtext[56];
-                    else if (rds.ECC.get() == 0xE3) rds.ECCtext = ECCtext[57];
-                    else if (rds.ECC.get() == 0xE4) rds.ECCtext = ECCtext[58];
-                    else if (rds.ECC.get() == 0xF0) rds.ECCtext = ECCtext[202];
-                    else if (rds.ECC.get() == 0xF1) rds.ECCtext = ECCtext[192];
-                    else if (rds.ECC.get() == 0xF2) rds.ECCtext = ECCtext[220];
-                    else if (rds.ECC.get() == 0xF3) rds.ECCtext = ECCtext[71];
+                    if (rds.ECC == 0xA1) rds.ECCtext = ECCtext[149];
+                    else if (rds.ECC == 0xA2) rds.ECCtext = ECCtext[222];
+                    else if (rds.ECC == 0xA3) rds.ECCtext = ECCtext[153];
+                    else if (rds.ECC == 0xA4) rds.ECCtext = ECCtext[176];
+                    else if (rds.ECC == 0xA5) rds.ECCtext = ECCtext[158];
+                    else if (rds.ECC == 0xA6) rds.ECCtext = ECCtext[168];
+                    else if (rds.ECC == 0xD0) rds.ECCtext = ECCtext[67];
+                    else if (rds.ECC == 0xD1) rds.ECCtext = ECCtext[75];
+                    else if (rds.ECC == 0xD2) rds.ECCtext = ECCtext[114];
+                    else if (rds.ECC == 0xE0) rds.ECCtext = ECCtext[54];
+                    else if (rds.ECC == 0xE1) rds.ECCtext = ECCtext[55];
+                    else if (rds.ECC == 0xE2) rds.ECCtext = ECCtext[56];
+                    else if (rds.ECC == 0xE3) rds.ECCtext = ECCtext[57];
+                    else if (rds.ECC == 0xE4) rds.ECCtext = ECCtext[58];
+                    else if (rds.ECC == 0xF0) rds.ECCtext = ECCtext[202];
+                    else if (rds.ECC == 0xF1) rds.ECCtext = ECCtext[192];
+                    else if (rds.ECC == 0xF2) rds.ECCtext = ECCtext[220];
+                    else if (rds.ECC == 0xF3) rds.ECCtext = ECCtext[71];
                     break;
                   }
                 default: {
@@ -1190,10 +1190,10 @@ void TEF6686::readRDS(byte showrdserrors) {
               rds.aid_counter++;
             }
 
-            if (rds.rdsD == 0xCD46) rds.hasTMC.set(true);
+            if (rds.rdsD == 0xCD46) rds.hasTMC = true;
 
             if (rds.rdsD == 0x4BD7) {
-              rds.hasRTplus.set(true);
+              rds.hasRTplus = true;
               rtplusblock = ((rds.rdsB & 0x1F) >> 1) * 2;
             }
 
@@ -1285,7 +1285,7 @@ void TEF6686::readRDS(byte showrdserrors) {
       case RDS_GROUP_11A:
       case RDS_GROUP_12A:
       case RDS_GROUP_13A: {
-          if ((!rdsBerrorThreshold && !rdsCerrorThreshold && !rdsDerrorThreshold) && rtplusblock == rdsgroup && rds.hasRTplus.get()) {
+          if ((!rdsBerrorThreshold && !rdsCerrorThreshold && !rdsDerrorThreshold) && rtplusblock == rdsgroup && rds.hasRTplus) {
             rds.rdsplusTag1 = ((rds.rdsB & 0x07) << 3) + (rds.rdsC >> 13);
             rds.rdsplusTag2 = ((rds.rdsC & 0x01) << 5) + (rds.rdsD >> 11);
             uint16_t start_marker_1 = (rds.rdsC >> 7) & 0x3F;
@@ -1362,7 +1362,7 @@ void TEF6686::readRDS(byte showrdserrors) {
             }
           }
 
-          if (!rdsBerrorThreshold && rdsgroup == RDS_GROUP_8A && (bitRead(rds.rdsB, 15))) rds.hasTMC.set(true);
+          if (!rdsBerrorThreshold && rdsgroup == RDS_GROUP_8A && (bitRead(rds.rdsB, 15))) rds.hasTMC = true;
 
           if ((!rdsBerrorThreshold && !rdsCerrorThreshold && !rdsDerrorThreshold) && DABAFblock == rdsgroup && rds.hasDABAF) {
             rds.dabaffreq = (rds.rdsC * 16);
@@ -1386,7 +1386,7 @@ void TEF6686::readRDS(byte showrdserrors) {
 
       case RDS_GROUP_14A: {
           if (!rdsAerrorThreshold && !rdsBerrorThreshold && !rdsCerrorThreshold && !rdsDerrorThreshold) {
-            rds.hasEON.set(true);
+            rds.hasEON = true;
 
             bool isValuePresent = false;
             int eonIndex = -1;
@@ -1539,8 +1539,8 @@ void TEF6686::clearRDS(bool fullsearchrds) {
   devTEF_Set_Cmd(TEF_FM, Cmd_Set_RDS, 9, fullsearchrds ? 3 : 1, 1, 0);
   rds.piBuffer.clear();
   rds.stationName = rds.stationText = rds.stationNameLong = "";
-  rds.stationText32 = rds.RTContent1 = rds.RTContent2 = "";
-  rds.PTYN = rds.ECCtext = rds.stationIDtext = "";
+  rds.PTYN = rds.stationText32 = rds.RTContent1 = rds.RTContent2 = "";;
+  rds.ECCtext = rds.stationIDtext = "";
   rds.stationStatetext = rds.enhancedRTtext = PSLongtext = "";
 
   for (uint8_t i = 0; i < 8; i++) {
@@ -1597,21 +1597,17 @@ void TEF6686::clearRDS(bool fullsearchrds) {
   for (uint8_t i = 0; i < 10; i++) rds.aid[i] = 0;
 
   rdsgroup = 254;
-  rds.ECC.set(0);
+  rds.ECC = rds.PTY = 0;
   rds.dabaffreq = rds.correctPI = correctPIold = processed_rdsblocks = piold = 0;
-  rds.PTY.set(0);
   rds.hasECC = rds.hasRT = rds.hasRDS = false;
-  rds.TP = rds.hasAF = rds.hasTA = false;
-  rds.hasCT = false;
+  rds.hasAF = false;
+  rds.hasCT = rds.hasRTplus = rds.hasTMC = rds.hasEON = false;
   rds.hasAID = rds.hasPTYN = rds.hasLongPS = false;
-  rds.hasRTplus.set(false);
-  rds.hasTMC.set(false);
-  rds.hasEON.set(false);
+  rds.TA = rds.TP = rds.hasCompressed = rds.hasArtificialhead = rds.hasStereo = false;
   rds.hasDABAF = rds.hasEnhancedRT = false;
   rt_process = ps_process = pslong_process = false;
   rds.rdsreset = true;
-  rds.hasArtificialhead = rds.hasCompressed = false;
-  rds.hasDynamicPTY = rds.hasStereo = false;
+  rds.hasDynamicPTY = false;
   af_counter = af_updatecounter = eon_counter = 0;
   afreset = rds.rdsAerror = rds.rdsBerror = rds.rdsCerror = rds.rdsDerror = true;
   initrt = initab = true;

@@ -440,7 +440,7 @@ typedef struct _rds_ {
   String stationText32;
   String RTContent1;
   String RTContent2;
-  String PTYN;
+  Detector<String, 1> PTYN{""};
   String ECCtext;
   String stationIDtext;
   String stationNameLong;
@@ -466,23 +466,23 @@ typedef struct _rds_ {
   bool rdsBerror;
   bool rdsCerror;
   bool rdsDerror;
-  bool hasArtificialhead;
-  bool hasCompressed;
+  Detector<bool, 1> hasArtificialhead{false};
+  Detector<bool, 1> hasCompressed{false};
   bool hasDynamicPTY;
-  bool hasStereo;
+  Detector<bool, 1> hasStereo{false};
   bool hasRDS;
   bool hasECC;
   bool hasDABAF;
   bool hasLongPS;
   bool hasRT;
   bool hasEnhancedRT;
-  bool TP;
-  bool hasTA;
+  Detector<bool, 1> TP{false};
+  Detector<bool, 1> TA{false};
   Detector<bool, 1> hasEON{false};
   bool hasAID;
   Detector<bool, 1> hasTMC{false};
   bool hasAF;
-  bool hasCT;
+  Detector<bool, 1> hasCT{false};
   bool hasPTYN;
   bool rtAB;
   bool rtAB32;
@@ -507,10 +507,10 @@ typedef struct _af_ {
 } af_;
 
 typedef struct _eon_ {
-  uint16_t  mappedfreq;
-  uint16_t  mappedfreq2;
-  uint16_t  mappedfreq3;
-  uint16_t  pi;
+  uint16_t mappedfreq;
+  uint16_t mappedfreq2;
+  uint16_t mappedfreq3;
+  uint16_t pi;
   char picode[6];
   String ps;
   bool ta;

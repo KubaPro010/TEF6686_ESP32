@@ -588,7 +588,7 @@ void BuildAFScreen() {
   if (afpagenr == 1) {
     if (!radio.rds.hasAF) tftPrint(ALEFT, textUI(87), 6, 48, PrimaryColor, PrimaryColorSmooth, 16);
   } else if (afpagenr == 2) {
-    if (!radio.rds.hasEON.get()) tftPrint(ALEFT, textUI(88), 6, 48, PrimaryColor, PrimaryColorSmooth, 16);
+    if (!radio.rds.hasEON) tftPrint(ALEFT, textUI(88), 6, 48, PrimaryColor, PrimaryColorSmooth, 16);
   }
   RDSstatusold = !RDSstatusold;
   ShowFreq(0);
@@ -2977,12 +2977,7 @@ void BuildAdvancedRDS() {
   stationIDold = " ";
   stationStateold = " ";
   af_counterold = 254;
-  TAold = false;
-  TPold = false;
   dynamicPTYold = false;
-  artheadold = false;
-  compressedold = false;
-  rdsstereoold = false;
   hasafold = false;
   haseonold = false;
   BWreset = true;
@@ -3102,8 +3097,6 @@ void BuildDisplay() {
   batteryold = 6;
   batteryVold = 0;
   vPerold = 0;
-  TAold = false;
-  TPold = false;
   haseonold = false;
   rds_clockold = "";
   PIold = " ";

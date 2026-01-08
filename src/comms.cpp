@@ -524,12 +524,10 @@ void XDRGTKRoutine() {
         XDRBWset = atol(buff + 1);
         DataPrint("F" + String(XDRBWset) + "\n");
         if (XDRBWset < 0) {
-          XDRBWsetold = XDRBWset;
           BWset = 0;
         } else if (XDRBWset < 16) {
           BWset = XDRBWset + 1;
-          XDRBWsetold = XDRBWset;
-        } else XDRBWset = XDRBWsetold;
+        }
         doBW();
         break;
       } case 'G': {
@@ -714,13 +712,9 @@ void XDRGTKRoutine() {
           radio.SetFreq(frequency);
         }
 
-        if (band == BAND_FM) {
-          DataPrint("T" + String((frequency + ConverterSet * 100) * 10) + "\n");
-        } else if (band == BAND_OIRT) {
-          DataPrint("T" + String(frequency_OIRT * 10) + "\n");
-        } else {
-          DataPrint("T" + String(frequency_AM) + "\n");
-        }
+        if (band == BAND_FM) DataPrint("T" + String((frequency + ConverterSet * 100) * 10) + "\n");
+        else if (band == BAND_OIRT) DataPrint("T" + String(frequency_OIRT * 10) + "\n");
+        else DataPrint("T" + String(frequency_AM) + "\n");
         ShowFreq(0);
         RDSstatus = false;
         store = true;
@@ -805,20 +799,19 @@ void XDRGTKRoutine() {
             }
 
             DataPrint("U");
-            frequencyold = frequency;
 
             for (freq_scan = scanner_start; freq_scan <= scanner_end; freq_scan += scanner_step) {
               radio.SetFreq(freq_scan);
               delay(5);
               DataPrint(String(freq_scan * 10, DEC));
               DataPrint(" = ");
-              if (band < BAND_GAP) radio.getStatus(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus, &CN); else  radio.getStatusAM(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus, &CN);
+              if (band < BAND_GAP) radio.getStatus(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus, &CN); else radio.getStatusAM(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus, &CN);
               DataPrint(String((SStatus / 10) + 10, DEC));
               DataPrint(", ");
             }
             DataPrint("\n");
 
-            radio.SetFreq(frequencyold);
+            radio.SetFreq(frequency);
             BuildDisplay();
             SelectBand();
             BWset = BWsetRecall;

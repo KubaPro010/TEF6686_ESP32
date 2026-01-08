@@ -222,10 +222,10 @@ byte addRowToCSV() {
   stationName.replace(",", " ");
   radioTextModified.replace(",", " ");
 
-  String TA = radio.rds.hasTA ? "•" : " ";
+  String TA = radio.rds.TA ? "•" : " ";
   String TP = radio.rds.TP ? "•" : " ";
   String Stereo = radio.getStereoStatus() ? "•" : " ";
-  String pty = String(radio.rds.PTY.get());
+  String pty = String(radio.rds.PTY);
   String ECC = "--";
   if (radio.rds.hasECC) {
     char eccBuffer[3];
@@ -412,13 +412,13 @@ void sendUDPlog() {
   }
 
   String RTPLUS = "";
-  if (radio.rds.hasRTplus.get()) RTPLUS += radio.rds.RTContent1 + ";" + radio.rds.RTContent2;
+  if (radio.rds.hasRTplus) RTPLUS += radio.rds.RTContent1 + ";" + radio.rds.RTContent2;
 
   // Construct the data row to send via UDP
   String row = CHIP + "," + VERSION + "," + String(scandxmode) + "," +
                currentDateTime + "," + frequencyFormatted + "," + String(radio.rds.picode).substring(0, 4) + "," +
-               signal + "," + String(radio.getStereoStatus()) + "," + String(radio.rds.hasTA) + "," +
-               String(radio.rds.TP) + "," + String(radio.rds.hasTMC.get()) + "," + String(radio.rds.PTY.get()) + "," +
+               signal + "," + String(radio.getStereoStatus()) + "," + String(radio.rds.TA) + "," +
+               String(radio.rds.TP) + "," + String(radio.rds.hasTMC) + "," + String(radio.rds.PTY) + "," +
                ECC + "," + stationName + "," + radioTextModified + "," +
                AF + "," + EON + "," + RTPLUS + "\n";
 

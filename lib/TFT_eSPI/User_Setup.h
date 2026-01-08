@@ -1,3 +1,5 @@
+#pragma once
+
 #define ILI9341_DRIVER
 #define TFT_DMA_SUPPORT
 #define TFT_CS          5
