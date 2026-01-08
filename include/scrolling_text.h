@@ -13,6 +13,7 @@ private:
   unsigned long lastTick;
   unsigned long holdTick;
   bool isScrolling;
+  std::function<void(TFT_eSprite*, bool)> postDrawCallback;
   
   static const unsigned long SCROLL_INTERVAL = 5;
   static const unsigned long HOLD_DURATION = 2000;
@@ -20,11 +21,14 @@ private:
 public:
   ScrollingTextDisplay(TFT_eSprite* spr, int y, int maxW)
     : sprite(spr), yPos(y), maxWidth(maxW),
-      xPos(0), textWidth(0), lastTick(0), holdTick(0), isScrolling(false) {}
+      xPos(0), textWidth(0), lastTick(0), holdTick(0), isScrolling(false), postDrawCallback(nullptr) {}
 
-  // Update the display with new text
-  void update(const String& text, int width, bool status, uint16_t activeColor, uint16_t activeSmooth, uint16_t dropoutColor, uint16_t dropoutSmooth, uint16_t backgroundColor) {
-    textWidth = width;
+  void setPostDrawCallback(std::function<void(TFT_eSprite*, bool)> callback) {
+    postDrawCallback = callback;
+  }
+
+  void update(const String& text, bool status, uint16_t activeColor, uint16_t activeSmooth, uint16_t dropoutColor, uint16_t dropoutSmooth, uint16_t backgroundColor) {
+    textWidth = sprite->textWidth(text);
     
     if (textWidth < maxWidth) {
       xPos = 0;
@@ -70,7 +74,8 @@ private:
     sprite->fillSprite(backgroundColor);
     if (status) sprite->setTextColor(activeColor, activeSmooth, false);
     else sprite->setTextColor(dropoutColor, dropoutSmooth, false);
-    sprite->drawString(text, xPos, 2);
+    sprite->drawString(text, xPos, 0);
+    if (postDrawCallback) postDrawCallback(sprite, false);
     sprite->pushSprite(35, yPos);
   }
 
@@ -78,8 +83,9 @@ private:
     sprite->fillSprite(backgroundColor);
     if (status) sprite->setTextColor(activeColor, activeSmooth, false);
     else sprite->setTextColor(dropoutColor, dropoutSmooth, false);
-    sprite->drawString(text, xPos, 2);
-    sprite->drawString(text, xPos + textWidth, 2);
+    sprite->drawString(text, xPos, 0);
+    sprite->drawString(text, xPos + textWidth, 0);
+    if (postDrawCallback) postDrawCallback(sprite, true);
     sprite->pushSprite(35, yPos);
   }
 };

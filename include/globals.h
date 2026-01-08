@@ -399,3 +399,4 @@ extern WebServer webserver;
 extern ScrollingTextDisplay rtplusDisplay;
 extern ScrollingTextDisplay eonDisplay;
 extern ScrollingTextDisplay eccDisplay;
+extern ScrollingTextDisplay rtDisplay;

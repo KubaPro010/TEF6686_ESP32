@@ -362,6 +362,14 @@ mem presets[EE_PRESETS_CNT];
 TEF6686 radio;
 ESP32Time rtc(0);
 
+
+// FrequencySprite.createSprite(200, 50);
+// RDSSprite.createSprite(165, 19);
+// PSSprite.createSprite(150, 32);
+// SquelchSprite.createSprite(27, 19);
+// FullLineSprite.createSprite(308, 19);
+// OneBigLineSprite.createSprite(270, 30);
+
 TFT_eSprite FrequencySprite = TFT_eSprite(&tft);
 TFT_eSprite RDSSprite = TFT_eSprite(&tft);
 TFT_eSprite SquelchSprite = TFT_eSprite(&tft);
@@ -376,6 +384,7 @@ WiFiClient RemoteClient;
 WiFiUDP Udp;
 WebServer webserver(80);
 
-ScrollingTextDisplay rtplusDisplay(&RDSSprite, 146, 170);
-ScrollingTextDisplay eonDisplay(&RDSSprite, 172, 170);
-ScrollingTextDisplay eccDisplay(&FullLineSprite, 199, 270);
+ScrollingTextDisplay rtplusDisplay(&RDSSprite, 147, 180);
+ScrollingTextDisplay eonDisplay(&RDSSprite, 174, 180);
+ScrollingTextDisplay eccDisplay(&FullLineSprite, 198, 270);
+ScrollingTextDisplay rtDisplay(&FullLineSprite, 220, 270);

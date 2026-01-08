@@ -1386,7 +1386,7 @@ void TEF6686::readRDS(byte showrdserrors) {
 
       case RDS_GROUP_14A: {
           if (!rdsAerrorThreshold && !rdsBerrorThreshold && !rdsCerrorThreshold && !rdsDerrorThreshold) {
-            rds.hasEON = true;
+            rds.hasEON.set(true);
 
             bool isValuePresent = false;
             int eonIndex = -1;
@@ -1602,10 +1602,11 @@ void TEF6686::clearRDS(bool fullsearchrds) {
   rds.PTY.set(0);
   rds.hasECC = rds.hasRT = rds.hasRDS = false;
   rds.TP = rds.hasAF = rds.hasTA = false;
-  rds.hasEON = rds.hasCT = false;
+  rds.hasCT = false;
   rds.hasAID = rds.hasPTYN = rds.hasLongPS = false;
   rds.hasRTplus.set(false);
   rds.hasTMC.set(false);
+  rds.hasEON.set(false);
   rds.hasDABAF = rds.hasEnhancedRT = false;
   rt_process = ps_process = pslong_process = false;
   rds.rdsreset = true;

@@ -588,7 +588,7 @@ void BuildAFScreen() {
   if (afpagenr == 1) {
     if (!radio.rds.hasAF) tftPrint(ALEFT, textUI(87), 6, 48, PrimaryColor, PrimaryColorSmooth, 16);
   } else if (afpagenr == 2) {
-    if (!radio.rds.hasEON) tftPrint(ALEFT, textUI(88), 6, 48, PrimaryColor, PrimaryColorSmooth, 16);
+    if (!radio.rds.hasEON.get()) tftPrint(ALEFT, textUI(88), 6, 48, PrimaryColor, PrimaryColorSmooth, 16);
   }
   RDSstatusold = !RDSstatusold;
   ShowFreq(0);
@@ -608,7 +608,6 @@ void BuildAFScreen() {
   rds_clockold = "";
   dropout = false;
   rdsreset = true;
-  xPos = 0;
   rtplusDisplay.reset();
   eonDisplay.reset();
   eccDisplay.reset();
@@ -2993,10 +2992,11 @@ void BuildAdvancedRDS() {
   rdsreset = true;
   ShowMemoryPos();
   xPos = 0;
+  xPos2 = 0;
   rtplusDisplay.reset();
   eonDisplay.reset();
   eccDisplay.reset();
-  xPos2 = 0;
+  rtDisplay.reset();
 }
 
 void BuildDisplay() {
@@ -3112,10 +3112,11 @@ void BuildDisplay() {
   stationStateold = " ";
   BWreset = true;
   dropout = false;
-  xPos = 0;
   rtplusDisplay.reset();
   eonDisplay.reset();
   eccDisplay.reset();
+  rtDisplay.reset();
+  xPos = 0;
   xPos2 = 0;
   MPold = 99;
   USold = 99;

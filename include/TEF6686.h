@@ -478,7 +478,7 @@ typedef struct _rds_ {
   bool hasEnhancedRT;
   bool TP;
   bool hasTA;
-  bool hasEON;
+  Detector<bool, 1> hasEON{false};
   bool hasAID;
   Detector<bool, 1> hasTMC{false};
   bool hasAF;

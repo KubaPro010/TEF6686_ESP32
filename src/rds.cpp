@@ -6,8 +6,8 @@
 String HexStringold;
 float smoothBER = 0;
 
-int RadiotextWidth, PSLongWidth, AIDWidth, afstringWidth, eccstringWidth, eonstringWidth, rtplusstringWidth, lengths[7];
-String afstringold, eonstringold, rtplusstringold, stationNameLongOld, AIDStringold;
+int PSLongWidth, AIDWidth, lengths[7];
+String stationNameLongOld, AIDStringold;
 bool rtABold, ps12errorold, ps34errorold, ps56errorold, ps78errorold;
 
 void ShowAdvancedRDS() {
@@ -60,8 +60,6 @@ void ShowAdvancedRDS() {
   if (radio.rds.ECC.changed(0)) {
     if (!screenmute) {
       if (radio.rds.hasECC) ECCString = (radio.rds.ECCtext.length() == 0 ? textUI(73) : radio.rds.ECCtext); else ECCString = "N/A";
-      tftPrint(ALEFT, "N/A", 35, 199, BackgroundColor, BackgroundColor, 16);
-      eccstringWidth = RDSSprite.textWidth(ECCString);
     }
 
     if (wifi) {
@@ -72,23 +70,17 @@ void ShowAdvancedRDS() {
       Udp.endPacket();
     }
   }
-  if(!screenmute) eccDisplay.update(ECCString, eccstringWidth, RDSstatus, RDSColor, RDSColorSmooth, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor);
+  if(!screenmute) eccDisplay.update(ECCString, RDSstatus, RDSColor, RDSColorSmooth, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor);
 
   String eonstring;
   if (radio.eon_counter > 0) for (byte i = 0; i < radio.eon_counter; i++) eonstring += String(radio.eon[i].picode) + (radio.eon[i].ps.length() > 0 ? String(": " + String(radio.eon[i].ps)) : "") + (radio.eon[i].mappedfreq > 0 ? String(" " + String(radio.eon[i].mappedfreq / 100) + "." + String((radio.eon[i].mappedfreq % 100) / 10))  : "") + (radio.eon[i].mappedfreq2 > 0 ? String(" / " + String(radio.eon[i].mappedfreq2 / 100) + "." + String((radio.eon[i].mappedfreq2 % 100) / 10))  : "") + (radio.eon[i].mappedfreq3 > 0 ? String(" /  " + String(radio.eon[i].mappedfreq3 / 100) + "." + String((radio.eon[i].mappedfreq3 % 100) / 10))  : "") + (i == radio.eon_counter - 1 ? "        " : " | "); else eonstring = textUI(88);
-  if (haseonold != radio.rds.hasEON) {
+  if (radio.rds.hasEON.changed(0)) {
     if (!screenmute)  {
       if (radio.eon_counter > 0) tftPrint(ALEFT, "EON", 153, 51, RDSColor, RDSColorSmooth, 16); else tftPrint(ALEFT, "EON", 153, 51, GreyoutColor, BackgroundColor, 16);
     }
-    haseonold = radio.rds.hasEON;
   }
 
-  if (eonstring != eonstringold) {
-    eonstringWidth = RDSSprite.textWidth(eonstring);
-    eonstringold = eonstring;
-  }
-
-  if(!screenmute) eonDisplay.update(eonstring, eonstringWidth, RDSstatus, RDSColor, RDSColorSmooth, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor);
+  if(!screenmute) eonDisplay.update(eonstring, RDSstatus, RDSColor, RDSColorSmooth, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor);
 
   String rtplusstring;
   if (radio.rds.hasRTplus.get()) rtplusstring = (radio.rds.rdsplusTag1 != 169 ? String(textUI(radio.rds.rdsplusTag1)) + ": " + String(radio.rds.RTContent1) : "") + (radio.rds.rdsplusTag2 != 169 ? " - " + String(textUI(radio.rds.rdsplusTag2)) + ": " + String(radio.rds.RTContent2) : "") + "        "; else rtplusstring = textUI(89);
@@ -98,12 +90,7 @@ void ShowAdvancedRDS() {
     }
   }
 
-  if (rtplusstring != rtplusstringold) {
-    rtplusstringWidth = RDSSprite.textWidth(rtplusstring);
-    rtplusstringold = rtplusstring;
-  }
-
-  if(!screenmute) rtplusDisplay.update(rtplusstring, rtplusstringWidth, RDSstatus, RDSColor, RDSColorSmooth, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor);
+  if(!screenmute) rtplusDisplay.update(rtplusstring, RDSstatus, RDSColor, RDSColorSmooth, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor);
 
   if (TPold != radio.rds.TP) {
     if (!screenmute) {
@@ -610,73 +597,14 @@ void showRadioText() {
   String RTString = String(radio.rds.stationText + (radio.rds.stationText.length() > 0 ? " " : "") + radio.rds.stationText32 + (radio.rds.hasEnhancedRT ? " eRT: " + String(radio.rds.enhancedRTtext) : "") + "      ");
 
   if (radio.rds.hasRT && radio.rds.rtAB != rtABold) {
-    xPos = 0;
+    rtDisplay.reset();
     rttickerhold = millis();
     rtABold = radio.rds.rtAB;
   }
 
-  if (!screenmute) {
-    if (radio.rds.hasRT &&
-        (radio.rds.stationText.length() > 0 || radio.rds.stationText32.length() > 0)) {
-
-      if (RDSSprite.textWidth(trimTrailingSpaces(RTString)) < 270) {
-        xPos = 0;
-        FullLineSprite.fillSprite(BackgroundColor);
-        FullLineSprite.setTextDatum(TL_DATUM);
-        FullLineSprite.setTextColor(
-          RDSstatus ? RDSColor : RDSDropoutColor,
-          RDSstatus ? RDSColorSmooth : RDSDropoutColorSmooth,
-          false
-        );
-        FullLineSprite.drawString(RTString, xPos, 2);
-        FullLineSprite.fillRect(275, 0, 8, 19, BackgroundColor);
-        FullLineSprite.drawLine(283, 0, 283, 19, FrameColor);
-
-        if (radio.rds.hasRT) {
-          FullLineSprite.fillCircle(278, 3, 2, radio.rds.rtAB ? GreyoutColor : InsignificantColor);
-          FullLineSprite.fillCircle(278, 14, 2, radio.rds.rtAB ? InsignificantColor : GreyoutColor);
-        }
-
-        FullLineSprite.pushSprite(36, 220);
-      } else {
-        // Handle scrolling text
-        if (millis() - rtticker >= 15) {
-          if (xPos == 0 && millis() - rttickerhold < 1000) {
-            // Wait for a moment before scrolling
-          } else {
-            xPos--;
-            rttickerhold = millis(); // Update hold time only when xPos changes
-          }
-
-          if (xPos < -RadiotextWidth) xPos = 0; // Reset position if scrolled off
-
-          FullLineSprite.fillSprite(BackgroundColor);
-          FullLineSprite.setTextDatum(TL_DATUM);
-          FullLineSprite.setTextColor(
-            RDSstatus ? RDSColor : RDSDropoutColor,
-            RDSstatus ? RDSColorSmooth : RDSDropoutColorSmooth,
-            false
-          );
-          FullLineSprite.drawString(RTString, xPos, 2);
-          FullLineSprite.drawString(RTString, xPos + RadiotextWidth, 2);
-          FullLineSprite.fillRect(275, 0, 8, 19, BackgroundColor);
-          FullLineSprite.drawLine(283, 0, 283, 19, FrameColor);
-
-          if (radio.rds.hasRT) {
-            FullLineSprite.fillCircle(278, 3, 2, radio.rds.rtAB ? GreyoutColor : InsignificantColor);
-            FullLineSprite.fillCircle(278, 14, 2, radio.rds.rtAB ? InsignificantColor : GreyoutColor);
-          }
-
-          FullLineSprite.pushSprite(36, 220);
-          rtticker = millis();
-        }
-      }
-    }
-  }
+  if (!screenmute && radio.rds.hasRT && (radio.rds.stationText.length() > 0 || radio.rds.stationText32.length() > 0)) rtDisplay.update(RTString, RDSstatus, RDSColor, RDSColorSmooth, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor);
 
   if (RTold != RTString) {
-    RadiotextWidth = FullLineSprite.textWidth(RTString);
-
     if (wifi) {
       Udp.beginPacket(remoteip, 9030);
       Udp.print("from=TEF_tuner_" + String(stationlistid, DEC) + ";RT1=");

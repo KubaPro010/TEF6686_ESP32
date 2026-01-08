@@ -8,9 +8,6 @@ The version in the repository is an ongoing development. It could and will conta
 Advanced Tuner software for NXP TEF668x tuners with ESP32 board
 More information: https://www.pe5pvb.nl/tef6686/
 
-## TFT_eSPI
-When compiling for the first time, please edit the User_Setup.h file in the lib/TFT_eSPI/
-
 ## Wiki
 - [About the software & features](https://github.com/PE5PVB/TEF6686_ESP32/wiki)
 - [Getting started](https://github.com/PE5PVB/TEF6686_ESP32/wiki#getting-started)

@@ -1,6 +1,3 @@
-//#define ARS                 // uncomment for BGR type display (ARS version)
-#define DEEPELEC_DP_66X     // uncomment for DEEPELEC Portable DP-66X build
-
 #define ILI9341_DRIVER
 #define TFT_DMA_SUPPORT
 #define TFT_CS          5
