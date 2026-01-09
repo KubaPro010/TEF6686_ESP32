@@ -1618,7 +1618,7 @@ void setup() {
   tft.fillRect(152, 230, 16, 6, GreyoutColor);
   tft.fillRect(184, 230, 16, 6, GreyoutColor);
 
-  tft.pushImage(78, 34, 163, 84, openradiologo);
+  tft.pushImage(78, 34, 163, 84, radiologo);
   tft.drawBitmap(130, 124, TEFLogo, 59, 23, ActiveColor);
 
   for (int x = 0; x <= ContrastSet; x++) {
