@@ -1,21 +1,20 @@
-// This header file contains a list of user setup files and defines which one the
-// compiler uses when the IDE performs a Verify/Compile or Upload.
-//
-// Users can create configurations for different boards and TFT displays.
-// This makes selecting between hardware setups easy by "uncommenting" one line.
+#pragma once
 
-// The advantage of this hardware configuration method is that the examples provided
-// with the library should work with immediately without any other changes being
-// needed. It also improves the portability of users sketches to other hardware
-// configurations and compatible libraries.
-//
-// Create a shortcut to this file on your desktop to permit quick access for editing.
-// Re-compile and upload after making and saving any changes to this file.
+#define ILI9341_DRIVER
+#define TFT_DMA_SUPPORT
+#define TFT_CS          5
+#define TFT_DC          17
+#define TFT_RST         16
+#define TOUCH_CS	32
 
-// Example User_Setup files are stored in the "User_Setups" folder. These can be used
-// unmodified or adapted for a particular hardware configuration.
+#define SPI_FREQUENCY       7500000
+#define SPI_READ_FREQUENCY 20000000
+#define SPI_TOUCH_FREQUENCY 2500000
+#define SMOOTH_FONT
 
-#include <User_Setup.h>
+#ifdef ARS
+#define TFT_RGB_ORDER TFT_RGB
+#endif
 
 // Identical looking TFT displays may have a different colour ordering in the 16-bit colour
 #define TFT_BGR 0   // Colour order Blue-Green-Red
@@ -24,8 +23,6 @@
 #include <TFT_Drivers/ILI9341_Defines.h>
 #define  TFT_DRIVER 0x9341
 
-// These are the pins for ESP8266 boards
-//      Name   GPIO    NodeMCU      Function
 #define PIN_D0  16  // GPIO16       WAKE
 #define PIN_D1   5  // GPIO5        User purpose
 #define PIN_D2   4  // GPIO4        User purpose

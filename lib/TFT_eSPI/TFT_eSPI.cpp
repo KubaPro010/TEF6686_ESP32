@@ -23,12 +23,6 @@
   #else
     #include "Processors/TFT_eSPI_ESP32.c"
   #endif
-#elif defined (ARDUINO_ARCH_ESP8266)
-  #include "Processors/TFT_eSPI_ESP8266.c"
-#elif defined (STM32) // (_VARIANT_ARDUINO_STM32_) stm32_def.h
-  #include "Processors/TFT_eSPI_STM32.c"
-#elif defined (ARDUINO_ARCH_RP2040)  || defined (ARDUINO_ARCH_MBED) // Raspberry Pi Pico
-  #include "Processors/TFT_eSPI_RP2040.c"
 #else
   #include "Processors/TFT_eSPI_Generic.c"
 #endif
@@ -74,7 +68,7 @@
 inline void TFT_eSPI::begin_tft_write(void){
   if (locked) {
     locked = false; // Flag to show SPI access now unlocked
-#if defined (SPI_HAS_TRANSACTION) && defined (SUPPORT_TRANSACTIONS) && !defined(TFT_PARALLEL_8_BIT) && !defined(RP2040_PIO_INTERFACE)
+#if defined (SPI_HAS_TRANSACTION) && defined (SUPPORT_TRANSACTIONS) && !defined(TFT_PARALLEL_8_BIT)
     spi.beginTransaction(SPISettings(spi_write_speed * 1000000, MSBFIRST, TFT_SPI_MODE));
 #endif
     CS_L;
@@ -86,7 +80,7 @@ inline void TFT_eSPI::begin_tft_write(void){
 void TFT_eSPI::begin_nin_write(void){
   if (locked) {
     locked = false; // Flag to show SPI access now unlocked
-#if defined (SPI_HAS_TRANSACTION) && defined (SUPPORT_TRANSACTIONS) && !defined(TFT_PARALLEL_8_BIT) && !defined(RP2040_PIO_INTERFACE)
+#if defined (SPI_HAS_TRANSACTION) && defined (SUPPORT_TRANSACTIONS) && !defined(TFT_PARALLEL_8_BIT)
     spi.beginTransaction(SPISettings(spi_write_speed * 1000000, MSBFIRST, TFT_SPI_MODE));
 #endif
     CS_L;
@@ -105,7 +99,7 @@ inline void TFT_eSPI::end_tft_write(void){
       SPI_BUSY_CHECK;       // Check send complete and clean out unused rx data
       CS_H;
       SET_BUS_READ_MODE;    // In case bus has been configured for tx only
-#if defined (SPI_HAS_TRANSACTION) && defined (SUPPORT_TRANSACTIONS) && !defined(TFT_PARALLEL_8_BIT) && !defined(RP2040_PIO_INTERFACE)
+#if defined (SPI_HAS_TRANSACTION) && defined (SUPPORT_TRANSACTIONS) && !defined(TFT_PARALLEL_8_BIT)
       spi.endTransaction();
 #endif
     }
@@ -120,7 +114,7 @@ inline void TFT_eSPI::end_nin_write(void){
       SPI_BUSY_CHECK;       // Check send complete and clean out unused rx data
       CS_H;
       SET_BUS_READ_MODE;    // In case SPI has been configured for tx only
-#if defined (SPI_HAS_TRANSACTION) && defined (SUPPORT_TRANSACTIONS) && !defined(TFT_PARALLEL_8_BIT) && !defined(RP2040_PIO_INTERFACE)
+#if defined (SPI_HAS_TRANSACTION) && defined (SUPPORT_TRANSACTIONS) && !defined(TFT_PARALLEL_8_BI)
       spi.endTransaction();
 #endif
     }
@@ -134,14 +128,14 @@ inline void TFT_eSPI::end_nin_write(void){
 // Reads require a lower SPI clock rate than writes
 inline void TFT_eSPI::begin_tft_read(void){
   DMA_BUSY_CHECK; // Wait for any DMA transfer to complete before changing SPI settings
-#if defined (SPI_HAS_TRANSACTION) && defined (SUPPORT_TRANSACTIONS) && !defined(TFT_PARALLEL_8_BIT) && !defined(RP2040_PIO_INTERFACE)
+#if defined (SPI_HAS_TRANSACTION) && defined (SUPPORT_TRANSACTIONS) && !defined(TFT_PARALLEL_8_BIT)
   if (locked) {
     locked = false;
     spi.beginTransaction(SPISettings(SPI_READ_FREQUENCY, MSBFIRST, TFT_SPI_MODE));
     CS_L;
   }
 #else
-  #if !defined(TFT_PARALLEL_8_BIT) && !defined(RP2040_PIO_INTERFACE)
+  #if !defined(TFT_PARALLEL_8_BIT)
     spi.setFrequency(SPI_READ_FREQUENCY);
   #endif
    CS_L;
@@ -154,7 +148,7 @@ inline void TFT_eSPI::begin_tft_read(void){
 ** Description:             End transaction for reads and deselect TFT
 ***************************************************************************************/
 inline void TFT_eSPI::end_tft_read(void){
-#if defined (SPI_HAS_TRANSACTION) && defined (SUPPORT_TRANSACTIONS) && !defined(TFT_PARALLEL_8_BIT) && !defined(RP2040_PIO_INTERFACE)
+#if defined (SPI_HAS_TRANSACTION) && defined (SUPPORT_TRANSACTIONS) && !defined(TFT_PARALLEL_8_BIT)
   if(!inTransaction) {
     if (!locked) {
       locked = true;
@@ -163,7 +157,7 @@ inline void TFT_eSPI::end_tft_read(void){
     }
   }
 #else
-  #if !defined(TFT_PARALLEL_8_BIT) && !defined(RP2040_PIO_INTERFACE)
+  #if !defined(TFT_PARALLEL_8_BIT)
     spi.setFrequency(spi_write_speed * 1000000);
   #endif
    if(!inTransaction) {CS_H;}
@@ -484,10 +478,6 @@ TFT_eSPI::TFT_eSPI(int16_t w, int16_t h)
   fs_font  = true;     // Smooth font filing system or array (fs_font = false) flag
 #endif
 
-#if defined (ESP32) && defined (CONFIG_SPIRAM_SUPPORT)
-  if (psramFound()) _psram_enable = true; // Enable the use of PSRAM (if available)
-  else
-#endif
   _psram_enable = false;
 
   addr_row = 0xFFFF;  // drawPixel command length optimiser
@@ -557,8 +547,7 @@ void TFT_eSPI::initBus(void) {
   }
 #endif
 
-// In parallel mode and with the RP2040 processor, the TFT_WR line is handled in the  PIO
-#if defined (TFT_WR) && !defined (ARDUINO_ARCH_RP2040) && !defined (ARDUINO_ARCH_MBED)
+#if defined (TFT_WR)
   if (TFT_WR >= 0) {
     pinMode(TFT_WR, OUTPUT);
     digitalWrite(TFT_WR, HIGH); // Set write strobe high (inactive)
@@ -587,17 +576,15 @@ void TFT_eSPI::initBus(void) {
     digitalWrite(TFT_RD, HIGH);
   }
 
-  #if  !defined (ARDUINO_ARCH_RP2040)  && !defined (ARDUINO_ARCH_MBED)// PIO manages pins
-    // Set TFT data bus lines to output
-    pinMode(TFT_D0, OUTPUT); digitalWrite(TFT_D0, HIGH);
-    pinMode(TFT_D1, OUTPUT); digitalWrite(TFT_D1, HIGH);
-    pinMode(TFT_D2, OUTPUT); digitalWrite(TFT_D2, HIGH);
-    pinMode(TFT_D3, OUTPUT); digitalWrite(TFT_D3, HIGH);
-    pinMode(TFT_D4, OUTPUT); digitalWrite(TFT_D4, HIGH);
-    pinMode(TFT_D5, OUTPUT); digitalWrite(TFT_D5, HIGH);
-    pinMode(TFT_D6, OUTPUT); digitalWrite(TFT_D6, HIGH);
-    pinMode(TFT_D7, OUTPUT); digitalWrite(TFT_D7, HIGH);
-  #endif
+  // Set TFT data bus lines to output
+  pinMode(TFT_D0, OUTPUT); digitalWrite(TFT_D0, HIGH);
+  pinMode(TFT_D1, OUTPUT); digitalWrite(TFT_D1, HIGH);
+  pinMode(TFT_D2, OUTPUT); digitalWrite(TFT_D2, HIGH);
+  pinMode(TFT_D3, OUTPUT); digitalWrite(TFT_D3, HIGH);
+  pinMode(TFT_D4, OUTPUT); digitalWrite(TFT_D4, HIGH);
+  pinMode(TFT_D5, OUTPUT); digitalWrite(TFT_D5, HIGH);
+  pinMode(TFT_D6, OUTPUT); digitalWrite(TFT_D6, HIGH);
+  pinMode(TFT_D7, OUTPUT); digitalWrite(TFT_D7, HIGH);
 
   PARALLEL_INIT_TFT_DATA_BUS;
 
@@ -624,42 +611,13 @@ void TFT_eSPI::init(uint8_t tc)
   {
     initBus();
 
-#if !defined (ESP32) && !defined(TFT_PARALLEL_8_BIT) && !defined(ARDUINO_ARCH_RP2040) && !defined (ARDUINO_ARCH_MBED)
-  // Legacy bitmasks for GPIO
-  #if defined (TFT_CS) && (TFT_CS >= 0)
-    cspinmask = (uint32_t) digitalPinToBitMask(TFT_CS);
-  #endif
-
-  #if defined (TFT_DC) && (TFT_DC >= 0)
-    dcpinmask = (uint32_t) digitalPinToBitMask(TFT_DC);
-  #endif
-
-  #if defined (TFT_WR) && (TFT_WR >= 0)
-    wrpinmask = (uint32_t) digitalPinToBitMask(TFT_WR);
-  #endif
-
-  #if defined (TFT_SCLK) && (TFT_SCLK >= 0)
-    sclkpinmask = (uint32_t) digitalPinToBitMask(TFT_SCLK);
-  #endif
-
-  #if defined (TFT_SPI_OVERLAP) && defined (ARDUINO_ARCH_ESP8266)
-    // Overlap mode SD0=MISO, SD1=MOSI, CLK=SCLK must use D3 as CS
-    //    pins(int8_t sck, int8_t miso, int8_t mosi, int8_t ss);
-    //spi.pins(        6,          7,           8,          0);
-    spi.pins(6, 7, 8, 0);
-  #endif
-
-  spi.begin(); // This will set HMISO to input
-
-#else
-  #if !defined(TFT_PARALLEL_8_BIT) && !defined(RP2040_PIO_INTERFACE)
-    #if defined (TFT_MOSI) && !defined (TFT_SPI_OVERLAP) && !defined(ARDUINO_ARCH_RP2040) && !defined (ARDUINO_ARCH_MBED)
-      spi.begin(TFT_SCLK, TFT_MISO, TFT_MOSI, -1); // This will set MISO to input
-    #else
-      spi.begin(); // This will set MISO to input
+    #if !defined(TFT_PARALLEL_8_BIT)
+      #if defined (TFT_MOSI) && !defined (TFT_SPI_OVERLAP)
+        spi.begin(TFT_SCLK, TFT_MISO, TFT_MOSI, -1); // This will set MISO to input
+      #else
+        spi.begin(); // This will set MISO to input
+      #endif
     #endif
-  #endif
-#endif
     lockTransaction = false;
     inTransaction = false;
     locked = true;
@@ -667,19 +625,17 @@ void TFT_eSPI::init(uint8_t tc)
     INIT_TFT_DATA_BUS;
 
 
-#if defined (TFT_CS) && !defined(RP2040_PIO_INTERFACE)
+#if defined (TFT_CS)
   // Set to output once again in case MISO is used for CS
   if (TFT_CS >= 0) {
     pinMode(TFT_CS, OUTPUT);
     digitalWrite(TFT_CS, HIGH); // Chip select high (inactive)
   }
-#elif defined (ARDUINO_ARCH_ESP8266) && !defined (TFT_PARALLEL_8_BIT) && !defined (RP2040_PIO_SPI)
-  spi.setHwCs(1); // Use hardware SS toggling
 #endif
 
 
   // Set to output once again in case MISO is used for DC
-#if defined (TFT_DC) && !defined(RP2040_PIO_INTERFACE)
+#if defined (TFT_DC)
   if (TFT_DC >= 0) {
     pinMode(TFT_DC, OUTPUT);
     digitalWrite(TFT_DC, HIGH); // Data/Command high = data mode
@@ -692,12 +648,10 @@ void TFT_eSPI::init(uint8_t tc)
 
   // Toggle RST low to reset
 #ifdef TFT_RST
-  #if !defined(RP2040_PIO_INTERFACE)
-    // Set to output once again in case MISO is used for TFT_RST
-    if (TFT_RST >= 0) {
-      pinMode(TFT_RST, OUTPUT);
-    }
-  #endif
+  // Set to output once again in case MISO is used for TFT_RST
+  if (TFT_RST >= 0) {
+    pinMode(TFT_RST, OUTPUT);
+  }
   if (TFT_RST >= 0) {
     writecommand(0x00); // Put SPI bus in known state for TFT with CS tied low
     digitalWrite(TFT_RST, HIGH);
@@ -717,69 +671,7 @@ void TFT_eSPI::init(uint8_t tc)
 
   tc = tc; // Suppress warning
 
-  // This loads the driver specific initialisation code  <<<<<<<<<<<<<<<<<<<<< ADD NEW DRIVERS TO THE LIST HERE <<<<<<<<<<<<<<<<<<<<<<<
-#if   defined (ILI9341_DRIVER) || defined(ILI9341_2_DRIVER) || defined (ILI9342_DRIVER)
-    #include "TFT_Drivers/ILI9341_Init.h"
-
-#elif defined (ST7735_DRIVER)
-    tabcolor = tc;
-    #include "TFT_Drivers/ST7735_Init.h"
-
-#elif defined (ILI9163_DRIVER)
-    #include "TFT_Drivers/ILI9163_Init.h"
-
-#elif defined (S6D02A1_DRIVER)
-    #include "TFT_Drivers/S6D02A1_Init.h"
-
-#elif defined (ST7796_DRIVER)
-    #include "TFT_Drivers/ST7796_Init.h"
-
-#elif defined (ILI9486_DRIVER)
-    #include "TFT_Drivers/ILI9486_Init.h"
-
-#elif defined (ILI9481_DRIVER)
-    #include "TFT_Drivers/ILI9481_Init.h"
-
-#elif defined (ILI9488_DRIVER)
-    #include "TFT_Drivers/ILI9488_Init.h"
-
-#elif defined (HX8357D_DRIVER)
-    #include "TFT_Drivers/HX8357D_Init.h"
-
-#elif defined (ST7789_DRIVER)
-    #include "TFT_Drivers/ST7789_Init.h"
-
-#elif defined (R61581_DRIVER)
-    #include "TFT_Drivers/R61581_Init.h"
-
-#elif defined (RM68140_DRIVER)
-	#include "TFT_Drivers/RM68140_Init.h"
-
-#elif defined (ST7789_2_DRIVER)
-    #include "TFT_Drivers/ST7789_2_Init.h"
-
-#elif defined (SSD1351_DRIVER)
-    #include "TFT_Drivers/SSD1351_Init.h"
-
-#elif defined (SSD1963_DRIVER)
-    #include "TFT_Drivers/SSD1963_Init.h"
-
-#elif defined (GC9A01_DRIVER)
-     #include "TFT_Drivers/GC9A01_Init.h"
-
-#elif defined (ILI9225_DRIVER)
-     #include "TFT_Drivers/ILI9225_Init.h"
-
-#elif defined (RM68120_DRIVER)
-     #include "TFT_Drivers/RM68120_Init.h"
-
-#elif defined (HX8357B_DRIVER)
-    #include "TFT_Drivers/HX8357B_Init.h"
-
-#elif defined (HX8357C_DRIVER)
-    #include "TFT_Drivers/HX8357C_Init.h"
-
-#endif
+  #include "TFT_Drivers/ILI9341_Init.h"
 
 #ifdef TFT_INVERSION_ON
   writecommand(TFT_INVON);
@@ -819,68 +711,7 @@ void TFT_eSPI::setRotation(uint8_t m)
 
   begin_tft_write();
 
-    // This loads the driver specific rotation code  <<<<<<<<<<<<<<<<<<<<< ADD NEW DRIVERS TO THE LIST HERE <<<<<<<<<<<<<<<<<<<<<<<
-#if   defined (ILI9341_DRIVER) || defined(ILI9341_2_DRIVER) || defined (ILI9342_DRIVER)
-    #include "TFT_Drivers/ILI9341_Rotation.h"
-
-#elif defined (ST7735_DRIVER)
-    #include "TFT_Drivers/ST7735_Rotation.h"
-
-#elif defined (ILI9163_DRIVER)
-    #include "TFT_Drivers/ILI9163_Rotation.h"
-
-#elif defined (S6D02A1_DRIVER)
-    #include "TFT_Drivers/S6D02A1_Rotation.h"
-
-#elif defined (ST7796_DRIVER)
-    #include "TFT_Drivers/ST7796_Rotation.h"
-
-#elif defined (ILI9486_DRIVER)
-    #include "TFT_Drivers/ILI9486_Rotation.h"
-
-#elif defined (ILI9481_DRIVER)
-    #include "TFT_Drivers/ILI9481_Rotation.h"
-
-#elif defined (ILI9488_DRIVER)
-    #include "TFT_Drivers/ILI9488_Rotation.h"
-
-#elif defined (HX8357D_DRIVER)
-    #include "TFT_Drivers/HX8357D_Rotation.h"
-
-#elif defined (ST7789_DRIVER)
-    #include "TFT_Drivers/ST7789_Rotation.h"
-
-#elif defined (R61581_DRIVER)
-    #include "TFT_Drivers/R61581_Rotation.h"
-
-#elif defined (RM68140_DRIVER)
-	#include "TFT_Drivers/RM68140_Rotation.h"
-
-#elif defined (ST7789_2_DRIVER)
-    #include "TFT_Drivers/ST7789_2_Rotation.h"
-
-#elif defined (SSD1351_DRIVER)
-    #include "TFT_Drivers/SSD1351_Rotation.h"
-
-#elif defined (SSD1963_DRIVER)
-    #include "TFT_Drivers/SSD1963_Rotation.h"
-
-#elif defined (GC9A01_DRIVER)
-     #include "TFT_Drivers/GC9A01_Rotation.h"
-
-#elif defined (ILI9225_DRIVER)
-     #include "TFT_Drivers/ILI9225_Rotation.h"
-
-#elif defined (RM68120_DRIVER)
-     #include "TFT_Drivers/RM68120_Rotation.h"
-
-#elif defined (HX8357B_DRIVER)
-    #include "TFT_Drivers/HX8357B_Rotation.h"
-
-#elif defined (HX8357C_DRIVER)
-    #include "TFT_Drivers/HX8357C_Rotation.h"
-
-#endif
+  #include "TFT_Drivers/ILI9341_Rotation.h"
 
   delayMicroseconds(10);
 
@@ -1071,7 +902,7 @@ void TFT_eSPI::writedata(uint8_t d)
 uint8_t TFT_eSPI::readcommand8(uint8_t cmd_function, uint8_t index)
 {
   uint8_t reg = 0;
-#if defined(TFT_PARALLEL_8_BIT) || defined(RP2040_PIO_INTERFACE)
+#if defined(TFT_PARALLEL_8_BIT)
 
   writecommand(cmd_function); // Sets DC and CS high
 
@@ -1153,7 +984,7 @@ uint16_t TFT_eSPI::readPixel(int32_t x0, int32_t y0)
   // Range checking
   if ((x0 < _vpX) || (y0 < _vpY) ||(x0 >= _vpW) || (y0 >= _vpH)) return 0;
 
-#if defined(TFT_PARALLEL_8_BIT) || defined(RP2040_PIO_INTERFACE)
+#if defined(TFT_PARALLEL_8_BIT)
 
   if (!inTransaction) { CS_L; } // CS_L can be multi-statement
 
@@ -1162,44 +993,22 @@ uint16_t TFT_eSPI::readPixel(int32_t x0, int32_t y0)
   // Set masked pins D0- D7 to input
   busDir(GPIO_DIR_MASK, INPUT);
 
-  #if  !defined (SSD1963_DRIVER)
   // Dummy read to throw away don't care value
   readByte();
-  #endif
 
   // Fetch the 16-bit BRG pixel
   //uint16_t rgb = (readByte() << 8) | readByte();
 
-  #if defined (ILI9341_DRIVER)  || defined(ILI9341_2_DRIVER) || defined (ILI9488_DRIVER) || defined (SSD1963_DRIVER)// Read 3 bytes
 
-    // Read window pixel 24-bit RGB values and fill in LS bits
-    uint16_t rgb = ((readByte() & 0xF8) << 8) | ((readByte() & 0xFC) << 3) | (readByte() >> 3);
+  // Read window pixel 24-bit RGB values and fill in LS bits
+  uint16_t rgb = ((readByte() & 0xF8) << 8) | ((readByte() & 0xFC) << 3) | (readByte() >> 3);
 
-    if (!inTransaction) { CS_H; } // CS_H can be multi-statement
+  if (!inTransaction) { CS_H; } // CS_H can be multi-statement
 
-    // Set masked pins D0- D7 to output
-    busDir(GPIO_DIR_MASK, OUTPUT);
+  // Set masked pins D0- D7 to output
+  busDir(GPIO_DIR_MASK, OUTPUT);
 
-    return rgb;
-
-  #else // ILI9481 or ILI9486 16-bit read
-
-    // Fetch the 16-bit BRG pixel
-    uint16_t bgr = (readByte() << 8) | readByte();
-
-    if (!inTransaction) { CS_H; } // CS_H can be multi-statement
-
-    // Set masked pins D0- D7 to output
-    busDir(GPIO_DIR_MASK, OUTPUT);
-
-    #if defined (ILI9486_DRIVER) || defined (ST7796_DRIVER)
-      return  bgr;
-    #else
-      // Swap Red and Blue (could check MADCTL setting to see if this is needed)
-      return  (bgr>>11) | (bgr<<11) | (bgr & 0x7E0);
-    #endif
-
-  #endif
+  return rgb;
 
 #else // Not TFT_PARALLEL_8_BIT
 
@@ -1221,39 +1030,12 @@ uint16_t TFT_eSPI::readPixel(int32_t x0, int32_t y0)
   // Dummy read to throw away don't care value
   tft_Read_8();
 
-  //#if !defined (ILI9488_DRIVER)
-
-    #if defined (ST7796_DRIVER)
-      // Read the 2 bytes
-      color = ((tft_Read_8()) << 8) | (tft_Read_8());
-    #elif defined (ST7735_DRIVER)
-      // Read the 3 RGB bytes, colour is in LS 6 bits of the top 7 bits of each byte
-      // as the TFT stores colours as 18 bits
-      uint8_t r = tft_Read_8()<<1;
-      uint8_t g = tft_Read_8()<<1;
-      uint8_t b = tft_Read_8()<<1;
-      color = color565(r, g, b);
-    #else
-      // Read the 3 RGB bytes, colour is actually only in the top 6 bits of each byte
-      // as the TFT stores colours as 18 bits
-      uint8_t r = tft_Read_8();
-      uint8_t g = tft_Read_8();
-      uint8_t b = tft_Read_8();
-      color = color565(r, g, b);
-    #endif
-
-/*
-  #else
-
-    // The 6 colour bits are in MS 6 bits of each byte, but the ILI9488 needs an extra clock pulse
-    // so bits appear shifted right 1 bit, so mask the middle 6 bits then shift 1 place left
-    uint8_t r = (tft_Read_8()&0x7E)<<1;
-    uint8_t g = (tft_Read_8()&0x7E)<<1;
-    uint8_t b = (tft_Read_8()&0x7E)<<1;
+    // Read the 3 RGB bytes, colour is actually only in the top 6 bits of each byte
+    // as the TFT stores colours as 18 bits
+    uint8_t r = tft_Read_8();
+    uint8_t g = tft_Read_8();
+    uint8_t b = tft_Read_8();
     color = color565(r, g, b);
-
-  #endif
-*/
   CS_H;
 
   #ifdef TFT_SDA_READ
@@ -1284,7 +1066,7 @@ void TFT_eSPI::readRect(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *da
 {
   PI_CLIP ;
 
-#if defined(TFT_PARALLEL_8_BIT) || defined(RP2040_PIO_INTERFACE)
+#if defined(TFT_PARALLEL_8_BIT)
 
   CS_L;
 
@@ -1295,65 +1077,22 @@ void TFT_eSPI::readRect(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *da
   // Set masked pins D0- D7 to input
   busDir(GPIO_DIR_MASK, INPUT);
 
-  #if defined (ILI9341_DRIVER)  || defined(ILI9341_2_DRIVER) || defined (ILI9488_DRIVER) // Read 3 bytes
-    // Dummy read to throw away don't care value
-    readByte();
+  // Dummy read to throw away don't care value
+  readByte();
 
-    // Fetch the 24-bit RGB value
-    while (dh--) {
-      int32_t lw = dw;
-      uint16_t* line = data;
-      while (lw--) {
-        // Assemble the RGB 16-bit colour
-        uint16_t rgb = ((readByte() & 0xF8) << 8) | ((readByte() & 0xFC) << 3) | (readByte() >> 3);
+  // Fetch the 24-bit RGB value
+  while (dh--) {
+    int32_t lw = dw;
+    uint16_t* line = data;
+    while (lw--) {
+      // Assemble the RGB 16-bit colour
+      uint16_t rgb = ((readByte() & 0xF8) << 8) | ((readByte() & 0xFC) << 3) | (readByte() >> 3);
 
-        // Swapped byte order for compatibility with pushRect()
-        *line++ = (rgb<<8) | (rgb>>8);
-      }
-      data += w;
+      // Swapped byte order for compatibility with pushRect()
+      *line++ = (rgb<<8) | (rgb>>8);
     }
-
-  #elif  defined (SSD1963_DRIVER)
-    // Fetch the 18-bit BRG pixels
-    while (dh--) {
-      int32_t lw = dw;
-      uint16_t* line = data;
-      while (lw--) {
-        uint16_t bgr = ((readByte() & 0xF8) >> 3);; // CS_L adds a small delay
-        bgr |= ((readByte() & 0xFC) << 3);
-        bgr |= (readByte() << 8);
-        // Swap Red and Blue (could check MADCTL setting to see if this is needed)
-        uint16_t rgb = (bgr>>11) | (bgr<<11) | (bgr & 0x7E0);
-        // Swapped byte order for compatibility with pushRect()
-        *line++ = (rgb<<8) | (rgb>>8);
-      }
-      data += w;
-    }
-
-  #else // ILI9481 reads as 16 bits
-    // Dummy read to throw away don't care value
-    readByte();
-
-    // Fetch the 16-bit BRG pixels
-    while (dh--) {
-      int32_t lw = dw;
-      uint16_t* line = data;
-      while (lw--) {
-      #if defined (ILI9486_DRIVER) || defined (ST7796_DRIVER)
-        // Read the RGB 16-bit colour
-        *line++ = readByte() | (readByte() << 8);
-      #else
-        // Read the BRG 16-bit colour
-        uint16_t bgr = (readByte() << 8) | readByte();
-        // Swap Red and Blue (could check MADCTL setting to see if this is needed)
-        uint16_t rgb = (bgr>>11) | (bgr<<11) | (bgr & 0x7E0);
-        // Swapped byte order for compatibility with pushRect()
-        *line++ = (rgb<<8) | (rgb>>8);
-      #endif
-      }
-      data += w;
-    }
-  #endif
+    data += w;
+  }
 
   CS_H;
 
@@ -1388,36 +1127,12 @@ void TFT_eSPI::readRect(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *da
     uint16_t* line = data;
     while (lw--) {
 
-  #if !defined (ILI9488_DRIVER)
-
-    #if defined (ST7796_DRIVER)
-      // Read the 2 bytes
-      color = ((tft_Read_8()) << 8) | (tft_Read_8());
-    #elif defined (ST7735_DRIVER)
-      // Read the 3 RGB bytes, colour is in LS 6 bits of the top 7 bits of each byte
-      // as the TFT stores colours as 18 bits
-      uint8_t r = tft_Read_8()<<1;
-      uint8_t g = tft_Read_8()<<1;
-      uint8_t b = tft_Read_8()<<1;
-      color = color565(r, g, b);
-    #else
       // Read the 3 RGB bytes, colour is actually only in the top 6 bits of each byte
       // as the TFT stores colours as 18 bits
       uint8_t r = tft_Read_8();
       uint8_t g = tft_Read_8();
       uint8_t b = tft_Read_8();
       color = color565(r, g, b);
-    #endif
-
-  #else
-
-      // The 6 colour bits are in MS 6 bits of each byte but we do not include the extra clock pulse
-      // so we use a trick and mask the middle 6 bits of the byte, then only shift 1 place left
-      uint8_t r = (tft_Read_8()&0x7E)<<1;
-      uint8_t g = (tft_Read_8()&0x7E)<<1;
-      uint8_t b = (tft_Read_8()&0x7E)<<1;
-      color = color565(r, g, b);
-  #endif
 
       // Swapped colour byte order for compatibility with pushRect()
       *line++ = color << 8 | color >> 8;
@@ -2210,7 +1925,7 @@ bool TFT_eSPI::getSwapBytes(void)
 // If w and h are 1, then 1 pixel is read, *data array size must be 3 bytes per pixel
 void  TFT_eSPI::readRectRGB(int32_t x0, int32_t y0, int32_t w, int32_t h, uint8_t *data)
 {
-#if defined(TFT_PARALLEL_8_BIT) || defined(RP2040_PIO_INTERFACE)
+#if defined(TFT_PARALLEL_8_BIT)
 
   uint32_t len = w * h;
   uint8_t* buf565 = data + len;
@@ -2244,16 +1959,11 @@ void  TFT_eSPI::readRectRGB(int32_t x0, int32_t y0, int32_t w, int32_t h, uint8_
   // Read window pixel 24-bit RGB values, buffer must be set in sketch to 3 * w * h
   uint32_t len = w * h;
   while (len--) {
-
-  #if !defined (ILI9488_DRIVER)
-
     // Read the 3 RGB bytes, colour is actually only in the top 6 bits of each byte
     // as the TFT stores colours as 18 bits
     *data++ = tft_Read_8();
     *data++ = tft_Read_8();
     *data++ = tft_Read_8();
-
-  #else
 
     // The 6 colour bits are in MS 6 bits of each byte, but the ILI9488 needs an extra clock pulse
     // so bits appear shifted right 1 bit, so mask the middle 6 bits then shift 1 place left
@@ -2272,8 +1982,6 @@ void  TFT_eSPI::readRectRGB(int32_t x0, int32_t y0, int32_t w, int32_t h, uint8_
   #endif
 
   end_tft_read();
-
-#endif
 }
 
 
@@ -3373,50 +3081,6 @@ void TFT_eSPI::setWindow(int32_t x0, int32_t y0, int32_t x1, int32_t y1)
   addr_row = 0xFFFF;
   addr_col = 0xFFFF;
 
-#if defined (ILI9225_DRIVER)
-  if (rotation & 0x01) { transpose(x0, y0); transpose(x1, y1); }
-  SPI_BUSY_CHECK;
-  DC_C; tft_Write_8(TFT_CASET1);
-  DC_D; tft_Write_16(x0);
-  DC_C; tft_Write_8(TFT_CASET2);
-  DC_D; tft_Write_16(x1);
-
-  DC_C; tft_Write_8(TFT_PASET1);
-  DC_D; tft_Write_16(y0);
-  DC_C; tft_Write_8(TFT_PASET2);
-  DC_D; tft_Write_16(y1);
-
-  DC_C; tft_Write_8(TFT_RAM_ADDR1);
-  DC_D; tft_Write_16(x0);
-  DC_C; tft_Write_8(TFT_RAM_ADDR2);
-  DC_D; tft_Write_16(y0);
-
-  // write to RAM
-  DC_C; tft_Write_8(TFT_RAMWR);
-  DC_D;
-  // Temporary solution is to include the RP2040 code here
-  #if (defined(ARDUINO_ARCH_RP2040)  || defined (ARDUINO_ARCH_MBED)) && !defined(RP2040_PIO_INTERFACE)
-    // For ILI9225 and RP2040 the slower Arduino SPI transfer calls were used, so need to swap back to 16-bit mode
-    while (spi_get_hw(SPI_X)->sr & SPI_SSPSR_BSY_BITS) {};
-    hw_write_masked(&spi_get_hw(SPI_X)->cr0, (16 - 1) << SPI_SSPCR0_DSS_LSB, SPI_SSPCR0_DSS_BITS);
-  #endif
-#elif defined (SSD1351_DRIVER)
-  if (rotation & 1) {
-    transpose(x0, y0);
-    transpose(x1, y1);
-  }
-  SPI_BUSY_CHECK;
-  DC_C; tft_Write_8(TFT_CASET);
-  DC_D; tft_Write_16(x1 | (x0 << 8));
-  DC_C; tft_Write_8(TFT_PASET);
-  DC_D; tft_Write_16(y1 | (y0 << 8));
-  DC_C; tft_Write_8(TFT_RAMWR);
-  DC_D;
-#else
-  #if defined (SSD1963_DRIVER)
-    if ((rotation & 0x1) == 0) { transpose(x0, y0); transpose(x1, y1); }
-  #endif
-
   #ifdef CGRAM_OFFSET
     x0+=colstart;
     x1+=colstart;
@@ -3424,82 +3088,13 @@ void TFT_eSPI::setWindow(int32_t x0, int32_t y0, int32_t x1, int32_t y1)
     y1+=rowstart;
   #endif
 
-  // Temporary solution is to include the RP2040 optimised code here
-  #if (defined(ARDUINO_ARCH_RP2040)  || defined (ARDUINO_ARCH_MBED))
-    #if !defined(RP2040_PIO_INTERFACE)
-      // Use hardware SPI port, this code does not swap from 8 to 16-bit
-      // to avoid the spi_set_format() call overhead
-      while (spi_get_hw(SPI_X)->sr & SPI_SSPSR_BSY_BITS) {};
-      DC_C;
-      #if !defined (SPI_18BIT_DRIVER)
-        #if  defined (RPI_DISPLAY_TYPE) // RPi TFT type always needs 16-bit transfers
-          hw_write_masked(&spi_get_hw(SPI_X)->cr0, (16 - 1) << SPI_SSPCR0_DSS_LSB, SPI_SSPCR0_DSS_BITS);
-        #else
-          hw_write_masked(&spi_get_hw(SPI_X)->cr0, (8 - 1) << SPI_SSPCR0_DSS_LSB, SPI_SSPCR0_DSS_BITS);
-        #endif
-      #endif
-      spi_get_hw(SPI_X)->dr = (uint32_t)TFT_CASET;
-
-      while (spi_get_hw(SPI_X)->sr & SPI_SSPSR_BSY_BITS) {};
-      DC_D;
-      spi_get_hw(SPI_X)->dr = (uint32_t)x0>>8;
-      spi_get_hw(SPI_X)->dr = (uint32_t)x0;
-      spi_get_hw(SPI_X)->dr = (uint32_t)x1>>8;
-      spi_get_hw(SPI_X)->dr = (uint32_t)x1;
-
-      while (spi_get_hw(SPI_X)->sr & SPI_SSPSR_BSY_BITS) {};
-      DC_C;
-      spi_get_hw(SPI_X)->dr = (uint32_t)TFT_PASET;
-
-      while (spi_get_hw(SPI_X)->sr & SPI_SSPSR_BSY_BITS) {};
-      DC_D;
-      spi_get_hw(SPI_X)->dr = (uint32_t)y0>>8;
-      spi_get_hw(SPI_X)->dr = (uint32_t)y0;
-      spi_get_hw(SPI_X)->dr = (uint32_t)y1>>8;
-      spi_get_hw(SPI_X)->dr = (uint32_t)y1;
-
-      while (spi_get_hw(SPI_X)->sr & SPI_SSPSR_BSY_BITS) {};
-      DC_C;
-      spi_get_hw(SPI_X)->dr = (uint32_t)TFT_RAMWR;
-
-      while (spi_get_hw(SPI_X)->sr & SPI_SSPSR_BSY_BITS) {};
-      #if !defined (SPI_18BIT_DRIVER)
-        hw_write_masked(&spi_get_hw(SPI_X)->cr0, (16 - 1) << SPI_SSPCR0_DSS_LSB, SPI_SSPCR0_DSS_BITS);
-      #endif
-      DC_D;
-    #elif defined (RM68120_DRIVER)
-      DC_C; tft_Write_16(TFT_CASET+0); DC_D; tft_Write_16(x0 >> 8);
-      DC_C; tft_Write_16(TFT_CASET+1); DC_D; tft_Write_16(x0 & 0xFF);
-      DC_C; tft_Write_16(TFT_CASET+2); DC_D; tft_Write_16(x1 >> 8);
-      DC_C; tft_Write_16(TFT_CASET+3); DC_D; tft_Write_16(x1 & 0xFF);
-      DC_C; tft_Write_16(TFT_PASET+0); DC_D; tft_Write_16(y0 >> 8);
-      DC_C; tft_Write_16(TFT_PASET+1); DC_D; tft_Write_16(y0 & 0xFF);
-      DC_C; tft_Write_16(TFT_PASET+2); DC_D; tft_Write_16(y1 >> 8);
-      DC_C; tft_Write_16(TFT_PASET+3); DC_D; tft_Write_16(y1 & 0xFF);
-
-      DC_C; tft_Write_16(TFT_RAMWR);
-      DC_D;
-    #else
-      // This is for the RP2040 and PIO interface (SPI or parallel)
-      WAIT_FOR_STALL;
-      tft_pio->sm[pio_sm].instr = pio_instr_addr;
-
-      TX_FIFO = TFT_CASET;
-      TX_FIFO = (x0<<16) | x1;
-      TX_FIFO = TFT_PASET;
-      TX_FIFO = (y0<<16) | y1;
-      TX_FIFO = TFT_RAMWR;
-    #endif
-  #else
-    SPI_BUSY_CHECK;
-    DC_C; tft_Write_8(TFT_CASET);
-    DC_D; tft_Write_32C(x0, x1);
-    DC_C; tft_Write_8(TFT_PASET);
-    DC_D; tft_Write_32C(y0, y1);
-    DC_C; tft_Write_8(TFT_RAMWR);
-    DC_D;
-  #endif // RP2040 SPI
-#endif
+  SPI_BUSY_CHECK;
+  DC_C; tft_Write_8(TFT_CASET);
+  DC_D; tft_Write_32C(x0, x1);
+  DC_C; tft_Write_8(TFT_PASET);
+  DC_D; tft_Write_32C(y0, y1);
+  DC_C; tft_Write_8(TFT_RAMWR);
+  DC_D;
   //end_tft_write(); // Must be called after setWindow
 }
 
@@ -3517,10 +3112,6 @@ void TFT_eSPI::readAddrWindow(int32_t xs, int32_t ys, int32_t w, int32_t h)
   addr_col = 0xFFFF;
   addr_row = 0xFFFF;
 
-#if defined (SSD1963_DRIVER)
-  if ((rotation & 0x1) == 0) { transpose(xs, ys); transpose(xe, ye); }
-#endif
-
 #ifdef CGRAM_OFFSET
   xs += colstart;
   xe += colstart;
@@ -3528,45 +3119,6 @@ void TFT_eSPI::readAddrWindow(int32_t xs, int32_t ys, int32_t w, int32_t h)
   ye += rowstart;
 #endif
 
-  // Temporary solution is to include the RP2040 optimised code here
-#if (defined(ARDUINO_ARCH_RP2040)  || defined (ARDUINO_ARCH_MBED)) && !defined(RP2040_PIO_INTERFACE)
-  // Use hardware SPI port, this code does not swap from 8 to 16-bit
-  // to avoid the spi_set_format() call overhead
-  while (spi_get_hw(SPI_X)->sr & SPI_SSPSR_BSY_BITS) {};
-  DC_C;
-  hw_write_masked(&spi_get_hw(SPI_X)->cr0, (8 - 1) << SPI_SSPCR0_DSS_LSB, SPI_SSPCR0_DSS_BITS);
-  spi_get_hw(SPI_X)->dr = (uint32_t)TFT_CASET;
-
-  while (spi_get_hw(SPI_X)->sr & SPI_SSPSR_BSY_BITS) {};
-  DC_D;
-  spi_get_hw(SPI_X)->dr = (uint32_t)xs>>8;
-  spi_get_hw(SPI_X)->dr = (uint32_t)xs;
-  spi_get_hw(SPI_X)->dr = (uint32_t)xe>>8;
-  spi_get_hw(SPI_X)->dr = (uint32_t)xe;
-
-  while (spi_get_hw(SPI_X)->sr & SPI_SSPSR_BSY_BITS) {};
-  DC_C;
-  spi_get_hw(SPI_X)->dr = (uint32_t)TFT_PASET;
-
-  while (spi_get_hw(SPI_X)->sr & SPI_SSPSR_BSY_BITS) {};
-  DC_D;
-  spi_get_hw(SPI_X)->dr = (uint32_t)ys>>8;
-  spi_get_hw(SPI_X)->dr = (uint32_t)ys;
-  spi_get_hw(SPI_X)->dr = (uint32_t)ye>>8;
-  spi_get_hw(SPI_X)->dr = (uint32_t)ye;
-
-  while (spi_get_hw(SPI_X)->sr & SPI_SSPSR_BSY_BITS) {};
-  DC_C;
-  spi_get_hw(SPI_X)->dr = (uint32_t)TFT_RAMRD;
-
-  while (spi_get_hw(SPI_X)->sr & SPI_SSPSR_BSY_BITS) {};
-  DC_D;
-
-  // Flush the rx buffer and reset overflow flag
-  while (spi_is_readable(SPI_X)) (void)spi_get_hw(SPI_X)->dr;
-  spi_get_hw(SPI_X)->icr = SPI_SSPICR_RORIC_BITS;
-
-#else
   // Column addr set
   DC_C; tft_Write_8(TFT_CASET);
   DC_D; tft_Write_32C(xs, xe);
@@ -3579,7 +3131,6 @@ void TFT_eSPI::readAddrWindow(int32_t xs, int32_t ys, int32_t w, int32_t h)
   DC_C; tft_Write_8(TFT_RAMRD);
 
   DC_D;
-#endif // RP2040 SPI
 
   //end_tft_write(); // Must be called after readAddrWindow or CS set high
 }
@@ -3610,176 +3161,21 @@ void TFT_eSPI::drawPixel(int32_t x, int32_t y, uint32_t color)
 #endif
 
   begin_tft_write();
-
-#if defined (ILI9225_DRIVER)
-  if (rotation & 0x01) { transpose(x, y); }
-  SPI_BUSY_CHECK;
-
-  // Set window to full screen to optimise sequential pixel rendering
-  if (addr_row != 0x9225) {
-    addr_row = 0x9225; // addr_row used for flag
-    DC_C; tft_Write_8(TFT_CASET1);
-    DC_D; tft_Write_16(0);
-    DC_C; tft_Write_8(TFT_CASET2);
-    DC_D; tft_Write_16(175);
-
-    DC_C; tft_Write_8(TFT_PASET1);
-    DC_D; tft_Write_16(0);
-    DC_C; tft_Write_8(TFT_PASET2);
-    DC_D; tft_Write_16(219);
-  }
-
-  // Define pixel coordinate
-  DC_C; tft_Write_8(TFT_RAM_ADDR1);
-  DC_D; tft_Write_16(x);
-  DC_C; tft_Write_8(TFT_RAM_ADDR2);
-  DC_D; tft_Write_16(y);
-
-  // write to RAM
-  DC_C; tft_Write_8(TFT_RAMWR);
-  #if defined(TFT_PARALLEL_8_BIT) || defined(TFT_PARALLEL_16_BIT) || !defined(ESP32)
-    DC_D; tft_Write_16(color);
-  #else
-    DC_D; tft_Write_16N(color);
-  #endif
-
-// Temporary solution is to include the RP2040 optimised code here
-#elif (defined (ARDUINO_ARCH_RP2040) || defined (ARDUINO_ARCH_MBED)) && !defined (SSD1351_DRIVER)
-
-  #if defined (SSD1963_DRIVER)
-    if ((rotation & 0x1) == 0) { transpose(x, y); }
-  #endif
-
-  #if !defined(RP2040_PIO_INTERFACE)
-    while (spi_get_hw(SPI_X)->sr & SPI_SSPSR_BSY_BITS) {};
-
-    #if  defined (RPI_DISPLAY_TYPE) // RPi TFT type always needs 16-bit transfers
-      hw_write_masked(&spi_get_hw(SPI_X)->cr0, (16 - 1) << SPI_SSPCR0_DSS_LSB, SPI_SSPCR0_DSS_BITS);
-    #else
-      hw_write_masked(&spi_get_hw(SPI_X)->cr0, (8 - 1) << SPI_SSPCR0_DSS_LSB, SPI_SSPCR0_DSS_BITS);
-    #endif
-
-    if (addr_col != x) {
-      DC_C;
-      spi_get_hw(SPI_X)->dr = (uint32_t)TFT_CASET;
-      while (spi_get_hw(SPI_X)->sr & SPI_SSPSR_BSY_BITS){};
-      DC_D;
-      spi_get_hw(SPI_X)->dr = (uint32_t)x>>8;
-      spi_get_hw(SPI_X)->dr = (uint32_t)x;
-      spi_get_hw(SPI_X)->dr = (uint32_t)x>>8;
-      spi_get_hw(SPI_X)->dr = (uint32_t)x;
-      addr_col = x;
-      while (spi_get_hw(SPI_X)->sr & SPI_SSPSR_BSY_BITS) {};
-    }
-
-    if (addr_row != y) {
-      DC_C;
-      spi_get_hw(SPI_X)->dr = (uint32_t)TFT_PASET;
-      while (spi_get_hw(SPI_X)->sr & SPI_SSPSR_BSY_BITS) {};
-      DC_D;
-      spi_get_hw(SPI_X)->dr = (uint32_t)y>>8;
-      spi_get_hw(SPI_X)->dr = (uint32_t)y;
-      spi_get_hw(SPI_X)->dr = (uint32_t)y>>8;
-      spi_get_hw(SPI_X)->dr = (uint32_t)y;
-      addr_row = y;
-      while (spi_get_hw(SPI_X)->sr & SPI_SSPSR_BSY_BITS) {};
-    }
-
-    DC_C;
-    spi_get_hw(SPI_X)->dr = (uint32_t)TFT_RAMWR;
-
-    #if defined (SPI_18BIT_DRIVER) // SPI 18-bit colour
-      uint8_t r = (color & 0xF800)>>8;
-      uint8_t g = (color & 0x07E0)>>3;
-      uint8_t b = (color & 0x001F)<<3;
-      while (spi_get_hw(SPI_X)->sr & SPI_SSPSR_BSY_BITS) {};
-      DC_D;
-      tft_Write_8N(r); tft_Write_8N(g); tft_Write_8N(b);
-    #else
-      while (spi_get_hw(SPI_X)->sr & SPI_SSPSR_BSY_BITS) {};
-      DC_D;
-      #if  defined (RPI_DISPLAY_TYPE) // RPi TFT type always needs 16-bit transfers
-        spi_get_hw(SPI_X)->dr = (uint32_t)color;
-      #else
-        spi_get_hw(SPI_X)->dr = (uint32_t)color>>8;
-        spi_get_hw(SPI_X)->dr = (uint32_t)color;
-      #endif
-    #endif
-    while (spi_get_hw(SPI_X)->sr & SPI_SSPSR_BSY_BITS) {};
-  #elif defined (RM68120_DRIVER)
-    if (addr_col != x) {
-      DC_C; tft_Write_16(TFT_CASET+0); DC_D; tft_Write_16(x >> 8);
-      DC_C; tft_Write_16(TFT_CASET+1); DC_D; tft_Write_16(x & 0xFF);
-      DC_C; tft_Write_16(TFT_CASET+2); DC_D; tft_Write_16(x >> 8);
-      DC_C; tft_Write_16(TFT_CASET+3); DC_D; tft_Write_16(x & 0xFF);
-      addr_col = x;
-    }
-    if (addr_row != y) {
-      DC_C; tft_Write_16(TFT_PASET+0); DC_D; tft_Write_16(y >> 8);
-      DC_C; tft_Write_16(TFT_PASET+1); DC_D; tft_Write_16(y & 0xFF);
-      DC_C; tft_Write_16(TFT_PASET+2); DC_D; tft_Write_16(y >> 8);
-      DC_C; tft_Write_16(TFT_PASET+3); DC_D; tft_Write_16(y & 0xFF);
-      addr_row = y;
-    }
-    DC_C; tft_Write_16(TFT_RAMWR); DC_D;
-
-    TX_FIFO = color;
-  #else
-    // This is for the RP2040 and PIO interface (SPI or parallel)
-    WAIT_FOR_STALL;
-    tft_pio->sm[pio_sm].instr = pio_instr_addr;
-    TX_FIFO = TFT_CASET;
-    TX_FIFO = (x<<16) | x;
-    TX_FIFO = TFT_PASET;
-    TX_FIFO = (y<<16) | y;
-    TX_FIFO = TFT_RAMWR;
-    //DC set high by PIO
-    #if  defined (SPI_18BIT_DRIVER) || (defined (SSD1963_DRIVER) && defined (TFT_PARALLEL_8_BIT))
-      TX_FIFO = ((color & 0xF800)<<8) | ((color & 0x07E0)<<5) | ((color & 0x001F)<<3);
-    #else
-      TX_FIFO = color;
-    #endif
-
-  #endif
-
-#else
-
-  #if defined (SSD1963_DRIVER)
-    if ((rotation & 0x1) == 0) { transpose(x, y); }
-  #endif
-
     SPI_BUSY_CHECK;
 
-  #if defined (SSD1351_DRIVER)
-    if (rotation & 0x1) { transpose(x, y); }
-    // No need to send x if it has not changed (speeds things up)
-    if (addr_col != x) {
-      DC_C; tft_Write_8(TFT_CASET);
-      DC_D; tft_Write_16(x | (x << 8));
-      addr_col = x;
-    }
+  // No need to send x if it has not changed (speeds things up)
+  if (addr_col != x) {
+    DC_C; tft_Write_8(TFT_CASET);
+    DC_D; tft_Write_32D(x);
+    addr_col = x;
+  }
 
-    // No need to send y if it has not changed (speeds things up)
-    if (addr_row != y) {
-      DC_C; tft_Write_8(TFT_PASET);
-      DC_D; tft_Write_16(y | (y << 8));
-      addr_row = y;
-    }
-  #else
-    // No need to send x if it has not changed (speeds things up)
-    if (addr_col != x) {
-      DC_C; tft_Write_8(TFT_CASET);
-      DC_D; tft_Write_32D(x);
-      addr_col = x;
-    }
-
-    // No need to send y if it has not changed (speeds things up)
-    if (addr_row != y) {
-      DC_C; tft_Write_8(TFT_PASET);
-      DC_D; tft_Write_32D(y);
-      addr_row = y;
-    }
-  #endif
+  // No need to send y if it has not changed (speeds things up)
+  if (addr_row != y) {
+    DC_C; tft_Write_8(TFT_PASET);
+    DC_D; tft_Write_32D(y);
+    addr_row = y;
+  }
 
   DC_C; tft_Write_8(TFT_RAMWR);
 
@@ -3788,7 +3184,6 @@ void TFT_eSPI::drawPixel(int32_t x, int32_t y, uint32_t color)
   #else
     DC_D; tft_Write_16N(color);
   #endif
-#endif
 
   end_tft_write();
 }
@@ -4871,10 +4266,6 @@ void TFT_eSPI::setAttribute(uint8_t attr_id, uint8_t param) {
             decoderState = 0;
             break;
         case PSRAM_ENABLE:
-#if defined (ESP32) && defined (CONFIG_SPIRAM_SUPPORT)
-            if (psramFound()) _psram_enable = param; // Enable the use of PSRAM (if available)
-            else
-#endif
             _psram_enable = false;
             break;
         //case 4: // TBD future feature control
@@ -5955,7 +5346,7 @@ void TFT_eSPI::setTextFont(uint8_t f)
 ** Function name:           getSPIinstance
 ** Description:             Get the instance of the SPI class
 ***************************************************************************************/
-#if !defined (TFT_PARALLEL_8_BIT) && !defined (RP2040_PIO_INTERFACE)
+#if !defined (TFT_PARALLEL_8_BIT)
 SPIClass& TFT_eSPI::getSPIinstance(void)
 {
   return spi;
@@ -6153,16 +5544,10 @@ void TFT_eSPI::getSetup(setup_t &tft_settings)
   #include "Extensions/Touch.cpp"
 #endif
 
-#include "Extensions/Button.cpp"
-
 #include "Extensions/Sprite.cpp"
 
 #ifdef SMOOTH_FONT
   #include "Extensions/Smooth_font.cpp"
-#endif
-
-#ifdef AA_GRAPHICS
-  #include "Extensions/AA_graphics.cpp"  // Loaded if SMOOTH_FONT is defined by user
 #endif
 ////////////////////////////////////////////////////////////////////////////////////////
 
