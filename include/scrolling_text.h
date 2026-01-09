@@ -49,7 +49,7 @@ public:
           holdTick = millis();
         }
         
-        drawScrollingText(text, status, activeColor, activeSmooth, dropoutColor, dropoutSmooth, backgroundColor);
+        drawText(text, status, activeColor, activeSmooth, dropoutColor, dropoutSmooth, backgroundColor);
         lastTick = millis();
       }
     }
@@ -75,17 +75,8 @@ private:
     if (status) sprite->setTextColor(activeColor, activeSmooth, false);
     else sprite->setTextColor(dropoutColor, dropoutSmooth, false);
     sprite->drawString(text, xPos, 0);
+    if(isScrolling) sprite->drawString(text, xPos + textWidth, 0);
     if (postDrawCallback) postDrawCallback(sprite, false);
-    sprite->pushSprite(35, yPos);
-  }
-
-  void drawScrollingText(const String& text, bool status, uint16_t activeColor, uint16_t activeSmooth, uint16_t dropoutColor, uint16_t dropoutSmooth, uint16_t backgroundColor) {
-    sprite->fillSprite(backgroundColor);
-    if (status) sprite->setTextColor(activeColor, activeSmooth, false);
-    else sprite->setTextColor(dropoutColor, dropoutSmooth, false);
-    sprite->drawString(text, xPos, 0);
-    sprite->drawString(text, xPos + textWidth, 0);
-    if (postDrawCallback) postDrawCallback(sprite, true);
     sprite->pushSprite(35, yPos);
   }
 };
