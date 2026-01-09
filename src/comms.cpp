@@ -4,10 +4,10 @@
 extern mem presets[];
 
 void Communication() {
-  if (!menu) {
-    if (wifi) {
+  if(!menu) {
+    if(wifi) {
       int packetSize = Udp.parsePacket();
-      if (packetSize > 0) {
+      if(packetSize > 0) {
         char packetBuffer[packetSize + 1];
         Udp.read(packetBuffer, packetSize);
         packetBuffer[packetSize] = '\0';
@@ -15,29 +15,29 @@ void Communication() {
 
         String packet = String(packetBuffer);
 
-        if (packet.equals("from=StationList;freq=?;bandwidth=?")) {
+        if(packet.equals("from=StationList;freq=?;bandwidth=?")) {
           ShowFreq(0);
           return;
         }
 
         externaltune = true;
 
-        if (packet.charAt(0) == '*') {
-          if (afscreen) BuildAdvancedRDS();
+        if(packet.charAt(0) == '*') {
+          if(afscreen) BuildAdvancedRDS();
           char command = packet.charAt(1);
-          switch (command) {
+          switch(command) {
             case 'U':
             case 'D': {
               tunemode = TUNE_MAN;
               ShowTuneMode();
-              if (command == 'U') TuneUp(); else TuneDown();
+              if(command == 'U') TuneUp(); else TuneDown();
               ShowFreq(0);
               break;
             }
 
             case '>':
             case '<': {
-              if (command == '>') direction = true; else direction = false;
+              if(command == '>') direction = true; else direction = false;
               Seek(direction);
               ShowFreq(0);
               break;
@@ -45,24 +45,24 @@ void Communication() {
 
             case 'T': {
               uint16_t freqtemp = packet.substring(2).toInt();
-              if (BAND_FM) freqtemp -= ConverterSet * 1000;
-              if (seek) seek = false;
+              if(BAND_FM) freqtemp -= ConverterSet * 1000;
+              if(seek) seek = false;
               radio.clearRDS(fullsearchrds);
 
-              if (freqtemp >= LowEdgeOIRTSet && freqtemp <= HighEdgeOIRTSet) {
+              if(freqtemp >= LowEdgeOIRTSet && freqtemp <= HighEdgeOIRTSet) {
                 frequency_OIRT = freqtemp;
-                if (afscreen || advancedRDS) {
+                if(afscreen || advancedRDS) {
                   BuildDisplay();
                   SelectBand();
                 }
-                if (band != BAND_OIRT) {
+                if(band != BAND_OIRT) {
                   band = BAND_OIRT;
                   SelectBand();
                 }
                 radio.SetFreq(frequency_OIRT);
-              } else if (freqtemp >= (TEF == 205 ? 6400 : 6500) && freqtemp <= 10800) {
+              } else if(freqtemp >= (TEF == 205 ? 6400 : 6500) && freqtemp <= 10800) {
                 frequency = freqtemp;
-                if (afscreen || advancedRDS) {
+                if(afscreen || advancedRDS) {
                   BuildDisplay();
                   SelectBand();
                 }
@@ -296,33 +296,24 @@ void Communication() {
                   String rdsPs = data_str;
 
 
-                  if (memfreq >= FREQ_LW_LOW_EDGE_MIN && memfreq <= FREQ_LW_HIGH_EDGE_MAX) {
-                    memband = BAND_LW;
-                  } else if (memfreq > FREQ_LW_HIGH_EDGE_MAX && memfreq <= FREQ_MW_HIGH_EDGE_MAX_10K) {
-                    memband = BAND_MW;
-                  } else if (memfreq > FREQ_MW_HIGH_EDGE_MAX_10K && memfreq <= FREQ_SW_END) {
-                    memband = BAND_SW;
-                  } else if (ConverterSet != 0 && memfreq >= FREQ_FM_OIRT_START * 10 && memfreq <= FREQ_FM_OIRT_END * 10) {
+                  if (memfreq >= FREQ_LW_LOW_EDGE_MIN && memfreq <= FREQ_LW_HIGH_EDGE_MAX) memband = BAND_LW;
+                  else if (memfreq > FREQ_LW_HIGH_EDGE_MAX && memfreq <= FREQ_MW_HIGH_EDGE_MAX_10K) memband = BAND_MW;
+                  else if (memfreq > FREQ_MW_HIGH_EDGE_MAX_10K && memfreq <= FREQ_SW_END) memband = BAND_SW;
+                  else if (ConverterSet != 0 && memfreq >= FREQ_FM_OIRT_START * 10 && memfreq <= FREQ_FM_OIRT_END * 10) {
                     memband = BAND_OIRT;
                     memfreq /= 10;
                   } else if ((ConverterSet != 0 && memfreq > FREQ_FM_OIRT_START * 10) || ((ConverterSet == 0 && memfreq > FREQ_FM_OIRT_END * 10) && memfreq <= 108000 * 10)) {
                     memband = BAND_FM;
                     memfreq /= 10;
-                  } else if (memfreq == EE_PRESETS_FREQUENCY) {
-                    memband = BAND_FM;
-                  } else {
-                    error |= (1 << 0);
-                  }
+                  } else if (memfreq == EE_PRESETS_FREQUENCY) memband = BAND_FM;
+                  else error |= (1 << 0);
 
                   if (mempos == 0 && memfreq == EE_PRESETS_FREQUENCY) error |= (1 << 4);
 
                   if (mempos >= EE_PRESETS_CNT) error |= (1 << 1);
 
-                  if (memband != BAND_FM && memband != BAND_OIRT) {
-                    if (membw < 1 || membw > 4) error |= (1 << 2);
-                  } else if (membw > 16) {
-                    error |= (1 << 2);
-                  }
+                  if (memband != BAND_FM && memband != BAND_OIRT && (membw < 1 || membw > 4)) error |= (1 << 2);
+                  else if (membw > 16) error |= (1 << 2);
 
                   if (memms > 1) error |= (1 << 3);
 
@@ -355,11 +346,8 @@ void Communication() {
                     }
 
                     for (int i = 0; i < 9; i++) {
-                      if (i < rdsPs.length()) {
-                        presets[mempos].RDSPS[i] = rdsPs.charAt(i);
-                      } else {
-                        presets[mempos].RDSPS[i] = '\0';
-                      }
+                      if (i < rdsPs.length()) presets[mempos].RDSPS[i] = rdsPs.charAt(i);
+                      else presets[mempos].RDSPS[i] = '\0';
                       EEPROM.writeByte((mempos * 9) + i + EE_PRESETS_RDSPS_START, presets[mempos].RDSPS[i]);
                     }
 
@@ -371,9 +359,7 @@ void Communication() {
             }
           }
         }
-      } else if (data_str.startsWith("l") || data_str.startsWith("L")) {
-        printLogbookCSV();
-      }
+      } else if (data_str.startsWith("l") || data_str.startsWith("L")) printLogbookCSV();
     }
 
     if (RDSSPYUSB && Serial.available()) {
@@ -430,7 +416,7 @@ void XDRGTKRoutine() {
     switch (buff[0])
     {
       case 'A': {
-        int AGC = atol(buff + 1);
+        int AGC = atoi(buff + 1);
         DataPrint("A" + String(AGC) + "\n");
         switch (AGC) {
           case 0:
@@ -472,7 +458,7 @@ void XDRGTKRoutine() {
         }
         break;
       } case 'B': {
-        byte stmo = atol(buff + 1);
+        byte stmo = atoi(buff + 1);
         DataPrint("B" + String(stmo) + "\n");
         StereoToggle = (stmo == 1);
         audiomode = (stmo != 0 && stmo != 1);
@@ -483,7 +469,7 @@ void XDRGTKRoutine() {
           BuildDisplay();
           SelectBand();
         }
-        byte scanmethod = atol(buff + 1);
+        byte scanmethod = atoi(buff + 1);
 
         if (band < BAND_GAP) {
           stepsize = 0;
@@ -505,7 +491,7 @@ void XDRGTKRoutine() {
         DataPrint("C0\n");
         break;
       } case 'D': {
-        byte demp = atol(buff + 1);
+        byte demp = atoi(buff + 1);
         DataPrint("D" + String(demp) + "\n");
         switch (demp) {
           case 0:
@@ -521,7 +507,7 @@ void XDRGTKRoutine() {
         radio.setDeemphasis(fmdeemphasis);
         break;
       } case 'F': {
-        XDRBWset = atol(buff + 1);
+        XDRBWset = atoi(buff + 1);
         DataPrint("F" + String(XDRBWset) + "\n");
         if (XDRBWset < 0) {
           BWset = 0;
@@ -531,8 +517,7 @@ void XDRGTKRoutine() {
         doBW();
         break;
       } case 'G': {
-        byte offsetg;
-        offsetg = atol(buff + 1);
+        byte offsetg = atoi(buff + 1);
         if (offsetg == 0) {
           iMSset = 1;
           EQset = 1;
@@ -557,7 +542,7 @@ void XDRGTKRoutine() {
         updateEQ();
         break;
       } case 'H': {
-        byte autosq_read = atol(buff + 1);
+        byte autosq_read = atoi(buff + 1);
         if (autosq_read == 0) {
           autosquelch = false;
           DataPrint("H0\n");
@@ -578,7 +563,7 @@ void XDRGTKRoutine() {
         }
         break;
       } case 'I': {
-        byte fmscansenstemp = atol(buff + 1);
+        byte fmscansenstemp = atoi(buff + 1);
         if (fmscansenstemp > 0 && fmscansenstemp < 31) {
           fmscansens = fmscansenstemp;
           EEPROM.writeByte(EE_BYTE_FMSCANSENS, fmscansens);
@@ -587,13 +572,13 @@ void XDRGTKRoutine() {
         DataPrint("I" + String(fmscansens) + "\n");
         break;
       } case 'J': {
-        byte scandxtemp = atol(buff + 1);
+        byte scandxtemp = atoi(buff + 1);
         if (scandxtemp == 0 && scandxmode) cancelDXScan();
         if (scandxtemp == 1 && !scandxmode) startFMDXScan();
         DataPrint("J" + String(scandxtemp) + "\n");
         break;
       } case 'K': {
-        byte scanholdtemp= atol(buff + 1);
+        byte scanholdtemp = atoi(buff + 1);
         if (scanholdtemp < 31) {
           scanhold = scanholdtemp;
           EEPROM.writeByte(EE_BYTE_SCANHOLD, scanhold);
@@ -603,7 +588,7 @@ void XDRGTKRoutine() {
         break;
       } case 'M': {
         if (scandxmode) cancelDXScan();
-        byte XDRband = atol(buff + 1);
+        byte XDRband = atoi(buff + 1);
         if (XDRband == 1) {
           if (frequency_AM >= LWLowEdgeSet && frequency_AM <= LWHighEdgeSet) {
             if (band != BAND_LW) {
@@ -643,8 +628,8 @@ void XDRGTKRoutine() {
         if (scandxmode) cancelDXScan();
         unsigned int freqtemp = atoi(buff + 1);
 
-        if (BAND_FM) freqtemp -= ConverterSet * 1000;
-        if (seek) seek = false;
+        if(BAND_FM) freqtemp -= ConverterSet * 1000;
+        if(seek) seek = false;
         radio.clearRDS(fullsearchrds);
 
         if (freqtemp >= LWLowEdgeSet && freqtemp <= LWHighEdgeSet) {
@@ -723,13 +708,12 @@ void XDRGTKRoutine() {
         break;
       } case 'Q': {
         Squelch = atoi(buff + 1);
-        if (Squelch == -1) {
-          DataPrint("Q-1\n");
-        } else {
-          Squelch *= 10;
+        if (Squelch == -1) DataPrint("Q-1\n");
+        else {
           DataPrint("Q");
-          DataPrint(String(Squelch / 10));
+          DataPrint(String(Squelch));
           DataPrint("\n");
+          Squelch *= 10;
         }
         break;
       } case 'S': {
@@ -739,11 +723,11 @@ void XDRGTKRoutine() {
         Data_Accelerator = true;
 
         switch (buff[1]) {
-          case 'a': scanner_start = (atol(buff + 2) + 5) / 10; break;
-          case 'b': scanner_end = (atol(buff + 2) + 5) / 10; return;
-          case 'c': scanner_step = (atol(buff + 2) + 5) / 10; break;
+          case 'a': scanner_start = (atoi(buff + 2) + 5) / 10; break;
+          case 'b': scanner_end = (atoi(buff + 2) + 5) / 10; return;
+          case 'c': scanner_step = (atoi(buff + 2) + 5) / 10; break;
           case 'f':
-            scanner_filter = atol(buff + 2);
+            scanner_filter = atoi(buff + 2);
             switch (scanner_filter) {
               case 0: BWset = 1; break;
               case 26: BWset = 2; break;

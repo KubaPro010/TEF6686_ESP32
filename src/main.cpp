@@ -3419,10 +3419,7 @@ void ShowModLevel() {
     int segments;
     MStatus = (MStatus > 120) ? 120 : MStatus;
 
-    if (seek || SQ) {
-      MStatus = 0;
-      MStatusold = 1;
-    }
+    if (seek || SQ) MStatus = 0;
 
     segments = constrain(map(MStatus, 0, 120, 0, 86), 0, 86);
 

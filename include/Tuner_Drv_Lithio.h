@@ -1,8 +1,8 @@
 #pragma once
 
-#define High_16bto8b(a) ((uint8_t)((a) >> 8))
-#define Low_16bto8b(a) ((uint8_t)(a ))
-#define Convert8bto16b(a) ((uint16_t)(((uint16_t)(*(a))) << 8 |((uint16_t)(*(a+1)))))
+#define High_16bto8b(a) (uint8_t)((a) >> 8)
+#define Low_16bto8b(a) (uint8_t)(a )
+#define Convert8bto16b(a) (uint16_t)(((uint16_t)(*(a))) << 8 |((uint16_t)(*(a+1))))
 
 typedef enum {
   TEF_FM = 32,
@@ -69,8 +69,8 @@ void devTEF_Set_Cmd(TEF_MODULE module, uint8_t cmd, uint16_t len, ...);
 bool devTEF_Get_Cmd(TEF_MODULE module, uint8_t cmd, uint8_t *receive, uint16_t len);
 void devTEF_Radio_Set_Wavegen(bool mode, int16_t amplitude, uint16_t freq);
 
-void devTEF_Radio_Get_Quality_Status (uint16_t *status, int16_t *level, uint16_t *usn, uint16_t *wam, int16_t *offset, uint16_t *bandwidth, uint16_t *mod, int8_t *snr);
-bool devTEF_Radio_Get_Processing_Status (uint16_t *highcut, uint16_t *stereo, uint16_t *sthiblend, uint8_t *stband_1, uint8_t *stband_2, uint8_t *stband_3, uint8_t *stband_4);
+void devTEF_Radio_Get_Quality_Status(uint16_t *status, int16_t *level, uint16_t *usn, uint16_t *wam, int16_t *offset, uint16_t *bandwidth, uint16_t *mod, int8_t *snr);
+bool devTEF_Radio_Get_Processing_Status(uint16_t *highcut, uint16_t *stereo, uint16_t *sthiblend, uint8_t *stband_1, uint8_t *stband_2, uint8_t *stband_3, uint8_t *stband_4);
 uint8_t devTEF_APPL_Get_Operation_Status();
 bool devTEF_Radio_Get_Stereo_Status(uint16_t *status);
 void devTEF_Radio_Get_RDS_Status(uint16_t *status, uint16_t *A_block, uint16_t *B_block, uint16_t *C_block, uint16_t *D_block, uint16_t *dec_error);

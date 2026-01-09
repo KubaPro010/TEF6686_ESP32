@@ -30,17 +30,17 @@ public:
   void update(const String& text, bool status, uint16_t activeColor, uint16_t activeSmooth, uint16_t dropoutColor, uint16_t dropoutSmooth, uint16_t backgroundColor) {
     textWidth = sprite->textWidth(text);
     
-    if (textWidth < maxWidth) {
+    if(textWidth < maxWidth) {
       xPos = 0;
       isScrolling = false;
       drawText(text, status, activeColor, activeSmooth, dropoutColor, dropoutSmooth, backgroundColor);
     } else {
       isScrolling = true;
-      if (millis() - lastTick >= SCROLL_INTERVAL) {
-        if (xPos < -textWidth) xPos = 0;
+      if(millis() - lastTick >= SCROLL_INTERVAL) {
+        if(xPos < -textWidth) xPos = 0;
         
-        if (xPos == 0) {
-          if (millis() - holdTick >= HOLD_DURATION) {
+        if(xPos == 0) {
+          if(millis() - holdTick >= HOLD_DURATION) {
             xPos--;
             holdTick = millis();
           }
@@ -72,11 +72,11 @@ public:
 private:
   void drawText(const String& text, bool status, uint16_t activeColor, uint16_t activeSmooth, uint16_t dropoutColor, uint16_t dropoutSmooth, uint16_t backgroundColor) {
     sprite->fillSprite(backgroundColor);
-    if (status) sprite->setTextColor(activeColor, activeSmooth, false);
+    if(status) sprite->setTextColor(activeColor, activeSmooth, false);
     else sprite->setTextColor(dropoutColor, dropoutSmooth, false);
     sprite->drawString(text, xPos, 0);
     if(isScrolling) sprite->drawString(text, xPos + textWidth, 0);
-    if (postDrawCallback) postDrawCallback(sprite, false);
+    if(postDrawCallback) postDrawCallback(sprite, false);
     sprite->pushSprite(35, yPos);
   }
 };
