@@ -2992,6 +2992,18 @@ void BuildAdvancedRDS() {
   eonDisplay.reset();
   eccDisplay.reset();
   rtDisplay.reset();
+  radio.rds.PTY.call();
+  radio.rds.PTYN.call();
+  radio.rds.ECC.call();
+  radio.rds.hasArtificialhead.call();
+  radio.rds.hasCompressed.call();
+  radio.rds.hasStereo.call();
+  radio.rds.TP.call();
+  radio.rds.TA.call();
+  radio.rds.hasEON.call();
+  radio.rds.hasTMC.call();
+  radio.rds.hasCT.call();
+  radio.rds.hasRTplus.call();
 }
 
 void BuildDisplay() {
@@ -3109,6 +3121,18 @@ void BuildDisplay() {
   eonDisplay.reset();
   eccDisplay.reset();
   rtDisplay.reset();
+  radio.rds.PTY.call();
+  radio.rds.PTYN.call();
+  radio.rds.ECC.call();
+  radio.rds.hasArtificialhead.call();
+  radio.rds.hasCompressed.call();
+  radio.rds.hasStereo.call();
+  radio.rds.TP.call();
+  radio.rds.TA.call();
+  radio.rds.hasEON.call();
+  radio.rds.hasTMC.call();
+  radio.rds.hasCT.call();
+  radio.rds.hasRTplus.call();
   xPos = 0;
   xPos2 = 0;
   MPold = 99;

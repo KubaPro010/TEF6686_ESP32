@@ -19,6 +19,10 @@ public:
         value = v;
     }
 
+    void call() {
+        for (size_t i = 0; i < MaxObservers; ++i) seen[i] = false;
+    }
+
     bool changed(size_t id) {
         if (id >= MaxObservers) return false;
         if (!seen[id]) {
