@@ -29,12 +29,9 @@
 #define TOUCHIRQ        33
 #define EXT_IRQ         14
 
-#define DYNAMIC_SPI_SPEED
-
 extern bool RDSstatus;
 extern bool RDSstatusold;
 extern TFT_eSPI tft;
-extern bool dynamicspi;
 extern bool Data_Accelerator;
 extern bool advancedRDS, afmethodBold, afpage;
 extern bool afscreen, aftest;
@@ -372,6 +369,7 @@ extern TFT_eSprite FullLineSprite;
 extern TFT_eSprite OneBigLineSprite;
 extern TFT_eSprite SignalSprite;
 extern TFT_eSprite PSSprite;
+extern TFT_eSprite PTYSprite;
 
 extern WiFiConnect wc;
 extern WiFiServer Server;

@@ -8,12 +8,6 @@ TFT_eSPI tft = TFT_eSPI(320, 240);
 TFT_eSPI tft = TFT_eSPI(240, 320);
 #endif
 
-#ifdef DYNAMIC_SPI_SPEED
-bool dynamicspi = true;
-#else
-bool dynamicspi = false;
-#endif
-
 bool Data_Accelerator = false;
 
 bool advancedRDS, afmethodBold, afpage;
@@ -114,7 +108,7 @@ byte amgain;
 byte freqoldcount;
 byte HighCutLevel;
 byte HighCutOffset;
-byte items[10] = {10, static_cast<byte>(dynamicspi ? 10 : 9), 7, 10, 10, 10, 9, 10, 10, 9};
+byte items[10] = {10, static_cast<byte>(10), 7, 10, 10, 10, 9, 10, 10, 9};
 byte iMSEQ;
 byte iMSset;
 byte language;
@@ -349,12 +343,14 @@ ESP32Time rtc(0);
 // FrequencySprite.createSprite(200, 50);
 // RDSSprite.createSprite(165, 19);
 // PSSprite.createSprite(150, 32);
+// PTYSprite.createSprite(160, 19);
 // SquelchSprite.createSprite(27, 19);
 // FullLineSprite.createSprite(308, 19);
 // OneBigLineSprite.createSprite(270, 30);
 
 TFT_eSprite FrequencySprite = TFT_eSprite(&tft);
 TFT_eSprite RDSSprite = TFT_eSprite(&tft);
+TFT_eSprite PTYSprite = TFT_eSprite(&tft);
 TFT_eSprite SquelchSprite = TFT_eSprite(&tft);
 TFT_eSprite FullLineSprite = TFT_eSprite(&tft);
 TFT_eSprite OneBigLineSprite = TFT_eSprite(&tft);

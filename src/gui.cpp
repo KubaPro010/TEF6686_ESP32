@@ -1636,22 +1636,20 @@ void ShowOneLine(byte position, byte item, bool selected) {
           break;
 
         case MAINSETTINGS:
-          if (dynamicspi) {
-            FullLineSprite.setTextDatum(TL_DATUM);
+          FullLineSprite.setTextDatum(TL_DATUM);
+          FullLineSprite.setTextColor(ActiveColor, ActiveColorSmooth, false);
+          FullLineSprite.drawString(removeNewline(textUI(81)), 6, 2);
+
+          FullLineSprite.setTextDatum(TR_DATUM);
+
+          if (spispeed == 7) {
+            FullLineSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
+            FullLineSprite.drawString(textUI(86), 298, 2);
+          } else {
             FullLineSprite.setTextColor(ActiveColor, ActiveColorSmooth, false);
-            FullLineSprite.drawString(removeNewline(textUI(81)), 6, 2);
-
-            FullLineSprite.setTextDatum(TR_DATUM);
-
-            if (spispeed == 7) {
-              FullLineSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
-              FullLineSprite.drawString(textUI(86), 298, 2);
-            } else {
-              FullLineSprite.setTextColor(ActiveColor, ActiveColorSmooth, false);
-              FullLineSprite.drawString("MHz", 298, 2);
-              FullLineSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
-              FullLineSprite.drawString((spispeed == SPI_SPEED_DEFAULT ? String(textUI(204)) + " " + String(SPI_FREQUENCY / 1000000, DEC) : String(spispeed * 10, DEC)), 258, 2);
-            }
+            FullLineSprite.drawString("MHz", 298, 2);
+            FullLineSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
+            FullLineSprite.drawString((spispeed == SPI_SPEED_DEFAULT ? String(textUI(204)) + " " + String(SPI_FREQUENCY / 1000000, DEC) : String(spispeed * 10, DEC)), 258, 2);
           }
           break;
 
@@ -2728,22 +2726,20 @@ void ShowOneButton(byte position, byte item, bool selected) {
           break;
 
         case MAINSETTINGS:
-          if (dynamicspi) {
-            PSSprite.setTextDatum(TC_DATUM);
-            PSSprite.setTextColor(ActiveColor, ActiveColorSmooth, false);
-            PSSprite.drawString(shortLine(removeNewline(textUI(81))), 75, 1);
+          PSSprite.setTextDatum(TC_DATUM);
+          PSSprite.setTextColor(ActiveColor, ActiveColorSmooth, false);
+          PSSprite.drawString(shortLine(removeNewline(textUI(81))), 75, 1);
 
-            if (spispeed == 7) {
-              PSSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
-              PSSprite.drawString(textUI(86), 75, 15);
-            } else {
-              PSSprite.setTextDatum(TL_DATUM);
-              PSSprite.setTextColor(ActiveColor, ActiveColorSmooth, false);
-              PSSprite.drawString("MHz", 77, 15);
-              PSSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
-              PSSprite.setTextDatum(TR_DATUM);
-              PSSprite.drawString((spispeed == SPI_SPEED_DEFAULT ? String(textUI(204)) + " " + String(SPI_FREQUENCY / 1000000, DEC) : String(spispeed * 10, DEC)), 73, 15);
-            }
+          if (spispeed == 7) {
+            PSSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
+            PSSprite.drawString(textUI(86), 75, 15);
+          } else {
+            PSSprite.setTextDatum(TL_DATUM);
+            PSSprite.setTextColor(ActiveColor, ActiveColorSmooth, false);
+            PSSprite.drawString("MHz", 77, 15);
+            PSSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
+            PSSprite.setTextDatum(TR_DATUM);
+            PSSprite.drawString((spispeed == SPI_SPEED_DEFAULT ? String(textUI(204)) + " " + String(SPI_FREQUENCY / 1000000, DEC) : String(spispeed * 10, DEC)), 73, 15);
           }
           break;
 
@@ -3393,15 +3389,9 @@ void MenuUpDown(bool dir) {
               OneBigLineSprite.drawString((spispeed == SPI_SPEED_DEFAULT ? String(textUI(204)) + " " + String(SPI_FREQUENCY / 1000000, DEC) : String(spispeed * 10, DEC)), 160, 0);
             }
             OneBigLineSprite.pushSprite(24, 118);
-#ifdef DYNAMIC_SPI_SPEED
-            if (spispeed == SPI_SPEED_DEFAULT) {
-              tft.setSPISpeed(SPI_FREQUENCY / 1000000);
-            } else if (spispeed == 7) {
-              setAutoSpeedSPI();
-            } else {
-              tft.setSPISpeed(spispeed * 10);
-            }
-#endif
+            if (spispeed == SPI_SPEED_DEFAULT) tft.setSPISpeed(SPI_FREQUENCY / 1000000);
+            else if (spispeed == 7) setAutoSpeedSPI();
+            else tft.setSPISpeed(spispeed * 10);
             break;
         }
         break;

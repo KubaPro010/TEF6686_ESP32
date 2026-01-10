@@ -406,14 +406,14 @@ void showPI() {
 void showPTY() {
   if(radio.rds.PTY.changed(0)) {
     String PTYString = String(radio.rds.PTY) + "/" + (radio.rds.region != 0 ? (radio.rds.region == 0 ? PTY_EU[radio.rds.PTY] : PTY_USA[radio.rds.PTY]) : textUI(228 + radio.rds.PTY));
-    RDSSprite.fillSprite(BackgroundColor);
-    if(RDSstatus) RDSSprite.setTextColor(RDSColor, RDSColorSmooth, false);
-    else RDSSprite.setTextColor(RDSDropoutColor, RDSDropoutColorSmooth, false);
-    if(band < BAND_GAP) RDSSprite.drawString(PTYString, 0, 2); // only draw it on fm
+    PTYSprite.fillSprite(BackgroundColor);
+    if(RDSstatus) PTYSprite.setTextColor(RDSColor, RDSColorSmooth, false);
+    else PTYSprite.setTextColor(RDSDropoutColor, RDSDropoutColorSmooth, false);
+    if(band < BAND_GAP) PTYSprite.drawString(PTYString, 0, 2); // only draw it on fm
 
     if (!screenmute) {
-      if (advancedRDS) RDSSprite.pushSprite(35, 107);
-      else RDSSprite.pushSprite(35, 161);
+      if (advancedRDS) PTYSprite.pushSprite(35, 107);
+      else PTYSprite.pushSprite(35, 161);
     }
     
     if (wifi) {

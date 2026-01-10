@@ -1021,9 +1021,7 @@ void NumpadProcess(int num) {
       menuoption = ITEM1;
       menupage = DXMODE;
       menuitem = 0;
-#ifdef DYNAMIC_SPI_SPEED
       if (spispeed == 7) tft.setSPISpeed(40);
-#endif
       submenu = true;
       menu = true;
       PSSprite.unloadFont();
@@ -1051,7 +1049,6 @@ void NumpadProcess(int num) {
 }
 
 void setAutoSpeedSPI() {
-#ifdef DYNAMIC_SPI_SPEED
   switch (frequency / 10) {
     case 875 ... 877: tft.setSPISpeed(28); break;
     case 878 ... 881: tft.setSPISpeed(24); break;
@@ -1096,7 +1093,6 @@ void setAutoSpeedSPI() {
     case 1076 ... 1080: tft.setSPISpeed(15); break;
     default: tft.setSPISpeed(30); break;
   }
-#endif
 }
 
 void endMenu() {
@@ -1396,11 +1392,9 @@ void setup() {
   logcounter = EEPROM.readUInt(EE_UINT16_LOGCOUNTER);
   radio.rds.PICTlock = EEPROM.readUInt(EE_UINT16_PICTLOCK);
 
-#ifdef DYNAMIC_SPI_SPEED
   if (spispeed == SPI_SPEED_DEFAULT) tft.setSPISpeed(SPI_FREQUENCY / 1000000);
   else if (spispeed == 7) setAutoSpeedSPI();
   else tft.setSPISpeed(spispeed * 10);
-#endif
 
   LWLowEdgeSet = FREQ_LW_LOW_EDGE_MIN;
   LWHighEdgeSet = FREQ_LW_HIGH_EDGE_MAX;
@@ -1495,6 +1489,11 @@ void setup() {
 
   RDSSprite.createSprite(165, 19);
   RDSSprite.setTextDatum(TL_DATUM);
+  RDSSprite.setSwapBytes(true);
+
+  PTYSprite.createSprite(160, 19);
+  PTYSprite.setTextDatum(TL_DATUM);
+  PTYSprite.setSwapBytes(true);
 
   PSSprite.createSprite(150, 32);
   PSSprite.setTextDatum(TL_DATUM);
@@ -2624,9 +2623,7 @@ void ModeButtonPress() {
             menuoption = ITEM1;
             menupage = INDEX;
             menuitem = 0;
-#ifdef DYNAMIC_SPI_SPEED
             if (spispeed == 7) tft.setSPISpeed(40);
-#endif
             PSSprite.unloadFont();
             if (language == LANGUAGE_CHS) PSSprite.loadFont(FONT16_CHS); else PSSprite.loadFont(FONT16);
             BuildMenu();
@@ -2991,9 +2988,7 @@ void ShowMemoryPos() {
 }
 
 void DoMemoryPosTune() {
-#ifdef DYNAMIC_SPI_SPEED
   if (spispeed == 7) tft.setSPISpeed(50);
-#endif
   radio.clearRDS(fullsearchrds);
 
   if (IsStationEmpty()) {
@@ -3091,11 +3086,12 @@ void ShowFreq(int mode) {
       FrequencySprite.fillSprite(BackgroundColor);
 
       switch (freqfont) {
+        case 0: FrequencySprite.loadFont(FREQFONT0); break;
         case 1: FrequencySprite.loadFont(FREQFONT1); break;
         case 2: FrequencySprite.loadFont(FREQFONT2); break;
         case 3: FrequencySprite.loadFont(FREQFONT3); break;
         case 4: FrequencySprite.loadFont(FREQFONT4); break;
-        default: FrequencySprite.loadFont(FREQFONT0); break;
+        case 5: FrequencySprite.loadFont(FREQFONT5); break;
       }
 
       FrequencySprite.setTextDatum(TR_DATUM);
@@ -3131,11 +3127,12 @@ void ShowFreq(int mode) {
         freqold = freq;
       } else {
         switch (freqfont) {
+          case 0: FrequencySprite.loadFont(FREQFONT0); break;
           case 1: FrequencySprite.loadFont(FREQFONT1); break;
           case 2: FrequencySprite.loadFont(FREQFONT2); break;
           case 3: FrequencySprite.loadFont(FREQFONT3); break;
           case 4: FrequencySprite.loadFont(FREQFONT4); break;
-          default: FrequencySprite.loadFont(FREQFONT0); break;
+          case 5: FrequencySprite.loadFont(FREQFONT5); break;
         }
 
         FrequencySprite.fillSprite(BackgroundColor);
@@ -4174,11 +4171,7 @@ void DefaultSettings() {
   EEPROM.writeByte(EE_BYTE_CLOCKAMPM, 0);
   EEPROM.writeUInt(EE_UINT16_PICTLOCK, 0);
 
-#ifdef DYNAMIC_SPI_SPEED
   EEPROM.writeByte(EE_BYTE_SPISPEED, 7);
-#else
-  EEPROM.writeByte(EE_BYTE_SPISPEED, 0);
-#endif
 
 #ifdef DEEPELEC_DP_66X
   EEPROM.writeByte(EE_BYTE_ROTARYMODE, 1);
@@ -4277,17 +4270,20 @@ void UpdateFonts(byte mode) {
   switch (mode) {
     case 0:
       RDSSprite.unloadFont();
+      PTYSprite.unloadFont();
       PSSprite.unloadFont();
       FullLineSprite.unloadFont();
       OneBigLineSprite.unloadFont();
 
       if (language == LANGUAGE_CHS) {
         RDSSprite.loadFont(FONT16_CHS);
+        PTYSprite.loadFont(FONT16_CHS);
         if (menu) PSSprite.loadFont(FONT16_CHS); else PSSprite.loadFont(FONT28_CHS);
         FullLineSprite.loadFont(FONT16_CHS);
         OneBigLineSprite.loadFont(FONT28_CHS);
       } else {
         RDSSprite.loadFont(FONT16);
+        PTYSprite.loadFont(FONT16);
         if (menu) PSSprite.loadFont(FONT16); else PSSprite.loadFont(FONT28);
         FullLineSprite.loadFont(FONT16);
         OneBigLineSprite.loadFont(FONT28);
@@ -4297,6 +4293,7 @@ void UpdateFonts(byte mode) {
       FullLineSprite.unloadFont();
       OneBigLineSprite.unloadFont();
       RDSSprite.unloadFont();
+      PTYSprite.unloadFont();
       PSSprite.unloadFont();
       break;
   }

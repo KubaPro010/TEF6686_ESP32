@@ -478,8 +478,6 @@ TFT_eSPI::TFT_eSPI(int16_t w, int16_t h)
   fs_font  = true;     // Smooth font filing system or array (fs_font = false) flag
 #endif
 
-  _psram_enable = false;
-
   addr_row = 0xFFFF;  // drawPixel command length optimiser
   addr_col = 0xFFFF;  // drawPixel command length optimiser
 
@@ -4265,9 +4263,6 @@ void TFT_eSPI::setAttribute(uint8_t attr_id, uint8_t param) {
             _utf8  = param;
             decoderState = 0;
             break;
-        case PSRAM_ENABLE:
-            _psram_enable = false;
-            break;
         //case 4: // TBD future feature control
         //    _tbd = param;
         //    break;
@@ -4285,8 +4280,6 @@ uint8_t TFT_eSPI::getAttribute(uint8_t attr_id) {
             return _cp437;
         case UTF8_SWITCH: // ON/OFF control of UTF-8 decoding
             return _utf8;
-        case PSRAM_ENABLE:
-            return _psram_enable;
         //case 3: // TBD future feature control
         //    return _tbd;
         //    break;
