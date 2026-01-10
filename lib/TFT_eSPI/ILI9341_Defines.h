@@ -1,14 +1,3 @@
-// Change the width and height if required (defined in portrait mode)
-// or use the constructor to over-ride defaults
-
-#if defined (ILI9341_DRIVER) || defined (ILI9341_2_DRIVER)
-  #define TFT_WIDTH  240
-  #define TFT_HEIGHT 320
-#elif defined (ILI9342_DRIVER)
-  #define TFT_WIDTH  320
-  #define TFT_HEIGHT 240
-#endif
-
 // Color definitions for backwards compatibility with old sketches
 // use colour definitions like TFT_BLACK to make sketches more portable
 #define ILI9341_BLACK       0x0000      /*   0,   0,   0 */
@@ -35,8 +24,6 @@
 // Delay between some initialisation commands
 #define TFT_INIT_DELAY 0x80 // Not used unless commandlist invoked
 
-
-// Generic commands used by TFT_eSPI.cpp
 #define TFT_NOP     0x00
 #define TFT_SWRST   0x01
 
@@ -51,7 +38,7 @@
 #define TFT_RAMWR   0x2C
 
 #define TFT_RAMRD   0x2E
-#define TFT_IDXRD   0xDD // ILI9341 only, indexed control register read
+#define TFT_IDXRD   0xDD
 
 #define TFT_MADCTL  0x36
 #define TFT_MAD_MY  0x80
@@ -72,7 +59,6 @@
   #define TFT_MAD_COLOR_ORDER TFT_MAD_BGR
 #endif
 
-// All ILI9341 specific commands some are used by init()
 #define ILI9341_NOP     0x00
 #define ILI9341_SWRESET 0x01
 #define ILI9341_RDDID   0x04
@@ -129,7 +115,7 @@
 #define ILI9341_RDID1   0xDA
 #define ILI9341_RDID2   0xDB
 #define ILI9341_RDID3   0xDC
-#define ILI9341_RDIDX   0xDD // TBC
+#define ILI9341_RDIDX   0xDD
 
 #define ILI9341_GMCTRP1 0xE0
 #define ILI9341_GMCTRN1 0xE1

@@ -28,10 +28,8 @@ RdsPiBuffer::State RdsPiBuffer::getState(uint16_t value) {
     uint8_t count = 0;
     uint8_t correctCount = 0;
 
-    for (uint8_t i = 0; i < this->fill; i++)
-    {
-        if (this->buff[i] == value)
-        {
+    for (uint8_t i = 0; i < this->fill; i++) {
+        if (this->buff[i] == value) {
             count++;
             if ((this->errorBuff[i / 8] & (1 << (i % 8))) == 0) correctCount++;
         }

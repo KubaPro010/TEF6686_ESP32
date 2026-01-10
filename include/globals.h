@@ -101,7 +101,6 @@ extern byte band;
 extern byte bandAM;
 extern byte bandFM;
 extern byte bandforbidden;
-extern byte battery;
 extern byte batteryold;
 extern byte batteryoptions;
 extern byte BWset;

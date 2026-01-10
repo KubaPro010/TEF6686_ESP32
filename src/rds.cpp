@@ -179,7 +179,6 @@ void readRds() {
         dropout = true;
       }
     } else {
-      // --- RDS recovery or memory reset ---
       if (dropout || memreset) {
         if (!rdsstatscreen) {
           if (radio.rds.region == 0) tftPrint(ACENTER, PIold, 275, advancedRDS ? 75 : 187, RDSColor, RDSColorSmooth, 28);

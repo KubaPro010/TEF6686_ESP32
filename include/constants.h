@@ -1,6 +1,6 @@
 #pragma once
 
-#define VERSION "v2.20.5b"
+#define VERSION "v2.20.5c"
 
 #define REVERSE                     false
 
@@ -15,18 +15,14 @@
     (x_ < y_) ? x_ : y_; }
 
 #define TIMER_OFFSET_TIMER          (TIMER_500_TICK)
-#define TIMER_BW_TIMER              (TIMER_500_TICK)
-#define TIMER_SNR_TIMER             100
-#define TIMER_BAT_TIMER             (TIMER_500_TICK)
+#define TIMER_BW_TIMER              300
+#define TIMER_SNR_TIMER             50
+#define TIMER_BAT_TIMER             250
 #define TIMER_500_TICK              500
 
-#define BAT_LEVEL_EMPTY             1600
-#define BAT_LEVEL_WARN              1700
-#define BAT_LEVEL_FULL              2270
 #define BAT_LEVEL_STAGE             4
-#define BATTERY_WARN_VALUE          3.68
-#define BATTERY_LOW_VALUE           3.0
-#define BATTERY_FULL_VALUE          4.2
+#define BATTERY_LOW_VALUE           3.2
+#define BATTERY_FULL_VALUE          4.12
 
 #define XTAL_0V_ADC                 0
 #define XTAL_1V_ADC                 1050
@@ -57,8 +53,6 @@
 #define FREQ_FM_OIRT_START          6500   // use values of 1/10 * kHz
 #define FREQ_FM_OIRT_END            7400   // use values of 1/10 * kHz
 
-#define FM_DEEMPHASIS_50            50
-#define FM_DEEMPHASIS_75            75
 #define REGION_EU                   0
 #define REGION_US                   1
 

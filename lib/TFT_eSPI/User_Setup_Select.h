@@ -1,27 +1,31 @@
 #pragma once
 
-#define ILI9341_DRIVER
-#define TFT_DMA_SUPPORT
-#define TFT_CS          5
-#define TFT_DC          17
-#define TFT_RST         16
-#define TOUCH_CS	32
+#define TFT_CS 5
+#define TFT_DC 17
+#define TFT_RST 16
+#define TOUCH_CS 32
 
-#define SPI_FREQUENCY       7500000
+#define SPI_FREQUENCY 7500000
 #define SPI_READ_FREQUENCY 20000000
 #define SPI_TOUCH_FREQUENCY 2500000
-#define SMOOTH_FONT
 
 #ifdef ARS
 #define TFT_RGB_ORDER TFT_RGB
 #endif
 
-// Identical looking TFT displays may have a different colour ordering in the 16-bit colour
 #define TFT_BGR 0   // Colour order Blue-Green-Red
 #define TFT_RGB 1   // Colour order Red-Green-Blue
 
-#include <TFT_Drivers/ILI9341_Defines.h>
-#define  TFT_DRIVER 0x9341
+#ifndef ARS
+  #define TFT_WIDTH  240
+  #define TFT_HEIGHT 320
+#else
+  #define TFT_WIDTH  320
+  #define TFT_HEIGHT 240
+#endif
+
+#include <ILI9341_Defines.h>
+#define TFT_DRIVER 0x9341
 
 #define PIN_D0  16  // GPIO16       WAKE
 #define PIN_D1   5  // GPIO5        User purpose

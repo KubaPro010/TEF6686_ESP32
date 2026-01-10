@@ -2,11 +2,7 @@
 
 bool RDSstatus;
 bool RDSstatusold;
-#ifdef ARS
-TFT_eSPI tft = TFT_eSPI(320, 240);
-#else
-TFT_eSPI tft = TFT_eSPI(240, 320);
-#endif
+TFT_eSPI tft = TFT_eSPI();
 
 bool Data_Accelerator = false;
 
@@ -78,7 +74,6 @@ byte band;
 byte bandAM;
 byte bandFM;
 byte bandforbidden;
-byte battery;
 byte batteryold;
 byte batteryoptions;
 byte BWset;
@@ -338,7 +333,6 @@ const size_t language_entrynumber = sizeof(myLanguage[0]) / sizeof(myLanguage[0]
 mem presets[EE_PRESETS_CNT];
 TEF6686 radio;
 ESP32Time rtc(0);
-
 
 // FrequencySprite.createSprite(200, 50);
 // RDSSprite.createSprite(165, 19);
