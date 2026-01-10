@@ -1721,21 +1721,20 @@ void setup() {
   if (tunemode == TUNE_MEM) DoMemoryPosTune();
 
   eccDisplay.setPostDrawCallback([&](TFT_eSprite* sprite, bool scrolling) {
-    sprite->fillRect(275, 0, 8, 19, BackgroundColor);
+    sprite->fillRect(275, 0, 10, 19, BackgroundColor);
     sprite->drawLine(284, 0, 284, 19, FrameColor);
   });
   rtDisplay.setPostDrawCallback([&](TFT_eSprite* sprite, bool scrolling) {
-    sprite->fillRect(275, 0, 8, 19, BackgroundColor);
+    sprite->fillRect(275, 0, 10, 19, BackgroundColor);
     sprite->drawLine(284, 0, 284, 19, FrameColor);
-    if (radio.rds.hasRT) {
-      FullLineSprite.fillCircle(278, 3, 2, radio.rds.rtAB ? GreyoutColor : InsignificantColor);
-      FullLineSprite.fillCircle(278, 14, 2, radio.rds.rtAB ? InsignificantColor : GreyoutColor);
+    if(radio.rds.hasRT) {
+      sprite->fillCircle(278, 3, 2, radio.rds.rtAB ? GreyoutColor : InsignificantColor);
+      sprite->fillCircle(278, 14, 2, radio.rds.rtAB ? InsignificantColor : GreyoutColor);
     }
   });
 
   setupmode = false;
 
-  if (edgebeep) radio.tone(50, -5, 2000);
   if (!usesquelch) radio.setUnMute();
 
   screensavertimer = millis();
