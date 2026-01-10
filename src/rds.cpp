@@ -142,6 +142,7 @@ void readRds() {
   if (band >= BAND_GAP) return;
 
   radio.readRDS(showrdserrors);
+  if(RDSstatus != radio.rds.hasRDS) radio.rds.PTY.call();
   RDSstatus = radio.rds.hasRDS;
   ShowRDSLogo(RDSstatus);
 
@@ -170,7 +171,7 @@ void readRds() {
         }
 
         if (advancedRDS || rdsstatscreen) {
-          tft.fillCircle( 86, 41, 5, SignificantColor);
+          tft.fillCircle(86, 41, 5, SignificantColor);
           tft.fillCircle(124, 41, 5, SignificantColor);
           tft.fillCircle(162, 41, 5, SignificantColor);
           tft.fillCircle(200, 41, 5, SignificantColor);
