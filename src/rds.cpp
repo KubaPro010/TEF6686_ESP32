@@ -162,8 +162,6 @@ void readRds() {
             PSSprite.drawString(PSold, 0, 2);
             PSSprite.pushSprite(36, advancedRDS ? 72 : 185);
           }
-
-          tftPrint(ALEFT, PTYold, 34, advancedRDS ? 109 : 163, RDSDropoutColor, RDSDropoutColorSmooth, 16);
         }
 
         if (rdsstatscreen && berPercentold != 100) {
@@ -204,8 +202,6 @@ void readRds() {
             }
             PSSprite.pushSprite(36, advancedRDS ? 72 : 185);
           }
-
-          tftPrint(ALEFT, PTYold, 34, advancedRDS ? 109 : 163, RDSColor, RDSColorSmooth, 16);
 
           tft.fillCircle(314, 223, 2, GreyoutColor);
           tft.fillCircle(314, 234, 2, GreyoutColor);
@@ -410,18 +406,16 @@ void showPI() {
 void showPTY() {
   if(radio.rds.PTY.changed(0)) {
     String PTYString = String(radio.rds.PTY) + "/" + (radio.rds.region != 0 ? (radio.rds.region == 0 ? PTY_EU[radio.rds.PTY] : PTY_USA[radio.rds.PTY]) : textUI(228 + radio.rds.PTY));
+    RDSSprite.fillSprite(BackgroundColor);
+    if(RDSstatus) RDSSprite.setTextColor(RDSColor, RDSColorSmooth, false);
+    else RDSSprite.setTextColor(RDSDropoutColor, RDSDropoutColorSmooth, false);
+    if(band < BAND_GAP) RDSSprite.drawString(PTYString, 0, 2); // only draw it on fm
 
     if (!screenmute) {
-      if (advancedRDS) {
-        if (!RDSstatus) tftReplace(ALEFT, PTYold, PTYString, 34, 109, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor, 16);
-        else tftReplace(ALEFT, PTYold, PTYString, 34, 109, RDSColor, RDSColorSmooth, BackgroundColor, 16);
-      } else {
-        if (!RDSstatus) tftReplace(ALEFT, PTYold, PTYString, 34, 163, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor, 16);
-        else tftReplace(ALEFT, PTYold, PTYString, 34, 163, RDSColor, RDSColorSmooth, BackgroundColor, 16);
-      }
+      if (advancedRDS) RDSSprite.pushSprite(35, 107);
+      else RDSSprite.pushSprite(35, 161);
     }
-    PTYold = PTYString;
-
+    
     if (wifi) {
       Udp.beginPacket(remoteip, 9030);
       Udp.print("from=TEF_tuner_" + String(stationlistid, DEC) + ";PTY=");
@@ -588,7 +582,6 @@ void showRadioText() {
 
   if (radio.rds.hasRT && radio.rds.rtAB != rtABold) {
     rtDisplay.reset();
-    rttickerhold = millis();
     rtABold = radio.rds.rtAB;
   }
 

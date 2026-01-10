@@ -266,7 +266,6 @@ extern String ECCString;
 extern String eonpsold[20];
 extern String PIold;
 extern String PSold;
-extern String PTYold;
 extern String rds_clock;
 extern String rds_clockold;
 extern String rds_date;

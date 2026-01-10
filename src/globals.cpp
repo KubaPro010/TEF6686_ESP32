@@ -246,7 +246,6 @@ String ECCString;
 String eonpsold[20];
 String PIold;
 String PSold;
-String PTYold;
 String rds_clock;
 String rds_clockold;
 String rds_date;
