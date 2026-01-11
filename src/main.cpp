@@ -1236,11 +1236,7 @@ void setup() {
   tft.init();
   tft.initDMA();
 
-  tft.loadFont(FONT16, 0);
-  tft.loadFont(FONT16_CHS, 1);
-  tft.loadFont(FONT28, 2);
-  tft.loadFont(FONT28_CHS, 3);
-  tft.loadFont(FONT48, 4);
+  tft.loadFont(FONT48, 2);
 
   doTheme();
 
@@ -1289,16 +1285,10 @@ void setup() {
   FrequencySprite.loadFont(FREQFONT3, 3);
   FrequencySprite.loadFont(FREQFONT4, 4);
   FrequencySprite.loadFont(FREQFONT5, 5);
-  FrequencySprite.loadFont(FONT16, 6);
-  FrequencySprite.loadFont(FONT16_CHS, 7);
 
   GeneralTextSprite.createSprite(308, 28);
   GeneralTextSprite.setSwapBytes(true);
-  GeneralTextSprite.loadFont(FONT16, 0);
-  GeneralTextSprite.loadFont(FONT16_CHS, 1);
-  GeneralTextSprite.loadFont(FONT28, 2);
-  GeneralTextSprite.loadFont(FONT28_CHS, 3);
-  GeneralTextSprite.loadFont(FONT48, 4);
+  GeneralTextSprite.loadFont(FONT48, 2);
 
   PSSprite.createSprite(150, 32);
   PSSprite.setSwapBytes(true);
@@ -1309,18 +1299,12 @@ void setup() {
 
   SquelchSprite.createSprite(27, 19);
   SquelchSprite.setSwapBytes(true);
-  SquelchSprite.loadFont(FONT16, 0);
-  SquelchSprite.loadFont(FONT16_CHS, 1);
 
   FullLineSprite.createSprite(308, 19);
   FullLineSprite.setSwapBytes(true);
-  FullLineSprite.loadFont(FONT16, 0);
-  FullLineSprite.loadFont(FONT16_CHS, 1);
 
   OneBigLineSprite.createSprite(270, 30);
   OneBigLineSprite.setSwapBytes(true);
-  OneBigLineSprite.loadFont(FONT28, 0);
-  OneBigLineSprite.loadFont(FONT28_CHS, 1);
 
   SignalSprite.createSprite(80, 48);
   SignalSprite.loadFont(FONT28, 0);
@@ -3304,9 +3288,9 @@ void doSquelch() {
         if (!BWtune && !menu && (Squelch > Squelchold + 2 || Squelch < Squelchold - 2)) {
           SquelchSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
           SquelchSprite.fillSprite(BackgroundColor);
-          if (Squelch == -100) SquelchSprite.drawString("--", 0, 0, (language == LANGUAGE_CHS) ? 1 : 0);
-          else if (Squelch == 920) SquelchSprite.drawString("ST", 0, 0, (language == LANGUAGE_CHS) ? 1 : 0);
-          else SquelchSprite.drawString(String(SquelchShow), 0, 0, (language == LANGUAGE_CHS) ? 1 : 0);
+          if (Squelch == -100) SquelchSprite.drawString("--", 0, 0);
+          else if (Squelch == 920) SquelchSprite.drawString("ST", 0, 0);
+          else SquelchSprite.drawString(String(SquelchShow), 0, 0);
           SquelchSprite.pushSprite(223, 147);
           Squelchold = Squelch;
         }
@@ -3341,9 +3325,9 @@ void doSquelch() {
             SquelchSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
             SquelchSprite.fillSprite(BackgroundColor);
 
-            if (Squelch == -1) SquelchSprite.drawString("ST", 0, 0, (language == LANGUAGE_CHS) ? 1 : 0);
-            else if (Squelch == 0) SquelchSprite.drawString("--", 0, 0, (language == LANGUAGE_CHS) ? 1 : 0);
-            else SquelchSprite.drawString(String(SquelchShow), 0, 0, (language == LANGUAGE_CHS) ? 1 : 0);
+            if (Squelch == -1) SquelchSprite.drawString("ST", 0, 0);
+            else if (Squelch == 0) SquelchSprite.drawString("--", 0, 0);
+            else SquelchSprite.drawString(String(SquelchShow), 0, 0);
             if (Squelch != Squelchold) SquelchSprite.pushSprite(223, 147);
             Squelchold = Squelch;
           }
@@ -3846,14 +3830,9 @@ void read_encoder() {
 
 void tftReplace(int8_t offset, const String & textold, const String & text, int16_t x, int16_t y, int color, int smoothcolor, int background, uint8_t fontsize) {
   uint8_t selectedFont = 0;
-  if (language == LANGUAGE_CHS) {
-    if (fontsize == 16) selectedFont = 1;
-    else if (fontsize == 28) selectedFont = 3;
-  } else {
-    if (fontsize == 16) selectedFont = 0;
-    else if (fontsize == 28) selectedFont = 2;
-  }
-  if (fontsize == 48) selectedFont = 4;
+  if (fontsize == 16) selectedFont = 0;
+  else if (fontsize == 28) selectedFont = 1;
+  else if (fontsize == 48) selectedFont = 2;
 
   tft.setTextColor(background, background, false);
 
@@ -3880,14 +3859,9 @@ void tftReplace(int8_t offset, const String & textold, const String & text, int1
 
 void tftPrint(int8_t offset, const String & text, int16_t x, int16_t y, int color, int smoothcolor, uint8_t fontsize) {
   uint8_t selectedFont = 0;
-  if (language == LANGUAGE_CHS) {
-    if (fontsize == 16) selectedFont = 1;
-    else if (fontsize == 28) selectedFont = 3;
-  } else {
-    if (fontsize == 16) selectedFont = 0;
-    else if (fontsize == 28) selectedFont = 2;
-  }
-  if (fontsize == 48) selectedFont = 4;
+  if (fontsize == 16) selectedFont = 0;
+  else if (fontsize == 28) selectedFont = 1;
+  else if (fontsize == 48) selectedFont = 2;
 
   tft.setTextColor(color, smoothcolor, (fontsize == 52 ? true : false));
 
@@ -3906,14 +3880,24 @@ void tftPrint(int8_t offset, const String & text, int16_t x, int16_t y, int colo
 void UpdateFonts() {
   if (language == LANGUAGE_CHS) {
     if (menu) PSSprite.setTextFont(1); else PSSprite.setTextFont(3);
-    OneBigLineSprite.setTextFont(1);
-    GeneralTextSprite.setTextFont(1);
-    FullLineSprite.setTextFont(1);
+    OneBigLineSprite.loadFont(FONT28_CHS, 0);
+    FullLineSprite.loadFont(FONT16_CHS, 0);
+    GeneralTextSprite.loadFont(FONT16_CHS, 0);
+    GeneralTextSprite.loadFont(FONT28_CHS, 1);
+    FrequencySprite.loadFont(FONT16_CHS, 6);
+    tft.loadFont(FONT16_CHS, 0);
+    tft.loadFont(FONT28_CHS, 1);
+    SquelchSprite.loadFont(FONT16, 0);
   } else {
     if (menu) PSSprite.setTextFont(0); else PSSprite.setTextFont(2);
-    OneBigLineSprite.setTextFont(0);
-    GeneralTextSprite.setTextFont(0);
-    FullLineSprite.setTextFont(0);
+    OneBigLineSprite.loadFont(FONT28, 0);
+    FullLineSprite.loadFont(FONT16, 0);
+    GeneralTextSprite.loadFont(FONT16, 0);
+    GeneralTextSprite.loadFont(FONT28, 1);
+    FrequencySprite.loadFont(FONT16, 6);
+    tft.loadFont(FONT16, 0);
+    tft.loadFont(FONT28, 1);
+    SquelchSprite.loadFont(FONT16_CHS, 0);
   }
 }
 
@@ -4007,7 +3991,7 @@ uint8_t doAutoMemory(uint16_t startfreq, uint16_t stopfreq, uint8_t startmem, ui
       SignalSprite.pushSprite(120, 125);
 
       SquelchSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
-      SquelchSprite.drawString(String(counter), 0, 0, (language == LANGUAGE_CHS) ? 1 : 0);
+      SquelchSprite.drawString(String(counter), 0, 0);
       SquelchSprite.pushSprite(200, 155);
 
       tft.fillRect(60, 110, 2 * percent, 6, BarInsignificantColor);

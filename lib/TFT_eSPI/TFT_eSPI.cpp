@@ -3153,7 +3153,6 @@ int16_t TFT_eSPI::drawString(const char *string, int32_t poX, int32_t poY, uint8
     }
   }
 
-
   int8_t xo = 0;
 
   uint16_t len = strlen(string);
@@ -3275,7 +3274,7 @@ int16_t TFT_eSPI::drawFloat(float floatNumber, uint8_t dp, int32_t poX, int32_t 
 
 void TFT_eSPI::setTextFont(uint8_t f)
 {
-  textfont = (f > 8) ? 1 : f; // Don't allow font > 8
+  textfont = (f > 7) ? 1 : f; // Don't allow font > 7
 }
 
 SPIClass& TFT_eSPI::getSPIinstance()

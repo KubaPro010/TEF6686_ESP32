@@ -350,8 +350,7 @@ class TFT_eSPI { friend class TFT_eSprite;
     uint16_t maxDescent;             // Maximum descent found in font
   } fontMetrics;
 
-  fontMetrics gFonts[8] = {
-    { nullptr, 0, 0, 0, 0, 0, 0, 0 },
+  fontMetrics gFonts[7] = {
     { nullptr, 0, 0, 0, 0, 0, 0, 0 },
     { nullptr, 0, 0, 0, 0, 0, 0, 0 },
     { nullptr, 0, 0, 0, 0, 0, 0, 0 },
@@ -362,13 +361,13 @@ class TFT_eSPI { friend class TFT_eSprite;
   };
 
   // These are for the metrics for each individual glyph (so we don't need to seek this in file and waste time)
-  uint16_t* gUnicode[8] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};  //UTF-16 code, the codes are searched so do not need to be sequential
-  uint8_t*  gHeight[8] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};   //cheight
-  uint8_t*  gWidth[8] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};    //cwidth
-  uint8_t*  gxAdvance[8] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}; //setWidth
-  int16_t*  gdY[8] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};       //topExtent
-  int8_t*   gdX[8] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};       //leftExtent
-  uint32_t* gBitmap[8] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};   //file pointer to greyscale bitmap
+  uint16_t* gUnicode[7] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL};  //UTF-16 code, the codes are searched so do not need to be sequential
+  uint8_t*  gHeight[7] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL};   //cheight
+  uint8_t*  gWidth[7] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL};    //cwidth
+  uint8_t*  gxAdvance[7] = {NULL, NULL, NULL, NULL, NULL, NULL}; //setWidth
+  int16_t*  gdY[7] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL};       //topExtent
+  int8_t*   gdX[7] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL};       //leftExtent
+  uint32_t* gBitmap[7] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL};   //file pointer to greyscale bitmap
 
   uint8_t  getTouchRaw(uint16_t *x, uint16_t *y);
   uint16_t getTouchRawZ(void);
