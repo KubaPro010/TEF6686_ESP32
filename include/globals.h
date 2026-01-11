@@ -346,14 +346,12 @@ extern mem presets[EE_PRESETS_CNT];
 extern TEF6686 radio;
 
 extern TFT_eSprite FrequencySprite;
-extern TFT_eSprite RDSSprite;
 extern TFT_eSprite SquelchSprite;
 extern TFT_eSprite FullLineSprite;
 extern TFT_eSprite OneBigLineSprite;
 extern TFT_eSprite SignalSprite;
 extern TFT_eSprite PSSprite;
-extern TFT_eSprite PTYSprite;
-extern TFT_eSprite CTSprite;
+extern TFT_eSprite GeneralTextSprite;
 
 extern WiFiConnect wc;
 extern WiFiServer Server;

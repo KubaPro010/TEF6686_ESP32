@@ -207,7 +207,7 @@ void updateSWMIBand() {
     case SW_MI_BAND_90M:
     case SW_MI_BAND_120M:
     case SW_MI_BAND_160M:
-      FrequencySprite.drawString(SWMIBandstring + " ", 0, 0);
+      FrequencySprite.drawString(SWMIBandstring + " ", 0, 0, 6);
       beepresetstart = true;
       if (beepresetstop) {
         EdgeBeeper();
@@ -816,22 +816,12 @@ void TuneFreq(int temp) {
 }
 
 void ShowNum(int val) {
-  switch (freqfont) {
-    case 1: FrequencySprite.loadFont(FREQFONT1); break;
-    case 2: FrequencySprite.loadFont(FREQFONT2); break;
-    case 3: FrequencySprite.loadFont(FREQFONT3); break;
-    case 4: FrequencySprite.loadFont(FREQFONT4); break;
-    default: FrequencySprite.loadFont(FREQFONT0); break;
-  }
-
   FrequencySprite.setTextDatum(TR_DATUM);
 
   FrequencySprite.fillSprite(BackgroundColor);
   FrequencySprite.setTextColor(SecondaryColor, SecondaryColorSmooth, false);
-  FrequencySprite.drawString(String(val) + " ", 218, -6);
+  FrequencySprite.drawString(String(val) + " ", 218, -6, freqfont);
   FrequencySprite.pushSprite(46, 46);
-
-  FrequencySprite.unloadFont();
 }
 
 byte numval[16] = {2, 3, 127, 5, 6, 0, 9, 13, 8, 7, 4, 1, 0, 0, 0, 0};
@@ -981,8 +971,7 @@ void NumpadProcess(int num) {
       if (spispeed == 7) tft.setSPISpeed(40);
       submenu = true;
       menu = true;
-      PSSprite.unloadFont();
-      if (language == LANGUAGE_CHS) PSSprite.loadFont(FONT16_CHS); else PSSprite.loadFont(FONT16);
+      if (language == LANGUAGE_CHS) PSSprite.setTextFont(1); else PSSprite.setTextFont(0);
       BuildMenu();
     } else if (num == 13) {
       if (freq_in != 0) {
@@ -1068,8 +1057,7 @@ void endMenu() {
   if (USBmode) Serial.begin(19200); else Serial.begin(115200);
 
   leave = true;
-  PSSprite.unloadFont();
-  if (language == LANGUAGE_CHS) PSSprite.loadFont(FONT28_CHS); else PSSprite.loadFont(FONT28);
+  if (language == LANGUAGE_CHS) PSSprite.setTextFont(3); else PSSprite.setTextFont(2);
   PSSprite.setTextDatum(TL_DATUM);
   BuildDisplay();
   SelectBand();
@@ -1248,6 +1236,12 @@ void setup() {
   tft.init();
   tft.initDMA();
 
+  tft.loadFont(FONT16, 0);
+  tft.loadFont(FONT16_CHS, 1);
+  tft.loadFont(FONT28, 2);
+  tft.loadFont(FONT28_CHS, 3);
+  tft.loadFont(FONT48, 4);
+
   doTheme();
 
   if (displayflip == 0) {
@@ -1289,26 +1283,47 @@ void setup() {
   FrequencySprite.createSprite(200, 50);
   FrequencySprite.setTextDatum(TR_DATUM);
   FrequencySprite.setSwapBytes(true);
+  FrequencySprite.loadFont(FREQFONT0, 0);
+  FrequencySprite.loadFont(FREQFONT1, 1);
+  FrequencySprite.loadFont(FREQFONT2, 2);
+  FrequencySprite.loadFont(FREQFONT3, 3);
+  FrequencySprite.loadFont(FREQFONT4, 4);
+  FrequencySprite.loadFont(FREQFONT5, 5);
+  FrequencySprite.loadFont(FONT16, 6);
+  FrequencySprite.loadFont(FONT16_CHS, 7);
 
-  RDSSprite.createSprite(165, 19);
-  RDSSprite.setSwapBytes(true);
-
-  PTYSprite.createSprite(160, 19);
-  PTYSprite.setSwapBytes(true);
+  GeneralTextSprite.createSprite(308, 28);
+  GeneralTextSprite.setSwapBytes(true);
+  GeneralTextSprite.loadFont(FONT16, 0);
+  GeneralTextSprite.loadFont(FONT16_CHS, 1);
+  GeneralTextSprite.loadFont(FONT28, 2);
+  GeneralTextSprite.loadFont(FONT28_CHS, 3);
+  GeneralTextSprite.loadFont(FONT48, 4);
 
   PSSprite.createSprite(150, 32);
   PSSprite.setSwapBytes(true);
+  PSSprite.loadFont(FONT16, 0);
+  PSSprite.loadFont(FONT16_CHS, 1);
+  PSSprite.loadFont(FONT28, 2);
+  PSSprite.loadFont(FONT28_CHS, 3);
 
   SquelchSprite.createSprite(27, 19);
   SquelchSprite.setSwapBytes(true);
+  SquelchSprite.loadFont(FONT16, 0);
+  SquelchSprite.loadFont(FONT16_CHS, 1);
 
   FullLineSprite.createSprite(308, 19);
   FullLineSprite.setSwapBytes(true);
+  FullLineSprite.loadFont(FONT16, 0);
+  FullLineSprite.loadFont(FONT16_CHS, 0);
 
   OneBigLineSprite.createSprite(270, 30);
   OneBigLineSprite.setSwapBytes(true);
+  OneBigLineSprite.loadFont(FONT28, 0);
+  OneBigLineSprite.loadFont(FONT28_CHS, 0);
 
   SignalSprite.createSprite(80, 48);
+  SignalSprite.loadFont(FONT28, 0);
   SignalSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
   SignalSprite.setSwapBytes(true);
 
@@ -2421,8 +2436,7 @@ void ModeButtonPress() {
             menupage = INDEX;
             menuitem = 0;
             if (spispeed == 7) tft.setSPISpeed(40);
-            PSSprite.unloadFont();
-            if (language == LANGUAGE_CHS) PSSprite.loadFont(FONT16_CHS); else PSSprite.loadFont(FONT16);
+            if (language == LANGUAGE_CHS) PSSprite.setTextFont(1); else PSSprite.setTextFont(0);
             BuildMenu();
             freq_in = 0;
             menu = true;
@@ -2465,8 +2479,7 @@ void ModeButtonPress() {
             menuoption = ITEM1;
             menupage = INDEX;
             menuitem = 0;
-            PSSprite.unloadFont();
-            if (language == LANGUAGE_CHS) PSSprite.loadFont(FONT16_CHS); else PSSprite.loadFont(FONT16);
+            if (language == LANGUAGE_CHS) PSSprite.setTextFont(1); else PSSprite.setTextFont(0);
             BuildMenu();
             freq_in = 0;
           }
@@ -2881,30 +2894,17 @@ void ShowFreq(int mode) {
 
     if (!screenmute) {
       FrequencySprite.fillSprite(BackgroundColor);
-
-      switch (freqfont) {
-        case 0: FrequencySprite.loadFont(FREQFONT0); break;
-        case 1: FrequencySprite.loadFont(FREQFONT1); break;
-        case 2: FrequencySprite.loadFont(FREQFONT2); break;
-        case 3: FrequencySprite.loadFont(FREQFONT3); break;
-        case 4: FrequencySprite.loadFont(FREQFONT4); break;
-        case 5: FrequencySprite.loadFont(FREQFONT5); break;
-      }
-
       FrequencySprite.setTextDatum(TR_DATUM);
       FrequencySprite.setTextColor(FreqColor, FreqColorSmooth, false);
-      FrequencySprite.drawString(String(frequency_AM) + " ", 218, -6);
-      FrequencySprite.unloadFont();
+      FrequencySprite.drawString(String(frequency_AM) + " ", 218, -6, freqfont);
       FrequencySprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
       FrequencySprite.setTextDatum(TL_DATUM);
-      FrequencySprite.loadFont(FONT16);
 
       if (band == BAND_SW && showSWMIBand) {
         DivdeSWMIBand();
         updateSWMIBand();
       }
 
-      FrequencySprite.unloadFont();
       FrequencySprite.pushSprite(46, 46);
     }
 
@@ -2923,33 +2923,21 @@ void ShowFreq(int mode) {
         tftReplace(ARIGHT, String(freqold / 100) + "." + (freqold % 100 < 10 ? "0" : "") + String(freqold % 100) + " MHz", String(freq / 100) + "." + (freq % 100 < 10 ? "0" : "") + String(freq % 100), 290, 201, BWAutoColor, BWAutoColorSmooth, BackgroundColor, 16);
         freqold = freq;
       } else {
-        switch (freqfont) {
-          case 0: FrequencySprite.loadFont(FREQFONT0); break;
-          case 1: FrequencySprite.loadFont(FREQFONT1); break;
-          case 2: FrequencySprite.loadFont(FREQFONT2); break;
-          case 3: FrequencySprite.loadFont(FREQFONT3); break;
-          case 4: FrequencySprite.loadFont(FREQFONT4); break;
-          case 5: FrequencySprite.loadFont(FREQFONT5); break;
-        }
-
         FrequencySprite.fillSprite(BackgroundColor);
 
         if (mode == 0) {
           FrequencySprite.setTextDatum(TR_DATUM);
           FrequencySprite.setTextColor(FreqColor, FreqColorSmooth, false);
         } else {
-          FrequencySprite.unloadFont();
           FrequencySprite.setTextColor(ActiveColor, ActiveColorSmooth, false);
           FrequencySprite.setTextDatum(TC_DATUM);
-          if (language == LANGUAGE_CHS) FrequencySprite.loadFont(FONT16_CHS); else FrequencySprite.loadFont(FONT16);
         }
 
         switch (mode) {
           case 0:
-            FrequencySprite.drawString(String(freq / 100) + "." + (freq % 100 < 10 ? "0" : "") + String(freq % 100) + " ", 218, -6);
+            FrequencySprite.drawString(String(freq / 100) + "." + (freq % 100 < 10 ? "0" : "") + String(freq % 100) + " ", 218, -6, freqfont);
             freqold = freq;
             break;
-
           case 1: Infoboxprint(textUI(34)); break;
           case 2: Infoboxprint(textUI(290)); break;
           case 3: Infoboxprint(textUI(291)); break;
@@ -2958,7 +2946,6 @@ void ShowFreq(int mode) {
         }
 
         FrequencySprite.pushSprite(46, 46);
-        FrequencySprite.unloadFont();
         if (mode == 5) delay(1000);
       }
     }
@@ -2988,8 +2975,9 @@ void ShowFreq(int mode) {
       tft.fillCircle(314, 223, 2, GreyoutColor);
       tft.fillCircle(314, 234, 2, GreyoutColor);
     } else {
-      RDSSprite.fillSprite(BackgroundColor);
-      RDSSprite.pushSprite(36, 220);
+      GeneralTextSprite.fillSprite(TFT_TRANSPARENT);
+      GeneralTextSprite.fillRect(0, 0, 165, 19, BackgroundColor);
+      GeneralTextSprite.pushSprite(36, 220, TFT_TRANSPARENT);
       tft.fillCircle(314, 223, 2, GreyoutColor);
       tft.fillCircle(314, 234, 2, GreyoutColor);
     }
@@ -3311,16 +3299,14 @@ void doSquelch() {
       }
     }
   } else {
-    if (language == LANGUAGE_CHS) SquelchSprite.loadFont(FONT16_CHS); else SquelchSprite.loadFont(FONT16);
-
     if (!XDRGTKUSB && !XDRGTKTCP && usesquelch && (!scandxmode || (scandxmode && !scanmute))) {
       if (!screenmute && usesquelch && !advancedRDS && !afscreen && !rdsstatscreen) {
         if (!BWtune && !menu && (Squelch > Squelchold + 2 || Squelch < Squelchold - 2)) {
           SquelchSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
           SquelchSprite.fillSprite(BackgroundColor);
-          if (Squelch == -100) SquelchSprite.drawString("--", 0, 0);
-          else if (Squelch == 920) SquelchSprite.drawString("ST", 0, 0);
-          else SquelchSprite.drawString(String(SquelchShow), 0, 0);
+          if (Squelch == -100) SquelchSprite.drawString("--", 0, 0, (language == LANGUAGE_CHS) ? 1 : 0);
+          else if (Squelch == 920) SquelchSprite.drawString("ST", 0, 0, (language == LANGUAGE_CHS) ? 1 : 0);
+          else SquelchSprite.drawString(String(SquelchShow), 0, 0, (language == LANGUAGE_CHS) ? 1 : 0);
           SquelchSprite.pushSprite(223, 147);
           Squelchold = Squelch;
         }
@@ -3355,9 +3341,9 @@ void doSquelch() {
             SquelchSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
             SquelchSprite.fillSprite(BackgroundColor);
 
-            if (Squelch == -1) SquelchSprite.drawString("ST", 0, 0);
-            else if (Squelch == 0) SquelchSprite.drawString("--", 0, 0);
-            else SquelchSprite.drawString(String(SquelchShow), 0, 0);
+            if (Squelch == -1) SquelchSprite.drawString("ST", 0, 0, (language == LANGUAGE_CHS) ? 1 : 0);
+            else if (Squelch == 0) SquelchSprite.drawString("--", 0, 0, (language == LANGUAGE_CHS) ? 1 : 0);
+            else SquelchSprite.drawString(String(SquelchShow), 0, 0, (language == LANGUAGE_CHS) ? 1 : 0);
             if (Squelch != Squelchold) SquelchSprite.pushSprite(223, 147);
             Squelchold = Squelch;
           }
@@ -3387,7 +3373,6 @@ void doSquelch() {
       }
     }
   }
-  SquelchSprite.unloadFont();
 }
 
 void doBW() {
@@ -3860,17 +3845,16 @@ void read_encoder() {
 }
 
 void tftReplace(int8_t offset, const String & textold, const String & text, int16_t x, int16_t y, int color, int smoothcolor, int background, uint8_t fontsize) {
-  const uint8_t *selectedFont = nullptr;
+  uint8_t selectedFont = 0;
   if (language == LANGUAGE_CHS) {
-    if (fontsize == 16) selectedFont = FONT16_CHS;
-    else if (fontsize == 28) selectedFont = FONT28_CHS;
+    if (fontsize == 16) selectedFont = 1;
+    else if (fontsize == 28) selectedFont = 3;
   } else {
-    if (fontsize == 16) selectedFont = FONT16;
-    else if (fontsize == 28) selectedFont = FONT28;
+    if (fontsize == 16) selectedFont = 0;
+    else if (fontsize == 28) selectedFont = 2;
   }
-  if (fontsize == 48) selectedFont = FONT48;
+  if (fontsize == 48) selectedFont = 4;
 
-  tft.loadFont(selectedFont);
   tft.setTextColor(background, background, false);
 
   switch (offset) {
@@ -3879,7 +3863,7 @@ void tftReplace(int8_t offset, const String & textold, const String & text, int1
     case 1: tft.setTextDatum(TR_DATUM); break;
   }
 
-  tft.drawString(textold, x, y);
+  tft.drawString(textold, x, y, selectedFont);
   tft.setTextColor(color, smoothcolor, false);
 
   switch (offset) {
@@ -3891,23 +3875,19 @@ void tftReplace(int8_t offset, const String & textold, const String & text, int1
   String modifiedText = text;
   modifiedText.replace("\n", " ");
 
-  tft.drawString(modifiedText, x, y);
-  tft.unloadFont();
+  tft.drawString(modifiedText, x, y, selectedFont);
 }
 
 void tftPrint(int8_t offset, const String & text, int16_t x, int16_t y, int color, int smoothcolor, uint8_t fontsize) {
-  const uint8_t *selectedFont = nullptr;
+  uint8_t selectedFont = 0;
   if (language == LANGUAGE_CHS) {
-    if (fontsize == 16) selectedFont = FONT16_CHS;
-    else if (fontsize == 28) selectedFont = FONT28_CHS;
+    if (fontsize == 16) selectedFont = 1;
+    else if (fontsize == 28) selectedFont = 3;
   } else {
-    if (fontsize == 16) selectedFont = FONT16;
-    else if (fontsize == 28) selectedFont = FONT28;
+    if (fontsize == 16) selectedFont = 0;
+    else if (fontsize == 28) selectedFont = 2;
   }
-
-  if (fontsize == 48) selectedFont = FONT48;
-
-  tft.loadFont(selectedFont);
+  if (fontsize == 48) selectedFont = 4;
 
   tft.setTextColor(color, smoothcolor, (fontsize == 52 ? true : false));
 
@@ -3920,39 +3900,23 @@ void tftPrint(int8_t offset, const String & text, int16_t x, int16_t y, int colo
   String modifiedText = text;
   modifiedText.replace("\n", " ");
 
-  tft.drawString(modifiedText, x, y, 1);
-  tft.unloadFont();
+  tft.drawString(modifiedText, x, y, selectedFont);
 }
 
 void UpdateFonts(byte mode) {
   switch (mode) {
     case 0:
-      RDSSprite.unloadFont();
-      PTYSprite.unloadFont();
-      PSSprite.unloadFont();
-      FullLineSprite.unloadFont();
-      OneBigLineSprite.unloadFont();
-
       if (language == LANGUAGE_CHS) {
-        RDSSprite.loadFont(FONT16_CHS);
-        PTYSprite.loadFont(FONT16_CHS);
-        if (menu) PSSprite.loadFont(FONT16_CHS); else PSSprite.loadFont(FONT28_CHS);
-        FullLineSprite.loadFont(FONT16_CHS);
-        OneBigLineSprite.loadFont(FONT28_CHS);
+        if (menu) PSSprite.setTextFont(1); else PSSprite.setTextFont(3);
+        OneBigLineSprite.setTextFont(1);
+        GeneralTextSprite.setTextFont(1);
+        FullLineSprite.setTextFont(1);
       } else {
-        RDSSprite.loadFont(FONT16);
-        PTYSprite.loadFont(FONT16);
-        if (menu) PSSprite.loadFont(FONT16); else PSSprite.loadFont(FONT28);
-        FullLineSprite.loadFont(FONT16);
-        OneBigLineSprite.loadFont(FONT28);
+        if (menu) PSSprite.setTextFont(0); else PSSprite.setTextFont(2);
+        OneBigLineSprite.setTextFont(0);
+        GeneralTextSprite.setTextFont(0);
+        FullLineSprite.setTextFont(0);
       }
-      break;
-    case 1:
-      FullLineSprite.unloadFont();
-      OneBigLineSprite.unloadFont();
-      RDSSprite.unloadFont();
-      PTYSprite.unloadFont();
-      PSSprite.unloadFont();
       break;
   }
 }
@@ -4043,14 +4007,11 @@ uint8_t doAutoMemory(uint16_t startfreq, uint16_t stopfreq, uint8_t startmem, ui
 
       SignalSprite.setTextColor(SecondaryColor, SecondaryColorSmooth, false);
       SignalSprite.setTextDatum(TC_DATUM);
-      SignalSprite.loadFont(FONT28);
       SignalSprite.drawString(String(percent) + "%", 40, 0);
-      SignalSprite.unloadFont();
       SignalSprite.pushSprite(120, 125);
 
-      if (language == LANGUAGE_CHS) SquelchSprite.loadFont(FONT16_CHS); else SquelchSprite.loadFont(FONT16);
       SquelchSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
-      SquelchSprite.drawString(String(counter), 0, 0);
+      SquelchSprite.drawString(String(counter), 0, 0, (language == LANGUAGE_CHS) ? 1 : 0);
       SquelchSprite.pushSprite(200, 155);
 
       tft.fillRect(60, 110, 2 * percent, 6, BarInsignificantColor);

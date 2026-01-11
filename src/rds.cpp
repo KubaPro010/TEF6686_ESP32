@@ -406,14 +406,15 @@ void showPI() {
 void showPTY() {
   if(radio.rds.PTY.changed(0)) {
     String PTYString = String(radio.rds.PTY) + "/" + (radio.rds.region != 0 ? (radio.rds.region == 0 ? PTY_EU[radio.rds.PTY] : PTY_USA[radio.rds.PTY]) : textUI(228 + radio.rds.PTY));
-    PTYSprite.fillSprite(BackgroundColor);
-    if(RDSstatus) PTYSprite.setTextColor(RDSColor, RDSColorSmooth, false);
-    else PTYSprite.setTextColor(RDSDropoutColor, RDSDropoutColorSmooth, false);
-    if(band < BAND_GAP) PTYSprite.drawString(PTYString, 0, 2); // only draw it on fm
+    GeneralTextSprite.fillSprite(TFT_TRANSPARENT);
+    GeneralTextSprite.fillRect(0, 0, 160, 19, BackgroundColor);
+    if(RDSstatus) GeneralTextSprite.setTextColor(RDSColor, RDSColorSmooth, false);
+    else GeneralTextSprite.setTextColor(RDSDropoutColor, RDSDropoutColorSmooth, false);
+    if(band < BAND_GAP) GeneralTextSprite.drawString(PTYString, 0, 2); // only draw it on fm
 
     if (!screenmute) {
-      if (advancedRDS) PTYSprite.pushSprite(35, 107);
-      else PTYSprite.pushSprite(35, 161);
+      if (advancedRDS) GeneralTextSprite.pushSprite(35, 107, TFT_TRANSPARENT);
+      else GeneralTextSprite.pushSprite(35, 161, TFT_TRANSPARENT);
     }
     
     if (wifi) {
@@ -514,7 +515,7 @@ void showPS() {
 void showCT() {
   char timeStr[16];
   char dateStr[9];
-  time_t t = rtc.getEpoch() + (NTPupdated ? 0 : radio.rds.offset);
+  time_t t = rtc.getEpoch();
 
   if (NTPupdated) {
     t += NTPoffset * 3600; // Convert offset from hours to seconds
@@ -537,7 +538,7 @@ void showCT() {
     int hour = localtm->tm_hour;
     if (hour < 0 || hour > 23) hour = 0;
 
-    snprintf(timeStr, sizeof(timeStr), "%02d:%02d", hour, localtm->tm_min);
+    snprintf(timeStr, sizeof(timeStr), "%02d:%02d:%02d", hour, localtm->tm_min, localtm->tm_sec);
     
   }
   rds_clock = String(timeStr);
@@ -547,26 +548,11 @@ void showCT() {
   rds_date = String(dateStr);
 
   if (!screenmute && showclock && (rds_clock != rds_clockold || rds_date != rds_dateold || radio.rds.hasCT.changed(0))) {
-
-    if ((radio.rds.hasCT && RDSstatus) || NTPupdated) {
-      rtcset = true;
-      tftReplace(ACENTER, rds_clockold, rds_clock, 134, 1, RDSColor, RDSColorSmooth, BackgroundColor, 16);
-      tftReplace(ACENTER, rds_dateold, rds_date, 134, 15, RDSColor, RDSColorSmooth, BackgroundColor, 16);
-    } else { // Handle dropout scenarios
-      if (rtcset) { // Display dropout message if RTC was set
-        tftReplace(ACENTER, rds_clockold, rds_clock, 134, 1, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor, 16);
-        tftReplace(ACENTER, rds_dateold, rds_date, 134, 15, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor, 16);
-      } else { // Clear and reprint the clock and date
-        tftPrint(ACENTER, rds_clockold, 134, 1, BackgroundColor, BackgroundColor, 16);
-        tftPrint(ACENTER, rds_clock, 134, 1, BackgroundColor, BackgroundColor, 16);
-        tftPrint(ACENTER, rds_dateold, 134, 15, BackgroundColor, BackgroundColor, 16);
-        tftPrint(ACENTER, rds_date, 134, 15, BackgroundColor, BackgroundColor, 16);
-      }
-    }
+    tftReplace(ACENTER, rds_clockold, rds_clock, 134, 1, RDSColor, RDSColorSmooth, BackgroundColor, 16);
+    tftReplace(ACENTER, rds_dateold, rds_date, 134, 15, RDSColor, RDSColorSmooth, BackgroundColor, 16);
+    rds_clockold = rds_clock;
+    rds_dateold = rds_date;
   }
-
-  rds_clockold = rds_clock;
-  rds_dateold = rds_date;
 }
 
 void showRadioText() {

@@ -1209,7 +1209,6 @@ void TEF6686::readRDS(byte showrdserrors) {
             }
           }
         } break;
-
       case RDS_GROUP_4A: {
           if (!rdsBerrorThreshold && !rdsCerrorThreshold && !rdsDerrorThreshold && rds.ctupdate && (rds.PICTlock == pi || rds.PICTlock == 0)) {
             auto rtc_time = rtc.getEpoch();
@@ -1254,10 +1253,12 @@ void TEF6686::readRDS(byte showrdserrors) {
               rtcset = true;
               
               time_t rds_utc_time = rdstime + timeoffset;
-              rds.clock_correction = rtc_time - rds_utc_time;
+              int32_t current_correction = rtc_time - rds_utc_time;
+              rds.clock_correction = current_correction;
               
               if (!NTPupdated) {
-                rtc.setTime(rds_utc_time);
+                time_t corrected_time = rds_utc_time - (current_correction / 2);
+                rtc.setTime(corrected_time);
                 sync_to_rx_rtc();
               }
             } else rds.hasCT = false;

@@ -332,16 +332,14 @@ mem presets[EE_PRESETS_CNT];
 TEF6686 radio;
 
 // FrequencySprite.createSprite(200, 50);
-// RDSSprite.createSprite(165, 19);
 // PSSprite.createSprite(150, 32);
-// PTYSprite.createSprite(160, 19);
+// GeneralTextSprite.createSprite(308, 28);
 // SquelchSprite.createSprite(27, 19);
 // FullLineSprite.createSprite(308, 19);
 // OneBigLineSprite.createSprite(270, 30);
 
 TFT_eSprite FrequencySprite = TFT_eSprite(&tft);
-TFT_eSprite RDSSprite = TFT_eSprite(&tft);
-TFT_eSprite PTYSprite = TFT_eSprite(&tft);
+TFT_eSprite GeneralTextSprite = TFT_eSprite(&tft);
 TFT_eSprite SignalSprite = TFT_eSprite(&tft);
 TFT_eSprite SquelchSprite = TFT_eSprite(&tft);
 TFT_eSprite FullLineSprite = TFT_eSprite(&tft);
@@ -354,7 +352,7 @@ WiFiClient RemoteClient;
 WiFiUDP Udp;
 WebServer webserver(80);
 
-ScrollingTextDisplay rtplusDisplay(&RDSSprite, 147, 180);
-ScrollingTextDisplay eonDisplay(&RDSSprite, 174, 180);
+ScrollingTextDisplay rtplusDisplay(&GeneralTextSprite, 147, 180, 165, 19);
+ScrollingTextDisplay eonDisplay(&GeneralTextSprite, 174, 180, 165, 19);
 ScrollingTextDisplay eccDisplay(&FullLineSprite, 198, 270);
 ScrollingTextDisplay rtDisplay(&FullLineSprite, 220, 270);
