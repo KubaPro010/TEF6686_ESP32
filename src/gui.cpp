@@ -3081,11 +3081,8 @@ void BuildDisplay() {
   tft.drawBitmap(68, 5, RDSLogo, 35, 22, GreyoutColor);
   tft.drawBitmap(249, 4, Speaker, 28, 24, GreyoutColor);
 
-  if (!StereoToggle) {
-    tft.drawBitmap(38, 5, Mono, 22, 22, SecondaryColor);
-  } else {
-    tft.drawBitmap(32, 5, Stereo, 32, 22, GreyoutColor);
-  }
+  if (!StereoToggle) tft.drawBitmap(38, 5, Mono, 22, 22, SecondaryColor);
+  else tft.drawBitmap(32, 5, Stereo, 32, 22, GreyoutColor);
 
   if (autosquelch) showAutoSquelch(1);
 
@@ -3820,13 +3817,6 @@ void MenuUpDown(bool dir) {
               if (ConverterSet < 200 || ConverterSet > 2400) {
                 if (ConverterSet > 2400) ConverterSet = 2400; else ConverterSet = 0;
               }
-            }
-
-            if (ConverterSet >= 200) {
-              Wire.beginTransmission(0x12);
-              Wire.write(ConverterSet >> 8);
-              Wire.write(ConverterSet & (0xFF));
-              Wire.endTransmission();
             }
 
             OneBigLineSprite.setTextDatum(TL_DATUM);

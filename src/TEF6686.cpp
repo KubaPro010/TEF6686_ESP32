@@ -2,7 +2,7 @@
 #include <map>
 #include <Arduino.h>
 #include <TimeLib.h>
-#include "SPIFFS.h"
+#include <SPIFFS.h>
 #include "constants.h"
 #include "utils.h"
 
@@ -1212,11 +1212,12 @@ void TEF6686::readRDS(byte showrdserrors) {
 
       case RDS_GROUP_4A: {
           if (!rdsBerrorThreshold && !rdsCerrorThreshold && !rdsDerrorThreshold && rds.ctupdate && (rds.PICTlock == pi || rds.PICTlock == 0)) {
-            uint32_t mjd = (rds.rdsB & 0x03) << 15 | ((rds.rdsC >> 1) & 0x7FFF);;
+            auto rtc_time = rtc.getEpoch();
+            uint32_t mjd = (rds.rdsB & 0x03) << 15 | ((rds.rdsC >> 1) & 0x7FFF);
             uint16_t hour, minute, day = 5, month = 1, year = 2026;
             int32_t timeoffset;
 
-            long J = mjd + 2400001 +  68569;
+            long J = mjd + 2400001 + 68569;
             long C = 4 * J / 146097;
             J = J - (146097 * C + 3) / 4;
             long Y = 4000 * (J + 1) / 1461001;
@@ -1247,20 +1248,23 @@ void TEF6686::readRDS(byte showrdserrors) {
             tm.tm_isdst = -1;
             time_t rdstime = mktime(&tm);
 
-            if (lastrdstime == 0) {
-              lastrdstime = rdstime;
-              lasttimeoffset = timeoffset;
-            }
-            if ((rdstime == lastrdstime + 60 && timeoffset == lasttimeoffset) || showrdserrors != 0) {
+            if (((rdstime == lastrdstime + 60 && timeoffset == lasttimeoffset) || (lastrdstime == 0 && lasttimeoffset == 0)) || showrdserrors != 0) {
               rds.hasCT = true;
-              rds.time = rdstime;
               rds.offset = timeoffset;
+              rtcset = true;
+              
+              time_t rds_utc_time = rdstime + timeoffset;
+              rds.clock_correction = rtc_time - rds_utc_time;
+              
+              if (!NTPupdated) {
+                rtc.setTime(rds_utc_time);
+                sync_to_rx_rtc();
+              }
             } else rds.hasCT = false;
             lastrdstime = rdstime;
             lasttimeoffset = timeoffset;
           }
         } break;
-
       case RDS_GROUP_10A: {
           if (!rdsCerrorThreshold && !rdsDerrorThreshold) {
             uint8_t segment = bitRead(rds.rdsB, 0);

@@ -1,6 +1,7 @@
 #pragma once
-#include "TimeLib.h"
+#include <TimeLib.h>
 #include "globals.h"
+#include "rtc.hpp"
 
 static const char ntpServerName[] = "0.pool.ntp.org";
 static const int localPort = 8944;

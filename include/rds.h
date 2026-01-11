@@ -7,6 +7,8 @@
 #include <WiFi.h>
 #include <ESP32Time.h>
 #include "globals.h"
+#include "NTPupdate.h"
+#include "rtc.hpp"
 
 void ShowAdvancedRDS();
 void readRds();

@@ -51,7 +51,7 @@ const unsigned char tuner_init_tab55000[] PROGMEM = {
 };
 
 bool Tuner_WriteBuffer(unsigned char *buf, uint16_t len) {
-  Wire.beginTransmission(0x64);
+  Wire.beginTransmission(TEF668X_ADDRESS);
   for (uint16_t i = 0; i < len; i++) Wire.write(buf[i]);
   uint8_t r = Wire.endTransmission();
   if (!Data_Accelerator) delay(2);
@@ -59,7 +59,7 @@ bool Tuner_WriteBuffer(unsigned char *buf, uint16_t len) {
 }
 
 bool Tuner_ReadBuffer(unsigned char *buf, uint16_t len) {
-  Wire.requestFrom(0x64, len);
+  Wire.requestFrom(TEF668X_ADDRESS, len);
   if (Wire.available() == len) {
     for (uint16_t i = 0; i < len; i++) buf[i] = Wire.read();
     return true;
@@ -92,7 +92,7 @@ bool Tuner_Table_Write(const unsigned char *tab) {
 }
 
 void Tuner_Reset(void) {
-  Wire.beginTransmission(0x64);
+  Wire.beginTransmission(TEF668X_ADDRESS);
   Wire.write(0x1e);
   Wire.write(0x5a);
   Wire.write(0x01);
@@ -104,13 +104,13 @@ void Tuner_Reset(void) {
 void Tuner_Patch(byte TEF) {
   Tuner_Reset();
   delay(100);
-  Wire.beginTransmission(0x64);
+  Wire.beginTransmission(TEF668X_ADDRESS);
   Wire.write(0x1c);
   Wire.write(0x00);
   Wire.write(0x00);
   Wire.endTransmission();
   delay(100);
-  Wire.beginTransmission(0x64);
+  Wire.beginTransmission(TEF668X_ADDRESS);
   Wire.write(0x1c);
   Wire.write(0x00);
   Wire.write(0x74);
@@ -123,13 +123,13 @@ void Tuner_Patch(byte TEF) {
       Tuner_Patch_Load(pPatchBytes205, PatchSize205);
       break;
   }
-  Wire.beginTransmission(0x64);
+  Wire.beginTransmission(TEF668X_ADDRESS);
   Wire.write(0x1c);
   Wire.write(0x00);
   Wire.write(0x00);
   Wire.endTransmission();
   delay(100);
-  Wire.beginTransmission(0x64);
+  Wire.beginTransmission(TEF668X_ADDRESS);
   Wire.write(0x1c);
   Wire.write(0x00);
   Wire.write(0x75);
@@ -142,7 +142,7 @@ void Tuner_Patch(byte TEF) {
       Tuner_Patch_Load(pLutBytes205, LutSize205);
       break;
   }
-  Wire.beginTransmission(0x64);
+  Wire.beginTransmission(TEF668X_ADDRESS);
   Wire.write(0x1c);
   Wire.write(0x00);
   Wire.write(0x00);

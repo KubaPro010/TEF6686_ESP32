@@ -514,50 +514,42 @@ void showPS() {
 void showCT() {
   char timeStr[16];
   char dateStr[9];
-  time_t t;
-
-  if (radio.rds.hasCT && !dropout && !NTPupdated) t = radio.rds.time + radio.rds.offset;
-  else {
-    t = rtc.getEpoch() + (NTPupdated ? 0 : radio.rds.offset);
-
-    // Update RDS time during dropout
-    if (dropout) radio.rds.time = static_cast<time_t>(rtc.getEpoch());
-  }
+  time_t t = rtc.getEpoch() + (NTPupdated ? 0 : radio.rds.offset);
 
   if (NTPupdated) {
     t += NTPoffset * 3600; // Convert offset from hours to seconds
     if (autoDST && isDST(t)) t += 3600;
   }
 
+  auto localtm = localtime(&t);
+
   if (clockampm) { // USA region: 12-hour AM/PM format
-    int hour = localtime(&t)->tm_hour;
+    int hour = localtm->tm_hour;
 
     if (hour < 1 || hour > 12) {
       if (hour == 0) hour = 12;
       else if (hour > 12) hour -= 12;
     }
 
-    String ampm = (localtime(&t)->tm_hour >= 12) ? "PM" : "AM";
-    snprintf(timeStr, sizeof(timeStr), "%d:%02d %s", hour, localtime(&t)->tm_min, ampm.c_str());
+    String ampm = (localtm->tm_hour >= 12) ? "PM" : "AM";
+    snprintf(timeStr, sizeof(timeStr), "%d:%02d %s", hour, localtm->tm_min, ampm.c_str());
   } else {
-    int hour = localtime(&t)->tm_hour;
+    int hour = localtm->tm_hour;
     if (hour < 0 || hour > 23) hour = 0;
 
-    snprintf(timeStr, sizeof(timeStr), "%02d:%02d", hour, localtime(&t)->tm_min);
+    snprintf(timeStr, sizeof(timeStr), "%02d:%02d", hour, localtm->tm_min);
+    
   }
-
   rds_clock = String(timeStr);
 
-  if (clockampm) strftime(dateStr, sizeof(dateStr), "%m-%d-%y", localtime(&t));
-  else strftime(dateStr, sizeof(dateStr), "%d-%m-%y", localtime(&t));
+  if (clockampm) strftime(dateStr, sizeof(dateStr), "%m-%d-%y", localtm);
+  else strftime(dateStr, sizeof(dateStr), "%d-%m-%y", localtm);
   rds_date = String(dateStr);
 
   if (!screenmute && showclock && (rds_clock != rds_clockold || rds_date != rds_dateold || radio.rds.hasCT.changed(0))) {
 
     if ((radio.rds.hasCT && RDSstatus) || NTPupdated) {
       rtcset = true;
-      if (!NTPupdated) rtc.setTime(radio.rds.time);
-
       tftReplace(ACENTER, rds_clockold, rds_clock, 134, 1, RDSColor, RDSColorSmooth, BackgroundColor, 16);
       tftReplace(ACENTER, rds_dateold, rds_date, 134, 15, RDSColor, RDSColorSmooth, BackgroundColor, 16);
     } else { // Handle dropout scenarios

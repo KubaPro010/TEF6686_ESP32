@@ -25,14 +25,12 @@ bool memorystore;
 bool memreset, memtune;
 bool menu, menuopen;
 bool mwstepsize;
-bool NTPupdated;
 bool optenc;
 bool rdsflagreset;
 bool rdsreset;
 bool rdsstatscreen;
 bool RDSSPYTCP, RDSSPYUSB;
 bool rotaryaccelerate = true;
-bool rtcset;
 bool scandxmode;
 bool scanholdflag;
 bool scanholdonsignal;
@@ -332,7 +330,6 @@ const size_t language_entrynumber = sizeof(myLanguage[0]) / sizeof(myLanguage[0]
 
 mem presets[EE_PRESETS_CNT];
 TEF6686 radio;
-ESP32Time rtc(0);
 
 // FrequencySprite.createSprite(200, 50);
 // RDSSprite.createSprite(165, 19);
@@ -345,10 +342,10 @@ ESP32Time rtc(0);
 TFT_eSprite FrequencySprite = TFT_eSprite(&tft);
 TFT_eSprite RDSSprite = TFT_eSprite(&tft);
 TFT_eSprite PTYSprite = TFT_eSprite(&tft);
+TFT_eSprite SignalSprite = TFT_eSprite(&tft);
 TFT_eSprite SquelchSprite = TFT_eSprite(&tft);
 TFT_eSprite FullLineSprite = TFT_eSprite(&tft);
 TFT_eSprite OneBigLineSprite = TFT_eSprite(&tft);
-TFT_eSprite SignalSprite = TFT_eSprite(&tft);
 TFT_eSprite PSSprite = TFT_eSprite(&tft);
 
 WiFiConnect wc;

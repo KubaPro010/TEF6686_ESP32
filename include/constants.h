@@ -1,8 +1,31 @@
 #pragma once
 
-#define VERSION "v2.20.5c"
+#include <Arduino.h>
 
-#define REVERSE                     false
+#define VERSION "v2.20.5d"
+
+#define ROTARY_PIN_A 34
+#define ROTARY_PIN_B 36
+#define ROTARY_BUTTON 39
+#define PIN_POT 35
+#define BATTERY_PIN 13
+#define BANDBUTTON 4
+#define BWBUTTON 25
+#define MODEBUTTON 26
+#define CONTRASTPIN 2
+#define STANDBYLED 19
+#define SMETERPIN 27
+#define TOUCHIRQ 33
+#define EXT_IRQ 14
+
+#define XL9555_ADDRESS 0x20 // GPIO driver used in the DP666 for the 0-9 + DX(Backspace) + Enter buttons
+// Assumes that A0 = A1 = A2 = 0 of the chip, this can range from 0x20 to 0x27
+
+#define TEF668X_ADDRESS 0x64 // I2C address of the TEF itself! Not sure if this even changes
+
+#define RX8010SJ_ADDRESS 0x32 // Address of the RTC chip in the DP666 receivers
+
+#define REVERSE false
 
 #define ALEFT                       -1
 #define ACENTER                     0
@@ -15,12 +38,12 @@
     (x_ < y_) ? x_ : y_; }
 
 #define TIMER_OFFSET_TIMER          (TIMER_500_TICK)
-#define TIMER_BW_TIMER              300
+#define TIMER_BW_TIMER              (TIMER_500_TICK)
 #define TIMER_SNR_TIMER             50
-#define TIMER_BAT_TIMER             250
+#define TIMER_BAT_TIMER             (TIMER_500_TICK)
 #define TIMER_500_TICK              500
 
-#define BAT_LEVEL_STAGE             4
+#define BAT_LEVEL_STAGE             8
 #define BATTERY_LOW_VALUE           3.2
 #define BATTERY_FULL_VALUE          4.12
 

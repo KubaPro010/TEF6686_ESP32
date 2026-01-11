@@ -5,6 +5,7 @@
 #include "Tuner_Interface.h"
 #include "RdsPiBuffer.hpp"
 #include "change_detector.h"
+#include "rtc.hpp"
 
 extern const unsigned char tuner_init_tab[] PROGMEM;
 extern const unsigned char tuner_init_tab9216[] PROGMEM;
@@ -455,7 +456,7 @@ typedef struct _rds_ {
   unsigned long blockcounter[33];
   uint16_t rdsA, rdsB, rdsC, rdsD, rdsErr, rdsStat, correctPI, rdsplusTag1, rdsplusTag2, PICTlock = 0;
   bool ps12error, ps34error, ps56error, ps78error;
-  time_t time;
+  int32_t clock_correction;
   int32_t offset;
   uint16_t aid[10];
   uint32_t dabaffreq;

@@ -10,24 +10,11 @@
 #include <WiFiUdp.h>
 #include <WiFiClient.h>
 #include <WebServer.h>
-#include "WiFiConnect.h"
-#include "WiFiConnectParam.h"
-#include "ESP32Time.h"
+#include <WiFiConnect.h>
+#include <WiFiConnectParam.h>
 #include "scrolling_text.h"
+#include "rtc.hpp"
 
-#define ROTARY_PIN_A    34
-#define ROTARY_PIN_B    36
-#define ROTARY_BUTTON   39
-#define PIN_POT         35
-#define BATTERY_PIN     13
-#define BANDBUTTON       4
-#define BWBUTTON        25
-#define MODEBUTTON      26
-#define CONTRASTPIN     2
-#define STANDBYLED      19
-#define SMETERPIN       27
-#define TOUCHIRQ        33
-#define EXT_IRQ         14
 
 extern bool RDSstatus;
 extern bool RDSstatusold;
@@ -52,14 +39,12 @@ extern bool memorystore;
 extern bool memreset, memtune;
 extern bool menu, menuopen;
 extern bool mwstepsize;
-extern bool NTPupdated;
 extern bool optenc;
 extern bool rdsflagreset;
 extern bool rdsreset;
 extern bool rdsstatscreen;
 extern bool RDSSPYTCP, RDSSPYUSB;
 extern bool rotaryaccelerate;
-extern bool rtcset;
 extern bool scandxmode;
 extern bool scanholdflag;
 extern bool scanholdonsignal;
@@ -359,7 +344,6 @@ extern const size_t language_entrynumber;
 
 extern mem presets[EE_PRESETS_CNT];
 extern TEF6686 radio;
-extern ESP32Time rtc;
 
 extern TFT_eSprite FrequencySprite;
 extern TFT_eSprite RDSSprite;
@@ -369,6 +353,7 @@ extern TFT_eSprite OneBigLineSprite;
 extern TFT_eSprite SignalSprite;
 extern TFT_eSprite PSSprite;
 extern TFT_eSprite PTYSprite;
+extern TFT_eSprite CTSprite;
 
 extern WiFiConnect wc;
 extern WiFiServer Server;

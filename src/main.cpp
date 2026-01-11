@@ -841,10 +841,10 @@ int GetNum() {
   int cnt = 0;
   unsigned int num;
 
-  Wire.beginTransmission(0x20);
+  Wire.beginTransmission(XL9555_ADDRESS);
   Wire.write(0x00);
   Wire.endTransmission();
-  Wire.requestFrom(0x20, 2);
+  Wire.requestFrom(XL9555_ADDRESS, 2);
 
   if (Wire.available() == 2) {
     keypadtimer = millis();
@@ -1146,6 +1146,52 @@ void setup() {
   gpio_set_drive_capability((gpio_num_t) 23, GPIO_DRIVE_CAP_0);
 
   setupmode = true;
+
+  Tuner_I2C_Init();
+  Serial.begin(115200);
+  byte error, address;
+  for (address = 1; address < 127; address++) {  // I2C addresses 0x01–0x7F
+    Wire.beginTransmission(address);
+    error = Wire.endTransmission();
+
+    if (error == 0) {
+      Serial.print("I2C device found at 0x");
+      if (address < 16) Serial.print("0");
+      Serial.print(address, HEX);
+      if(address == RX8010SJ_ADDRESS) {
+        Serial.print(" RTC");
+        rx_rtc_avail = true;
+      }
+      Serial.println(" !");
+    } else if (error == 4) {
+      Serial.print("Unknown error at 0x");
+      if (address < 16) Serial.print("0");
+      Serial.println(address, HEX);
+    }
+  }
+  Serial.flush();
+  Serial.end();
+
+  rtc.setTime(0);
+  if(rx_rtc_avail) {
+    RX8010SJ::DateTime defaulttime = RX8010SJ::DateTime();
+    defaulttime.second = 21;
+    defaulttime.minute = 45;
+    defaulttime.hour = 11;
+    defaulttime.dayOfWeek = 6;
+    defaulttime.dayOfMonth = 11;
+    defaulttime.month = 1;
+    defaulttime.year = 26;
+    bool reset = rx_rtc.initModule(); // initModule, not initAdapter, adapter also reinits wire
+    if(reset) {
+      Serial.println("RTC reset with defaults");
+		  rx_rtc.writeDateTime(defaulttime);
+    } else {
+      rtcset = true;
+      sync_from_rx_rtc();
+    }
+  }
+
   EEPROM.begin(EE_TOTAL_CNT);
   loadData();
 
@@ -1417,7 +1463,7 @@ void setup() {
   }
   tftPrint(ACENTER, "Patch: v" + String(TEF), 160, 202, ActiveColor, ActiveColorSmooth, 28);
 
-  Wire.beginTransmission(0x20);
+  Wire.beginTransmission(XL9555_ADDRESS);
   Wire.write(0x06);
   Wire.write(0xFF);
   Wire.write(0xFF);

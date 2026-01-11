@@ -720,7 +720,6 @@ void XDRGTKRoutine() {
         if (scandxmode) cancelDXScan();
         if (!XDRScan) BWsetRecall = BWset;
         XDRScan = true;
-        Data_Accelerator = true;
 
         switch (buff[1]) {
           case 'a': scanner_start = (atoi(buff + 2) + 5) / 10; break;
@@ -748,9 +747,8 @@ void XDRGTKRoutine() {
             }
             doBW();
             break;
-          case 'w':
-            unsigned int bwtemp;
-            bwtemp = atoi(buff + 2);
+          case 'w': {
+            unsigned int bwtemp = atoi(buff + 2);
             switch (bwtemp) {
               case 0: BWset = 0; break;
               case 56000: BWset = 1; break;
@@ -772,6 +770,7 @@ void XDRGTKRoutine() {
             }
             doBW();
             break;
+          }
 
           case '\0':
             radio.setMute();
@@ -808,7 +807,6 @@ void XDRGTKRoutine() {
             }
             break;
         }
-        Data_Accelerator = false;
         break;
       } case 'W': {
         unsigned int bwtemp = atoi(buff + 1);

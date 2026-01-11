@@ -5,6 +5,7 @@ using fs::FS;
 #include <WebServer.h>
 #include <SPIFFS.h>
 #include "globals.h"
+#include "rtc.hpp"
 
 void handleRoot();
 void handleDownloadCSV();
