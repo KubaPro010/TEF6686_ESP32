@@ -162,7 +162,7 @@ void TEF6686::setAMOffset(int8_t offset) {
 }
 
 void TEF6686::setFMBandw(uint16_t bandwidth) {
-  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Bandwidth, 7, 0, bandwidth);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Bandwidth, 7, 0, bandwidth * 10);
 }
 
 void TEF6686::setAMBandw(uint16_t bandwidth) {
