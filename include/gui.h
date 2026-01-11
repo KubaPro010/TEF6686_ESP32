@@ -41,7 +41,7 @@ extern void TuneUp();
 extern void endMenu();
 extern void startFMDXScan();
 extern void DoMemoryPosTune();
-extern void UpdateFonts(byte mode);
+extern void UpdateFonts();
 extern void tftPrint(int8_t offset, const String & text, int16_t x, int16_t y, int color, int smoothcolor, uint8_t fontsize);
 extern void setAutoSpeedSPI();
 extern void showAutoSquelch(bool mode);

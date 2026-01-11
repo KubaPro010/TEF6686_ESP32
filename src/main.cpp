@@ -1315,19 +1315,19 @@ void setup() {
   FullLineSprite.createSprite(308, 19);
   FullLineSprite.setSwapBytes(true);
   FullLineSprite.loadFont(FONT16, 0);
-  FullLineSprite.loadFont(FONT16_CHS, 0);
+  FullLineSprite.loadFont(FONT16_CHS, 1);
 
   OneBigLineSprite.createSprite(270, 30);
   OneBigLineSprite.setSwapBytes(true);
   OneBigLineSprite.loadFont(FONT28, 0);
-  OneBigLineSprite.loadFont(FONT28_CHS, 0);
+  OneBigLineSprite.loadFont(FONT28_CHS, 1);
 
   SignalSprite.createSprite(80, 48);
   SignalSprite.loadFont(FONT28, 0);
   SignalSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
   SignalSprite.setSwapBytes(true);
 
-  UpdateFonts(0);
+  UpdateFonts();
 
   if (digitalRead(BWBUTTON) == LOW && digitalRead(ROTARY_BUTTON) == HIGH && digitalRead(MODEBUTTON) == HIGH && digitalRead(BANDBUTTON) == HIGH) {
     if (rotarymode == 0) rotarymode = 1; else rotarymode = 0;
@@ -3903,21 +3903,17 @@ void tftPrint(int8_t offset, const String & text, int16_t x, int16_t y, int colo
   tft.drawString(modifiedText, x, y, selectedFont);
 }
 
-void UpdateFonts(byte mode) {
-  switch (mode) {
-    case 0:
-      if (language == LANGUAGE_CHS) {
-        if (menu) PSSprite.setTextFont(1); else PSSprite.setTextFont(3);
-        OneBigLineSprite.setTextFont(1);
-        GeneralTextSprite.setTextFont(1);
-        FullLineSprite.setTextFont(1);
-      } else {
-        if (menu) PSSprite.setTextFont(0); else PSSprite.setTextFont(2);
-        OneBigLineSprite.setTextFont(0);
-        GeneralTextSprite.setTextFont(0);
-        FullLineSprite.setTextFont(0);
-      }
-      break;
+void UpdateFonts() {
+  if (language == LANGUAGE_CHS) {
+    if (menu) PSSprite.setTextFont(1); else PSSprite.setTextFont(3);
+    OneBigLineSprite.setTextFont(1);
+    GeneralTextSprite.setTextFont(1);
+    FullLineSprite.setTextFont(1);
+  } else {
+    if (menu) PSSprite.setTextFont(0); else PSSprite.setTextFont(2);
+    OneBigLineSprite.setTextFont(0);
+    GeneralTextSprite.setTextFont(0);
+    FullLineSprite.setTextFont(0);
   }
 }
 

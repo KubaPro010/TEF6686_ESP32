@@ -498,7 +498,6 @@ TFT_eSPI::TFT_eSPI(int16_t w, int16_t h)
   _fillbg = isDigits = textwrapY = false;
   textwrapX = true;
   textdatum = TL_DATUM;
-  fontsloaded = 0;
 
   _swapBytes = false;
 
@@ -507,17 +506,12 @@ TFT_eSPI::TFT_eSPI(int16_t w, int16_t h)
   lockTransaction = false;
 
   _booted = true;
-  _cp437 = false;
-  _utf8 = true;
 
   addr_row = 0xFFFF;
   addr_col = 0xFFFF;
 
   _xPivot = 0;
   _yPivot = 0;
-
-  fontsloaded = 0x0002; // Bit 1 set
-  fontsloaded |= 0x8000; // Bit 15 set
 }
 
 void TFT_eSPI::initBus(void) {
@@ -2139,10 +2133,6 @@ int16_t TFT_eSPI::textWidth(const char *string, uint8_t font) {
   return str_width;
 }
 
-uint16_t TFT_eSPI::fontsLoaded() {
-  return fontsloaded;
-}
-
 int16_t TFT_eSPI::fontHeight(uint8_t font) {
   if (font > 8) return 0;
 
@@ -2948,8 +2938,6 @@ void TFT_eSPI::invertDisplay(bool i) {
 }
 
 uint16_t TFT_eSPI::decodeUTF8(uint8_t c) {
-  if (!_utf8) return c;
-
   if ((c & 0x80) == 0x00) {
     decoderState = 0;
     return c;
@@ -2988,8 +2976,6 @@ uint16_t TFT_eSPI::decodeUTF8(uint8_t c) {
 uint16_t TFT_eSPI::decodeUTF8(uint8_t *buf, uint16_t *index, uint16_t remaining)
 {
   uint16_t c = buf[(*index)++];
-
-  if (!_utf8) return c;
 
   if ((c & 0x80) == 0x00) return c;
 

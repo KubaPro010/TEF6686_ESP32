@@ -277,9 +277,6 @@ class TFT_eSPI { friend class TFT_eSprite;
            // Used by Smooth font class to fetch a pixel colour for the anti-aliasing
   void     setCallback(getColorCallback getCol);
 
-  uint16_t fontsLoaded(void); // Each bit in returned value represents a font type that is loaded - used for debug/error handling only
-
-
   void     spiwrite(uint8_t);        // legacy support only
   void     writecommand(uint8_t c);  // Send an 8-bit command, function resets DC/RS high ready for data
   void     writedata(uint8_t d);     // Send data with DC/RS set high
@@ -440,16 +437,11 @@ uint8_t spi_write_speed;
   int32_t  bg_cursor_x;
   int32_t  last_cursor_x;
 
-  uint32_t fontsloaded;
-
   bool     isDigits;
   bool     textwrapX, textwrapY;
   bool     _swapBytes;
 
   bool     _booted;
-
-  bool     _cp437;
-  bool     _utf8;
 
   uint32_t _lastColor;
 

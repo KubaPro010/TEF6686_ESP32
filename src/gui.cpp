@@ -3519,14 +3519,14 @@ void MenuUpDown(bool dir) {
         switch (menuoption) {
           case ITEM1:
             if (dir) {
-              language ++;
+              language++;
               if (language == language_totalnumber) language = 0;
             } else {
-              language --;
+              language--;
               if (language > language_totalnumber) language = language_totalnumber - 1;
             }
 
-            UpdateFonts(0);
+            UpdateFonts();
             OneBigLineSprite.drawString(textUI(0), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
@@ -5222,7 +5222,6 @@ void DoMenu() {
               tftPrint(ACENTER, "http://192.168.4.1", 155, 174, PrimaryColor, PrimaryColorSmooth, 16);
               char key [9];
               XDRGTK_key.toCharArray(key, 9);
-              UpdateFonts(1);
               if (wifi) {
                 wifi = false;
                 tryWiFi();
@@ -5238,7 +5237,6 @@ void DoMenu() {
               XDRGTK_key = XDRGTK_key_input.getValue();
               EEPROM.writeString(EE_STRING_XDRGTK_KEY, XDRGTK_key);
               EEPROM.commit();
-              UpdateFonts(0);
               wifi = true;
               tryWiFi();
               delay(2000);
