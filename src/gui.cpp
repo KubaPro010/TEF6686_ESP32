@@ -2878,7 +2878,9 @@ void BuildMenu() {
     ShowOneLine(ITEM10, 9, (menuoption == ITEM10 ? true : false));
   }
 
+#ifdef SMETERPIN
   analogWrite(SMETERPIN, 0);
+#endif
 }
 
 void BuildAdvancedRDS() {

@@ -8,11 +8,12 @@ typedef enum {
   TEF_FM = 32,
   TEF_AM = 33,
   TEF_AUDIO = 48,
-  TEF_APPL = 64
+  TEF_APPL = 64,
+  TEF_INIT = 20
 } TEF_MODULE;
 
 typedef enum {
-  Cmd_Tune_To =  1,
+  Cmd_Tune_To = 1,
   Cmd_Set_Bandwidth = 10,
   Cmd_Set_RFAGC = 11,
   Cmd_Set_Antenna = 12,
@@ -29,10 +30,13 @@ typedef enum {
   Cmd_Set_Highcut_Noise = 53,
   Cmd_Set_Highcut_Mph = 54,
   Cmd_Set_Highcut_Max = 55,
+  Cmd_Set_LowCut_Max = 57,
+  Cmd_Set_Stereo_Time = 60,
   Cmd_Set_Stereo_Level = 62,
   Cmd_Set_Stereo_Noise = 63,
   Cmd_Set_Stereo_Mph = 64,
   Cmd_Set_Stereo_Min = 66,
+  Cmd_Set_StHiBlend_Time = 70,
   Cmd_Set_StHiBlend_Level = 72,
   Cmd_Set_StHiBlend_Noise = 73,
   Cmd_Set_StHiBlend_Mph = 74,
@@ -54,13 +58,18 @@ typedef enum {
 typedef enum {
   Cmd_Set_Volume = 10,
   Cmd_Set_Mute = 11,
+  Cmd_Set_Output_Source = 13,
   Cmd_Set_Input = 12,
+  Cmd_Set_Ana_Out = 21,
+  Cmd_Set_Dig_IO = 22,
   Cmd_Set_WaveGen = 24
 } TEF_AUDIO_COMMAND;
 
 typedef enum {
   Cmd_Set_OperationMode = 1,
   Cmd_Set_GPIO = 3,
+  Cmd_Set_ReferenceClock = 4,
+  Cmd_Set_Activate = 5,
   Cmd_Get_Operation_Status = 128,
   Cmd_Get_Identification = 130
 } TEF_APPL_COMMAND;

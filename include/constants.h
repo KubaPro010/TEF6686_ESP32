@@ -13,13 +13,15 @@
 #define BWBUTTON 25
 #define MODEBUTTON 26
 #define CONTRASTPIN 2
-#define STANDBYLED 19
-#define SMETERPIN 27
 #define TOUCHIRQ 33
 #define EXT_IRQ 14
 
+#ifndef DEEPELEC_DP_66X
+#define STANDBYLED 19
+#define SMETERPIN 27
+#endif
+
 #define XL9555_ADDRESS 0x20 // GPIO driver used in the DP666 for the 0-9 + DX(Backspace) + Enter buttons
-// Assumes that A0 = A1 = A2 = 0 of the chip, this can range from 0x20 to 0x27
 
 #define TEF668X_ADDRESS 0x64 // I2C address of the TEF itself! Not sure if this even changes
 
@@ -37,11 +39,10 @@
     typeof (Y) y_ = (Y);\
     (x_ < y_) ? x_ : y_; }
 
-#define TIMER_OFFSET_TIMER          (TIMER_500_TICK)
-#define TIMER_BW_TIMER              (TIMER_500_TICK)
-#define TIMER_SNR_TIMER             50
-#define TIMER_BAT_TIMER             (TIMER_500_TICK)
-#define TIMER_500_TICK              500
+#define TIMER_OFFSET_TIMER          250
+#define TIMER_BW_TIMER              300
+#define TIMER_SNR_TIMER             30
+#define TIMER_BAT_TIMER             750
 
 #define BAT_LEVEL_STAGE             8
 #define BATTERY_LOW_VALUE           3.2
@@ -376,7 +377,7 @@ enum LONGBANDBUTTONPRESS {
 enum menupage {INDEX, MAINSETTINGS, AUDIOSETTINGS, DISPLAYSETTINGS, RDSSETTINGS, FMSETTINGS, AMSETTINGS, CONNECTIVITY, DXMODE, AUTOMEM};
 
 enum AUTOMEMPIMODES {
-  MEMPI_OFF = 0, MEMPI_RANGE, MEMPI_FULL
+  MEMPI_OFF = 0, MEMPI_RANGE
 };
 
 enum SCAN_CANCEL {
@@ -384,7 +385,7 @@ enum SCAN_CANCEL {
 };
 
 enum RADIO_BAND {
-  BAND_OIRT = 0, BAND_FM, BAND_GAP, BAND_LW, BAND_MW, BAND_SW, BAND_NONEXISTENT
+  BAND_OIRT = 0, BAND_FM, BAND_GAP, BAND_LW, BAND_MW, BAND_SW
 };
 
 enum RADIO_FM_BAND_SELECTION {

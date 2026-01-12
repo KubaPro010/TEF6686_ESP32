@@ -60,9 +60,13 @@ void Touch_IRQ_Handler() {
 }
 
 void deepSleep() {
+#ifdef SMETERPIN
   analogWrite(SMETERPIN, 0);
+#endif
+#ifdef STANDBYLED
   pinMode(STANDBYLED, OUTPUT);
   digitalWrite(STANDBYLED, LOW);
+#endif
   MuteScreen(1);
   StoreFrequency();
   radio.power(1);
@@ -179,7 +183,7 @@ void ShowBW() {
   else if(!BWtune) return;
 
   if (BW != BWOld || BWreset) {
-    if (BWset == 0) tftReplace(ARIGHT, String (BWOld, DEC), String (BW, DEC), 203, 4, BWAutoColor, BWAutoColorSmooth, BackgroundColor, 28); else tftReplace(ARIGHT, String (BWOld, DEC), String (BW, DEC), 203, 4, PrimaryColor, PrimaryColorSmooth, BackgroundColor, 28);
+    if (BWset == 0) tftReplace(ARIGHT, String(BWOld, DEC), String(BW, DEC), 203, 4, BWAutoColor, BWAutoColorSmooth, BackgroundColor, 28); else tftReplace(ARIGHT, String (BWOld, DEC), String(BW, DEC), 203, 4, PrimaryColor, PrimaryColorSmooth, BackgroundColor, 28);
     BWOld = BW;
     BWreset = false;
     if (wifi) {
@@ -233,7 +237,7 @@ void updateCodetect() {
 }
 
 void SetTunerPatch() {
-  if (TEF != 102 && TEF != 205) {
+  if(FORBIDDEN_TUNER(TEF)) {
     radio.init(102);
     uint16_t device, hw, sw;
     radio.getIdentification(&device, &hw, &sw);
@@ -241,7 +245,7 @@ void SetTunerPatch() {
     tft.fillScreen(BackgroundColor);
     analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 15, 255));
 
-    if (TEF != 102 && TEF != 205) {
+    if(FORBIDDEN_TUNER(TEF)) {
       tftPrint(ACENTER, textUI(35), 150, 78, ActiveColor, ActiveColorSmooth, 28);
       for (;;);
     }
@@ -827,19 +831,37 @@ void ShowNum(int val) {
 byte numval[16] = {2, 3, 127, 5, 6, 0, 9, 13, 8, 7, 4, 1, 0, 0, 0, 0};
 
 int GetNum() {
-  int16_t temp;
-  int cnt = 0;
-  unsigned int num;
 
+  // Get input port 0 and 1
   Wire.beginTransmission(XL9555_ADDRESS);
   Wire.write(0x00);
   Wire.endTransmission();
   Wire.requestFrom(XL9555_ADDRESS, 2);
 
-  if (Wire.available() == 2) {
+  // According to the schematic of the DP666, this is the table that the buttons are connected to:
+  // IO0_0 = NUM2
+  // IO0_1 = NUM3
+  // IO0_2 = BACKSPACE (DX is printed on the case)
+  // IO0_3 = NUM5
+  // IO0_4 = NUM6
+  // IO0_5 = NUM0
+  // IO0_6 = NUM9
+  // IO0_7 = ENTER
+  // IO1_0 = NUM8
+  // IO1_1 = NUM7
+  // IO1_2 = NUM4
+  // IO1_3 = NUM1
+  // Rest is NC
+  // According to the docs, register 0 contains pins IO0_x where x is equal to the bit from the right (x = 7, is MSB)
+
+  int cnt = 0;
+  int16_t temp;
+  unsigned int num;
+  if(Wire.available() == 2) {
     keypadtimer = millis();
+
     temp = Wire.read() & 0xFF;
-    temp |= (Wire.read() & 0xFF) * 256;
+    temp |= (Wire.read() & 0xFF) << 8;
     for (int i = 0; i < 16; i++) {
       if ((temp & 0x01) == 0) {
         num = numval[i];
@@ -1135,10 +1157,13 @@ void setup() {
 
   setupmode = true;
 
-  Tuner_I2C_Init();
+  Wire.begin();
+  Wire.setClock(400000);
+  delay(5);
+
   Serial.begin(115200);
   byte error, address;
-  for (address = 1; address < 127; address++) {  // I2C addresses 0x01–0x7F
+  for (address = 1; address < 127; address++) {
     Wire.beginTransmission(address);
     error = Wire.endTransmission();
 
@@ -1262,8 +1287,10 @@ void setup() {
   pinMode(ROTARY_BUTTON, INPUT);
   pinMode(ROTARY_PIN_A, INPUT);
   pinMode(ROTARY_PIN_B, INPUT);
+#ifdef STANDBYLED
   pinMode(STANDBYLED, OUTPUT);
   digitalWrite(STANDBYLED, HIGH);
+#endif
   pinMode(TOUCHIRQ, INPUT);
   pinMode(EXT_IRQ, INPUT_PULLUP);
 
@@ -1348,12 +1375,16 @@ void setup() {
   }
 
   if (digitalRead(BWBUTTON) == HIGH && digitalRead(ROTARY_BUTTON) == HIGH && digitalRead(MODEBUTTON) == HIGH && digitalRead(BANDBUTTON) == LOW) {
+#ifdef SMETERPIN
     analogWrite(SMETERPIN, 511);
+#endif
     analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 15, 255));
     Infoboxprint(textUI(4));
     tftPrint(ACENTER, textUI(2), 155, 130, ActiveColor, ActiveColorSmooth, 28);
     while (digitalRead(BANDBUTTON) == LOW) delay(50);
+#ifdef SMETERPIN
     analogWrite(SMETERPIN, 0);
+#endif
   }
 
   if (digitalRead(BWBUTTON) == HIGH && digitalRead(ROTARY_BUTTON) == LOW && digitalRead(MODEBUTTON) == HIGH && digitalRead(BANDBUTTON) == HIGH) {
@@ -1419,13 +1450,13 @@ void setup() {
 
   for (int x = 0; x <= ContrastSet; x++) {
     analogWrite(CONTRASTPIN, map(x, 0, 100, 15, 255));
-    delay(30);
+    delay(10);
   }
 
   tft.fillRect(120, 230, 16, 6, PrimaryColor);
 
   TEF = EEPROM.readByte(EE_BYTE_TEF);
-  if (TEF != 102 && TEF != 205) SetTunerPatch();
+  if(FORBIDDEN_TUNER(TEF)) SetTunerPatch();
   radio.init(TEF);
 
   uint16_t device, hw, sw;
@@ -1438,6 +1469,7 @@ void setup() {
     chipmodel = 0;
     tft.fillRect(152, 230, 16, 6, PrimaryColor);
     tftPrint(ACENTER, "TEF6686 Lithio", 160, 172, ActiveColor, ActiveColorSmooth, 28);
+#ifndef DEEPELEC_DP_66X
   } else if (lowByte(device) == 1) {
     fullsearchrds = true;
     chipmodel = 1;
@@ -1454,14 +1486,15 @@ void setup() {
     chipmodel = 3;
     tft.fillRect(152, 230, 16, 6, PrimaryColor);
     tftPrint(ACENTER, "TEF6689 Lithio FMSI DR", 160, 172, ActiveColor, ActiveColorSmooth, 28);
+#endif
   } else {
     tftPrint(ACENTER, textUI(9), 160, 172, SignificantColor, SignificantColorSmooth, 28);
     tft.fillRect(152, 230, 16, 6, SignificantColor);
     while (true);
-    for (;;);
   }
   tftPrint(ACENTER, "Patch: v" + String(TEF), 160, 202, ActiveColor, ActiveColorSmooth, 28);
 
+  // Configures the GPIO chip for input in every pin
   Wire.beginTransmission(XL9555_ADDRESS);
   Wire.write(0x06);
   Wire.write(0xFF);
@@ -1480,7 +1513,8 @@ void setup() {
     Udp.stop();
     tft.fillRect(184, 230, 16, 6, SignificantColor);
   }
-  delay(750);
+
+  while(digitalRead(ROTARY_BUTTON) == LOW) delay(50);
 
   radio.setVolume(VolSet);
   radio.setOffset(LevelOffset);
@@ -1505,13 +1539,6 @@ void setup() {
   radio.setAMAGC(amagc);
   if (fmsi) radio.setFMSI(2); else radio.setFMSI(1);
   LowLevelInit = true;
-
-  if (ConverterSet >= 200) {
-    Wire.beginTransmission(0x12);
-    Wire.write(ConverterSet >> 8);
-    Wire.write(ConverterSet & (0xFF));
-    Wire.endTransmission();
-  }
 
   BuildDisplay();
   SelectBand();
@@ -2975,6 +3002,7 @@ void ShowSignalLevel() {
   SAvg4 = (((SAvg4 * 9) + 5) / 10) + WAM;
   SAvg5 = (((SAvg5 * 9) + 5) / 10) + USN;
 
+#ifdef SMETERPIN
   float sval = 0;
   int16_t smeter = 0;
 
@@ -2986,6 +3014,7 @@ void ShowSignalLevel() {
   }
 
   smeter = int16_t(sval);
+#endif
   SStatus = SAvg / 10;
   CN = SAvg2 / 10;
   MP = SAvg4 / 10;
@@ -3021,7 +3050,9 @@ void ShowSignalLevel() {
       }
     }
 
+#ifdef SMETERPIN
     if (!menu) analogWrite(SMETERPIN, smeter);
+#endif
 
     int SStatusprint = 0;
     if (unit == 0) SStatusprint = SStatus;

@@ -105,24 +105,45 @@ uint16_t TEF6686::TestAF() {
   return currentfreq;
 }
 
-
 void TEF6686::init(byte TEF) {
-  Tuner_I2C_Init();
+  Tuner_Reset();
 
-  uint8_t bootstatus = devTEF_APPL_Get_Operation_Status();
-  if (bootstatus == 0) {
-    Tuner_Patch(TEF);
-    delay(50);
+  while(devTEF_APPL_Get_Operation_Status() != 0) delay(5);
 
-    int xtalADC = analogRead(15);
-    if (xtalADC < XTAL_0V_ADC + XTAL_ADC_TOL) Tuner_Init(tuner_init_tab9216);
-    else if (xtalADC > XTAL_1V_ADC - XTAL_ADC_TOL && xtalADC < XTAL_1V_ADC + XTAL_ADC_TOL) Tuner_Init(tuner_init_tab12000);
-    else if (xtalADC > XTAL_2V_ADC - XTAL_ADC_TOL && xtalADC < XTAL_2V_ADC + XTAL_ADC_TOL) Tuner_Init(tuner_init_tab55000);
-    else Tuner_Init(tuner_init_tab4000);
+  uint32_t clock = 12000000;
 
-    power(1);
-    Tuner_Init(tuner_init_tab);
-  }
+#ifndef DEEPELEC_DP_66X
+  int xtalADC = analogRead(15);
+  if (xtalADC < XTAL_0V_ADC + XTAL_ADC_TOL) clock = 9216000;
+  else if (xtalADC > XTAL_1V_ADC - XTAL_ADC_TOL && xtalADC < XTAL_1V_ADC + XTAL_ADC_TOL);
+  else if (xtalADC > XTAL_2V_ADC - XTAL_ADC_TOL && xtalADC < XTAL_2V_ADC + XTAL_ADC_TOL) clock = 55466670;
+  else clock = 4000000;
+#endif
+
+  // Send the firmware to the device
+  Tuner_Patch(TEF);
+
+  // Start the firmware
+  devTEF_Set_Cmd(TEF_INIT, 0, 3);
+
+  while(devTEF_APPL_Get_Operation_Status() != 1) delay(5); // Wait for it to load
+
+  if(clock != 9216000) devTEF_Set_Cmd(TEF_APPL, Cmd_Set_ReferenceClock, 9, (clock >> 16) & 0xffff, clock & 0xffff, (clock == 55466670) ? 1 : 0);
+  devTEF_Set_Cmd(TEF_APPL, Cmd_Set_Activate, 5, 1); // Setup done, start radio
+
+  while(devTEF_APPL_Get_Operation_Status() != 2) delay(5); // Wait for it to start
+
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Mph, 9, 0, 360, 300);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Max, 7, 0, 4000);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_LowCut_Max, 7, 0, 100);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Stereo_Time, 11, 60, 120, 100, 200);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Time, 11, 500, 2000, 200, 200);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Level, 9, 0, 600, 240);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Noise, 9, 0, 160, 140);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Mph, 9, 0, 160, 140);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Max, 7, 0, 4000);
+  devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_Ana_Out, 7, 128, 1);
+  devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_Output_Source, 7, 128, 224);
 }
 
 void TEF6686::getIdentification(uint16_t *device, uint16_t *hw_version, uint16_t *sw_version) {
@@ -1251,11 +1272,11 @@ void TEF6686::readRDS(byte showrdserrors) {
               rds.hasCT = true;
               rds.offset = timeoffset;
               rtcset = true;
-              
+
               time_t rds_utc_time = rdstime + timeoffset;
               int32_t current_correction = rtc_time - rds_utc_time;
               rds.clock_correction = current_correction;
-              
+
               if (!NTPupdated) {
                 time_t corrected_time = rds_utc_time - (current_correction / 2);
                 rtc.setTime(corrected_time);
