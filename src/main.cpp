@@ -4,7 +4,6 @@
 #include <Wire.h>
 #include <Hash.h>
 #include <FS.h>
-#include <TimeLib.h>
 using fs::FS;
 #include <SPIFFS.h>
 #include "NTPupdate.h"
@@ -252,7 +251,7 @@ void SetTunerPatch() {
     EEPROM.writeByte(EE_BYTE_TEF, TEF);
     EEPROM.commit();
     Tuner_Reset();
-    ESP.restart();
+    esp_restart();
   }
 }
 
@@ -1159,11 +1158,12 @@ void setup() {
 
   Wire.begin();
   Wire.setClock(400000);
-  delay(5);
+  delay(3);
 
   Serial.begin(115200);
+  Serial.println();
   byte error, address;
-  for (address = 1; address < 127; address++) {
+  for (address = 1; address < 108; address++) {
     Wire.beginTransmission(address);
     error = Wire.endTransmission();
 
@@ -1175,6 +1175,8 @@ void setup() {
         Serial.print(" RTC");
         rx_rtc_avail = true;
       }
+      else if(address == TEF668X_ADDRESS) Serial.print(" TEF");
+      else if(address == XL9555_ADDRESS) Serial.print(" GPIO");
       Serial.println(" !");
     } else if (error == 4) {
       Serial.print("Unknown error at 0x");
@@ -1182,21 +1184,19 @@ void setup() {
       Serial.println(address, HEX);
     }
   }
-  Serial.flush();
-  Serial.end();
 
   rtc.setTime(0);
   if(rx_rtc_avail) {
-    RX8010SJ::DateTime defaulttime = RX8010SJ::DateTime();
-    defaulttime.second = 21;
-    defaulttime.minute = 45;
-    defaulttime.hour = 11;
-    defaulttime.dayOfWeek = 6;
-    defaulttime.dayOfMonth = 11;
-    defaulttime.month = 1;
-    defaulttime.year = 26;
     bool reset = rx_rtc.initModule(); // initModule, not initAdapter, adapter also reinits wire
     if(reset) {
+      RX8010SJ::DateTime defaulttime = RX8010SJ::DateTime();
+      defaulttime.second = 00;
+      defaulttime.minute = 00;
+      defaulttime.hour = 18;
+      defaulttime.dayOfWeek = 1;
+      defaulttime.dayOfMonth = 13;
+      defaulttime.month = 1;
+      defaulttime.year = 26;
       Serial.println("RTC reset with defaults");
 		  rx_rtc.writeDateTime(defaulttime);
     } else {
@@ -1204,6 +1204,9 @@ void setup() {
       sync_from_rx_rtc();
     }
   }
+
+  Serial.flush();
+  Serial.end();
 
   EEPROM.begin(EE_TOTAL_CNT);
   loadData();
@@ -1408,7 +1411,7 @@ void setup() {
     Infoboxprint(textUI(66));
     tftPrint(ACENTER, textUI(2), 155, 130, ActiveColor, ActiveColorSmooth, 28);
     while (digitalRead(ROTARY_BUTTON) == LOW && digitalRead(BWBUTTON) == LOW) delay(50);
-    ESP.restart();
+    esp_restart();
   }
 
   if (digitalRead(BWBUTTON) == LOW && digitalRead(ROTARY_BUTTON) == HIGH && digitalRead(MODEBUTTON) == LOW && digitalRead(BANDBUTTON) == HIGH) {
@@ -1439,7 +1442,7 @@ void setup() {
 
   tft.fillScreen(BackgroundColor);
   tftPrint(ACENTER, textUI(8), 160, 3, PrimaryColor, PrimaryColorSmooth, 28);
-  tftPrint(ACENTER, "Software " + String(VERSION), 160, 152, PrimaryColor, PrimaryColorSmooth, 16);
+  tftPrint(ACENTER, "Firmware " + String(VERSION), 160, 152, PrimaryColor, PrimaryColorSmooth, 16);
 
   tft.fillRect(120, 230, 16, 6, GreyoutColor);
   tft.fillRect(152, 230, 16, 6, GreyoutColor);
@@ -1492,7 +1495,7 @@ void setup() {
     tft.fillRect(152, 230, 16, 6, SignificantColor);
     while (true);
   }
-  tftPrint(ACENTER, "Patch: v" + String(TEF), 160, 202, ActiveColor, ActiveColorSmooth, 28);
+  tftPrint(ACENTER, "Patch: v" + String(TEF) + " HW " + String(hw >> 8) + "." + String(hw & 0xff) + " SW " + String(sw >> 8) + "." + String(sw & 0xff), 160, 202, ActiveColor, ActiveColorSmooth, 16);
 
   // Configures the GPIO chip for input in every pin
   Wire.beginTransmission(XL9555_ADDRESS);
@@ -1507,14 +1510,14 @@ void setup() {
   if (wifi) {
     tryWiFi();
     tft.fillRect(184, 230, 16, 6, PrimaryColor);
-    delay(2000);
+    delay(1750);
   } else {
     Server.end();
     Udp.stop();
     tft.fillRect(184, 230, 16, 6, SignificantColor);
   }
 
-  while(digitalRead(ROTARY_BUTTON) == LOW) delay(50);
+  while(digitalRead(ROTARY_BUTTON) == LOW) delay(75);
 
   radio.setVolume(VolSet);
   radio.setOffset(LevelOffset);
@@ -2035,7 +2038,6 @@ void DivdeSWMIBand() {
     }
     SWMIBandPos = SW_MI_BAND_GAP;
   }
-
 }
 
 void ToggleSWMIBand(bool frequencyup) {
@@ -4044,4 +4046,39 @@ uint8_t doAutoMemory(uint16_t startfreq, uint16_t stopfreq, uint8_t startmem, ui
   SQ = false;
 
   return error;
+}
+
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "esp_task_wdt.h"
+
+#ifndef ARDUINO_LOOP_STACK_SIZE
+#ifndef CONFIG_ARDUINO_LOOP_STACK_SIZE
+#define ARDUINO_LOOP_STACK_SIZE 8192
+#else
+#define ARDUINO_LOOP_STACK_SIZE CONFIG_ARDUINO_LOOP_STACK_SIZE
+#endif
+#endif
+
+TaskHandle_t loopTaskHandle = NULL;
+
+bool loopTaskWDTEnabled;
+
+__attribute__((weak)) size_t getArduinoLoopTaskStackSize(void) {
+    return ARDUINO_LOOP_STACK_SIZE;
+}
+
+void loopTask(void *pvParameters)
+{
+    setup();
+    for(;;) {
+        if(loopTaskWDTEnabled) esp_task_wdt_reset();
+        loop();
+        if (serialEventRun) serialEventRun();
+    }
+}
+
+extern "C" void app_main() {
+  initArduino();
+  xTaskCreateUniversal(loopTask, "loopTask", getArduinoLoopTaskStackSize(), NULL, 1, &loopTaskHandle, ARDUINO_RUNNING_CORE);
 }

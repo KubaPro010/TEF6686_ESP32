@@ -8,6 +8,10 @@ The version in the repository is an ongoing development. It could and will conta
 Advanced Tuner software for NXP TEF668x tuners with ESP32 board
 More information: https://www.pe5pvb.nl/tef6686/
 
+## Time
+
+You can receive CT time over the RDS on FM, DP666 receivers have a RX8010SJ (driver written by [Wh1teRabbitHU](https://github.com/Wh1teRabbitHU)) and thus can save time between boots, making the radio a high accuracy clock. Enabling the RDS Filter option can delay the clock by a few seconds, however without the filter the clock (from RDS CT) is in perfect sync with my Windows computer synced by NTP
+
 ## Wiki
 - [About the software & features](https://github.com/PE5PVB/TEF6686_ESP32/wiki)
 - [Getting started](https://github.com/PE5PVB/TEF6686_ESP32/wiki#getting-started)

@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 
-#define VERSION "v2.20.5d"
+#define VERSION "v2.20.5e"
 
 #define ROTARY_PIN_A 34
 #define ROTARY_PIN_B 36
@@ -48,10 +48,7 @@
 #define BATTERY_LOW_VALUE           3.2
 #define BATTERY_FULL_VALUE          4.12
 
-#define XTAL_0V_ADC                 0
-#define XTAL_1V_ADC                 1050
-#define XTAL_2V_ADC                 2250
-#define XTAL_ADC_TOL                300
+#define XTAL_MV_TOL                300
 
 #define LANGUAGE_CHS                14
 

@@ -1,6 +1,5 @@
 #include "rds.h"
 #include "constants.h"
-#include <TimeLib.h>
 #include "utils.h"
 
 String HexStringold;
@@ -513,7 +512,7 @@ void showPS() {
 }
 
 void showCT() {
-  char timeStr[16];
+  char timeStr[32];
   char dateStr[9];
   time_t t = rtc.getEpoch();
 
@@ -532,8 +531,8 @@ void showCT() {
       else if (hour > 12) hour -= 12;
     }
 
-    String ampm = (localtm->tm_hour >= 12) ? "PM" : "AM";
-    snprintf(timeStr, sizeof(timeStr), "%d:%02d %s", hour, localtm->tm_min, ampm.c_str());
+    const char* ampm = (localtm->tm_hour >= 12) ? "PM" : "AM";
+    snprintf(timeStr, sizeof(timeStr), "%d:%02d %.2s", hour, localtm->tm_min, ampm);
   } else {
     int hour = localtm->tm_hour;
     if (hour < 0 || hour > 23) hour = 0;

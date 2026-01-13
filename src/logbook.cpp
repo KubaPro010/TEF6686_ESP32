@@ -406,9 +406,11 @@ void sendUDPlog() {
   String CHIP = "";
   switch (chipmodel) {
     case 0: CHIP = "TEF6686"; break;
+#ifndef DEEPELEC_DP_66X
     case 1: CHIP = "TEF6687"; break;
     case 2: CHIP = "TEF6688"; break;
     case 3: CHIP = "TEF6689"; break;
+#endif
   }
 
   String RTPLUS = "";

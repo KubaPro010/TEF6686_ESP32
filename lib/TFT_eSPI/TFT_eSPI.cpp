@@ -1411,31 +1411,16 @@ void TFT_eSPI::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint8_t *da
   end_tft_write();
 }
 
-/***************************************************************************************
-** Function name:           setSwapBytes
-** Description:             Used by 16-bit pushImage() to swap byte order in colours
-***************************************************************************************/
 void TFT_eSPI::setSwapBytes(bool swap)
 {
   _swapBytes = swap;
 }
 
-
-/***************************************************************************************
-** Function name:           getSwapBytes
-** Description:             Return the swap byte order for colours
-***************************************************************************************/
 bool TFT_eSPI::getSwapBytes(void)
 {
   return _swapBytes;
 }
 
-
-/***************************************************************************************
-** Function name:           read rectangle (for SPI Interface II i.e. IM [3:0] = "1101")
-** Description:             Read RGB pixel colours from a defined area
-***************************************************************************************/
-// If w and h are 1, then 1 pixel is read, *data array size must be 3 bytes per pixel
 void  TFT_eSPI::readRectRGB(int32_t x0, int32_t y0, int32_t w, int32_t h, uint8_t *data) {
   begin_tft_read();
 
@@ -1893,11 +1878,6 @@ void TFT_eSPI::drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w
   end_tft_write();              // Does nothing if Sprite class uses this function
 }
 
-
-/***************************************************************************************
-** Function name:           drawBitmap
-** Description:             Draw an image stored in an array on the TFT
-***************************************************************************************/
 void TFT_eSPI::drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint16_t fgcolor, uint16_t bgcolor)
 {
   //begin_tft_write();          // Sprite class can use this function, avoiding begin_tft_write()
@@ -1917,10 +1897,6 @@ void TFT_eSPI::drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w
   end_tft_write();              // Does nothing if Sprite class uses this function
 }
 
-/***************************************************************************************
-** Function name:           drawXBitmap
-** Description:             Draw an image stored in an XBM array onto the TFT
-***************************************************************************************/
 void TFT_eSPI::drawXBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint16_t color)
 {
   //begin_tft_write();          // Sprite class can use this function, avoiding begin_tft_write()
@@ -1941,10 +1917,6 @@ void TFT_eSPI::drawXBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t 
 }
 
 
-/***************************************************************************************
-** Function name:           drawXBitmap
-** Description:             Draw an XBM image with foreground and background colors
-***************************************************************************************/
 void TFT_eSPI::drawXBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint16_t color, uint16_t bgcolor)
 {
   //begin_tft_write();          // Sprite class can use this function, avoiding begin_tft_write()
@@ -1964,22 +1936,12 @@ void TFT_eSPI::drawXBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t 
   end_tft_write();              // Does nothing if Sprite class uses this function
 }
 
-
-/***************************************************************************************
-** Function name:           setCursor
-** Description:             Set the text cursor x,y position
-***************************************************************************************/
 void TFT_eSPI::setCursor(int16_t x, int16_t y)
 {
   cursor_x = x;
   cursor_y = y;
 }
 
-
-/***************************************************************************************
-** Function name:           setCursor
-** Description:             Set the text cursor x,y position and font
-***************************************************************************************/
 void TFT_eSPI::setCursor(int16_t x, int16_t y, uint8_t font)
 {
   setTextFont(font);
@@ -1987,21 +1949,12 @@ void TFT_eSPI::setCursor(int16_t x, int16_t y, uint8_t font)
   cursor_y = y;
 }
 
-/***************************************************************************************
-** Function name:           setTextSize
-** Description:             Set the text size multiplier
-***************************************************************************************/
 void TFT_eSPI::setTextSize(uint8_t s)
 {
   if (s>7) s = 7; // Limit the maximum size multiplier so byte variables can be used for rendering
   textsize = (s > 0) ? s : 1; // Don't allow font size 0
 }
 
-
-/***************************************************************************************
-** Function name:           setTextColor
-** Description:             Set the font foreground colour (background is transparent)
-***************************************************************************************/
 void TFT_eSPI::setTextColor(uint16_t c)
 {
   // For 'transparent' background, we'll set the bg
@@ -2009,14 +1962,6 @@ void TFT_eSPI::setTextColor(uint16_t c)
   textcolor = textbgcolor = c;
 }
 
-
-/***************************************************************************************
-** Function name:           setTextColor
-** Description:             Set the font foreground and background colour
-***************************************************************************************/
-// Smooth fonts use the background colour for anti-aliasing and by default the
-// background is not filled. If bgfill = true, then a smooth font background fill will
-// be used.
 void TFT_eSPI::setTextColor(uint16_t c, uint16_t b, bool bgfill)
 {
   textcolor   = c;
@@ -2024,21 +1969,12 @@ void TFT_eSPI::setTextColor(uint16_t c, uint16_t b, bool bgfill)
   _fillbg     = bgfill;
 }
 
-
-/***************************************************************************************
-** Function name:           setPivot
-** Description:             Set the pivot point on the TFT
-*************************************************************************************x*/
 void TFT_eSPI::setPivot(int16_t x, int16_t y)
 {
   _xPivot = x;
   _yPivot = y;
 }
 
-/***************************************************************************************
-** Function name:           setBitmapColor
-** Description:             Set the foreground foreground and background colour
-***************************************************************************************/
 void TFT_eSPI::setBitmapColor(uint16_t c, uint16_t b)
 {
   if (c == b) b = ~c;
@@ -2046,32 +1982,17 @@ void TFT_eSPI::setBitmapColor(uint16_t c, uint16_t b)
   bitmap_bg = b;
 }
 
-
-/***************************************************************************************
-** Function name:           setTextWrap
-** Description:             Define if text should wrap at end of line
-***************************************************************************************/
 void TFT_eSPI::setTextWrap(bool wrapX, bool wrapY)
 {
   textwrapX = wrapX;
   textwrapY = wrapY;
 }
 
-
-/***************************************************************************************
-** Function name:           setTextDatum
-** Description:             Set the text position reference datum
-***************************************************************************************/
 void TFT_eSPI::setTextDatum(uint8_t d)
 {
   textdatum = d;
 }
 
-
-/***************************************************************************************
-** Function name:           setTextPadding
-** Description:             Define padding width (aids erasing old text and numbers)
-***************************************************************************************/
 void TFT_eSPI::setTextPadding(uint16_t x_width)
 {
   padX = x_width;

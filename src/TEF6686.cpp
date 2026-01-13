@@ -1,13 +1,11 @@
 #include "TEF6686.h"
 #include <map>
 #include <Arduino.h>
-#include <TimeLib.h>
 #include <SPIFFS.h>
 #include "constants.h"
 #include "utils.h"
 
-unsigned long rdstimer = 0;
-unsigned long bitStartTime = 0;
+uint8_t dropped_groups = 0;
 bool lastBitState = false;
 
 uint16_t TEF6686::getBlockA(void) {
@@ -25,13 +23,13 @@ void TEF6686::TestAFEON() {
     setMute();
     for (int x = 0; x < af_counter; x++) {
       timing = 0;
-      devTEF_Set_Cmd(TEF_FM, Cmd_Tune_To, 7, 3, af[x].frequency);
+      devTEF_Set_Cmd(TEF_FM, Cmd_Tune_To, 4, 3, af[x].frequency);
       while (timing == 0 && !bitRead(timing, 15)) {
         devTEF_Radio_Get_Quality_Status(&status, &aflevel, &afusn, &afwam, &afoffset, NULL, NULL, NULL);
         timing = lowByte(status);
       }
       if (afoffset > -125 || afoffset < 125) {
-        devTEF_Set_Cmd(TEF_FM, Cmd_Tune_To, 7, 4, af[x].frequency);
+        devTEF_Set_Cmd(TEF_FM, Cmd_Tune_To, 4, 4, af[x].frequency);
         delay(187);
         devTEF_Radio_Get_RDS_Status(&rds.rdsStat, &rds.rdsA, &rds.rdsB, &rds.rdsC, &rds.rdsD, &rds.rdsErr);
 
@@ -47,7 +45,7 @@ void TEF6686::TestAFEON() {
       }
     }
   }
-  devTEF_Set_Cmd(TEF_FM, Cmd_Tune_To, 7, 4, currentfreq);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Tune_To, 4, 4, currentfreq);
   setUnMute();
 }
 
@@ -62,7 +60,7 @@ uint16_t TEF6686::TestAF() {
 
     for (int x = 0; x < af_counter; x++) {
       timing = 0;
-      devTEF_Set_Cmd(TEF_FM, Cmd_Tune_To, 7, 3, af[x].frequency);
+      devTEF_Set_Cmd(TEF_FM, Cmd_Tune_To, 4, 3, af[x].frequency);
       while (timing == 0 && !bitRead(timing, 15)) {
         devTEF_Radio_Get_Quality_Status(&status, &aflevel, &afusn, &afwam, &afoffset, NULL, NULL, NULL);
         timing = lowByte(status);
@@ -82,7 +80,7 @@ uint16_t TEF6686::TestAF() {
     }
 
     if (af_counter != 0 && af[highestIndex].afvalid && af[highestIndex].score > (currentlevel - currentusn - currentwam) && (af[highestIndex].score - (currentlevel - currentusn - currentwam)) >= 70) {
-      devTEF_Set_Cmd(TEF_FM, Cmd_Tune_To, 7, 4, af[highestIndex].frequency);
+      devTEF_Set_Cmd(TEF_FM, Cmd_Tune_To, 4, 4, af[highestIndex].frequency);
       delay(187);
       devTEF_Radio_Get_RDS_Status(&rds.rdsStat, &rds.rdsA, &rds.rdsB, &rds.rdsC, &rds.rdsD, &rds.rdsErr);
       if (bitRead(rds.rdsStat, 9)) {
@@ -97,9 +95,9 @@ uint16_t TEF6686::TestAF() {
           af_counter = 0;
         } else {
           af[highestIndex].afvalid = false;
-          devTEF_Set_Cmd(TEF_FM, Cmd_Tune_To, 7, 4, currentfreq);
+          devTEF_Set_Cmd(TEF_FM, Cmd_Tune_To, 4, 4, currentfreq);
         }
-      } else devTEF_Set_Cmd(TEF_FM, Cmd_Tune_To, 7, 4, currentfreq);
+      } else devTEF_Set_Cmd(TEF_FM, Cmd_Tune_To, 4, 4, currentfreq);
     }
   }
   return currentfreq;
@@ -113,10 +111,11 @@ void TEF6686::init(byte TEF) {
   uint32_t clock = 12000000;
 
 #ifndef DEEPELEC_DP_66X
-  int xtalADC = analogRead(15);
-  if (xtalADC < XTAL_0V_ADC + XTAL_ADC_TOL) clock = 9216000;
-  else if (xtalADC > XTAL_1V_ADC - XTAL_ADC_TOL && xtalADC < XTAL_1V_ADC + XTAL_ADC_TOL);
-  else if (xtalADC > XTAL_2V_ADC - XTAL_ADC_TOL && xtalADC < XTAL_2V_ADC + XTAL_ADC_TOL) clock = 55466670;
+  int xtalMV = analogReadMilliVolts(15);
+
+  if (xtalMV < 0 + XTAL_MV_TOL) clock = 9216000;
+  else if (xtalMV > 1000 - XTAL_MV_TOL && xtalMV < 1000 + XTAL_MV_TOL);
+  else if (xtalMV > 2000 - XTAL_MV_TOL && xtalMV < 2000 + XTAL_MV_TOL) clock = 55466670;
   else clock = 4000000;
 #endif
 
@@ -124,26 +123,26 @@ void TEF6686::init(byte TEF) {
   Tuner_Patch(TEF);
 
   // Start the firmware
-  devTEF_Set_Cmd(TEF_INIT, 0, 3);
+  devTEF_Set_Cmd(TEF_INIT, 0, 0);
 
   while(devTEF_APPL_Get_Operation_Status() != 1) delay(5); // Wait for it to load
 
-  if(clock != 9216000) devTEF_Set_Cmd(TEF_APPL, Cmd_Set_ReferenceClock, 9, (clock >> 16) & 0xffff, clock & 0xffff, (clock == 55466670) ? 1 : 0);
-  devTEF_Set_Cmd(TEF_APPL, Cmd_Set_Activate, 5, 1); // Setup done, start radio
+  if(clock != 9216000) devTEF_Set_Cmd(TEF_APPL, Cmd_Set_ReferenceClock, 6, (clock >> 16) & 0xffff, clock & 0xffff, (clock == 55466670) ? 1 : 0);
+  devTEF_Set_Cmd(TEF_APPL, Cmd_Set_Activate, 2, 1); // Setup done, start radio
 
   while(devTEF_APPL_Get_Operation_Status() != 2) delay(5); // Wait for it to start
 
-  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Mph, 9, 0, 360, 300);
-  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Max, 7, 0, 4000);
-  devTEF_Set_Cmd(TEF_FM, Cmd_Set_LowCut_Max, 7, 0, 100);
-  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Stereo_Time, 11, 60, 120, 100, 200);
-  devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Time, 11, 500, 2000, 200, 200);
-  devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Level, 9, 0, 600, 240);
-  devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Noise, 9, 0, 160, 140);
-  devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Mph, 9, 0, 160, 140);
-  devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Max, 7, 0, 4000);
-  devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_Ana_Out, 7, 128, 1);
-  devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_Output_Source, 7, 128, 224);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Mph, 6, 0, 360, 300);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Max, 4, 0, 4000);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_LowCut_Max, 4, 0, 100);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Stereo_Time, 8, 60, 120, 100, 200);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Time, 8, 500, 2000, 200, 200);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Level, 6, 0, 600, 240);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Noise, 6, 0, 160, 140);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Mph, 6, 0, 160, 140);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Max, 4, 0, 4000);
+  devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_Ana_Out, 4, 128, 1);
+  devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_Output_Source, 4, 128, 224);
 }
 
 void TEF6686::getIdentification(uint16_t *device, uint16_t *hw_version, uint16_t *sw_version) {
@@ -156,73 +155,73 @@ void TEF6686::getIdentification(uint16_t *device, uint16_t *hw_version, uint16_t
 }
 
 void TEF6686::power(bool mode) {
-  devTEF_Set_Cmd(TEF_APPL, Cmd_Set_OperationMode, 5, mode);
-  if (mode == 0) devTEF_Set_Cmd(TEF_FM, Cmd_Tune_To, 7, 1, 10000);
+  devTEF_Set_Cmd(TEF_APPL, Cmd_Set_OperationMode, 2, mode);
+  if (mode == 0) devTEF_Set_Cmd(TEF_FM, Cmd_Tune_To, 4, 1, 10000);
 }
 
 void TEF6686::extendBW(bool yesno) {
-  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Bandwidth_Options, 5, (yesno ? 400 : 950));
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Bandwidth_Options, 2, (yesno ? 400 : 950));
 }
 
 void TEF6686::SetFreq(uint16_t frequency) {
-  devTEF_Set_Cmd(TEF_FM, Cmd_Tune_To, 7, 4, frequency);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Tune_To, 4, 4, frequency);
   currentfreq = ((frequency + 5) / 10) * 10;
   currentfreq2 = frequency;
 }
 
 void TEF6686::SetFreqAM(uint16_t frequency) {
-  devTEF_Set_Cmd(TEF_AM, Cmd_Tune_To, 7, 1, frequency);
+  devTEF_Set_Cmd(TEF_AM, Cmd_Tune_To, 4, 1, frequency);
 }
 
 void TEF6686::setOffset(int8_t offset) {
-  devTEF_Set_Cmd(TEF_FM, Cmd_Set_LevelOffset, 5, (offset * 10) - 70);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_LevelOffset, 2, (offset * 10) - 70);
 }
 
 void TEF6686::setAMOffset(int8_t offset) {
-  devTEF_Set_Cmd(TEF_AM, Cmd_Set_LevelOffset, 5, (offset * 10) - 70);
+  devTEF_Set_Cmd(TEF_AM, Cmd_Set_LevelOffset, 2, (offset * 10) - 70);
 }
 
 void TEF6686::setFMBandw(uint16_t bandwidth) {
-  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Bandwidth, 7, 0, bandwidth * 10);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Bandwidth, 4, 0, bandwidth * 10);
 }
 
 void TEF6686::setAMBandw(uint16_t bandwidth) {
-  devTEF_Set_Cmd(TEF_AM, Cmd_Set_Bandwidth, 7, 0, bandwidth * 10);
+  devTEF_Set_Cmd(TEF_AM, Cmd_Set_Bandwidth, 4, 0, bandwidth * 10);
 }
 
 void TEF6686::setAMCoChannel(uint16_t start, uint8_t level) {
   uint8_t mode = 1;
   if(start == 0) mode = 0;
-  devTEF_Set_Cmd(TEF_AM, Cmd_Set_CoChannelDet, 11, mode, 2, start * 10, 1000, level);
+  devTEF_Set_Cmd(TEF_AM, Cmd_Set_CoChannelDet, 8, mode, 2, start * 10, 1000, level);
 }
 
 void TEF6686::setSoftmuteAM(uint8_t mode) {
-  devTEF_Set_Cmd(TEF_AM, Cmd_Set_Softmute_Max, 7, mode, 250);
+  devTEF_Set_Cmd(TEF_AM, Cmd_Set_Softmute_Max, 4, mode, 250);
 }
 
 void TEF6686::setSoftmuteFM(uint8_t mode) {
-  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Softmute_Max, 7, mode, 200);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Softmute_Max, 4, mode, 200);
 }
 
 void TEF6686::setAMNoiseBlanker(uint16_t start) {
-  devTEF_Set_Cmd(TEF_AM, Cmd_Set_NoiseBlanker, 7, (start == 0) ? 0 : 1, (start == 0) ? 1000 : start * 10);
-  devTEF_Set_Cmd(TEF_AM, Cmd_Set_NoiseBlanker_Audio, 7, (start == 0) ? 0 : 1, 1000);
+  devTEF_Set_Cmd(TEF_AM, Cmd_Set_NoiseBlanker, 4, (start == 0) ? 0 : 1, (start == 0) ? 1000 : start * 10);
+  devTEF_Set_Cmd(TEF_AM, Cmd_Set_NoiseBlanker_Audio, 4, (start == 0) ? 0 : 1, 1000);
 }
 
 void TEF6686::setAMAttenuation(uint16_t start) {
-  devTEF_Set_Cmd(TEF_AM, Cmd_Set_Antenna, 5, start * 10);
+  devTEF_Set_Cmd(TEF_AM, Cmd_Set_Antenna, 2, start * 10);
 }
 
 void TEF6686::setFMABandw() {
-  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Bandwidth, 7, 1, 3110);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Bandwidth, 4, 1, 3110);
 }
 
 void TEF6686::setiMS(bool mph) {
-  devTEF_Set_Cmd(TEF_FM, Cmd_Set_MphSuppression, 5, mph);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_MphSuppression, 2, mph);
 }
 
 void TEF6686::setEQ(bool eq) {
-  devTEF_Set_Cmd(TEF_FM, Cmd_Set_ChannelEqualizer, 5, eq);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_ChannelEqualizer, 2, eq);
 }
 
 bool TEF6686::getStereoStatus() {
@@ -233,109 +232,109 @@ bool TEF6686::getStereoStatus() {
 }
 
 void TEF6686::setMono(bool mono) {
-  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Stereo_Min, 7, mono ? 2 : 0);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Stereo_Min, 4, mono ? 2 : 0);
 }
 
 void TEF6686::setVolume(int8_t volume) {
-  devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_Volume, 5, volume * 10);
+  devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_Volume, 2, volume * 10);
 }
 
 void TEF6686::setMute() {
   mute = true;
-  if (mpxmode) devTEF_Set_Cmd(TEF_FM, Cmd_Set_Specials, 5, 0);
-  devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_Mute, 5, 1);
+  if (mpxmode) devTEF_Set_Cmd(TEF_FM, Cmd_Set_Specials, 2, 0);
+  devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_Mute, 2, 1);
 }
 
 void TEF6686::setUnMute() {
   mute = false;
-  if (mpxmode) devTEF_Set_Cmd(TEF_FM, Cmd_Set_Specials, 5, 1);
-  devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_Mute, 5, 0);
+  if (mpxmode) devTEF_Set_Cmd(TEF_FM, Cmd_Set_Specials, 2, 1);
+  devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_Mute, 2, 0);
 }
 
 void TEF6686::setAGC(uint8_t agc) {
-  devTEF_Set_Cmd(TEF_FM, Cmd_Set_RFAGC, 7, agc * 10, 0);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_RFAGC, 4, agc * 10, 0);
 }
 
 void TEF6686::setAMAGC(uint8_t agc) {
-  devTEF_Set_Cmd(TEF_AM, Cmd_Set_RFAGC, 7, agc * 10, 0);
+  devTEF_Set_Cmd(TEF_AM, Cmd_Set_RFAGC, 4, agc * 10, 0);
 }
 
 void TEF6686::setDeemphasis(uint8_t timeconstant) {
   switch (timeconstant) {
-    case 1: devTEF_Set_Cmd(TEF_FM, Cmd_Set_Deemphasis, 5, 500); break;
-    case 2: devTEF_Set_Cmd(TEF_FM, Cmd_Set_Deemphasis, 5, 750); break;
-    default: devTEF_Set_Cmd(TEF_FM, Cmd_Set_Deemphasis, 5, 0); break;
+    case 1: devTEF_Set_Cmd(TEF_FM, Cmd_Set_Deemphasis, 2, 500); break;
+    case 2: devTEF_Set_Cmd(TEF_FM, Cmd_Set_Deemphasis, 2, 750); break;
+    default: devTEF_Set_Cmd(TEF_FM, Cmd_Set_Deemphasis, 2, 0); break;
   }
 }
 
 void TEF6686::setAudio(uint8_t audio) {
-  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Specials, 5, audio);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Specials, 2, audio);
   mpxmode = (audio != 0);
 }
 
 void TEF6686::setFMSI(uint8_t mode) {
   if(mode > 2) mode = 2;
   if(mode < 1) mode = 1;
-  devTEF_Set_Cmd(TEF_FM, Cmd_Set_StereoImprovement, 5, mode-1);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_StereoImprovement, 2, mode-1);
 }
 
 void TEF6686::setFMSI_Time(uint16_t attack, uint16_t decay) {
-  devTEF_Set_Cmd(TEF_FM, Cmd_Set_StBandBlend_Time, 7, attack, decay);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_StBandBlend_Time, 4, attack, decay);
 }
 
 void TEF6686::setFMSI_Gain(uint16_t band1, uint16_t band2, uint16_t band3, uint16_t band4) {
-  devTEF_Set_Cmd(TEF_FM, Cmd_Set_StBandBlend_Gain, 11, band1 * 10, band2 * 10, band3 * 10, band4 * 10);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_StBandBlend_Gain, 8, band1 * 10, band2 * 10, band3 * 10, band4 * 10);
 }
 
 void TEF6686::setFMSI_Bias(int16_t band1, int16_t band2, int16_t band3, int16_t band4) {
-  devTEF_Set_Cmd(TEF_FM, Cmd_Set_StBandBlend_Bias, 11, band1 - 250, band2 - 250, band3 - 250, band4 - 250);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_StBandBlend_Bias, 8, band1 - 250, band2 - 250, band3 - 250, band4 - 250);
 }
 
 void TEF6686::setFMNoiseBlanker(uint16_t start) {
-  devTEF_Set_Cmd(TEF_FM, Cmd_Set_NoiseBlanker, 7, (start == 0) ? 0 : 1, (start == 0) ? 1000 : (start * 10));
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_NoiseBlanker, 4, (start == 0) ? 0 : 1, (start == 0) ? 1000 : (start * 10));
 }
 
 void TEF6686::setStereoLevel(uint8_t start) {
   if (start == 0) {
-    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Stereo_Level, 9, 0, start * 10, 60);
-    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Stereo_Noise, 9, 0, 240, 200);
-    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Stereo_Mph, 9, 0, 240, 200);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Stereo_Level, 6, 0, start * 10, 60);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Stereo_Noise, 6, 0, 240, 200);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Stereo_Mph, 6, 0, 240, 200);
   } else {
-    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Stereo_Level, 9, 3, start * 10, 60);
-    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Stereo_Noise, 9, 3, 240, 200);
-    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Stereo_Mph, 9, 3, 240, 200);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Stereo_Level, 6, 3, start * 10, 60);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Stereo_Noise, 6, 3, 240, 200);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Stereo_Mph, 6, 3, 240, 200);
   }
 }
 
 void TEF6686::setHighCutOffset(uint8_t start) {
   if (start == 0) {
-    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Level, 9, 0, start * 10, 300);
-    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Noise, 9, 0, 360, 300);
-    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Mph, 9, 0, 360, 300);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Level, 6, 0, start * 10, 300);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Noise, 6, 0, 360, 300);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Mph, 6, 0, 360, 300);
   } else {
-    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Level, 9, 3, start * 10, 300);
-    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Noise, 9, 3, 360, 300);
-    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Mph, 9, 3, 360, 300);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Level, 6, 3, start * 10, 300);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Noise, 6, 3, 360, 300);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Mph, 6, 3, 360, 300);
   }
 }
 
 void TEF6686::setHighCutLevel(uint16_t limit) {
-  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Max, 7, 1, limit * 100);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Max, 4, 1, limit * 100);
 }
 
 void TEF6686::setStHiBlendLevel(uint16_t limit) {
-  devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Max, 7, 1, limit * 100);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Max, 4, 1, limit * 100);
 }
 
 void TEF6686::setStHiBlendOffset(uint8_t start) {
   if (start == 0) {
-    devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Level, 9, 0, start * 10, 300);
-    devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Noise, 9, 0, 360, 300);
-    devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Mph, 9, 0, 360, 300);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Level, 6, 0, start * 10, 300);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Noise, 6, 0, 360, 300);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Mph, 6, 0, 360, 300);
   } else {
-    devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Level, 9, 3, start * 10, 300);
-    devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Noise, 9, 3, 360, 300);
-    devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Mph, 9, 3, 360, 300);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Level, 6, 3, start * 10, 300);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Noise, 6, 3, 360, 300);
+    devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Mph, 6, 3, 360, 300);
   }
 }
 
@@ -360,23 +359,19 @@ void TEF6686::getStatusAM(int16_t *level, uint16_t *noise, uint16_t *cochannel, 
 void TEF6686::readRDS(byte showrdserrors) {
   if(rds.filter && ps_process) devTEF_Radio_Get_RDS_Status(&rds.rdsStat, &rds.rdsA, &rds.rdsB, &rds.rdsC, &rds.rdsD, &rds.rdsErr);
   else {
-    if(millis() >= rdstimer + 87) {
-      rdstimer += 87;
+    for(int i = 0; i < 3; i++) {
       devTEF_Radio_Get_RDS_Data(&rds.rdsStat, &rds.rdsA, &rds.rdsB, &rds.rdsC, &rds.rdsD, &rds.rdsErr);
-
-      if(bitRead(rds.rdsStat, 14)) {
-        for (int i = 0; i < 22; i++) devTEF_Radio_Get_RDS_Data(&rds.rdsStat, &rds.rdsA, &rds.rdsB, &rds.rdsC, &rds.rdsD, &rds.rdsErr);
-      }
+      delay(2);
+      if(bitRead(rds.rdsStat, 15)) break;
     }
   }
 
-
   if(bitRead(rds.rdsStat, 9)) {
     rds.hasRDS = true;
-    bitStartTime = 0;
+    dropped_groups = 0;
   } else {
-    if(bitStartTime == 0) bitStartTime = millis();
-    else if(millis() - bitStartTime >= 87) rds.hasRDS = false;
+    if(dropped_groups > 7) rds.hasRDS = false;
+    dropped_groups++;
     return; // No sync means no data, ever! Unless sync status changes of course
   }
 
@@ -1215,18 +1210,18 @@ void TEF6686::readRDS(byte showrdserrors) {
 
             if (rds.rdsD == 0x4BD7) {
               rds.hasRTplus = true;
-              rtplusblock = ((rds.rdsB & 0x1F) >> 1) * 2;
+              rtplusblock = rds.rdsB & 0x1E;
             }
 
             if (rds.rdsD == 0x0093) {
               rds.hasDABAF = true;
-              DABAFblock = ((rds.rdsB & 0x1F) >> 1) * 2;
+              DABAFblock = rds.rdsB & 0x1E;
             }
 
             if (rds.rdsD == 0x6552) {
               _hasEnhancedRT = true;
-              eRTblock = ((rds.rdsB & 0x1F) >> 1) * 2;
-              eRTcoding = bitRead(rds.rdsC, 0);
+              eRTblock = rds.rdsB & 0x1E;
+              eRTcoding = rds.rdsC & 1;
             }
           }
         } break;
@@ -1250,11 +1245,11 @@ void TEF6686::readRDS(byte showrdserrors) {
             if ((M +  2 - (12 * J)) < 13) month = M +  2 - (12 * J);
             if ((100 * (C - 49) + Y + J) > 2022) year = 100 * (C - 49) + Y + J;
 
-            hour = ((rds.rdsD >> 12) & 0xf) | ((rds.rdsC << 4) & 0x10);
-            timeoffset = rds.rdsD & 0x001f;
+            hour = ((rds.rdsD >> 12) & 0xF) | ((rds.rdsC << 4) & 0x10);
+            timeoffset = rds.rdsD & 0x1F;
             if (bitRead(rds.rdsD, 5)) timeoffset *= -1;
             timeoffset *= 1800;
-            minute = (rds.rdsD & 0x0fc0) >> 6;
+            minute = (rds.rdsD & 0xFC0) >> 6;
 
             if (year < 2026 || hour > 23 || minute > 59 || timeoffset > 55800 || timeoffset < -55800) break;
 
@@ -1279,8 +1274,7 @@ void TEF6686::readRDS(byte showrdserrors) {
 
               if (!NTPupdated) {
                 time_t corrected_time = rds_utc_time - (current_correction / 2);
-                rtc.setTime(corrected_time);
-                sync_to_rx_rtc();
+                set_time(corrected_time);
               }
             } else rds.hasCT = false;
             lastrdstime = rdstime;
@@ -1562,7 +1556,7 @@ void TEF6686::readRDS(byte showrdserrors) {
 }
 
 void TEF6686::clearRDS(bool fullsearchrds) {
-  devTEF_Set_Cmd(TEF_FM, Cmd_Set_RDS, 9, fullsearchrds ? 3 : 1, 1, 0);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_RDS, 6, fullsearchrds ? 3 : 1, 1, 0);
   rds.piBuffer.clear();
   rds.stationName = rds.stationText = rds.stationNameLong = "";
   rds.PTYN = rds.stationText32 = rds.RTContent1 = rds.RTContent2 = "";;
@@ -1648,7 +1642,7 @@ void TEF6686::clearRDS(bool fullsearchrds) {
 }
 
 void TEF6686::tone(uint16_t time, int16_t amplitude, uint16_t frequency) {
-  devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_Mute, 5, 0);
+  devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_Mute, 2, 0);
   devTEF_Radio_Set_Wavegen(1, amplitude, frequency);
   delay(time);
   devTEF_Radio_Set_Wavegen(0, 0, 0);
@@ -1697,10 +1691,10 @@ void TEF6686::RDScharConverter(const char* input, wchar_t* output, size_t size, 
       case 0x9B: output[i] = L'ç'; break;
       case 0x9C: output[i] = L'ş'; break;
       case 0x9D: output[i] = L'ǧ'; break;
-      case 0x9E: output[i] = L'ı'; break;
+      case 0x9E: output[i] = L'\x131'; break;
       case 0x9F: output[i] = L'ĳ'; break;
       case 0xA0: output[i] = L'ª'; break;
-      case 0xA1: output[i] = L'α'; break;
+      case 0xA1: output[i] = L'\x3b1'; break;
       case 0xA2: output[i] = L'©'; break;
       case 0xA3: output[i] = L'‰'; break;
       case 0xA4: output[i] = L'Ǧ'; break;

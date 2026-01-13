@@ -54,12 +54,7 @@ void NTPupdate() {
   time_t currentTime = getNtpTime();
 
   if (currentTime) {
-    rtc.setTime(currentTime);
-    if(rx_rtc_avail) {
-      RX8010SJ::DateTime rx_currenttime = RX8010SJ::DateTime();
-      timeToDateTime(currentTime, &rx_currenttime);
-		  rx_rtc.writeDateTime(rx_currenttime);
-    }
+    set_time(currentTime);
     rtcset = true;
     NTPupdated = true;
     radio.rds.ctupdate = false;
