@@ -8,7 +8,7 @@
 uint8_t dropped_groups = 0;
 bool lastBitState = false;
 
-uint16_t TEF6686::getBlockA(void) {
+uint16_t TEF6686::getBlockA() {
   uint16_t blockA;
   devTEF_Radio_Get_RDS_Status(NULL, &blockA, NULL, NULL, NULL, NULL);
   return blockA;
@@ -106,7 +106,7 @@ uint16_t TEF6686::TestAF() {
 void TEF6686::init(byte TEF) {
   Tuner_Reset();
 
-  while(devTEF_APPL_Get_Operation_Status() != 0) delay(5);
+  while(devTEF_APPL_Get_Operation_Status() != 0) delay(2);
 
   uint32_t clock = 12000000;
 
@@ -125,12 +125,12 @@ void TEF6686::init(byte TEF) {
   // Start the firmware
   devTEF_Set_Cmd(TEF_INIT, 0, 0);
 
-  while(devTEF_APPL_Get_Operation_Status() != 1) delay(5); // Wait for it to load
+  while(devTEF_APPL_Get_Operation_Status() != 1) delay(2); // Wait for it to load
 
   if(clock != 9216000) devTEF_Set_Cmd(TEF_APPL, Cmd_Set_ReferenceClock, 6, (clock >> 16) & 0xffff, clock & 0xffff, (clock == 55466670) ? 1 : 0);
   devTEF_Set_Cmd(TEF_APPL, Cmd_Set_Activate, 2, 1); // Setup done, start radio
 
-  while(devTEF_APPL_Get_Operation_Status() != 2) delay(5); // Wait for it to start
+  while(devTEF_APPL_Get_Operation_Status() != 2) delay(2); // Wait for it to start
 
   devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Mph, 6, 0, 360, 300);
   devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Max, 4, 0, 4000);
@@ -156,7 +156,6 @@ void TEF6686::getIdentification(uint16_t *device, uint16_t *hw_version, uint16_t
 
 void TEF6686::power(bool mode) {
   devTEF_Set_Cmd(TEF_APPL, Cmd_Set_OperationMode, 2, mode);
-  if (mode == 0) devTEF_Set_Cmd(TEF_FM, Cmd_Tune_To, 4, 1, 10000);
 }
 
 void TEF6686::extendBW(bool yesno) {
@@ -164,7 +163,7 @@ void TEF6686::extendBW(bool yesno) {
 }
 
 void TEF6686::SetFreq(uint16_t frequency) {
-  devTEF_Set_Cmd(TEF_FM, Cmd_Tune_To, 4, 4, frequency);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Tune_To, 4, 1, frequency);
   currentfreq = ((frequency + 5) / 10) * 10;
   currentfreq2 = frequency;
 }
@@ -359,9 +358,9 @@ void TEF6686::getStatusAM(int16_t *level, uint16_t *noise, uint16_t *cochannel, 
 void TEF6686::readRDS(byte showrdserrors) {
   if(rds.filter && ps_process) devTEF_Radio_Get_RDS_Status(&rds.rdsStat, &rds.rdsA, &rds.rdsB, &rds.rdsC, &rds.rdsD, &rds.rdsErr);
   else {
-    for(int i = 0; i < 3; i++) {
+    for(int i = 0; i < 4; i++) {
       devTEF_Radio_Get_RDS_Data(&rds.rdsStat, &rds.rdsA, &rds.rdsB, &rds.rdsC, &rds.rdsD, &rds.rdsErr);
-      delay(2);
+      delay(1);
       if(bitRead(rds.rdsStat, 15)) break;
     }
   }
@@ -437,7 +436,7 @@ void TEF6686::readRDS(byte showrdserrors) {
         fs::File file;
 
         if (rds.region == 1 && SPIFFS.begin(true)) {
-          delay(5);
+          delay(2);
           if (currentfreq2 < 9000) file = SPIFFS.open("/USA_87-90.csv");
           else if (currentfreq2 > 9000 && currentfreq2 < 9200) file = SPIFFS.open("/USA_90-92.csv");
           else if (currentfreq2 > 9200 && currentfreq2 < 9400) file = SPIFFS.open("/USA_92-94.csv");
@@ -449,7 +448,7 @@ void TEF6686::readRDS(byte showrdserrors) {
           else if (currentfreq2 > 10400 && currentfreq2 < 10600) file = SPIFFS.open("/USA_104-106.csv");
           else if (currentfreq2 > 10600) file = SPIFFS.open("/USA_106-108.csv");
 
-          delay(5);
+          delay(2);
           if (file) {
             int i = 0;
             while (file.available() && !isprint(file.peek())) {
@@ -1312,21 +1311,21 @@ void TEF6686::readRDS(byte showrdserrors) {
             uint16_t length_marker_1 = (rds.rdsC >> 1) & 0x3F;
             uint16_t start_marker_2 = (rds.rdsD >> 5) & 0x3F;
             uint16_t length_marker_2 = (rds.rdsD & 0x1F);
-            togglebit = bitRead(lowByte(rds.rdsB), 4);
-            runningbit = bitRead(lowByte(rds.rdsB), 3);
+            togglebit = bitRead(rds.rdsB, 4);
+            runningbit = bitRead(rds.rdsB, 3);
 
             switch (rds.rdsplusTag1) {
-              case 0: rds.rdsplusTag1 = 169; break;
-              case 1 ... 53: rds.rdsplusTag1 += 111; break;
-              case 59 ... 63: rds.rdsplusTag1 += 105; break;
-              default: rds.rdsplusTag1 = 169; break;
+              case 0: rds.rdsplusTag1 = 168; break;
+              case 1 ... 53: rds.rdsplusTag1 += 110; break;
+              case 59 ... 63: rds.rdsplusTag1 += 104; break;
+              default: rds.rdsplusTag1 = 168; break;
             }
 
             switch (rds.rdsplusTag2) {
-              case 0: rds.rdsplusTag2 = 169; break;
-              case 1 ... 53: rds.rdsplusTag2 += 111; break;
-              case 59 ... 63: rds.rdsplusTag2 += 105; break;
-              default: rds.rdsplusTag2 = 169; break;
+              case 0: rds.rdsplusTag2 = 168; break;
+              case 1 ... 53: rds.rdsplusTag2 += 110; break;
+              case 59 ... 63: rds.rdsplusTag2 += 104; break;
+              default: rds.rdsplusTag2 = 168; break;
             }
 
             if (togglebit) {

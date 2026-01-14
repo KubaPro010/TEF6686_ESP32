@@ -20,7 +20,11 @@ using fs::FS;
 #include "touch.h"
 #include "nonvolatile.h"
 #include "utils.h"
+#include "system_console.h"
 #pragma endregion
+
+Console console(&tft);
+bool gpio_chip = false;
 
 #pragma region to move
 void Round30K(unsigned int freq) {
@@ -59,13 +63,6 @@ void Touch_IRQ_Handler() {
 }
 
 void deepSleep() {
-#ifdef SMETERPIN
-  analogWrite(SMETERPIN, 0);
-#endif
-#ifdef STANDBYLED
-  pinMode(STANDBYLED, OUTPUT);
-  digitalWrite(STANDBYLED, LOW);
-#endif
   MuteScreen(1);
   StoreFrequency();
   radio.power(1);
@@ -108,9 +105,7 @@ void EdgeBeeper() {
 
 const char* textUI(uint16_t number) {
   if (number >= language_entrynumber) return "Overflow";
-  else {
-    return (const char*)pgm_read_ptr(&(myLanguage[language][number]));
-  }
+  else return (const char*)pgm_read_ptr(&(myLanguage[language][number]));
 }
 
 void doBWtuneUp() {
@@ -158,13 +153,10 @@ void ShowRSSI() {
   if (wifi) rssi = WiFi.RSSI(); else rssi = 0;
   if (rssiold != rssi) {
     rssiold = rssi;
-    if (!wifi && batterydetect) {
-      tft.drawBitmap(282, 3, WiFi4, 30, 25, BackgroundColor);
-    } else if (rssi == 0) {
-      tft.drawBitmap(282, 3, WiFi4, 30, 25, GreyoutColor);
-    } else if (rssi > -50 && rssi < 0) {
-      tft.drawBitmap(282, 3, WiFi4, 30, 25, WifiColorHigh);
-    } else if (rssi > -60) {
+    if (!wifi && batterydetect) tft.drawBitmap(282, 3, WiFi4, 30, 25, BackgroundColor);
+    else if (rssi == 0) tft.drawBitmap(282, 3, WiFi4, 30, 25, GreyoutColor);
+    else if (rssi > -50 && rssi < 0) tft.drawBitmap(282, 3, WiFi4, 30, 25, WifiColorHigh);
+    else if (rssi > -60) {
       tft.drawBitmap(282, 3, WiFi4, 30, 25, GreyoutColor);
       tft.drawBitmap(282, 3, WiFi3, 30, 25, WifiColorHigh);
     } else if (rssi > -70) {
@@ -245,7 +237,7 @@ void SetTunerPatch() {
     analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 15, 255));
 
     if(FORBIDDEN_TUNER(TEF)) {
-      tftPrint(ACENTER, textUI(35), 150, 78, ActiveColor, ActiveColorSmooth, 28);
+      tftPrint(ACENTER, textUI(34), 150, 78, ActiveColor, ActiveColorSmooth, 28);
       for (;;);
     }
     EEPROM.writeByte(EE_BYTE_TEF, TEF);
@@ -556,7 +548,7 @@ void BANDBUTTONPress() {
     }
   }
   while (digitalRead(BANDBUTTON) == LOW) delay(50);
-  delay(100);
+  delay(75);
 }
 
 void LimitAMFrequency() {
@@ -615,7 +607,7 @@ void BWButtonPress() {
     }
   }
   while (digitalRead(BWBUTTON) == LOW) delay(50);
-  delay(100);
+  delay(75);
 }
 
 void doStereoToggle() {
@@ -830,7 +822,7 @@ void ShowNum(int val) {
 byte numval[16] = {2, 3, 127, 5, 6, 0, 9, 13, 8, 7, 4, 1, 0, 0, 0, 0};
 
 int GetNum() {
-
+  if(!gpio_chip) return -1;
   // Get input port 0 and 1
   Wire.beginTransmission(XL9555_ADDRESS);
   Wire.write(0x00);
@@ -1156,9 +1148,11 @@ void setup() {
 
   setupmode = true;
 
+  bool tef_found = false;
+
   Wire.begin();
   Wire.setClock(400000);
-  delay(3);
+  delay(1);
 
   Serial.begin(115200);
   Serial.println();
@@ -1174,34 +1168,18 @@ void setup() {
       if(address == RX8010SJ_ADDRESS) {
         Serial.print(" RTC");
         rx_rtc_avail = true;
+      } else if(address == TEF668X_ADDRESS) {
+        Serial.print(" TEF");
+        tef_found = true;
+      } else if(address == XL9555_ADDRESS) {
+        Serial.print(" GPIO");
+        gpio_chip = true;
       }
-      else if(address == TEF668X_ADDRESS) Serial.print(" TEF");
-      else if(address == XL9555_ADDRESS) Serial.print(" GPIO");
       Serial.println(" !");
     } else if (error == 4) {
       Serial.print("Unknown error at 0x");
       if (address < 16) Serial.print("0");
       Serial.println(address, HEX);
-    }
-  }
-
-  rtc.setTime(0);
-  if(rx_rtc_avail) {
-    bool reset = rx_rtc.initModule(); // initModule, not initAdapter, adapter also reinits wire
-    if(reset) {
-      RX8010SJ::DateTime defaulttime = RX8010SJ::DateTime();
-      defaulttime.second = 00;
-      defaulttime.minute = 00;
-      defaulttime.hour = 18;
-      defaulttime.dayOfWeek = 1;
-      defaulttime.dayOfMonth = 13;
-      defaulttime.month = 1;
-      defaulttime.year = 26;
-      Serial.println("RTC reset with defaults");
-		  rx_rtc.writeDateTime(defaulttime);
-    } else {
-      rtcset = true;
-      sync_from_rx_rtc();
     }
   }
 
@@ -1268,19 +1246,8 @@ void setup() {
 
   doTheme();
 
-  if (displayflip == 0) {
-#ifdef ARS
-    tft.setRotation(0);
-#else
-    tft.setRotation(3);
-#endif
-  } else {
-#ifdef ARS
-    tft.setRotation(2);
-#else
-    tft.setRotation(1);
-#endif
-  }
+  if (displayflip == 0) tft.setRotation(3);
+  else tft.setRotation(1);
 
   tft.invertDisplay(!invertdisplay);
 
@@ -1290,10 +1257,6 @@ void setup() {
   pinMode(ROTARY_BUTTON, INPUT);
   pinMode(ROTARY_PIN_A, INPUT);
   pinMode(ROTARY_PIN_B, INPUT);
-#ifdef STANDBYLED
-  pinMode(STANDBYLED, OUTPUT);
-  digitalWrite(STANDBYLED, HIGH);
-#endif
   pinMode(TOUCHIRQ, INPUT);
   pinMode(EXT_IRQ, INPUT_PULLUP);
 
@@ -1302,7 +1265,6 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(ROTARY_PIN_B), read_encoder, CHANGE);
 
   tft.setSwapBytes(true);
-  tft.fillScreen(BackgroundColor);
 
   SPIFFS.begin();
 
@@ -1342,6 +1304,7 @@ void setup() {
   SignalSprite.setSwapBytes(true);
 
   UpdateFonts();
+  tft.fillScreen(BackgroundColor);
 
   if (digitalRead(BWBUTTON) == LOW && digitalRead(ROTARY_BUTTON) == HIGH && digitalRead(MODEBUTTON) == HIGH && digitalRead(BANDBUTTON) == HIGH) {
     if (rotarymode == 0) rotarymode = 1; else rotarymode = 0;
@@ -1356,18 +1319,10 @@ void setup() {
   if (digitalRead(BWBUTTON) == HIGH && digitalRead(ROTARY_BUTTON) == HIGH && digitalRead(MODEBUTTON) == LOW && digitalRead(BANDBUTTON) == HIGH) {
     if (displayflip == 0) {
       displayflip = 1;
-#ifdef ARS
-      tft.setRotation(2);
-#else
       tft.setRotation(1);
-#endif
     } else {
       displayflip = 0;
-#ifdef ARS
-      tft.setRotation(0);
-#else
       tft.setRotation(3);
-#endif
     }
     EEPROM.writeByte(EE_BYTE_DISPLAYFLIP, displayflip);
     EEPROM.commit();
@@ -1378,37 +1333,16 @@ void setup() {
   }
 
   if (digitalRead(BWBUTTON) == HIGH && digitalRead(ROTARY_BUTTON) == HIGH && digitalRead(MODEBUTTON) == HIGH && digitalRead(BANDBUTTON) == LOW) {
-#ifdef SMETERPIN
-    analogWrite(SMETERPIN, 511);
-#endif
     analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 15, 255));
     Infoboxprint(textUI(4));
     tftPrint(ACENTER, textUI(2), 155, 130, ActiveColor, ActiveColorSmooth, 28);
     while (digitalRead(BANDBUTTON) == LOW) delay(50);
-#ifdef SMETERPIN
-    analogWrite(SMETERPIN, 0);
-#endif
-  }
-
-  if (digitalRead(BWBUTTON) == HIGH && digitalRead(ROTARY_BUTTON) == LOW && digitalRead(MODEBUTTON) == HIGH && digitalRead(BANDBUTTON) == HIGH) {
-    analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 15, 255));
-    if (optenc == 0) {
-      optenc = 1;
-      Infoboxprint(textUI(6));
-    } else {
-      optenc = 0;
-      Infoboxprint(textUI(7));
-    }
-    EEPROM.writeByte(EE_BYTE_OPTENC, optenc);
-    EEPROM.commit();
-    tftPrint(ACENTER, textUI(2), 155, 130, ActiveColor, ActiveColorSmooth, 28);
-    while (digitalRead(ROTARY_BUTTON) == LOW) delay(50);
   }
 
   if (digitalRead(BWBUTTON) == LOW && digitalRead(ROTARY_BUTTON) == LOW && digitalRead(MODEBUTTON) == HIGH && digitalRead(BANDBUTTON) == HIGH) {
     analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 15, 255));
     DefaultSettings();
-    Infoboxprint(textUI(66));
+    Infoboxprint(textUI(65));
     tftPrint(ACENTER, textUI(2), 155, 130, ActiveColor, ActiveColorSmooth, 28);
     while (digitalRead(ROTARY_BUTTON) == LOW && digitalRead(BWBUTTON) == LOW) delay(50);
     esp_restart();
@@ -1416,8 +1350,8 @@ void setup() {
 
   if (digitalRead(BWBUTTON) == LOW && digitalRead(ROTARY_BUTTON) == HIGH && digitalRead(MODEBUTTON) == LOW && digitalRead(BANDBUTTON) == HIGH) {
     analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 15, 255));
-    Infoboxprint(textUI(282));
-    tftPrint(ACENTER, textUI(283), 155, 100, ActiveColor, ActiveColorSmooth, 28);
+    Infoboxprint(textUI(281));
+    tftPrint(ACENTER, textUI(282), 155, 100, ActiveColor, ActiveColorSmooth, 28);
     tft.calibrateTouch(TouchCalData, PrimaryColor, BackgroundColor, 30);
     EEPROM.writeUInt(EE_UINT16_CALTOUCH1, TouchCalData[0]);
     EEPROM.writeUInt(EE_UINT16_CALTOUCH2, TouchCalData[1]);
@@ -1429,7 +1363,7 @@ void setup() {
 
   if (digitalRead(BWBUTTON) == LOW && digitalRead(ROTARY_BUTTON) == HIGH && digitalRead(MODEBUTTON) == HIGH && digitalRead(BANDBUTTON) == LOW) {
     analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 15, 255));
-    Infoboxprint(textUI(69));
+    Infoboxprint(textUI(68));
     tftPrint(ACENTER, textUI(2), 155, 130, ActiveColor, ActiveColorSmooth, 28);
     invertdisplay = !invertdisplay;
     tft.invertDisplay(!invertdisplay);
@@ -1440,26 +1374,58 @@ void setup() {
 
   tft.setTouch(TouchCalData);
 
-  tft.fillScreen(BackgroundColor);
-  tftPrint(ACENTER, textUI(8), 160, 3, PrimaryColor, PrimaryColorSmooth, 28);
-  tftPrint(ACENTER, "Firmware " + String(VERSION), 160, 152, PrimaryColor, PrimaryColorSmooth, 16);
+  tft.fillScreen(TFT_BLACK);
 
-  tft.fillRect(120, 230, 16, 6, GreyoutColor);
-  tft.fillRect(152, 230, 16, 6, GreyoutColor);
-  tft.fillRect(184, 230, 16, 6, GreyoutColor);
-
-  tft.pushImage(78, 34, 163, 84, radiologo);
-  tft.drawBitmap(130, 124, TEFLogo, 59, 23, ActiveColor);
+  tft.pushImage((tft.width() - 163) / 2, (tft.height() - 84) / 2, 163, 84, radiologo, TFT_BLACK);
+  tft.drawBitmap((tft.width() - 59) / 2, 24, TEFLogo, 59, 23, ActiveColor);
 
   for (int x = 0; x <= ContrastSet; x++) {
     analogWrite(CONTRASTPIN, map(x, 0, 100, 15, 255));
     delay(10);
   }
 
-  tft.fillRect(120, 230, 16, 6, PrimaryColor);
+  console.print("Firmware " + String(VERSION));
+
+  if(!tef_found) {
+    console.print(textUI(8));
+    while (true) delay(1);
+  }
+
+  rtc.setTime(0);
+  if(rx_rtc_avail) {
+    bool reset = rx_rtc.initModule(); // initModule, not initAdapter, adapter also reinits wire
+    if(reset) {
+      RX8010SJ::DateTime defaulttime = RX8010SJ::DateTime();
+      defaulttime.second = 00;
+      defaulttime.minute = 5;
+      defaulttime.hour = 19;
+      defaulttime.dayOfWeek = 2;
+      defaulttime.dayOfMonth = 14;
+      defaulttime.month = 1;
+      defaulttime.year = 26;
+		  rx_rtc.writeDateTime(defaulttime);
+      console.print("RX8010SJ was reset, no time");
+    } else {
+      rtcset = true;
+      console.print("RX8010SJ is used as a time source");
+      sync_from_rx_rtc();
+    }
+  } else console.print("RX8010SJ is not available at address " + String(RX8010SJ_ADDRESS, HEX));
+
+  if(gpio_chip) {
+    console.print("XL9555 found, setting up");
+    // Configures the GPIO chip for input in every pin
+    Wire.beginTransmission(XL9555_ADDRESS);
+    Wire.write(0x06);
+    Wire.write(0xFF);
+    Wire.write(0xFF);
+    Wire.endTransmission();
+  } else console.print("XL9555 found not found on address " + String(XL9555_ADDRESS, HEX) + ". Numpad will not work");
 
   TEF = EEPROM.readByte(EE_BYTE_TEF);
   if(FORBIDDEN_TUNER(TEF)) SetTunerPatch();
+
+  // The tuner being missing here, would cause a infinite loop with no exit and no error, as it resets and polls the chip if it reset, if no response then we try again, and now, you see?
   radio.init(TEF);
 
   uint16_t device, hw, sw;
@@ -1470,54 +1436,45 @@ void setup() {
     fullsearchrds = false;
     fmsi = false;
     chipmodel = 0;
-    tft.fillRect(152, 230, 16, 6, PrimaryColor);
-    tftPrint(ACENTER, "TEF6686 Lithio", 160, 172, ActiveColor, ActiveColorSmooth, 28);
+    console.print("Detected a TEF6686 Lithio");
 #ifndef DEEPELEC_DP_66X
   } else if (lowByte(device) == 1) {
     fullsearchrds = true;
     chipmodel = 1;
-    tft.fillRect(152, 230, 16, 6, PrimaryColor);
-    tftPrint(ACENTER, "TEF6687 Lithio FMSI", 160, 172, ActiveColor, ActiveColorSmooth, 28);
+    console.print("Detected a TEF6687 Lithio FMSI");
   } else if (lowByte(device) == 9) {
     fullsearchrds = false;
     chipmodel = 2;
     fmsi = false;
-    tft.fillRect(152, 230, 16, 6, PrimaryColor);
-    tftPrint(ACENTER, "TEF6688 Lithio DR", 160, 172, ActiveColor, ActiveColorSmooth, 28);
+    console.print("Detected a TEF6688 Lithio DR");
   } else if (lowByte(device) == 3) {
     fullsearchrds = true;
     chipmodel = 3;
-    tft.fillRect(152, 230, 16, 6, PrimaryColor);
-    tftPrint(ACENTER, "TEF6689 Lithio FMSI DR", 160, 172, ActiveColor, ActiveColorSmooth, 28);
+    console.print("Detected a TEF6689 Lithio FMSI DR");
 #endif
-  } else {
-    tftPrint(ACENTER, textUI(9), 160, 172, SignificantColor, SignificantColorSmooth, 28);
-    tft.fillRect(152, 230, 16, 6, SignificantColor);
-    while (true);
   }
-  tftPrint(ACENTER, "Patch: v" + String(TEF) + " HW " + String(hw >> 8) + "." + String(hw & 0xff) + " SW " + String(sw >> 8) + "." + String(sw & 0xff), 160, 202, ActiveColor, ActiveColorSmooth, 16);
+  console.print("Chip Patch: v" + String(TEF) + " HW " + String(hw >> 8) + "." + String(hw & 0xff) + " SW " + String(sw >> 8) + "." + String(sw & 0xff));
 
-  // Configures the GPIO chip for input in every pin
-  Wire.beginTransmission(XL9555_ADDRESS);
-  Wire.write(0x06);
-  Wire.write(0xFF);
-  Wire.write(0xFF);
-  Wire.endTransmission();
+  if(analogRead(BATTERY_PIN) < 200) batterydetect = false;
+  else console.print("Battery detected.");
 
-  if (analogRead(BATTERY_PIN) < 200) batterydetect = false;
-  if (!SPIFFS.exists("/logbook.csv")) handleCreateNewLogbook();
+  if(!SPIFFS.exists("/logbook.csv")) {
+    handleCreateNewLogbook();
+    console.print("Creating a new logbook.");
+  }
 
   if (wifi) {
+    console.print("Trying WiFi");
     tryWiFi();
-    tft.fillRect(184, 230, 16, 6, PrimaryColor);
     delay(1750);
   } else {
     Server.end();
     Udp.stop();
-    tft.fillRect(184, 230, 16, 6, SignificantColor);
   }
 
   while(digitalRead(ROTARY_BUTTON) == LOW) delay(75);
+
+  console.print("Init done.");
 
   radio.setVolume(VolSet);
   radio.setOffset(LevelOffset);
@@ -1669,7 +1626,7 @@ void loop() {
       flashingtimer = millis();
     }
 
-    if (!scanholdflag) delay(100);
+    if (!scanholdflag) delay(75);
     radio.getStatus(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus, &CN);
 
     if (!initdxscan) {
@@ -1705,7 +1662,7 @@ void loop() {
             if (advancedRDS) {
               tft.drawRoundRect(10, 30, 300, 170, 2, ActiveColor);
               tft.fillRoundRect(12, 32, 296, 166, 2, BackgroundColor);
-              tftPrint(ACENTER, textUI(34), 160, 100, ActiveColor, ActiveColorSmooth, 28);
+              tftPrint(ACENTER, textUI(33), 160, 100, ActiveColor, ActiveColorSmooth, 28);
             } else ShowFreq(1);
           }
 
@@ -2356,8 +2313,6 @@ void SelectBand() {
     if (tunemode == TUNE_MI_BAND) tunemode = TUNE_MAN;
 
     if (!leave) {
-      radio.power(0);
-      delay(50);
       if (band == BAND_FM) radio.SetFreq(frequency);
       if (band == BAND_OIRT) radio.SetFreq(frequency_OIRT);
     }
@@ -2367,9 +2322,8 @@ void SelectBand() {
     freqold = frequency_AM;
     if (!externaltune && tunemode != TUNE_MEM) CheckBandForbiddenFM();
     doBW();
-    if (radio.rds.region == 0) {
-      tftPrint(ALEFT, "PI", 212, 193, ActiveColor, ActiveColorSmooth, 16);
-    } else {
+    if (radio.rds.region == 0) tftPrint(ALEFT, "PI", 212, 193, ActiveColor, ActiveColorSmooth, 16);
+    else {
       tftPrint(ALEFT, "PI", 212, 184, ActiveColor, ActiveColorSmooth, 16);
       tftPrint(ALEFT, "ID", 212, 201, ActiveColor, ActiveColorSmooth, 16);
     }
@@ -2394,18 +2348,18 @@ void SelectBand() {
     ShowTuneMode();
     ShowStepSize();
 
+    tftPrint(ALEFT, textUI(101), 70, 32, BackgroundColor, BackgroundColor, 16);
     tftPrint(ALEFT, textUI(102), 70, 32, BackgroundColor, BackgroundColor, 16);
     tftPrint(ALEFT, textUI(103), 70, 32, BackgroundColor, BackgroundColor, 16);
     tftPrint(ALEFT, textUI(104), 70, 32, BackgroundColor, BackgroundColor, 16);
     tftPrint(ALEFT, textUI(105), 70, 32, BackgroundColor, BackgroundColor, 16);
-    tftPrint(ALEFT, textUI(106), 70, 32, BackgroundColor, BackgroundColor, 16);
 
     switch (band) {
-      case BAND_LW: tftPrint(ALEFT, textUI(102), 70, 32, (bandforbidden ? GreyoutColor : PrimaryColor), (bandforbidden ? BackgroundColor : PrimaryColorSmooth), 16); break;
-      case BAND_MW: tftPrint(ALEFT, textUI(103), 70, 32, (bandforbidden ? GreyoutColor : PrimaryColor), (bandforbidden ? BackgroundColor : PrimaryColorSmooth), 16); break;
-      case BAND_SW: tftPrint(ALEFT, textUI(104), 70, 32, (bandforbidden ? GreyoutColor : PrimaryColor), (bandforbidden ? BackgroundColor : PrimaryColorSmooth), 16); break;
-      case BAND_FM: tftPrint(ALEFT, textUI(105), 70, 32, (bandforbidden ? GreyoutColor : PrimaryColor), (bandforbidden ? BackgroundColor : PrimaryColorSmooth), 16); break;
-      case BAND_OIRT: tftPrint(ALEFT, textUI(106), 70, 32, (bandforbidden ? GreyoutColor : PrimaryColor), (bandforbidden ? BackgroundColor : PrimaryColorSmooth), 16); break;
+      case BAND_LW: tftPrint(ALEFT, textUI(101), 70, 32, (bandforbidden ? GreyoutColor : PrimaryColor), (bandforbidden ? BackgroundColor : PrimaryColorSmooth), 16); break;
+      case BAND_MW: tftPrint(ALEFT, textUI(102), 70, 32, (bandforbidden ? GreyoutColor : PrimaryColor), (bandforbidden ? BackgroundColor : PrimaryColorSmooth), 16); break;
+      case BAND_SW: tftPrint(ALEFT, textUI(103), 70, 32, (bandforbidden ? GreyoutColor : PrimaryColor), (bandforbidden ? BackgroundColor : PrimaryColorSmooth), 16); break;
+      case BAND_FM: tftPrint(ALEFT, textUI(104), 70, 32, (bandforbidden ? GreyoutColor : PrimaryColor), (bandforbidden ? BackgroundColor : PrimaryColorSmooth), 16); break;
+      case BAND_OIRT: tftPrint(ALEFT, textUI(105), 70, 32, (bandforbidden ? GreyoutColor : PrimaryColor), (bandforbidden ? BackgroundColor : PrimaryColorSmooth), 16); break;
     }
   }
   leave = false;
@@ -2501,7 +2455,7 @@ void ModeButtonPress() {
     }
   }
   while (digitalRead(MODEBUTTON) == LOW) delay(50);
-  delay(100);
+  delay(75);
 }
 
 void RoundStep() {
@@ -2951,11 +2905,11 @@ void ShowFreq(int mode) {
             FrequencySprite.drawString(String(freq / 100) + "." + (freq % 100 < 10 ? "0" : "") + String(freq % 100) + " ", 218, -6, freqfont);
             freqold = freq;
             break;
-          case 1: Infoboxprint(textUI(34)); break;
-          case 2: Infoboxprint(textUI(290)); break;
-          case 3: Infoboxprint(textUI(291)); break;
-          case 4: Infoboxprint(textUI(295)); break;
-          case 5: Infoboxprint(textUI(284)); break;
+          case 1: Infoboxprint(textUI(33)); break;
+          case 2: Infoboxprint(textUI(289)); break;
+          case 3: Infoboxprint(textUI(290)); break;
+          case 4: Infoboxprint(textUI(294)); break;
+          case 5: Infoboxprint(textUI(283)); break;
         }
 
         FrequencySprite.pushSprite(46, 46);
@@ -3004,19 +2958,6 @@ void ShowSignalLevel() {
   SAvg4 = (((SAvg4 * 9) + 5) / 10) + WAM;
   SAvg5 = (((SAvg5 * 9) + 5) / 10) + USN;
 
-#ifdef SMETERPIN
-  float sval = 0;
-  int16_t smeter = 0;
-
-  if (SStatus > 0) {
-    if (SStatus < 1000) {
-      sval = 51 * ((pow(10, (((float)SStatus) / 1000))) - 1);
-      smeter = int16_t(sval);
-    } else smeter = 511;
-  }
-
-  smeter = int16_t(sval);
-#endif
   SStatus = SAvg / 10;
   CN = SAvg2 / 10;
   MP = SAvg4 / 10;
@@ -3051,10 +2992,6 @@ void ShowSignalLevel() {
         }
       }
     }
-
-#ifdef SMETERPIN
-    if (!menu) analogWrite(SMETERPIN, smeter);
-#endif
 
     int SStatusprint = 0;
     if (unit == 0) SStatusprint = SStatus;
@@ -3838,26 +3775,16 @@ void read_encoder() {
   encval += enc_states[( old_AB & 0x0f )];
   if (!(255 - old_AB)) encval = 0;
 
-  if (optenc) {
-    if (encval > 4) {
-      if (rotarymode) rotary = -1; else rotary = 1;
-      encval = 0;
-    } else if (encval < -4) {
-      if (rotarymode) rotary = 1; else rotary = -1;
-      encval = 0;
-    }
-  } else {
-    if (encval > 3) {
-      if (rotarymode) rotary = -1; else rotary = 1;
-      rotarycounter++;
-      rotarytimer = millis();
-      encval = 0;
-    } else if (encval < -3) {
-      if (rotarymode) rotary = 1; else rotary = -1;
-      rotarycounter++;
-      rotarytimer = millis();
-      encval = 0;
-    }
+  if (encval > 3) {
+    if (rotarymode) rotary = -1; else rotary = 1;
+    rotarycounter++;
+    rotarytimer = millis();
+    encval = 0;
+  } else if (encval < -3) {
+    if (rotarymode) rotary = 1; else rotary = -1;
+    rotarycounter++;
+    rotarytimer = millis();
+    encval = 0;
   }
 }
 
@@ -3867,26 +3794,19 @@ void tftReplace(int8_t offset, const String & textold, const String & text, int1
   else if (fontsize == 28) selectedFont = 1;
   else if (fontsize == 48) selectedFont = 2;
 
+  switch (offset) {
+    case -1: tft.setTextDatum(TL_DATUM); break;
+    case 0: tft.setTextDatum(TC_DATUM); break;
+    case 1: tft.setTextDatum(TR_DATUM); break;
+  }
+
   tft.setTextColor(background, background, false);
-
-  switch (offset) {
-    case -1: tft.setTextDatum(TL_DATUM); break;
-    case 0: tft.setTextDatum(TC_DATUM); break;
-    case 1: tft.setTextDatum(TR_DATUM); break;
-  }
-
   tft.drawString(textold, x, y, selectedFont);
-  tft.setTextColor(color, smoothcolor, false);
-
-  switch (offset) {
-    case -1: tft.setTextDatum(TL_DATUM); break;
-    case 0: tft.setTextDatum(TC_DATUM); break;
-    case 1: tft.setTextDatum(TR_DATUM); break;
-  }
 
   String modifiedText = text;
   modifiedText.replace("\n", " ");
 
+  tft.setTextColor(color, smoothcolor, false);
   tft.drawString(modifiedText, x, y, selectedFont);
 }
 
@@ -3953,7 +3873,7 @@ uint8_t doAutoMemory(uint16_t startfreq, uint16_t stopfreq, uint8_t startmem, ui
 
   tft.drawRect(59, 109, 202, 8, FrameColor);
   tft.fillRect(60, 110, 200, 6, GreyoutColor);
-  tftPrint(ARIGHT, textUI(272), 120, 155, ActiveColor, ActiveColorSmooth, 16);
+  tftPrint(ARIGHT, textUI(271), 120, 155, ActiveColor, ActiveColorSmooth, 16);
 
   for (frequency = startfreq * 10; frequency <= stopfreq * 10; frequency += 10) {
     if (stopScanning) break;
@@ -4046,39 +3966,4 @@ uint8_t doAutoMemory(uint16_t startfreq, uint16_t stopfreq, uint8_t startmem, ui
   SQ = false;
 
   return error;
-}
-
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "esp_task_wdt.h"
-
-#ifndef ARDUINO_LOOP_STACK_SIZE
-#ifndef CONFIG_ARDUINO_LOOP_STACK_SIZE
-#define ARDUINO_LOOP_STACK_SIZE 8192
-#else
-#define ARDUINO_LOOP_STACK_SIZE CONFIG_ARDUINO_LOOP_STACK_SIZE
-#endif
-#endif
-
-TaskHandle_t loopTaskHandle = NULL;
-
-bool loopTaskWDTEnabled;
-
-__attribute__((weak)) size_t getArduinoLoopTaskStackSize(void) {
-    return ARDUINO_LOOP_STACK_SIZE;
-}
-
-void loopTask(void *pvParameters)
-{
-    setup();
-    for(;;) {
-        if(loopTaskWDTEnabled) esp_task_wdt_reset();
-        loop();
-        if (serialEventRun) serialEventRun();
-    }
-}
-
-extern "C" void app_main() {
-  initArduino();
-  xTaskCreateUniversal(loopTask, "loopTask", getArduinoLoopTaskStackSize(), NULL, 1, &loopTaskHandle, ARDUINO_RUNNING_CORE);
 }

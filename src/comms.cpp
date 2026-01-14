@@ -778,7 +778,7 @@ void XDRGTKRoutine() {
             if (!screenmute) {
               tft.drawRoundRect(10, 30, 300, 170, 5, ActiveColor);
               tft.fillRoundRect(12, 32, 296, 166, 5, BackgroundColor);
-              tftPrint(ACENTER, textUI(34), 160, 100, ActiveColor, ActiveColorSmooth, 28);
+              tftPrint(ACENTER, textUI(33), 160, 100, ActiveColor, ActiveColorSmooth, 28);
             }
 
             DataPrint("U");
@@ -905,7 +905,7 @@ void tryWiFi() {
   if (!setupmode && wifi) {
     tft.drawRoundRect(1, 20, 319, 180, 5, ActiveColor);
     tft.fillRoundRect(3, 22, 315, 176, 5, BackgroundColor);
-    Infoboxprint(textUI(55));
+    Infoboxprint(textUI(54));
   }
   if (wifi) {
     if (wc.autoConnect()) {
@@ -917,9 +917,9 @@ void tryWiFi() {
       webserver.begin();
       NTPupdate();
       remoteip = IPAddress(WiFi.localIP()[0], WiFi.localIP()[1], WiFi.localIP()[2], subnetclient);
-      if (!setupmode) tftPrint(ACENTER, textUI(57), 155, 128, InsignificantColor, InsignificantColorSmooth, 28);
+      if (!setupmode) tftPrint(ACENTER, textUI(56), 155, 128, InsignificantColor, InsignificantColorSmooth, 28);
     } else {
-      if (!setupmode) tftPrint(ACENTER, textUI(56), 155, 128, SignificantColor, SignificantColorSmooth, 28);
+      if (!setupmode) tftPrint(ACENTER, textUI(55), 155, 128, SignificantColor, SignificantColorSmooth, 28);
       Server.end();
       webserver.stop();
       Udp.stop();

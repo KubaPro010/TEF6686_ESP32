@@ -25,7 +25,6 @@ bool memorystore;
 bool memreset, memtune;
 bool menu, menuopen;
 bool mwstepsize;
-bool optenc;
 bool rdsflagreset;
 bool rdsreset;
 bool rdsstatscreen;

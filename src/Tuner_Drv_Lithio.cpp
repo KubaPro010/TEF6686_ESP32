@@ -32,7 +32,7 @@ bool devTEF_Get_Cmd(TEF_MODULE module, uint8_t cmd, uint8_t *receive, uint16_t l
 
 uint8_t devTEF_APPL_Get_Operation_Status() {
   uint8_t buf[2];
-  while(!devTEF_Get_Cmd(TEF_APPL, Cmd_Get_Operation_Status, buf, sizeof(buf))) delay(2);
+  while(!devTEF_Get_Cmd(TEF_APPL, Cmd_Get_Operation_Status, buf, sizeof(buf))) delay(3);
   return Convert8bto16b(buf);
 }
 

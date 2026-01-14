@@ -574,7 +574,7 @@ class TEF6686 {
     void setVolume(int8_t volume);
     void tone(uint16_t time, int16_t amplitude, uint16_t frequency);
     void extendBW(bool yesno);
-    uint16_t getBlockA(void);
+    uint16_t getBlockA();
     uint8_t af_counter;
     uint8_t eon_counter;
     uint8_t logbook_counter;

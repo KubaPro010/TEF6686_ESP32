@@ -314,12 +314,12 @@ class TFT_eSPI { friend class TFT_eSprite;
   uint8_t  spiBusyCheck = 0;      // Number of ESP32 transfer buffers to check
 
   // Bare metal functions
-  void     startWrite(void);                         // Begin SPI transaction
+  void     startWrite();                         // Begin SPI transaction
   void     writeColor(uint16_t color, uint32_t len); // Deprecated, use pushBlock()
-  void     endWrite(void);                           // End SPI transaction
+  void     endWrite();                           // End SPI transaction
 
   // Global variables
-  static   SPIClass& getSPIinstance(void); // Get SPI class handle
+  static   SPIClass& getSPIinstance(); // Get SPI class handle
   uint32_t textcolor, textbgcolor;         // Text foreground and background colours
 
   uint32_t bitmap_fg, bitmap_bg;           // Bitmap foreground (bit=1) and background (bit=0) colours
@@ -370,7 +370,7 @@ class TFT_eSPI { friend class TFT_eSprite;
   uint32_t* gBitmap[7] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL};   //file pointer to greyscale bitmap
 
   uint8_t  getTouchRaw(uint16_t *x, uint16_t *y);
-  uint16_t getTouchRawZ(void);
+  uint16_t getTouchRawZ();
   void     convertRawXY(uint16_t *x, uint16_t *y);
   uint8_t  getTouch(uint16_t *x, uint16_t *y, uint16_t threshold = 600);
 
@@ -461,13 +461,13 @@ uint8_t spi_write_speed;
 class TFT_eSprite : public TFT_eSPI {
  public:
   explicit TFT_eSprite(TFT_eSPI *tft);
-  ~TFT_eSprite(void);
+  ~TFT_eSprite();
   void* createSprite(int16_t width, int16_t height, uint8_t frames = 1);
   void* getPointer();
   bool created();
-  void deleteSprite(void);
+  void deleteSprite();
   void* setColorDepth(int8_t b);
-  int8_t getColorDepth(void);
+  int8_t getColorDepth();
   void createPalette(uint16_t *palette = nullptr, uint8_t colors = 16);
   void createPalette(const uint16_t *palette = nullptr, uint8_t colors = 16);
   void setPaletteColor(uint8_t index, uint16_t color);
@@ -494,8 +494,8 @@ class TFT_eSprite : public TFT_eSPI {
   bool     pushToSprite(TFT_eSprite *dspr, int32_t x, int32_t y, uint16_t transparent);
   int16_t  drawChar(uint16_t uniCode, int32_t x, int32_t y, uint8_t font),
            drawChar(uint16_t uniCode, int32_t x, int32_t y);
-  int16_t  width(void),
-           height(void);
+  int16_t  width(),
+           height();
   void     drawGlyph(uint16_t code, uint16_t font);
 
  private:
@@ -503,9 +503,6 @@ class TFT_eSprite : public TFT_eSPI {
   TFT_eSPI *_tft;
 
   void*    callocSprite(int16_t width, int16_t height, uint8_t frames = 1);
-
-  void     begin_nin_write(void) { ; }
-  void     end_nin_write(void) { ; }
 
  protected:
 

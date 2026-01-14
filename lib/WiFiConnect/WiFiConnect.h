@@ -96,7 +96,7 @@ class WiFiConnect {
     //called when AP mode and config portal is started
     void          setAPCallback( void (*func)(WiFiConnect*) );
     //called when settings have been changed and connection was successful
-    void          setSaveConfigCallback( void (*func)(void) );
+    void          setSaveConfigCallback( void (*func)() );
 
     void setDebug(boolean isDebug);
 
@@ -161,7 +161,7 @@ class WiFiConnect {
     IPAddress     _sta_static_sn; ///< Variable for holding Static Subnet Mask IP Address for the network connection
 
     void (*_apcallback)(WiFiConnect*) = NULL;
-    void (*_savecallback)(void) = NULL;
+    void (*_savecallback)() = NULL;
 
 
 

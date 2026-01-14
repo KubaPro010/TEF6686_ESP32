@@ -39,7 +39,6 @@ extern bool memorystore;
 extern bool memreset, memtune;
 extern bool menu, menuopen;
 extern bool mwstepsize;
-extern bool optenc;
 extern bool rdsflagreset;
 extern bool rdsreset;
 extern bool rdsstatscreen;

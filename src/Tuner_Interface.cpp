@@ -9,7 +9,7 @@ bool Tuner_WriteBuffer(unsigned char *buf, uint16_t len) {
   Wire.beginTransmission(TEF668X_ADDRESS);
   for (uint16_t i = 0; i < len; i++) Wire.write(buf[i]);
   uint8_t r = Wire.endTransmission();
-  if (!Data_Accelerator) delay(2);
+  if (!Data_Accelerator) delay(1);
   return (r == 0) ? true : false;
 }
 

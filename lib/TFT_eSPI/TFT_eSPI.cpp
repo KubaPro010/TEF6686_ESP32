@@ -152,7 +152,7 @@ void TFT_eSPI::pushPixels(const void* data_in, uint32_t len){
   while (READ_PERI_REG(SPI_CMD_REG(SPI_PORT))&SPI_USR);
 }
 
-bool TFT_eSPI::dmaBusy(void)
+bool TFT_eSPI::dmaBusy()
 {
   if (!DMA_Enabled || !spiBusyCheck) return false;
 
@@ -169,7 +169,7 @@ bool TFT_eSPI::dmaBusy(void)
   return true;
 }
 
-void TFT_eSPI::dmaWait(void)
+void TFT_eSPI::dmaWait()
 {
   if (!DMA_Enabled || !spiBusyCheck) return;
   spi_transaction_t *rtrans;
@@ -293,7 +293,7 @@ bool TFT_eSPI::initDMA(bool ctrl_cs)
   if (dw < 1 || dh < 1) return;
 
 
-inline void TFT_eSPI::begin_tft_write(void){
+inline void TFT_eSPI::begin_tft_write() {
   if (locked) {
     locked = false; // Flag to show SPI access now unlocked
     spi.beginTransaction(SPISettings(spi_write_speed * 1000000, MSBFIRST, TFT_SPI_MODE));
@@ -302,7 +302,7 @@ inline void TFT_eSPI::begin_tft_write(void){
   }
 }
 
-void TFT_eSPI::begin_nin_write(void){
+void TFT_eSPI::begin_nin_write() {
   if (locked) {
     locked = false; // Flag to show SPI access now unlocked
     spi.beginTransaction(SPISettings(spi_write_speed * 1000000, MSBFIRST, TFT_SPI_MODE));
@@ -311,7 +311,7 @@ void TFT_eSPI::begin_nin_write(void){
   }
 }
 
-inline void TFT_eSPI::end_tft_write(void){
+inline void TFT_eSPI::end_tft_write() {
   if(!inTransaction) {      // Flag to stop ending transaction during multiple graphics calls
     if (!locked) {          // Locked when beginTransaction has been called
       locked = true;        // Flag to show SPI access now locked
@@ -345,7 +345,7 @@ inline void TFT_eSPI::begin_tft_read() {
   SET_BUS_READ_MODE;
 }
 
-inline void TFT_eSPI::end_tft_read(void){
+inline void TFT_eSPI::end_tft_read() {
   if(!inTransaction) {
     if (!locked) {
       locked = true;
@@ -514,8 +514,7 @@ TFT_eSPI::TFT_eSPI(int16_t w, int16_t h)
   _yPivot = 0;
 }
 
-void TFT_eSPI::initBus(void) {
-
+void TFT_eSPI::initBus() {
 #ifdef TFT_CS
   if (TFT_CS >= 0) {
     pinMode(TFT_CS, OUTPUT);
@@ -588,9 +587,9 @@ void TFT_eSPI::init()
   if (TFT_RST >= 0) {
     writecommand(0x00); // Put SPI bus in known state for TFT with CS tied low
     digitalWrite(TFT_RST, HIGH);
-    delay(5);
+    delay(3);
     digitalWrite(TFT_RST, LOW);
-    delay(20);
+    delay(12);
     digitalWrite(TFT_RST, HIGH);
   }
   else writecommand(TFT_SWRST); // Software reset
@@ -598,7 +597,7 @@ void TFT_eSPI::init()
   writecommand(TFT_SWRST); // Software reset
 #endif
 
-  delay(150); // Wait for reset to complete
+  delay(50); // Wait for reset to complete
 
   begin_tft_write();
 
@@ -701,15 +700,9 @@ void TFT_eSPI::writedata(uint8_t d)
   end_tft_write();
 }
 
-
-/***************************************************************************************
-** Function name:           readcommand8
-** Description:             Read a 8-bit data value from an indexed command register
-***************************************************************************************/
 uint8_t TFT_eSPI::readcommand8(uint8_t cmd_function, uint8_t index)
 {
   uint8_t reg = 0;
-  // Tested with ILI9341 set to Interface II i.e. IM [3:0] = "1101"
   begin_tft_read();
   index = 0x10 + (index & 0x0F);
 
@@ -1416,8 +1409,7 @@ void TFT_eSPI::setSwapBytes(bool swap)
   _swapBytes = swap;
 }
 
-bool TFT_eSPI::getSwapBytes(void)
-{
+bool TFT_eSPI::getSwapBytes() {
   return _swapBytes;
 }
 
@@ -1998,14 +1990,12 @@ void TFT_eSPI::setTextPadding(uint16_t x_width)
   padX = x_width;
 }
 
-int16_t TFT_eSPI::width(void)
-{
+int16_t TFT_eSPI::width() {
   if (_vpDatum) return _xWidth;
   return _width;
 }
 
-int16_t TFT_eSPI::height(void)
-{
+int16_t TFT_eSPI::height() {
   if (_vpDatum) return _yHeight;
   return _height;
 }
@@ -2055,12 +2045,12 @@ int16_t TFT_eSPI::textWidth(const char *string, uint8_t font) {
 }
 
 int16_t TFT_eSPI::fontHeight(uint8_t font) {
-  if (font > 8) return 0;
+  if (font > 7) return 0;
 
   return gFonts[font].yAdvance;
 }
 
-int16_t TFT_eSPI::fontHeight(void)
+int16_t TFT_eSPI::fontHeight()
 {
   return fontHeight(textfont);
 }
@@ -2204,19 +2194,13 @@ void TFT_eSPI::pushColor(uint16_t color, uint32_t len)
   end_tft_write();
 }
 
-/***************************************************************************************
-** Function name:           startWrite
-** Description:             begin transaction with CS low, MUST later call endWrite
-***************************************************************************************/
-void TFT_eSPI::startWrite(void)
-{
+void TFT_eSPI::startWrite() {
   begin_tft_write();
   lockTransaction = true; // Lock transaction for all sequentially run sketch functions
   inTransaction = true;
 }
 
-void TFT_eSPI::endWrite(void)
-{
+void TFT_eSPI::endWrite() {
   lockTransaction = false; // Release sketch induced transaction lock
   inTransaction = false;
   dmaWait();          // Safety check - user code should have checked this!
@@ -3012,7 +2996,7 @@ int16_t TFT_eSPI::drawString(const char *string, int32_t poX, int32_t poY) {
 }
 
 int16_t TFT_eSPI::drawString(const char *string, int32_t poX, int32_t poY, uint8_t font) {
-  if (font > 8) return 0;
+  if (font > 7) return 0;
 
   int16_t sumX = 0;
   uint8_t padding = 1, baseline = 0;
@@ -3249,23 +3233,6 @@ void TFT_eSPI::loadMetrics(uint8_t font)
     gdX[font][gNum]       =   (int8_t)readInt32(); // x delta from cursor
     readInt32(); // ignored
 
-    // Different glyph sets have different ascent values not always based on "d", so we could get
-    // the maximum glyph ascent by checking all characters. BUT this method can generate bad values
-    // for non-existent glyphs, so we will reply on processing for the value and disable this code for now...
-    /*
-    if (gdY[gNum] > gFont.maxAscent)
-    {
-      // Try to avoid UTF coding values and characters that tend to give duff values
-      if (((gUnicode[gNum] > 0x20) && (gUnicode[gNum] < 0x7F)) || (gUnicode[gNum] > 0xA0))
-      {
-        gFont.maxAscent   = gdY[gNum];
-#ifdef SHOW_ASCENT_DESCENT
-        Serial.print("Unicode = 0x"); Serial.print(gUnicode[gNum], HEX); Serial.print(", maxAscent  = "); Serial.println(gFont.maxAscent);
-#endif
-      }
-    }
-    */
-
     // Different glyph sets have different descent values not always based on "p", so get maximum glyph descent
     if (((int16_t)gHeight[font][gNum] - (int16_t)gdY[font][gNum]) > gFonts[font].maxDescent)
     {
@@ -3335,8 +3302,7 @@ void TFT_eSPI::unloadFont(uint8_t font)
   gFonts[font].gArray = nullptr;
 }
 
-uint32_t TFT_eSPI::readInt32(void)
-{
+uint32_t TFT_eSPI::readInt32() {
   uint32_t val = 0;
 
   val  = (uint32_t)pgm_read_byte(fontPtr++) << 24;
@@ -3434,9 +3400,7 @@ void TFT_eSPI::drawGlyph(uint16_t code, uint16_t font)
       if (fillwidth > 0) {
         fillheight = gFonts[font].maxAscent - gdY[font][gNum];
         // Could be negative
-        if (fillheight > 0) {
-          fillRect(bg_cursor_x, cursor_y, fillwidth, fillheight, textbgcolor);
-        }
+        if (fillheight > 0) fillRect(bg_cursor_x, cursor_y, fillwidth, fillheight, textbgcolor);
       }
       else {
         // Could be negative
@@ -3519,7 +3483,7 @@ void TFT_eSPI::drawGlyph(uint16_t code, uint16_t font)
   #define Z_THRESHOLD 350 // Touch pressure threshold for validating touches
 #endif
 
-inline void TFT_eSPI::begin_touch_read_write(void){
+inline void TFT_eSPI::begin_touch_read_write() {
   dmaWait();
   CS_H; // Just in case it has been left low
   if (locked) {locked = false; spi.beginTransaction(SPISettings(SPI_TOUCH_FREQUENCY, MSBFIRST, SPI_MODE0));}
@@ -3527,7 +3491,7 @@ inline void TFT_eSPI::begin_touch_read_write(void){
   digitalWrite(TOUCH_CS, LOW);
 }
 
-inline void TFT_eSPI::end_touch_read_write(void){
+inline void TFT_eSPI::end_touch_read_write() {
   digitalWrite(TOUCH_CS, HIGH);
   if(!inTransaction) {if (!locked) {locked = true; spi.endTransaction();}}
 }
@@ -3574,7 +3538,7 @@ uint8_t TFT_eSPI::getTouchRaw(uint16_t *x, uint16_t *y){
 ** Function name:           getTouchRawZ
 ** Description:             read raw pressure on touchpad and return Z value.
 ***************************************************************************************/
-uint16_t TFT_eSPI::getTouchRawZ(void){
+uint16_t TFT_eSPI::getTouchRawZ() {
 
   begin_touch_read_write();
 
@@ -3591,10 +3555,6 @@ uint16_t TFT_eSPI::getTouchRawZ(void){
   return (uint16_t)tz;
 }
 
-/***************************************************************************************
-** Function name:           validTouch
-** Description:             read validated position. Return false if not pressed.
-***************************************************************************************/
 #define _RAWERR 20 // Deadband error allowed in successive position samples
 uint8_t TFT_eSPI::validTouch(uint16_t *x, uint16_t *y, uint16_t threshold){
   uint16_t x_tmp, y_tmp, x_tmp2, y_tmp2;
@@ -3609,23 +3569,15 @@ uint8_t TFT_eSPI::validTouch(uint16_t *x, uint16_t *y, uint16_t threshold){
     delay(1);
   }
 
-  //  Serial.print("Z = ");Serial.println(z1);
-
   if (z1 <= threshold) return false;
 
   getTouchRaw(&x_tmp,&y_tmp);
-
-  //  Serial.print("Sample 1 x,y = "); Serial.print(x_tmp);Serial.print(",");Serial.print(y_tmp);
-  //  Serial.print(", Z = ");Serial.println(z1);
 
   delay(1); // Small delay to the next sample
   if (getTouchRawZ() <= threshold) return false;
 
   delay(2); // Small delay to the next sample
   getTouchRaw(&x_tmp2,&y_tmp2);
-
-  //  Serial.print("Sample 2 x,y = "); Serial.print(x_tmp2);Serial.print(",");Serial.println(y_tmp2);
-  //  Serial.print("Sample difference = ");Serial.print(abs(x_tmp - x_tmp2));Serial.print(",");Serial.println(abs(y_tmp - y_tmp2));
 
   if (abs(x_tmp - x_tmp2) > _RAWERR) return false;
   if (abs(y_tmp - y_tmp2) > _RAWERR) return false;
@@ -3693,15 +3645,9 @@ void TFT_eSPI::convertRawXY(uint16_t *x, uint16_t *y)
   *y = yy;
 }
 
-/***************************************************************************************
-** Function name:           calibrateTouch
-** Description:             generates calibration parameters for touchscreen.
-***************************************************************************************/
-void TFT_eSPI::calibrateTouch(uint16_t *parameters, uint32_t color_fg, uint32_t color_bg, uint8_t size){
+void TFT_eSPI::calibrateTouch(uint16_t *parameters, uint32_t color_fg, uint32_t color_bg, uint8_t size) {
   int16_t values[] = {0,0,0,0,0,0,0,0};
   uint16_t x_tmp, y_tmp;
-
-
 
   for(uint8_t i = 0; i<4; i++){
     fillRect(0, 0, size+1, size+1, color_bg);
@@ -3841,12 +3787,6 @@ TFT_eSprite::TFT_eSprite(TFT_eSPI *tft) {
   lockTransaction = true;
 }
 
-
-/***************************************************************************************
-** Function name:           createSprite
-** Description:             Create a sprite (bitmap) of defined width and height
-***************************************************************************************/
-// cast returned value to (uint8_t*) for 8-bit or (uint16_t*) for 16-bit colours
 void* TFT_eSprite::createSprite(int16_t w, int16_t h, uint8_t frames) {
 
   if ( _created ) return _img8_1;
@@ -3871,30 +3811,18 @@ void* TFT_eSprite::createSprite(int16_t w, int16_t h, uint8_t frames) {
   _img    = (uint16_t*) _img8;
   _img4   = _img8;
 
-  if ( (_bpp == 16) && (frames > 1) ) {
-    _img8_2 = _img8 + (w * h * 2 + 1);
-  }
+  if ( (_bpp == 16) && (frames > 1) ) _img8_2 = _img8 + (w * h * 2 + 1);
 
-  // ESP32 only 16bpp check
-  //if (esp_ptr_dma_capable(_img8_1)) Serial.println("DMA capable Sprite pointer _img8_1");
-  //else Serial.println("Not a DMA capable Sprite pointer _img8_1");
-  //if (esp_ptr_dma_capable(_img8_2)) Serial.println("DMA capable Sprite pointer _img8_2");
-  //else Serial.println("Not a DMA capable Sprite pointer _img8_2");
-
-  if ( (_bpp == 8) && (frames > 1) ) {
-    _img8_2 = _img8 + (w * h + 1);
-  }
+  if ( (_bpp == 8) && (frames > 1) ) _img8_2 = _img8 + (w * h + 1);
 
   // This is to make it clear what pointer size is expected to be used
   // but casting in the user sketch is needed due to the use of void*
-  if ( (_bpp == 1) && (frames > 1) )
-  {
+  if ( (_bpp == 1) && (frames > 1) ) {
     w = (w+7) & 0xFFF8;
     _img8_2 = _img8 + ( (w>>3) * h + 1 );
   }
 
-  if (_img8)
-  {
+  if (_img8) {
     _created = true;
     if ( (_bpp == 4) && (_colorMap == nullptr)) createPalette(default_4bit_palette);
 
@@ -3907,42 +3835,21 @@ void* TFT_eSprite::createSprite(int16_t w, int16_t h, uint8_t frames) {
   return nullptr;
 }
 
-/***************************************************************************************
-** Function name:           getPointer
-** Description:             Returns pointer to start of sprite memory area
-***************************************************************************************/
-void* TFT_eSprite::getPointer(void)
+void* TFT_eSprite::getPointer()
 {
   if (!_created) return nullptr;
   return _img8_1;
 }
 
-
-/***************************************************************************************
-** Function name:           created
-** Description:             Returns true if sprite has been created
-***************************************************************************************/
-bool TFT_eSprite::created(void)
-{
+bool TFT_eSprite::created() {
   return _created;
 }
 
-
-/***************************************************************************************
-** Function name:           ~TFT_eSprite
-** Description:             Class destructor
-***************************************************************************************/
-TFT_eSprite::~TFT_eSprite(void)
-{
+TFT_eSprite::~TFT_eSprite() {
   deleteSprite();
-  for(int i = 0; i < 2; i++) unloadFont(i);
+  for(int i = 0; i < 7; i++) unloadFont(i);
 }
 
-
-/***************************************************************************************
-** Function name:           callocSprite
-** Description:             Allocate a memory area for the Sprite and return pointer
-***************************************************************************************/
 void* TFT_eSprite::callocSprite(int16_t w, int16_t h, uint8_t frames)
 {
   // Add one extra "off screen" pixel to point out-of-bounds setWindow() coordinates
@@ -3953,28 +3860,13 @@ void* TFT_eSprite::callocSprite(int16_t w, int16_t h, uint8_t frames)
   if (frames > 2) frames = 2; // Currently restricted to 2 frame buffers
   if (frames < 1) frames = 1;
 
-  if (_bpp == 16)
-  {
-    {
-      ptr8 = ( uint8_t*) calloc(frames * w * h + frames, sizeof(uint16_t));
-      //Serial.println("Normal RAM");
-    }
-  }
-
-  else if (_bpp == 8)
-  {
-    ptr8 = ( uint8_t*) calloc(frames * w * h + frames, sizeof(uint8_t));
-  }
-
-  else if (_bpp == 4)
-  {
+  if (_bpp == 16) ptr8 = ( uint8_t*) calloc(frames * w * h + frames, sizeof(uint16_t));
+  else if (_bpp == 8) ptr8 = ( uint8_t*) calloc(frames * w * h + frames, sizeof(uint8_t));
+  else if (_bpp == 4) {
     w = (w+1) & 0xFFFE; // width needs to be multiple of 2, with an extra "off screen" pixel
     _iwidth = w;
     ptr8 = ( uint8_t*) calloc(((frames * w * h) >> 1) + frames, sizeof(uint8_t));
-  }
-
-  else // Must be 1 bpp
-  {
+  } else {// Must be 1 bpp
     //_dwidth   Display width+height in pixels always in rotation 0 orientation
     //_dheight  Not swapped for sprite rotations
     // Note: for 1bpp _iwidth and _iheight are swapped during Sprite rotations
@@ -4064,55 +3956,33 @@ void* TFT_eSprite::setColorDepth(int8_t b)
   return nullptr;
 }
 
-int8_t TFT_eSprite::getColorDepth(void)
-{
+int8_t TFT_eSprite::getColorDepth() {
   if (_created) return _bpp;
   else return 0;
 }
 
 
-/***************************************************************************************
-** Function name:           setBitmapColor
-** Description:             Set the 1bpp foreground foreground and background colour
-***************************************************************************************/
-void TFT_eSprite::setBitmapColor(uint16_t c, uint16_t b)
-{
+void TFT_eSprite::setBitmapColor(uint16_t c, uint16_t b) {
   if (c == b) b = ~c;
   _tft->bitmap_fg = c;
   _tft->bitmap_bg = b;
 }
 
-
-/***************************************************************************************
-** Function name:           setPaletteColor
-** Description:             Set the 4bpp palette color at the given index
-***************************************************************************************/
-void TFT_eSprite::setPaletteColor(uint8_t index, uint16_t color)
-{
+void TFT_eSprite::setPaletteColor(uint8_t index, uint16_t color) {
   if (_colorMap == nullptr || index > 15) return; // out of bounds
 
   _colorMap[index] = color;
 }
 
 
-/***************************************************************************************
-** Function name:           getPaletteColor
-** Description:             Return the palette color at 4bpp index, or 0 on error.
-***************************************************************************************/
-uint16_t TFT_eSprite::getPaletteColor(uint8_t index)
-{
+uint16_t TFT_eSprite::getPaletteColor(uint8_t index) {
   if (_colorMap == nullptr || index > 15) return 0; // out of bounds
 
   return _colorMap[index];
 }
 
 
-/***************************************************************************************
-** Function name:           deleteSprite
-** Description:             Delete the sprite to free up memory (RAM)
-***************************************************************************************/
-void TFT_eSprite::deleteSprite(void)
-{
+void TFT_eSprite::deleteSprite() {
   if (_colorMap != nullptr)
   {
     free(_colorMap);
@@ -4407,10 +4277,6 @@ uint16_t TFT_eSprite::readPixelValue(int32_t x, int32_t y)
   return 0;
 }
 
-/***************************************************************************************
-** Function name:           readPixel
-** Description:             Read 565 colour of a pixel at defined coordinates
-***************************************************************************************/
 uint16_t TFT_eSprite::readPixel(int32_t x, int32_t y)
 {
   if (_vpOoB  || !_created) return 0xFFFF;
@@ -4590,10 +4456,7 @@ void  TFT_eSprite::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_
         y++;
       }
     }
-  }
-
-  else // 1bpp
-  {
+  } else { // 1bpp
     // Plot a 1bpp image into a 1bpp Sprite
     uint32_t ww =  (w+7)>>3; // Width of source image line in bytes
     uint8_t *ptr = (uint8_t *)data;
@@ -4601,8 +4464,7 @@ void  TFT_eSprite::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_
     {
       uint32_t yw = yp * ww;              // Byte starting the line containing source pixel
       int32_t ox = x;
-      for (int32_t xp = dx; xp < dx + dw; xp++)
-      {
+      for (int32_t xp = dx; xp < dx + dw; xp++) {
         uint16_t readPixel = (ptr[(xp>>3) + yw] & (0x80 >> (xp & 0x7)) );
         drawPixel(ox++, y, readPixel);
       }
@@ -4615,8 +4477,7 @@ void  TFT_eSprite::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const u
   pushImage(x, y, w, h, (uint16_t*) data);
 }
 
-void TFT_eSprite::setWindow(int32_t x0, int32_t y0, int32_t x1, int32_t y1)
-{
+void TFT_eSprite::setWindow(int32_t x0, int32_t y0, int32_t x1, int32_t y1) {
   if (x0 > x1) transpose(x0, x1);
   if (y0 > y1) transpose(y0, y1);
 
@@ -4671,12 +4532,10 @@ void TFT_eSprite::pushColor(uint16_t color)
 
   else drawPixel(_xptr, _yptr, color);
 
-  // Increment x
   _xptr++;
 
   // Wrap on x and y to start, increment y if needed
-  if (_xptr > _xe)
-  {
+  if (_xptr > _xe) {
     _xptr = _xs;
     _yptr++;
     if (_yptr > _ye) _yptr = _ys;
@@ -4689,14 +4548,9 @@ void TFT_eSprite::pushColor(uint16_t color, uint32_t len)
   if (!_created ) return;
 
   uint16_t pixelColor;
-
-  if (_bpp == 16)
-    pixelColor = (uint16_t) (color >> 8) | (color << 8);
-
-  else  if (_bpp == 8)
-    pixelColor = (color & 0xE000)>>8 | (color & 0x0700)>>6 | (color & 0x0018)>>3;
-
-  else pixelColor = (uint16_t) color; // for 1bpp or 4bpp
+  if (_bpp == 16) pixelColor = (uint16_t) (color >> 8) | (color << 8);
+  else  if (_bpp == 8) pixelColor = (color & 0xE000)>>8 | (color & 0x0700)>>6 | (color & 0x0018)>>3;
+  else pixelColor = (uint16_t) color;
 
   while(len--) writeColor(pixelColor);
 }
@@ -4705,24 +4559,15 @@ void TFT_eSprite::writeColor(uint16_t color)
 {
   if (!_created ) return;
 
-  // Write 16-bit RGB 565 encoded colour to RAM
   if (_bpp == 16) _img [_xptr + _yptr * _iwidth] = color;
-
-  // Write 8-bit RGB 332 encoded colour to RAM
   else if (_bpp == 8) _img8[_xptr + _yptr * _iwidth] = (uint8_t) color;
-
-  else if (_bpp == 4)
-  {
+  else if (_bpp == 4) {
     uint8_t c = (uint8_t)color & 0x0F;
-    if ((_xptr & 0x01) == 0)
-      _img4[(_xptr + _yptr * _iwidth)>>1] = (c << 4) | (_img4[(_xptr + _yptr * _iwidth)>>1] & 0x0F);  // new color is in bits 7 .. 4
-    else
-      _img4[(_xptr + _yptr * _iwidth)>>1] = (_img4[(_xptr + _yptr * _iwidth)>>1] & 0xF0) | c; // new color is the low bits (x is odd)
+    if ((_xptr & 0x01) == 0) _img4[(_xptr + _yptr * _iwidth)>>1] = (c << 4) | (_img4[(_xptr + _yptr * _iwidth)>>1] & 0x0F);  // new color is in bits 7 .. 4
+    else _img4[(_xptr + _yptr * _iwidth)>>1] = (_img4[(_xptr + _yptr * _iwidth)>>1] & 0xF0) | c; // new color is the low bits (x is odd)
   }
-
   else drawPixel(_xptr, _yptr, color);
 
-  // Increment x
   _xptr++;
 
   // Wrap on x and y to start, increment y if needed
@@ -4738,27 +4583,18 @@ void TFT_eSprite::fillSprite(uint32_t color)
 {
   if (!_created || _vpOoB) return;
 
-  // Use memset if possible as it is super fast
-  if(_xDatum == 0 && _yDatum == 0  &&  _xWidth == width())
+  if(_xDatum == 0 && _yDatum == 0 && _xWidth == width())
   {
     if(_bpp == 16) {
-      if ( (uint8_t)color == (uint8_t)(color>>8) ) {
-        memset(_img,  (uint8_t)color, _iwidth * _yHeight * 2);
-      }
+      if ( (uint8_t)color == (uint8_t)(color>>8) ) memset(_img,  (uint8_t)color, _iwidth * _yHeight * 2);
       else fillRect(_vpX, _vpY, _xWidth, _yHeight, color);
-    }
-    else if (_bpp == 8)
-    {
+    } else if (_bpp == 8) {
       color = (color & 0xE000)>>8 | (color & 0x0700)>>6 | (color & 0x0018)>>3;
       memset(_img8, (uint8_t)color, _iwidth * _yHeight);
-    }
-    else if (_bpp == 4)
-    {
+    } else if (_bpp == 4) {
       uint8_t c = ((color & 0x0F) | (((color & 0x0F) << 4) & 0xF0));
       memset(_img4, c, (_iwidth * _yHeight) >> 1);
-    }
-    else if (_bpp == 1)
-    {
+    } else if (_bpp == 1) {
       if(color) memset(_img8, 0xFF, (_bitwidth>>3) * _dheight + 1);
       else      memset(_img8, 0x00, (_bitwidth>>3) * _dheight + 1);
     }
@@ -4766,8 +4602,7 @@ void TFT_eSprite::fillSprite(uint32_t color)
   else fillRect(_vpX - _xDatum, _vpY - _yDatum, _xWidth, _yHeight, color);
 }
 
-int16_t TFT_eSprite::width(void)
-{
+int16_t TFT_eSprite::width() {
   if (!_created ) return 0;
 
   if (_bpp > 1) {
@@ -4784,8 +4619,7 @@ int16_t TFT_eSprite::width(void)
   return _dwidth;
 }
 
-int16_t TFT_eSprite::height(void)
-{
+int16_t TFT_eSprite::height() {
   if (!_created ) return 0;
 
   if (_bpp > 1) {
@@ -4937,11 +4771,6 @@ void TFT_eSprite::drawFastVLine(int32_t x, int32_t y, int32_t h, uint32_t color)
   }
 }
 
-
-/***************************************************************************************
-** Function name:           drawFastHLine
-** Description:             draw a horizontal line
-***************************************************************************************/
 void TFT_eSprite::drawFastHLine(int32_t x, int32_t y, int32_t w, uint32_t color)
 {
   if (!_created || _vpOoB) return;

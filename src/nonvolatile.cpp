@@ -155,7 +155,6 @@ void loadData() {
   rotarymode = EEPROM.readByte(EE_BYTE_ROTARYMODE);
   tunemode = EEPROM.readByte(EE_BYTE_TUNEMODE);
   if (tunemode == TUNE_MAN) stepsize = EEPROM.readByte(EE_BYTE_STEPSIZE); else stepsize = 0;
-  optenc = EEPROM.readByte(EE_BYTE_OPTENC);
   iMSset = EEPROM.readByte(EE_BYTE_IMSSET);
   EQset = EEPROM.readByte(EE_BYTE_EQSET);
   band = EEPROM.readByte(EE_BYTE_BAND);
@@ -267,7 +266,6 @@ void DefaultSettings() {
   EEPROM.writeByte(EE_BYTE_TEF, 0);
   EEPROM.writeByte(EE_BYTE_STEPSIZE, 0);
   EEPROM.writeByte(EE_BYTE_TUNEMODE, 0);
-  EEPROM.writeByte(EE_BYTE_OPTENC, 0);
   EEPROM.writeByte(EE_BYTE_IMSSET, 1);
   EEPROM.writeByte(EE_BYTE_EQSET, 1);
   EEPROM.writeByte(EE_BYTE_BAND, BAND_FM);

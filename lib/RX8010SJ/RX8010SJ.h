@@ -100,11 +100,11 @@
                 // Methods
 				bool initAdapter();
 				bool initModule();
-				void resetModule(void);
+				void resetModule();
 				void toggleGlobalStop(bool stopEnabled);
 
 				// Calendar
-                DateTime readDateTime(void);
+                DateTime readDateTime();
 				void writeDateTime(DateTime dateTime);
 
 				// Fixed cycle interrupt

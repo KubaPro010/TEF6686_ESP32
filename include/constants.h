@@ -16,11 +16,6 @@
 #define TOUCHIRQ 33
 #define EXT_IRQ 14
 
-#ifndef DEEPELEC_DP_66X
-#define STANDBYLED 19
-#define SMETERPIN 27
-#endif
-
 #define XL9555_ADDRESS 0x20 // GPIO driver used in the DP666 for the 0-9 + DX(Backspace) + Enter buttons
 
 #define TEF668X_ADDRESS 0x64 // I2C address of the TEF itself! Not sure if this even changes
@@ -269,7 +264,7 @@
 #define EE_BYTE_ROTARYMODE            2118
 #define EE_BYTE_STEPSIZE              2119
 #define EE_BYTE_TUNEMODE              2120
-#define EE_BYTE_OPTENC                2121
+// empty byte
 #define EE_BYTE_CHECKBYTE             2122
 #define EE_BYTE_IMSSET                2123
 #define EE_BYTE_EQSET                 2124

@@ -289,14 +289,6 @@ boolean WiFiConnect::startConfigurationPortal(AP_Continue apcontinue, const char
 		DEBUG_WC(F("WiFi AP STA - Configuration Portal"));
   }
   _lastAPPage = millis();
-  //  WiFi.mode(WIFI_AP);//Fix for scan bug when switching from STA to AP STA
-  //  delay(1);
-  //  WiFi.mode(WIFI_AP_STA);
-  //  delay(1);
-	
-#ifdef ARDUINO_ARCH_ESP8266	
-	WiFi.setSleepMode(WIFI_NONE_SLEEP);
-#endif 
 
   delay(50);
 
@@ -1228,7 +1220,7 @@ void WiFiConnect::setAPCallback( void (*func)(WiFiConnect* myWiFiConnect) ) {
             a flag for processing else where.
 */
 /**************************************************************************/
-void WiFiConnect::setSaveConfigCallback( void (*func)(void) ) {
+void WiFiConnect::setSaveConfigCallback( void (*func)() ) {
   _savecallback = func;
 }
 /**************************************************************************/

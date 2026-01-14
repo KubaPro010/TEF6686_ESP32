@@ -9,20 +9,11 @@
 #define SPI_READ_FREQUENCY 20000000
 #define SPI_TOUCH_FREQUENCY 2500000
 
-#ifdef ARS
-#define TFT_RGB_ORDER TFT_RGB
-#endif
-
 #define TFT_BGR 0   // Colour order Blue-Green-Red
 #define TFT_RGB 1   // Colour order Red-Green-Blue
 
-#ifndef ARS
-  #define TFT_WIDTH  240
-  #define TFT_HEIGHT 320
-#else
-  #define TFT_WIDTH  320
-  #define TFT_HEIGHT 240
-#endif
+#define TFT_WIDTH  240
+#define TFT_HEIGHT 320
 
 #include <ILI9341_Defines.h>
 #define TFT_DRIVER 0x9341
