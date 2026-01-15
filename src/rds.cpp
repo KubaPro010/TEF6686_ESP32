@@ -849,15 +849,13 @@ void ShowRDSStatistics() {
       processed_rdsblocksold[rb] = radio.processed_rdsblocks;
     }
 
-    String HexString;
-    HexString = String(((radio.rds.rdsA >> 12) & 0xF), HEX) + String(((radio.rds.rdsA >> 8)  & 0xF), HEX) + String(((radio.rds.rdsA >> 4)  & 0xF), HEX) + String((radio.rds.rdsA & 0xF), HEX);
+    String HexString = String(((radio.rds.rdsA >> 12) & 0xF), HEX) + String(((radio.rds.rdsA >> 8)  & 0xF), HEX) + String(((radio.rds.rdsA >> 4)  & 0xF), HEX) + String((radio.rds.rdsA & 0xF), HEX);
     HexString += " ";
     HexString += String(((radio.rds.rdsB >> 12) & 0xF), HEX) + String(((radio.rds.rdsB >> 8)  & 0xF), HEX) + String(((radio.rds.rdsB >> 4)  & 0xF), HEX) + String((radio.rds.rdsB & 0xF), HEX);
     HexString += " ";
     HexString += String(((radio.rds.rdsC >> 12) & 0xF), HEX) + String(((radio.rds.rdsC >> 8)  & 0xF), HEX) + String(((radio.rds.rdsC >> 4)  & 0xF), HEX) + String((radio.rds.rdsC & 0xF), HEX);
     HexString += " ";
     HexString += String(((radio.rds.rdsD >> 12) & 0xF), HEX) + String(((radio.rds.rdsD >> 8)  & 0xF), HEX) + String(((radio.rds.rdsD >> 4)  & 0xF), HEX) + String((radio.rds.rdsD & 0xF), HEX);
-
     HexString.toUpperCase();
 
     if (HexString != HexStringold) {
@@ -866,9 +864,7 @@ void ShowRDSStatistics() {
     }
   }
 
-  // --- Always draw error indicators & BER meter if blocks processed ---
   if (radio.processed_rdsblocks > 0 && !dropout) {
-    // Draw A-D error circles (simple error flags)
     const uint8_t xErr[4] = {86, 124, 162, 200};
     const bool errors[4] = {radio.rds.rdsAerror, radio.rds.rdsBerror, radio.rds.rdsCerror, radio.rds.rdsDerror};
 
@@ -879,12 +875,10 @@ void ShowRDSStatistics() {
     int errC = ((radio.rds.rdsErr >> 8) & 12) >> 2;
     int errD = (radio.rds.rdsErr & 3);
 
-    // Aggressive weights per error level
     const int weights[4] = {0, 2, 6, 12};
 
-    // Total estimated error bits in this group
     int errorBits = weights[errA] + weights[errB] + weights[errC] + weights[errD];
-    int totalBits = 4 * 26;  // 104 data bits per RDS group
+    int totalBits = 4 * 26;
 
     float ber = (float)errorBits / (float)totalBits;
 

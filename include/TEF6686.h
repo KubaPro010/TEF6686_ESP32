@@ -598,7 +598,6 @@ class TEF6686 {
     char eRT_buffer[129];
     bool rt_process;
     char rt_buffer[65];
-    char rt_buffer2[65];
     char rt_buffer32[33];
     char pslong_buffer[33];
     char pslong_buffer2[33];
@@ -620,7 +619,7 @@ class TEF6686 {
     uint16_t  currentfreq2;
     bool togglebit;
     bool runningbit;
-    bool initrt;
+    uint8_t segments_received[16];
     bool initab;
     bool afinit;
     bool errorfreepi;

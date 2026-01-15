@@ -1086,64 +1086,54 @@ void TEF6686::readRDS(byte showrdserrors) {
               initab = false;
             }
 
-            byte endmarkerRT64 = 64;
-            for (byte i = 0; i < endmarkerRT64; i++) {
-              if (rt_buffer[i] == 0x0d) {
-                endmarkerRT64 = i;
-                break;
-              }
-            }
+              if (rds.rtAB != rtABold) {
+                if (rds.rtbuffer) {
+                  char rt_buffer_temp[129];
+                  strcpy(rt_buffer_temp, rt_buffer);
 
-            if (rds.rtAB != rtABold) {
-              initrt = false;
-              if (rds.rtbuffer) {
-                char rt_buffer_temp[129];
-                strcpy(rt_buffer_temp, rt_buffer);
-
-                for (int i = 0; i < 129; i++) {
-                  if (rt_buffer_temp[i] == '\r') {
-                    rt_buffer_temp[i] = '\0';
-                    break;
+                  byte endmarkerRT64 = 64;
+                  for (byte i = 0; i < endmarkerRT64; i++) {
+                      if (rt_buffer_temp[i] == 0x0d) { endmarkerRT64 = i; break; }
                   }
+                  rt_buffer_temp[endmarkerRT64] = '\0';
+
+                  wchar_t RTtext[65] = L"";
+                  RDScharConverter(rt_buffer_temp, RTtext, sizeof(RTtext) / sizeof(wchar_t), (underscore > 1 ? true : false));
+                  rds.stationText = trimTrailingSpaces(convertToUTF8(RTtext));
                 }
 
-                wchar_t RTtext[65] = L"";
-                RDScharConverter(rt_buffer_temp, RTtext, sizeof(RTtext) / sizeof(wchar_t), (underscore > 1 ? true : false));
-                rds.stationText = convertToUTF8(RTtext);
-                rds.stationText = extractUTF8Substring(rds.stationText, 0, endmarkerRT64, (underscore > 1 ? true : false));
-                rds.stationText = trimTrailingSpaces(rds.stationText);
+                memset(rt_buffer, 0x20, 64);
+                rt_buffer[64] = '\0';
+                memset(segments_received, 3, sizeof(segments_received));
+                rtABold = rds.rtAB;
               }
 
-              for (byte i = 0; i < 64; i++) rt_buffer[i] = 0x20;
-              rt_buffer[64] = '\0';
-              rtABold = rds.rtAB;
-            }
+              uint8_t segment_address = (rds.rdsB & 0xf);
 
-            uint8_t segment = (rds.rdsB & 0xf) * 4;
-            rt_buffer[segment + 0] = rds.rdsC >> 8;
-            rt_buffer[segment + 1] = rds.rdsC & 0xff;
-            rt_buffer[segment + 2] = rds.rdsD >> 8;
-            rt_buffer[segment + 3] = rds.rdsD & 0xff;
+              if(segments_received[segment_address] > (rds.rdsCerror + rds.rdsBerror)) {
+                  segments_received[segment_address] = rds.rdsCerror + rds.rdsBerror;
 
-            if (initrt || !rds.rtbuffer) {
-              char rt_buffer_temp[129];
-              strcpy(rt_buffer_temp, rt_buffer);
+                  uint8_t offset = segment_address * 4;
+                  rt_buffer[offset + 0] = rds.rdsC >> 8;
+                  rt_buffer[offset + 1] = rds.rdsC & 0xff;
+                  rt_buffer[offset + 2] = rds.rdsD >> 8;
+                  rt_buffer[offset + 3] = rds.rdsD & 0xff;
 
-              for (int i = 0; i < 129; i++) {
-                if (rt_buffer_temp[i] == '\r') {
-                  rt_buffer_temp[i] = '\0';
-                  break;
-                }
+                  if (!rds.rtbuffer) {
+                      char rt_buffer_temp[129];
+                      strcpy(rt_buffer_temp, rt_buffer);
+
+                      byte endmarkerRT64 = 64;
+                      for (byte i = 0; i < endmarkerRT64; i++) {
+                          if (rt_buffer_temp[i] == 0x0d) { endmarkerRT64 = i; break; }
+                      }
+                      rt_buffer_temp[endmarkerRT64] = '\0';
+
+                      wchar_t RTtext[65] = L"";
+                      RDScharConverter(rt_buffer_temp, RTtext, sizeof(RTtext) / sizeof(wchar_t), (underscore > 1 ? true : false));
+                      rds.stationText = trimTrailingSpaces(convertToUTF8(RTtext));
+                  }
               }
-
-              wchar_t RTtext[65] = L"";
-              RDScharConverter(rt_buffer_temp, RTtext, sizeof(RTtext) / sizeof(wchar_t), (underscore > 1 ? true : false));
-              rds.stationText = convertToUTF8(RTtext);
-              rds.stationText = extractUTF8Substring(rds.stationText, 0, endmarkerRT64, (underscore > 1 ? true : false));
-              rds.stationText = trimTrailingSpaces(rds.stationText);
-            }
-
-            for (int i = 0; i < 64; i++) rt_buffer2[i] = rt_buffer[i];
           }
       } break;
 
@@ -1271,10 +1261,7 @@ void TEF6686::readRDS(byte showrdserrors) {
               int32_t current_correction = rtc_time - rds_utc_time;
               rds.clock_correction = current_correction;
 
-              if (!NTPupdated) {
-                time_t corrected_time = rds_utc_time - (current_correction / 2);
-                set_time(corrected_time);
-              }
+              if (!NTPupdated) set_time(rds_utc_time - (current_correction / 2));
             } else rds.hasCT = false;
             lastrdstime = rdstime;
             lasttimeoffset = timeoffset;
@@ -1338,10 +1325,10 @@ void TEF6686::readRDS(byte showrdserrors) {
             }
 
             if (rds.rtAB == rtABold) {
-              for (int i = 0; i <= length_marker_1; i++)RDSplus1[i] = rt_buffer2[i + start_marker_1];
+              for (int i = 0; i <= length_marker_1; i++)RDSplus1[i] = rt_buffer[i + start_marker_1];
               RDSplus1[length_marker_1 + 1] = 0;
 
-              for (int i = 0; i <= length_marker_2; i++)RDSplus2[i] = rt_buffer2[i + start_marker_2];
+              for (int i = 0; i <= length_marker_2; i++)RDSplus2[i] = rt_buffer[i + start_marker_2];
               RDSplus2[length_marker_2 + 1] = 0;
             }
 
@@ -1629,7 +1616,7 @@ void TEF6686::clearRDS(bool fullsearchrds) {
   rds.hasDynamicPTY = false;
   af_counter = af_updatecounter = eon_counter = 0;
   afreset = rds.rdsAerror = rds.rdsBerror = rds.rdsCerror = rds.rdsDerror = true;
-  initrt = initab = true;
+  initab = true;
   rds.rdsplusTag1 = 169;
   rds.rdsplusTag2 = 169;
   afinit = afmethodB = errorfreepi = false;
@@ -1638,6 +1625,7 @@ void TEF6686::clearRDS(bool fullsearchrds) {
   rds.aid_counter = af_number = 0;
   afmethodBprobe = afmethodBtrigger = _hasEnhancedRT = false;
   rds.ps12error = rds.ps34error = rds.ps56error = rds.ps78error = true;
+  memset(segments_received, 3, sizeof(segments_received));
 }
 
 void TEF6686::tone(uint16_t time, int16_t amplitude, uint16_t frequency) {
