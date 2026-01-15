@@ -1396,9 +1396,9 @@ void setup() {
     bool reset = rx_rtc.initModule(); // initModule, not initAdapter, adapter also reinits wire
     if(reset) {
       RX8010SJ::DateTime defaulttime = RX8010SJ::DateTime();
-      defaulttime.second = 00;
-      defaulttime.minute = 5;
-      defaulttime.hour = 19;
+      defaulttime.second = 0;
+      defaulttime.minute = 0;
+      defaulttime.hour = 0;
       defaulttime.dayOfWeek = 2;
       defaulttime.dayOfMonth = 14;
       defaulttime.month = 1;
@@ -1771,9 +1771,12 @@ void loop() {
         tftPrint(ALEFT, "70", 114, 144, ActiveColor, ActiveColorSmooth, 16);
         tftPrint(ALEFT, "100", 160, 144, ActiveColor, ActiveColorSmooth, 16);
         tftPrint(ACENTER, "A", 7, 128, ActiveColor, ActiveColorSmooth, 16);
-        for (byte segments = 0; segments < 94; segments++) {
-          if (segments > 54 && (((segments - 53) % 10) == 0)) tft.fillRect(16 + (2 * segments), 141, 2, 2, BarSignificantColor);
-          else if(((segments + 1) % 6) == 0) tft.fillRect(16 + (2 * segments), 141, 2, 2, ModBarInsignificantColor);
+        for (byte segments = 0; segments < 93; segments++) {
+          if (segments > 54) {
+            if (((segments - 53) % 10) == 0) tft.fillRect(22 + (2 * segments), 141, 2, 2, BarSignificantColor);
+          } else {
+            if (((segments + 1) % 6) == 0) tft.fillRect(22 + (2 * segments), 141, 2, 2, BarInsignificantColor);
+          }
         }
       }
       if (radio.rds.region == 0) tftPrint(ALEFT, "PI", 212, 193, ActiveColor, ActiveColorSmooth, 16);
@@ -1784,7 +1787,7 @@ void loop() {
       tftPrint(ALEFT, "PS", 3, 193, ActiveColor, ActiveColorSmooth, 16);
       tftPrint(ALEFT, "RT", 3, 221, ActiveColor, ActiveColorSmooth, 16);
       tftPrint(ALEFT, "PTY", 3, 163, ActiveColor, ActiveColorSmooth, 16);
-      if (!showmodulation) tft.drawLine(16, 143, 203, 143, GreyoutColor); else tft.drawLine(16, 143, 203, 143, ActiveColor);
+      if (!showmodulation) tft.drawLine(16, 143, 189, 143, GreyoutColor); else tft.drawLine(16, 143, 189, 143, ActiveColor);
     }
     LowLevelInit = true;
   }
@@ -1792,21 +1795,21 @@ void loop() {
   if ((SStatus / 10 <= LowLevelSet) && band < BAND_GAP) {
     if (LowLevelInit && !BWtune && !menu) {
       if (!screenmute && !rdsstatscreen && !afscreen && !advancedRDS) {
-        for (byte segments = 0; segments < 94; segments++) {
-          if (segments > 54) {
-            if (((segments - 53) % 10) == 0) tft.fillRect(16 + (2 * segments), 141, 2, 2, GreyoutColor);
-          } else {
-            if (((segments + 1) % 6) == 0) tft.fillRect(16 + (2 * segments), 141, 2, 2, GreyoutColor);
-          }
-        }
-        if (showmodulation) {
+        if(showmodulation) {
           tftPrint(ALEFT, "10", 24, 144, GreyoutColor, BackgroundColor, 16);
           tftPrint(ALEFT, "30", 54, 144, GreyoutColor, BackgroundColor, 16);
           tftPrint(ALEFT, "50", 84, 144, GreyoutColor, BackgroundColor, 16);
           tftPrint(ALEFT, "70", 114, 144, GreyoutColor, BackgroundColor, 16);
           tftPrint(ALEFT, "100", 160, 144, GreyoutColor, BackgroundColor, 16);
           tftPrint(ACENTER, "A", 7, 128, GreyoutColor, BackgroundColor, 16);
-          tft.fillRect(16, 133, 187, 6, GreyoutColor);
+          tft.fillRect(16, 133, 174, 6, GreyoutColor);
+          for (byte segments = 0; segments < 93; segments++) {
+            if (segments > 54) {
+              if (((segments - 53) % 10) == 0) tft.fillRect(22 + (2 * segments), 141, 2, 2, GreyoutColor);
+            } else {
+              if (((segments + 1) % 6) == 0) tft.fillRect(22 + (2 * segments), 141, 2, 2, GreyoutColor);
+            }
+          }
         }
         if (radio.rds.region == 0) tftPrint(ALEFT, "PI", 212, 193, GreyoutColor, BackgroundColor, 16);
         else {
@@ -1816,7 +1819,7 @@ void loop() {
         tftPrint(ALEFT, "PS", 3, 193, GreyoutColor, BackgroundColor, 16);
         tftPrint(ALEFT, "RT", 3, 221, GreyoutColor, BackgroundColor, 16);
         tftPrint(ALEFT, "PTY", 3, 163, GreyoutColor, BackgroundColor, 16);
-        tft.drawLine(16, 143, 203, 143, GreyoutColor);
+        tft.drawLine(16, 143, 189, 143, GreyoutColor);
         tft.drawBitmap(68, 5, RDSLogo, 35, 22, GreyoutColor);
       }
       LowLevelInit = false;
