@@ -1393,19 +1393,9 @@ void setup() {
 
   rtc.setTime(0);
   if(rx_rtc_avail) {
-    bool reset = rx_rtc.initModule(); // initModule, not initAdapter, adapter also reinits wire
-    if(reset) {
-      RX8010SJ::DateTime defaulttime = RX8010SJ::DateTime();
-      defaulttime.second = 0;
-      defaulttime.minute = 0;
-      defaulttime.hour = 0;
-      defaulttime.dayOfWeek = 2;
-      defaulttime.dayOfMonth = 14;
-      defaulttime.month = 1;
-      defaulttime.year = 26;
-		  rx_rtc.writeDateTime(defaulttime);
-      console.print("RX8010SJ was reset, no time");
-    } else {
+    bool reset = init_rtc();
+    if(reset) console.print("RX8010SJ was reset, no time");
+    else {
       rtcset = true;
       console.print("RX8010SJ is used as a time source");
       sync_from_rx_rtc();

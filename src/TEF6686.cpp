@@ -1104,13 +1104,13 @@ void TEF6686::readRDS(byte showrdserrors) {
 
                 memset(rt_buffer, 0x20, 64);
                 rt_buffer[64] = '\0';
-                memset(segments_received, 3, sizeof(segments_received));
+                memset(segments_received, 99, sizeof(segments_received));
                 rtABold = rds.rtAB;
               }
 
               uint8_t segment_address = (rds.rdsB & 0xf);
 
-              if(segments_received[segment_address] > (rds.rdsCerror + rds.rdsBerror)) {
+              if(segments_received[segment_address] >= (rds.rdsCerror + rds.rdsBerror)) {
                   segments_received[segment_address] = rds.rdsCerror + rds.rdsBerror;
 
                   uint8_t offset = segment_address * 4;
@@ -1625,7 +1625,7 @@ void TEF6686::clearRDS(bool fullsearchrds) {
   rds.aid_counter = af_number = 0;
   afmethodBprobe = afmethodBtrigger = _hasEnhancedRT = false;
   rds.ps12error = rds.ps34error = rds.ps56error = rds.ps78error = true;
-  memset(segments_received, 3, sizeof(segments_received));
+  memset(segments_received, 99, sizeof(segments_received));
 }
 
 void TEF6686::tone(uint16_t time, int16_t amplitude, uint16_t frequency) {

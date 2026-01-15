@@ -48,7 +48,7 @@
   writedata(0x86);  //--
 
   writecommand(ILI9341_MADCTL);    // Memory Access Control
-  writedata(TFT_MAD_MX | TFT_MAD_COLOR_ORDER); // Rotation 0 (portrait mode)
+  writedata(TFT_MAD_MX | TFT_MAD_BGR); // Rotation 0 (portrait mode)
 
   writecommand(ILI9341_PIXFMT);
   writedata(0x55);

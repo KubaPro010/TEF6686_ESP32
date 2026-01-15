@@ -3,7 +3,6 @@
 #define TFT_ESPI_VERSION "2.5.43"
 
 #include <Arduino.h>
-#include <Print.h>
 #include <SPI.h>
 
 #include <User_Setup_Select.h>
@@ -187,9 +186,7 @@ class TFT_eSPI { friend class TFT_eSprite;
   void invertDisplay(bool i);
   void setAddrWindow(int32_t xs, int32_t ys, int32_t w, int32_t h);
   void setViewport(int32_t x, int32_t y, int32_t w, int32_t h, bool vpDatum = true);
-  bool checkViewport(int32_t x, int32_t y, int32_t w, int32_t h);
   void resetViewport();
-  bool clipAddrWindow(int32_t* x, int32_t* y, int32_t* w, int32_t* h);
   bool clipWindow(int32_t* xs, int32_t* ys, int32_t* xe, int32_t* ye);
   void pushColor(uint16_t color, uint32_t len);
   void pushColors(uint16_t  *data, uint32_t len, bool swap = true);
@@ -211,17 +208,13 @@ class TFT_eSPI { friend class TFT_eSprite;
   void     fillSmoothCircle(int32_t x, int32_t y, int32_t r, uint32_t color, uint32_t bg_color = 0x00FFFFFF);
   void     drawSmoothRoundRect(int32_t x, int32_t y, int32_t r, int32_t ir, int32_t w, int32_t h, uint32_t fg_color, uint32_t bg_color = 0x00FFFFFF, uint8_t quadrants = 0xF);
   void     fillSmoothRoundRect(int32_t x, int32_t y, int32_t w, int32_t h, int32_t radius, uint32_t color, uint32_t bg_color = 0x00FFFFFF);
-  void     drawSpot(float ax, float ay, float r, uint32_t fg_color, uint32_t bg_color = 0x00FFFFFF);
   void     drawWedgeLine(float ax, float ay, float bx, float by, float aw, float bw, uint32_t fg_color, uint32_t bg_color = 0x00FFFFFF);
   void     setSwapBytes(bool swap);
   bool     getSwapBytes();
   void     drawBitmap( int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint16_t fgcolor),
            drawBitmap( int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint16_t fgcolor, uint16_t bgcolor),
-           drawXBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint16_t fgcolor),
-           drawXBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint16_t fgcolor, uint16_t bgcolor),
            setBitmapColor(uint16_t fgcolor, uint16_t bgcolor);
   void     setPivot(int16_t x, int16_t y);
-  void     pushRect(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *data);
   void     pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *data);
   void     pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *data, uint16_t transparent);
   void     pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const uint16_t *data, uint16_t transparent);
@@ -229,8 +222,6 @@ class TFT_eSPI { friend class TFT_eSprite;
   void     pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint8_t  *data, bool bpp8 = true, uint16_t *cmap = nullptr);
   void     pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint8_t  *data, uint8_t  transparent, bool bpp8 = true, uint16_t *cmap = nullptr);
   void     pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const uint8_t *data, bool bpp8,  uint16_t *cmap = nullptr);
-  void     readRectRGB(int32_t x, int32_t y, int32_t w, int32_t h, uint8_t *data);
-
 
   // Text rendering - value returned is the pixel width of the rendered text
   int16_t  drawNumber(long intNumber, int32_t x, int32_t y, uint8_t font), // Draw integer using specified font number
@@ -249,8 +240,8 @@ class TFT_eSPI { friend class TFT_eSprite;
            drawString(const String& string, int32_t x, int32_t y);              // Draw string using current font
 
   // Text rendering and font handling support functions
-  void     setCursor(int16_t x, int16_t y),                 // Set cursor for tft.print()
-           setCursor(int16_t x, int16_t y, uint8_t font);   // Set cursor and font number for tft.print()
+  void     setCursor(int16_t x, int16_t y),
+           setCursor(int16_t x, int16_t y, uint8_t font);
 
   void     setTextColor(uint16_t color),                    // Set character (glyph) color only (background not over-written)
            setTextColor(uint16_t fgcolor, uint16_t bgcolor, bool bgfill = false),  // Set character (glyph) foreground and background colour, optional background fill for smooth fonts
@@ -274,19 +265,9 @@ class TFT_eSPI { friend class TFT_eSprite;
   uint16_t decodeUTF8(uint8_t *buf, uint16_t *index, uint16_t remaining),
            decodeUTF8(uint8_t c);
 
-           // Used by Smooth font class to fetch a pixel colour for the anti-aliasing
-  void     setCallback(getColorCallback getCol);
-
   void     spiwrite(uint8_t);        // legacy support only
   void     writecommand(uint8_t c);  // Send an 8-bit command, function resets DC/RS high ready for data
   void     writedata(uint8_t d);     // Send data with DC/RS set high
-
-  void     commandList(const uint8_t *addr); // Send a initialisation sequence to TFT stored in FLASH
-
-  uint8_t  readcommand8( uint8_t cmd_function, uint8_t index = 0); // read 8 bits from TFT
-  uint16_t readcommand16(uint8_t cmd_function, uint8_t index = 0); // read 16 bits from TFT
-  uint32_t readcommand32(uint8_t cmd_function, uint8_t index = 0); // read 32 bits from TFT
-
 
   // Colour conversion
            // Convert 8-bit red, green and blue to 16 bits
@@ -299,15 +280,8 @@ class TFT_eSPI { friend class TFT_eSprite;
 
            // 16-bit colour alphaBlend with alpha dither (dither reduces colour banding)
   uint16_t alphaBlend(uint8_t alpha, uint16_t fgc, uint16_t bgc, uint8_t dither);
-           // 24-bit colour alphaBlend with optional alpha dither
-  uint32_t alphaBlend24(uint8_t alpha, uint32_t fgc, uint32_t bgc, uint8_t dither = 0);
 
   bool     initDMA(bool ctrl_cs = false);  // Initialise the DMA engine and attach to SPI bus - typically used in setup()
-           // Push a block of pixels into a window set up using setAddrWindow()
-  void     pushPixelsDMA(uint16_t* image, uint32_t len);
-
-           // Check if the DMA is complete - use while(tft.dmaBusy); for a blocking wait
-  bool     dmaBusy(); // returns true if DMA is still in progress
   void     dmaWait(); // wait until DMA is complete
 
   bool     DMA_Enabled = false;   // Flag for DMA enabled state
@@ -319,7 +293,6 @@ class TFT_eSPI { friend class TFT_eSprite;
   void     endWrite();                           // End SPI transaction
 
   // Global variables
-  static   SPIClass& getSPIinstance(); // Get SPI class handle
   uint32_t textcolor, textbgcolor;         // Text foreground and background colours
 
   uint32_t bitmap_fg, bitmap_bg;           // Bitmap foreground (bit=1) and background (bit=0) colours
