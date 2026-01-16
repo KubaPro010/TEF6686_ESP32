@@ -1398,7 +1398,6 @@ void setup() {
     else {
       rtcset = true;
       console.print("RX8010SJ is used as a time source");
-      sync_from_rx_rtc();
     }
   } else console.print("RX8010SJ is not available at address " + String(RX8010SJ_ADDRESS, HEX));
 

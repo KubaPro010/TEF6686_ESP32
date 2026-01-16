@@ -8,7 +8,7 @@ bool NTPupdated;
 ESP32Time rtc(0);
 bool rx_rtc_avail = false;
 
-byte readFromModule(byte address) {
+inline byte readFromModule(byte address) {
     Wire.beginTransmission(RX8010SJ_ADDRESS);
     Wire.write(address);
     Wire.endTransmission();
@@ -43,35 +43,7 @@ inline byte sumValueFromBinary(byte binary, byte length) {
     return sum;
 }
 
-bool init_rtc() {
-    rtc.setTime(0);
-    byte flagregister = readFromModule(0x1E);
-    if((flagregister >> 1) & 1) {
-        while((flagregister >> 1) & 1) {
-            writeToModule(0x1E, 0); // clear VLF
-            flagregister = readFromModule(0x1E);
-        }
-        writeToModule(0x17, 216); // Reserved register
-        writeToModule(0x1F, 0); // Control register
-        writeToModule(0x31, 8); // Reserved register
-        writeToModule(0x32, 0); // IRQ control register
-
-        Wire.beginTransmission(RX8010SJ_ADDRESS);
-        Wire.write(0x10);
-        Wire.write(0);
-        Wire.write(0);
-        Wire.write(toBCD(12));
-        Wire.write(1 << 2);
-        Wire.write(toBCD(14));
-        Wire.write(1);
-        Wire.write(toBCD(26));
-        Wire.endTransmission();
-        return true;
-    }
-    return false;
-}
-
-void sync_from_rx_rtc(int32_t offset) {
+void sync_from_rx_rtc(int32_t offset = 0) {
     if(!rx_rtc_avail) return;
     struct tm timeinfo;
 
@@ -97,10 +69,46 @@ void sync_from_rx_rtc(int32_t offset) {
     }
 }
 
+bool init_rtc() {
+    rtc.setTime(0);
+    byte flagregister = readFromModule(0x1E);
+    if((flagregister >> 1) & 1) {
+        while((flagregister >> 1) & 1) {
+            writeToModule(0x1E, 0); // clear VLF
+            flagregister = readFromModule(0x1E);
+        }
+        writeToModule(0x17, 216); // Reserved register
+        writeToModule(0x1F, 64); // Control register, stop bit set
+
+        Wire.beginTransmission(RX8010SJ_ADDRESS);
+        Wire.write(0x31);
+        Wire.write(8); // Reserved register
+        Wire.write(0); // IRQ control register
+        Wire.endTransmission();
+
+        Wire.beginTransmission(RX8010SJ_ADDRESS);
+        Wire.write(0x10);
+        Wire.write(0);
+        Wire.write(0);
+        Wire.write(toBCD(12));
+        Wire.write(1 << 2);
+        Wire.write(toBCD(14));
+        Wire.write(1);
+        Wire.write(toBCD(26));
+        Wire.endTransmission();
+        writeToModule(0x1F, 0); // Unset stop bit
+        sync_from_rx_rtc();
+        return true;
+    }
+    sync_from_rx_rtc();
+    return false;
+}
+
 void set_time(time_t time) {
     rtc.setTime(time);
     if(!rx_rtc_avail) return;
     struct tm* timeinfo = gmtime(&time);
+    writeToModule(0x1F, 64);
     Wire.beginTransmission(RX8010SJ_ADDRESS);
     Wire.write(0x10);
     Wire.write(toBCD(timeinfo->tm_sec));
@@ -111,4 +119,5 @@ void set_time(time_t time) {
     Wire.write(toBCD(timeinfo->tm_mon + 1));
     Wire.write(toBCD((1900 + timeinfo->tm_year) % 100));
     Wire.endTransmission();
+    writeToModule(0x1F, 0);
 }
