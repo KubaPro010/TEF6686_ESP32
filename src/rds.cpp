@@ -404,7 +404,7 @@ void showPI() {
 
 void showPTY() {
   if(radio.rds.PTY.changed(0)) {
-    String PTYString = String(radio.rds.PTY) + "/" + (radio.rds.region != 0 ? (radio.rds.region == 0 ? PTY_EU[radio.rds.PTY] : PTY_USA[radio.rds.PTY]) : textUI(227 + radio.rds.PTY));
+    String PTYString = (radio.rds.region != 0 ? (radio.rds.region == 0 ? PTY_EU[radio.rds.PTY] : PTY_USA[radio.rds.PTY]) : textUI(227 + radio.rds.PTY));
     GeneralTextSprite.fillSprite(TFT_TRANSPARENT);
     GeneralTextSprite.fillRect(0, 0, 160, 19, BackgroundColor);
     if(RDSstatus) GeneralTextSprite.setTextColor(RDSColor, RDSColorSmooth, false);

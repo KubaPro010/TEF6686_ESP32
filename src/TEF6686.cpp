@@ -224,9 +224,13 @@ void TEF6686::setEQ(bool eq) {
 }
 
 bool TEF6686::getStereoStatus() {
-  uint16_t status;
+  uint16_t status, r;
+  uint8_t buf[2];
+  r = devTEF_Get_Cmd(TEF_FM, Cmd_Get_Signal_Status, buf, sizeof(buf));
+  status = Convert8bto16b(buf);
+
   bool stereo = 0;
-  if (1 == devTEF_Radio_Get_Stereo_Status(&status)) stereo = ((status >> 15) & 1) ? 1 : 0;
+  if(r) stereo = ((status >> 15) & 1) ? 1 : 0;
   return stereo;
 }
 
@@ -1637,10 +1641,12 @@ void TEF6686::clearRDS(bool fullsearchrds) {
 }
 
 void TEF6686::tone(uint16_t time, int16_t amplitude, uint16_t frequency) {
+  auto was_muted = mute;
   devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_Mute, 2, 0);
   devTEF_Radio_Set_Wavegen(1, amplitude, frequency);
   delay(time);
   devTEF_Radio_Set_Wavegen(0, 0, 0);
+  if(was_muted) devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_Mute, 2, 1);
 }
 
 void TEF6686::RDScharConverter(const char* input, wchar_t* output, size_t size, bool underscore) {

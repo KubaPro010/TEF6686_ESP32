@@ -80,6 +80,5 @@ void devTEF_Radio_Set_Wavegen(bool mode, int16_t amplitude, uint16_t freq);
 
 void devTEF_Radio_Get_Quality_Status(uint16_t *status, int16_t *level, uint16_t *usn, uint16_t *wam, int16_t *offset, uint16_t *bandwidth, uint16_t *mod, int8_t *snr);
 uint8_t devTEF_APPL_Get_Operation_Status();
-bool devTEF_Radio_Get_Stereo_Status(uint16_t *status);
 void devTEF_Radio_Get_RDS_Status(uint16_t *status, uint16_t *A_block, uint16_t *B_block, uint16_t *C_block, uint16_t *D_block, uint16_t *dec_error);
 void devTEF_Radio_Get_RDS_Data(uint16_t *status, uint16_t *A_block, uint16_t *B_block, uint16_t *C_block, uint16_t *D_block, uint16_t *dec_error);

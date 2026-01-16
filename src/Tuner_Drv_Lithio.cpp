@@ -73,14 +73,6 @@ void devTEF_Radio_Get_RDS_Data(uint16_t *status, uint16_t *A_block, uint16_t *B_
   if(dec_error != NULL) *dec_error = Convert8bto16b(buf + 10);
 }
 
-bool devTEF_Radio_Get_Stereo_Status(uint16_t *status) {
-  uint8_t buf[2];
-  uint16_t r = devTEF_Get_Cmd(TEF_FM, Cmd_Get_Signal_Status, buf, sizeof(buf));
-
-  *status = Convert8bto16b(buf);
-  return r;
-}
-
 void devTEF_Radio_Set_Wavegen(bool mode, int16_t amplitude, uint16_t freq) {
   devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_Input, 2, mode ? 240 : 0);
   if (mode) devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_WaveGen, 12, 5, 0, amplitude * 10, freq, amplitude * 10, freq);

@@ -29,8 +29,8 @@ using fs::FS;
 Console console(&tft);
 bool gpio_chip = false;
 
-#pragma region to move
-void Round30K(unsigned int freq) {
+#pragma region helpers
+inline void Round30K(unsigned int freq) {
   if (freq % FREQ_OIRT_STEP_30K == 1) frequency_OIRT = (freq + 1);
   else if (freq % FREQ_OIRT_STEP_30K == 0) frequency_OIRT = (freq - 1);
 }
@@ -41,7 +41,7 @@ void Round50K(unsigned int freq) {
   else if (freq % 10 > 7) frequency = (freq - (freq % 10) + 10);
 }
 
-void Round100K(unsigned int freq) {
+inline void Round100K(unsigned int freq) {
   if (freq % 10 < 5) frequency = (freq - freq % 10);
   else frequency = (freq - (freq % 10) + 10);
 }
@@ -61,19 +61,19 @@ void Round5K(unsigned int freqAM) {
   else if (freqAM % 10 > 7) frequency_AM = (freqAM - (freqAM % 10) + 10);
 }
 
-void Touch_IRQ_Handler() {
+inline void Touch_IRQ_Handler() {
   touch_detect = true;
 }
 
-void deepSleep() {
+inline void deepSleep() {
   MuteScreen(1);
   StoreFrequency();
   radio.power(1);
-  esp_sleep_enable_ext0_wakeup(GPIO_NUM_34, LOW);
+  esp_sleep_enable_ext0_wakeup((gpio_num_t)ROTARY_BUTTON, LOW);
   esp_deep_sleep_start();
 }
 
-bool IsStationEmpty() {
+inline bool IsStationEmpty() {
   return presets[memorypos].band == BAND_FM && presets[memorypos].frequency == EE_PRESETS_FREQUENCY;
 }
 
@@ -94,19 +94,12 @@ void doLog() {
   }
 }
 
-void EdgeBeeper() {
+inline void EdgeBeeper() {
   if(!edgebeep) return;
   radio.tone(50, -5, 2000);
-  if (radio.mute) {
-    radio.setMute();
-    if (!screenmute) tft.drawBitmap(249, 4, Speaker, 28, 24, PrimaryColor);
-  } else {
-    radio.setUnMute();
-    if (!screenmute) tft.drawBitmap(249, 4, Speaker, 28, 24, GreyoutColor);
-  }
 }
 
-const char* textUI(uint16_t number) {
+inline const char* textUI(uint16_t number) {
   if (number >= language_entrynumber) return "Overflow";
   else return (const char*)pgm_read_ptr(&(myLanguage[language][number]));
 }
@@ -223,7 +216,7 @@ void updateSWMIBand() {
   }
 }
 
-void updateCodetect() {
+inline void updateCodetect() {
   if (band > BAND_GAP) {
     if (WAM) tftPrint(ALEFT, "CO", 50, 61, PrimaryColor, PrimaryColorSmooth, 16);
     else tftPrint(ALEFT, "CO", 50, 61, BackgroundColor, BackgroundColor, 16);
@@ -775,38 +768,64 @@ void toggleiMSEQ() {
 }
 
 void TuneFreq(int temp) {
-  aftest = true;
-  aftimer = millis();
+  int newfreq = temp;
 
   if (band == BAND_FM) {
-    while (temp < (LowEdgeSet * 10)) temp = temp * 10;
-    if (temp > (HighEdgeSet * 10)) EdgeBeeper();
-    else frequency = temp;
+    while (newfreq < (LowEdgeSet * 10)) newfreq *= 10;
+    if (newfreq > (HighEdgeSet * 10)) {
+      EdgeBeeper();
+      return;
+    }
+    if (newfreq == frequency) return;
+    frequency = newfreq;
     radio.SetFreq(frequency);
+
   } else if (band == BAND_OIRT) {
-    while (temp < (LowEdgeOIRTSet * 10)) temp = temp * 10;
-    if (temp > HighEdgeOIRTSet) EdgeBeeper();
-    else frequency_OIRT = temp;
+    while (newfreq < (LowEdgeOIRTSet * 10)) newfreq *= 10;
+    if (newfreq > HighEdgeOIRTSet) {
+      EdgeBeeper();
+      return;
+    }
+    if (newfreq == frequency_OIRT) return;
+    frequency_OIRT = newfreq;
     radio.SetFreq(frequency_OIRT);
+
   } else if (band == BAND_LW) {
-    while (temp < LWLowEdgeSet) temp = temp * 10;
-    if (temp > LWHighEdgeSet) EdgeBeeper();
-    else frequency_AM = temp;
+    while (newfreq < LWLowEdgeSet) newfreq *= 10;
+    if (newfreq > LWHighEdgeSet) {
+      EdgeBeeper();
+      return;
+    }
+    if (newfreq == frequency_LW) return;
+    frequency_AM = newfreq;
+    frequency_LW = newfreq;
     radio.SetFreqAM(frequency_AM);
-    frequency_LW = frequency_AM;
+
   } else if (band == BAND_MW) {
-    while (temp < MWLowEdgeSet) temp = temp * 10;
-    if (temp > MWHighEdgeSet) EdgeBeeper();
-    else frequency_AM = temp;
+    while (newfreq < MWLowEdgeSet) newfreq *= 10;
+    if (newfreq > MWHighEdgeSet) {
+      EdgeBeeper();
+      return;
+    }
+    if (newfreq == frequency_MW) return;
+    frequency_AM = newfreq;
+    frequency_MW = newfreq;
     radio.SetFreqAM(frequency_AM);
-    frequency_MW = frequency_AM;
+
   } else if (band == BAND_SW) {
-    while (temp < SWLowEdgeSet) temp = temp * 10;
-    if (temp > SWHighEdgeSet) EdgeBeeper();
-    else frequency_AM = temp;
+    while (newfreq < SWLowEdgeSet) newfreq *= 10;
+    if (newfreq > SWHighEdgeSet) {
+      EdgeBeeper();
+      return;
+    }
+    if (newfreq == frequency_SW) return;
+    frequency_AM = newfreq;
+    frequency_SW = newfreq;
     radio.SetFreqAM(frequency_AM);
-    frequency_SW = frequency_AM;
   }
+
+  aftest = true;
+  aftimer = millis();
 
   radio.clearRDS(fullsearchrds);
   if (RDSSPYUSB) Serial.print("G:\r\nRESET-------\r\n\r\n");
@@ -1384,7 +1403,7 @@ void setup() {
 
   for (int x = 0; x <= ContrastSet; x++) {
     analogWrite(CONTRASTPIN, map(x, 0, 100, 15, 255));
-    delay(10);
+    delay(9);
   }
 
   console.print("Firmware " + String(VERSION));
@@ -1445,7 +1464,7 @@ void setup() {
     console.print("Detected a TEF6689 Lithio FMSI DR");
 #endif
   }
-  console.print("Chip Patch: v" + String(TEF) + " HW " + String(hw >> 8) + "." + String(hw & 0xff) + " SW " + String(sw >> 8) + "." + String(sw & 0xff));
+  console.print("Chip Patch: v" + String(TEF));
 
   if(analogRead(BATTERY_PIN) < 200) batterydetect = false;
   else console.print("Battery detected.");
@@ -1515,6 +1534,7 @@ void setup() {
 
   screensavertimer = millis();
   tottimer = millis();
+  console.reset();
 }
 
 void ShowModLevel();

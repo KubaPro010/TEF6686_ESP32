@@ -105,7 +105,6 @@ bool init_rtc() {
         Wire.write(toBCD(26));
         Wire.endTransmission();
         writeToModule(0x1F, 0); // Unset stop bit
-        sync_from_rx_rtc();
         return true;
     }
     sync_from_rx_rtc();
