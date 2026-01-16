@@ -1113,11 +1113,11 @@ void TEF6686::readRDS(byte showrdserrors) {
               segments_received[segment_address] = rds.rdsCerror + rds.rdsBerror;
 
               uint8_t offset = segment_address * 4;
-              if(rdsCerrorThreshold) {
+              if(!rdsCerrorThreshold) {
                 rt_buffer[offset + 0] = rds.rdsC >> 8;
                 rt_buffer[offset + 1] = rds.rdsC & 0xff;
               }
-              if(rdsDerrorThreshold) {
+              if(!rdsDerrorThreshold) {
                 rt_buffer[offset + 2] = rds.rdsD >> 8;
                 rt_buffer[offset + 3] = rds.rdsD & 0xff;
               }
@@ -1265,21 +1265,19 @@ void TEF6686::readRDS(byte showrdserrors) {
           }
         } break;
       case RDS_GROUP_10A: {
-          if (!rdsCerrorThreshold && !rdsDerrorThreshold) {
-            uint8_t segment = bitRead(rds.rdsB, 0);
-            if(rdsCerrorThreshold) {
-              ptyn_buffer[(segment * 4) + 0] = rds.rdsC >> 8;
-              ptyn_buffer[(segment * 4) + 1] = rds.rdsC & 0xFF;
-            }
-            if(rdsDerrorThreshold) {
-              ptyn_buffer[(segment * 4) + 2] = rds.rdsD >> 8;
-              ptyn_buffer[(segment * 4) + 3] = rds.rdsD & 0xFF;
-            }
-            for (byte i = 0; i < 8; i++) PTYNtext[i] = 0;
-            RDScharConverter(ptyn_buffer, PTYNtext, sizeof(PTYNtext) / sizeof(wchar_t), false);
-            rds.PTYN = extractUTF8Substring(convertToUTF8(PTYNtext), 0, 8, false);
-            rds.hasPTYN = true;
+          uint8_t segment = bitRead(rds.rdsB, 0);
+          if(!rdsCerrorThreshold) {
+            ptyn_buffer[(segment * 4) + 0] = rds.rdsC >> 8;
+            ptyn_buffer[(segment * 4) + 1] = rds.rdsC & 0xFF;
           }
+          if(!rdsDerrorThreshold) {
+            ptyn_buffer[(segment * 4) + 2] = rds.rdsD >> 8;
+            ptyn_buffer[(segment * 4) + 3] = rds.rdsD & 0xFF;
+          }
+          for (byte i = 0; i < 8; i++) PTYNtext[i] = 0;
+          RDScharConverter(ptyn_buffer, PTYNtext, sizeof(PTYNtext) / sizeof(wchar_t), false);
+          rds.PTYN = extractUTF8Substring(convertToUTF8(PTYNtext), 0, 8, false);
+          rds.hasPTYN = true;
         } break;
 
       case RDS_GROUP_5A:
@@ -1344,11 +1342,11 @@ void TEF6686::readRDS(byte showrdserrors) {
 
           if (eRTblock == rdsgroup && _hasEnhancedRT) {
             uint8_t offset = (rds.rdsB & 0x1f) * 4;
-            if(rdsCerrorThreshold) {
+            if(!rdsCerrorThreshold) {
               eRT_buffer[offset + 0] = rds.rdsC >> 8;
               eRT_buffer[offset + 1] = rds.rdsC & 0xff;
             }
-            if(rdsDerrorThreshold) {
+            if(!rdsDerrorThreshold) {
               eRT_buffer[offset + 2] = rds.rdsD >> 8;
               eRT_buffer[offset + 3] = rds.rdsD & 0xff;
             }
@@ -1487,7 +1485,7 @@ void TEF6686::readRDS(byte showrdserrors) {
         break;
 
       case RDS_GROUP_15A: {
-          if (showrdserrors == 3 || (!rdsCerrorThreshold && !rdsDerrorThreshold)) {
+          if (showrdserrors == 3) {
             if (pslong_process && rds.stationNameLong.length() > 0) rds.hasLongPS = true;
             uint8_t offset = (rds.rdsB & 7) * 4;
 
@@ -1497,11 +1495,11 @@ void TEF6686::readRDS(byte showrdserrors) {
             pslong_buffer2[offset + 3] = pslong_buffer[offset + 3];
             pslong_buffer2[32] = '\0';
 
-            if(rdsCerrorThreshold) {
+            if(!rdsCerrorThreshold) {
               pslong_buffer[offset + 0] = rds.rdsC >> 8;
               pslong_buffer[offset + 1] = rds.rdsC & 0xff;
             }
-            if(rdsDerrorThreshold) {
+            if(!rdsDerrorThreshold) {
               pslong_buffer[offset + 2] = rds.rdsD >> 8;
               pslong_buffer[offset + 3] = rds.rdsD & 0xff;
             }
