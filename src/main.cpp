@@ -3966,8 +3966,9 @@ uint8_t doAutoMemory(uint16_t startfreq, uint16_t stopfreq, uint8_t startmem, ui
 extern "C" void app_main() {
     initArduino();
     setup();
+    esp_task_wdt_add(NULL);
     while(true) {
-      loop();
       esp_task_wdt_reset();
+      loop();
     }
 }
