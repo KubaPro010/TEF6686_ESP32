@@ -1485,55 +1485,53 @@ void TEF6686::readRDS(byte showrdserrors) {
         break;
 
       case RDS_GROUP_15A: {
-          if (showrdserrors == 3) {
-            if (pslong_process && rds.stationNameLong.length() > 0) rds.hasLongPS = true;
-            uint8_t offset = (rds.rdsB & 7) * 4;
+          if (pslong_process && rds.stationNameLong.length() > 0) rds.hasLongPS = true;
+          uint8_t offset = (rds.rdsB & 7) * 4;
 
-            pslong_buffer2[offset + 0] = pslong_buffer[offset + 0];
-            pslong_buffer2[offset + 1] = pslong_buffer[offset + 1];
-            pslong_buffer2[offset + 2] = pslong_buffer[offset + 2];
-            pslong_buffer2[offset + 3] = pslong_buffer[offset + 3];
-            pslong_buffer2[32] = '\0';
+          pslong_buffer2[offset + 0] = pslong_buffer[offset + 0];
+          pslong_buffer2[offset + 1] = pslong_buffer[offset + 1];
+          pslong_buffer2[offset + 2] = pslong_buffer[offset + 2];
+          pslong_buffer2[offset + 3] = pslong_buffer[offset + 3];
+          pslong_buffer2[32] = '\0';
 
-            if(!rdsCerrorThreshold) {
-              pslong_buffer[offset + 0] = rds.rdsC >> 8;
-              pslong_buffer[offset + 1] = rds.rdsC & 0xff;
+          if(!rdsCerrorThreshold) {
+            pslong_buffer[offset + 0] = rds.rdsC >> 8;
+            pslong_buffer[offset + 1] = rds.rdsC & 0xff;
+          }
+          if(!rdsDerrorThreshold) {
+            pslong_buffer[offset + 2] = rds.rdsD >> 8;
+            pslong_buffer[offset + 3] = rds.rdsD & 0xff;
+          }
+          pslong_buffer[32] = '\0';
+
+          byte endmarkerLPS = 32;
+          bool foundendmarker = false;
+          for (byte i = 0; i < endmarkerLPS; i++) {
+            if (pslong_buffer[i] == 0x0d) {
+              foundendmarker = true;
+              endmarkerLPS = i;
+              break;
             }
-            if(!rdsDerrorThreshold) {
-              pslong_buffer[offset + 2] = rds.rdsD >> 8;
-              pslong_buffer[offset + 3] = rds.rdsD & 0xff;
-            }
-            pslong_buffer[32] = '\0';
+          }
 
-            byte endmarkerLPS = 32;
-            bool foundendmarker = false;
-            for (byte i = 0; i < endmarkerLPS; i++) {
-              if (pslong_buffer[i] == 0x0d) {
-                foundendmarker = true;
-                endmarkerLPS = i;
-                break;
-              }
-            }
-
-            if ((offset == 0 || foundendmarker) && (pslong_process || !rds.fastps)) {
-              if (strcmp(pslong_buffer, pslong_buffer2) == 0) {
-                pslong_process = true;
-                PSLongtext = pslong_buffer;
-                rds.stationNameLong = extractUTF8Substring(pslong_buffer, 0, endmarkerLPS, true);
-                rds.stationNameLong = trimTrailingSpaces(rds.stationNameLong);
-              }
-            }
-
-            if (!pslong_process && rds.fastps) {
-              if (offset == 0) packet0long = true;
-              if (offset == 4) packet1long = true;
-              if (offset == 8) packet2long = true;
-              if (offset == 16) packet3long = true;
+          if ((offset == 0 || foundendmarker) && (pslong_process || !rds.fastps)) {
+            if (strcmp(pslong_buffer, pslong_buffer2) == 0) {
+              pslong_process = true;
               PSLongtext = pslong_buffer;
               rds.stationNameLong = extractUTF8Substring(pslong_buffer, 0, endmarkerLPS, true);
               rds.stationNameLong = trimTrailingSpaces(rds.stationNameLong);
-              if ((packet0long && packet1long && packet2long && packet3long) || foundendmarker) pslong_process = true;
             }
+          }
+
+          if (!pslong_process && rds.fastps) {
+            if (offset == 0) packet0long = true;
+            if (offset == 4) packet1long = true;
+            if (offset == 8) packet2long = true;
+            if (offset == 16) packet3long = true;
+            PSLongtext = pslong_buffer;
+            rds.stationNameLong = extractUTF8Substring(pslong_buffer, 0, endmarkerLPS, true);
+            rds.stationNameLong = trimTrailingSpaces(rds.stationNameLong);
+            if ((packet0long && packet1long && packet2long && packet3long) || foundendmarker) pslong_process = true;
           }
         }
         break;
