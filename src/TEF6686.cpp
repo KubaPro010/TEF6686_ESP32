@@ -544,7 +544,7 @@ void TEF6686::readRDS(byte showrdserrors) {
 
     // B errors mean we can't reliably tell what this is, don't risk it.
     // And also make sure we have data in the first place, then the decoder first starts it could send just the pi code with nothing more
-    if ((rds.rdsBerror && showrdserrors != 3) && bitRead(rds.rdsStat, 13) == 0) goto end;
+    if ((rdsBerrorThreshold && showrdserrors != 3) && bitRead(rds.rdsStat, 13) == 0) goto end;
 
     rdsgroup = rds.rdsB >> 11; // Includes version bit as LSB, better for the switch statement
     if(bitRead(rds.rdsStat, 12) && (rdsgroup & 1) == 0) goto end; // Modulation says type B, but data says otherwise? Dunno what to treat it as, thus skip
@@ -1077,17 +1077,52 @@ void TEF6686::readRDS(byte showrdserrors) {
       } break;
 
       case RDS_GROUP_2A: {
-          if (showrdserrors == 3 || !(rdsCerrorThreshold && rdsDerrorThreshold)) {
-            rds.hasRT = true;
-            rds.rtAB = bitRead(rds.rdsB, 4);
+          rds.hasRT = true;
+          rds.rtAB = bitRead(rds.rdsB, 4);
 
-            if (initab) {
-              rtABold = rds.rtAB;
-              initab = false;
+          if (initab) {
+            rtABold = rds.rtAB;
+            initab = false;
+          }
+
+          if (rds.rtAB != rtABold) {
+            if (rds.rtbuffer) {
+              char rt_buffer_temp[129];
+              strcpy(rt_buffer_temp, rt_buffer);
+
+              byte endmarkerRT64 = 64;
+              for (byte i = 0; i < endmarkerRT64; i++) {
+                  if (rt_buffer_temp[i] == 0x0d) { endmarkerRT64 = i; break; }
+              }
+              rt_buffer_temp[endmarkerRT64] = '\0';
+
+              wchar_t RTtext[65] = L"";
+              RDScharConverter(rt_buffer_temp, RTtext, sizeof(RTtext) / sizeof(wchar_t), (underscore > 1 ? true : false));
+              rds.stationText = trimTrailingSpaces(convertToUTF8(RTtext));
             }
 
-              if (rds.rtAB != rtABold) {
-                if (rds.rtbuffer) {
+            memset(rt_buffer, 0x20, 64);
+            rt_buffer[64] = '\0';
+            memset(segments_received, 99, sizeof(segments_received));
+            rtABold = rds.rtAB;
+          }
+
+          uint8_t segment_address = (rds.rdsB & 0xf);
+
+          if(segments_received[segment_address] >= (rds.rdsCerror + rds.rdsBerror)) {
+              segments_received[segment_address] = rds.rdsCerror + rds.rdsBerror;
+
+              uint8_t offset = segment_address * 4;
+              if(rdsCerrorThreshold) {
+                rt_buffer[offset + 0] = rds.rdsC >> 8;
+                rt_buffer[offset + 1] = rds.rdsC & 0xff;
+              }
+              if(rdsDerrorThreshold) {
+                rt_buffer[offset + 2] = rds.rdsD >> 8;
+                rt_buffer[offset + 3] = rds.rdsD & 0xff;
+              }
+
+              if (!rds.rtbuffer) {
                   char rt_buffer_temp[129];
                   strcpy(rt_buffer_temp, rt_buffer);
 
@@ -1100,45 +1135,12 @@ void TEF6686::readRDS(byte showrdserrors) {
                   wchar_t RTtext[65] = L"";
                   RDScharConverter(rt_buffer_temp, RTtext, sizeof(RTtext) / sizeof(wchar_t), (underscore > 1 ? true : false));
                   rds.stationText = trimTrailingSpaces(convertToUTF8(RTtext));
-                }
-
-                memset(rt_buffer, 0x20, 64);
-                rt_buffer[64] = '\0';
-                memset(segments_received, 99, sizeof(segments_received));
-                rtABold = rds.rtAB;
-              }
-
-              uint8_t segment_address = (rds.rdsB & 0xf);
-
-              if(segments_received[segment_address] >= (rds.rdsCerror + rds.rdsBerror)) {
-                  segments_received[segment_address] = rds.rdsCerror + rds.rdsBerror;
-
-                  uint8_t offset = segment_address * 4;
-                  rt_buffer[offset + 0] = rds.rdsC >> 8;
-                  rt_buffer[offset + 1] = rds.rdsC & 0xff;
-                  rt_buffer[offset + 2] = rds.rdsD >> 8;
-                  rt_buffer[offset + 3] = rds.rdsD & 0xff;
-
-                  if (!rds.rtbuffer) {
-                      char rt_buffer_temp[129];
-                      strcpy(rt_buffer_temp, rt_buffer);
-
-                      byte endmarkerRT64 = 64;
-                      for (byte i = 0; i < endmarkerRT64; i++) {
-                          if (rt_buffer_temp[i] == 0x0d) { endmarkerRT64 = i; break; }
-                      }
-                      rt_buffer_temp[endmarkerRT64] = '\0';
-
-                      wchar_t RTtext[65] = L"";
-                      RDScharConverter(rt_buffer_temp, RTtext, sizeof(RTtext) / sizeof(wchar_t), (underscore > 1 ? true : false));
-                      rds.stationText = trimTrailingSpaces(convertToUTF8(RTtext));
-                  }
               }
           }
       } break;
 
       case RDS_GROUP_2B: {
-          if (showrdserrors == 3 || (!rdsBerrorThreshold && !rdsDerrorThreshold)) {
+          if (showrdserrors == 3 || !rdsDerrorThreshold) {
             rds.hasRT = true;
             rds.rtAB32 = (bitRead(rds.rdsB, 4));
 
@@ -1180,7 +1182,7 @@ void TEF6686::readRDS(byte showrdserrors) {
 
       case RDS_GROUP_3A: {
           if (!rdsDerrorThreshold) {
-            if (rds.rdsD != 0) rds.hasAID = true;
+            rds.hasAID = true;
 
             bool isValuePresent = false;
             for (int i = 0; i < 10; i++) {
@@ -1207,7 +1209,7 @@ void TEF6686::readRDS(byte showrdserrors) {
               DABAFblock = rds.rdsB & 0x1E;
             }
 
-            if (rds.rdsD == 0x6552) {
+            if (rds.rdsD == 0x6552 && rdsCerrorThreshold) {
               _hasEnhancedRT = true;
               eRTblock = rds.rdsB & 0x1E;
               eRTcoding = rds.rdsC & 1;
@@ -1215,8 +1217,7 @@ void TEF6686::readRDS(byte showrdserrors) {
           }
         } break;
       case RDS_GROUP_4A: {
-          if (!rdsBerrorThreshold && !rdsCerrorThreshold && !rdsDerrorThreshold && rds.ctupdate && (rds.PICTlock == pi || rds.PICTlock == 0)) {
-            auto rtc_time = rtc.getEpoch();
+          if (!rdsCerrorThreshold && !rdsDerrorThreshold && rds.ctupdate && (rds.PICTlock == pi || rds.PICTlock == 0)) {
             uint32_t mjd = (rds.rdsB & 0x03) << 15 | ((rds.rdsC >> 1) & 0x7FFF);
             uint16_t hour, minute, day = 5, month = 1, year = 2026;
             int32_t timeoffset;
@@ -1257,11 +1258,7 @@ void TEF6686::readRDS(byte showrdserrors) {
               rds.offset = timeoffset;
               rtcset = true;
 
-              time_t rds_utc_time = rdstime + timeoffset;
-              int32_t current_correction = rtc_time - rds_utc_time;
-              rds.clock_correction = current_correction;
-
-              if (!NTPupdated) set_time(rds_utc_time - (current_correction / 2));
+              if (!NTPupdated) set_time(rdstime + timeoffset);
             } else rds.hasCT = false;
             lastrdstime = rdstime;
             lasttimeoffset = timeoffset;
@@ -1270,16 +1267,18 @@ void TEF6686::readRDS(byte showrdserrors) {
       case RDS_GROUP_10A: {
           if (!rdsCerrorThreshold && !rdsDerrorThreshold) {
             uint8_t segment = bitRead(rds.rdsB, 0);
-            if (rds.rdsC != 0 && rds.rdsD != 0) {
+            if(rdsCerrorThreshold) {
               ptyn_buffer[(segment * 4) + 0] = rds.rdsC >> 8;
               ptyn_buffer[(segment * 4) + 1] = rds.rdsC & 0xFF;
+            }
+            if(rdsDerrorThreshold) {
               ptyn_buffer[(segment * 4) + 2] = rds.rdsD >> 8;
               ptyn_buffer[(segment * 4) + 3] = rds.rdsD & 0xFF;
-              for (byte i = 0; i < 8; i++) PTYNtext[i] = 0;
-              RDScharConverter(ptyn_buffer, PTYNtext, sizeof(PTYNtext) / sizeof(wchar_t), false);
-              rds.PTYN = extractUTF8Substring(convertToUTF8(PTYNtext), 0, 8, false);
-              rds.hasPTYN = true;
             }
+            for (byte i = 0; i < 8; i++) PTYNtext[i] = 0;
+            RDScharConverter(ptyn_buffer, PTYNtext, sizeof(PTYNtext) / sizeof(wchar_t), false);
+            rds.PTYN = extractUTF8Substring(convertToUTF8(PTYNtext), 0, 8, false);
+            rds.hasPTYN = true;
           }
         } break;
 
@@ -1291,7 +1290,7 @@ void TEF6686::readRDS(byte showrdserrors) {
       case RDS_GROUP_11A:
       case RDS_GROUP_12A:
       case RDS_GROUP_13A: {
-          if ((!rdsBerrorThreshold && !rdsCerrorThreshold && !rdsDerrorThreshold) && rtplusblock == rdsgroup && rds.hasRTplus) {
+          if ((!rdsCerrorThreshold && !rdsDerrorThreshold) && rtplusblock == rdsgroup && rds.hasRTplus) {
             rds.rdsplusTag1 = ((rds.rdsB & 0x07) << 3) + (rds.rdsC >> 13);
             rds.rdsplusTag2 = ((rds.rdsC & 0x01) << 5) + (rds.rdsD >> 11);
             uint16_t start_marker_1 = (rds.rdsC >> 7) & 0x3F;
@@ -1343,12 +1342,16 @@ void TEF6686::readRDS(byte showrdserrors) {
             rds.RTContent2 = extractUTF8Substring(rds.RTContent2, 0, 44, false);
           }
 
-          if ((!rdsBerrorThreshold && !rdsCerrorThreshold && !rdsDerrorThreshold) && eRTblock == rdsgroup && _hasEnhancedRT) {
+          if (eRTblock == rdsgroup && _hasEnhancedRT) {
             uint8_t offset = (rds.rdsB & 0x1f) * 4;
-            eRT_buffer[offset + 0] = rds.rdsC >> 8;
-            eRT_buffer[offset + 1] = rds.rdsC & 0xff;
-            eRT_buffer[offset + 2] = rds.rdsD >> 8;
-            eRT_buffer[offset + 3] = rds.rdsD & 0xff;
+            if(rdsCerrorThreshold) {
+              eRT_buffer[offset + 0] = rds.rdsC >> 8;
+              eRT_buffer[offset + 1] = rds.rdsC & 0xff;
+            }
+            if(rdsDerrorThreshold) {
+              eRT_buffer[offset + 2] = rds.rdsD >> 8;
+              eRT_buffer[offset + 3] = rds.rdsD & 0xff;
+            }
             eRT_buffer[127] = '\0';
 
             byte endmarkereRT = 127;
@@ -1368,9 +1371,9 @@ void TEF6686::readRDS(byte showrdserrors) {
             }
           }
 
-          if (!rdsBerrorThreshold && rdsgroup == RDS_GROUP_8A && (bitRead(rds.rdsB, 15))) rds.hasTMC = true;
+          if (rdsgroup == RDS_GROUP_8A && (bitRead(rds.rdsB, 15))) rds.hasTMC = true;
 
-          if ((!rdsBerrorThreshold && !rdsCerrorThreshold && !rdsDerrorThreshold) && DABAFblock == rdsgroup && rds.hasDABAF) {
+          if ((!rdsCerrorThreshold && !rdsDerrorThreshold) && DABAFblock == rdsgroup && rds.hasDABAF) {
             rds.dabaffreq = (rds.rdsC * 16);
 
             for (size_t i = 0; i < sizeof(DABfrequencyTable) / sizeof(DABfrequencyTable[0]); ++i) {
@@ -1391,14 +1394,14 @@ void TEF6686::readRDS(byte showrdserrors) {
         break;
 
       case RDS_GROUP_14A: {
-          if (!rdsAerrorThreshold && !rdsBerrorThreshold && !rdsCerrorThreshold && !rdsDerrorThreshold) {
+          if (!rdsCerrorThreshold && !rdsDerrorThreshold && pi != 0) {
             rds.hasEON = true;
 
             bool isValuePresent = false;
             int eonIndex = -1;
             int i = 0;
             for (; i < 20; i++) {
-              if (eon[i].pi == rds.rdsD || rds.rdsA == rds.rdsD) {
+              if (eon[i].pi == rds.rdsD || pi == rds.rdsD) {
                 isValuePresent = true;
                 eonIndex = i;
                 break;
@@ -1484,7 +1487,7 @@ void TEF6686::readRDS(byte showrdserrors) {
         break;
 
       case RDS_GROUP_15A: {
-          if (showrdserrors == 3 || (!rdsBerrorThreshold && !rdsCerrorThreshold && !rdsDerrorThreshold)) {
+          if (showrdserrors == 3 || (!rdsCerrorThreshold && !rdsDerrorThreshold)) {
             if (pslong_process && rds.stationNameLong.length() > 0) rds.hasLongPS = true;
             uint8_t offset = (rds.rdsB & 7) * 4;
 
@@ -1494,10 +1497,14 @@ void TEF6686::readRDS(byte showrdserrors) {
             pslong_buffer2[offset + 3] = pslong_buffer[offset + 3];
             pslong_buffer2[32] = '\0';
 
-            pslong_buffer[offset + 0] = rds.rdsC >> 8;
-            pslong_buffer[offset + 1] = rds.rdsC & 0xff;
-            pslong_buffer[offset + 2] = rds.rdsD >> 8;
-            pslong_buffer[offset + 3] = rds.rdsD & 0xff;
+            if(rdsCerrorThreshold) {
+              pslong_buffer[offset + 0] = rds.rdsC >> 8;
+              pslong_buffer[offset + 1] = rds.rdsC & 0xff;
+            }
+            if(rdsDerrorThreshold) {
+              pslong_buffer[offset + 2] = rds.rdsD >> 8;
+              pslong_buffer[offset + 3] = rds.rdsD & 0xff;
+            }
             pslong_buffer[32] = '\0';
 
             byte endmarkerLPS = 32;

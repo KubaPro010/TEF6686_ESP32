@@ -8,11 +8,11 @@ bool NTPupdated;
 ESP32Time rtc(0);
 bool rx_rtc_avail = false;
 
-inline byte readFromModule(byte address) {
+inline int16_t readFromModule(byte address) {
     Wire.beginTransmission(RX8010SJ_ADDRESS);
     Wire.write(address);
-    Wire.endTransmission();
-    Wire.requestFrom(RX8010SJ_ADDRESS, 1);
+    if (Wire.endTransmission() != 0) return -1;
+    if (Wire.requestFrom(RX8010SJ_ADDRESS, 1) != 1) return -1;
     if (Wire.available()) return Wire.read();
     return -1;
 }
@@ -45,20 +45,22 @@ inline byte sumValueFromBinary(byte binary, byte length) {
 
 void sync_from_rx_rtc(int32_t offset = 0) {
     if(!rx_rtc_avail) return;
-    struct tm timeinfo;
+    struct tm timeinfo = {0};
 
     Wire.beginTransmission(RX8010SJ_ADDRESS);
     Wire.write(0x10);
     Wire.endTransmission();
-    Wire.requestFrom(RX8010SJ_ADDRESS, 7);
-    if (Wire.available()) {
+    if (Wire.requestFrom(RX8010SJ_ADDRESS, 7) == 7) {
         timeinfo.tm_sec = sumValueFromBinary(Wire.read(), 7);
         timeinfo.tm_min = sumValueFromBinary(Wire.read(), 7);
         timeinfo.tm_hour = sumValueFromBinary(Wire.read(), 6);
 
         auto dayOfWeekBin = Wire.read();
         for (int i = 0; i < 7; i++) {
-            if (dayOfWeekBin & (1u << i)) timeinfo.tm_wday += i;
+            if (dayOfWeekBin & (1u << i)) {
+                timeinfo.tm_wday = i;
+                break;
+            }
         }
 
         timeinfo.tm_mday = sumValueFromBinary(Wire.read(), 6);
@@ -71,7 +73,12 @@ void sync_from_rx_rtc(int32_t offset = 0) {
 
 bool init_rtc() {
     rtc.setTime(0);
-    byte flagregister = readFromModule(0x1E);
+    if(!rx_rtc_avail) return false;
+    auto flagregister = readFromModule(0x1E);
+    if(flagregister < 0) {
+        rx_rtc_avail = false;
+        return false;
+    }
     if((flagregister >> 1) & 1) {
         while((flagregister >> 1) & 1) {
             writeToModule(0x1E, 0); // clear VLF
