@@ -107,6 +107,10 @@ bool init_rtc() {
         writeToModule(0x1F, 0); // Unset stop bit
         return true;
     }
+    if(readFromModule(0x1F) & 64) {
+        writeToModule(0x1F, 0);
+        return true;
+    }
     sync_from_rx_rtc();
     return false;
 }
