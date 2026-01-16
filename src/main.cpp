@@ -21,6 +21,9 @@ using fs::FS;
 #include "nonvolatile.h"
 #include "utils.h"
 #include "system_console.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "esp_task_wdt.h"
 #pragma endregion
 
 Console console(&tft);
@@ -846,7 +849,7 @@ int GetNum() {
   // According to the docs, register 0 contains pins IO0_x where x is equal to the bit from the right (x = 7, is MSB)
 
   int cnt = 0;
-  int16_t temp;
+  uint16_t temp;
   unsigned int num;
   if(Wire.available() == 2) {
     keypadtimer = millis();
@@ -3958,4 +3961,13 @@ uint8_t doAutoMemory(uint16_t startfreq, uint16_t stopfreq, uint8_t startmem, ui
   SQ = false;
 
   return error;
+}
+
+extern "C" void app_main() {
+    initArduino();
+    setup();
+    while(true) {
+      loop();
+      esp_task_wdt_reset();
+    }
 }
