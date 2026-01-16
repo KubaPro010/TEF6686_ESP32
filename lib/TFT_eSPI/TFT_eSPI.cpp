@@ -388,7 +388,7 @@ TFT_eSPI::TFT_eSPI(int16_t w, int16_t h)
   textbgcolor = bitmap_bg = 0x0000;
 
   _fillbg = isDigits = textwrapY = false;
-  textwrapX = true;
+  textwrapX = false;
   textdatum = TL_DATUM;
 
   _swapBytes = false;
@@ -2256,7 +2256,6 @@ void TFT_eSPI::drawWedgeLine(float ax, float ay, float bx, float by, float ar, f
   float alpha = 1.0f;
   ar += 0.5;
 
-  uint16_t bg = bg_color;
   float xpax, ypay, bax = bx - ax, bay = by - ay;
 
   begin_nin_write();
@@ -2282,10 +2281,10 @@ void TFT_eSPI::drawWedgeLine(float ax, float ay, float bx, float by, float ar, f
       }
       //Blend color with background and plot
       if (bg_color == 0x00FFFFFF) {
-        bg = readPixel(xp, yp); swin = true;
+        bg_color = readPixel(xp, yp); swin = true;
       }
       if (swin) { setWindow(xp, yp, x1, yp); swin = false; }
-      pushColor(fastBlend((uint8_t)(alpha * PixelAlphaGain), fg_color, bg));
+      pushColor(fastBlend((uint8_t)(alpha * PixelAlphaGain), fg_color, bg_color));
     }
   }
 
@@ -2309,10 +2308,10 @@ void TFT_eSPI::drawWedgeLine(float ax, float ay, float bx, float by, float ar, f
         continue;
       }
       if (bg_color == 0x00FFFFFF) {
-        bg = readPixel(xp, yp); swin = true;
+        bg_color = readPixel(xp, yp); swin = true;
       }
       if (swin) { setWindow(xp, yp, x1, yp); swin = false; }
-      pushColor(fastBlend((uint8_t)(alpha * PixelAlphaGain), fg_color, bg));
+      pushColor(fastBlend((uint8_t)(alpha * PixelAlphaGain), fg_color, bg_color));
     }
   }
 
@@ -2549,7 +2548,7 @@ int16_t TFT_eSPI::drawString(const char *string, int32_t poX, int32_t poY, uint8
   uint16_t cheight = 8 * textsize;
 
   baseline = gFonts[font].maxAscent;
-  cheight  = fontHeight(font);
+  cheight = fontHeight(font);
 
   if (textdatum || padX) {
     switch(textdatum) {
@@ -2862,14 +2861,9 @@ bool TFT_eSPI::getUnicodeIndex(uint16_t unicode, uint16_t *index, uint16_t font)
   return false;
 }
 
-void TFT_eSPI::drawGlyph(uint16_t code, uint16_t font)
-{
-  uint16_t fg = textcolor;
-  uint16_t bg = textbgcolor;
-
+void TFT_eSPI::drawGlyph(uint16_t code, uint16_t font) {
   // Check if cursor has moved
-  if (last_cursor_x != cursor_x)
-  {
+  if (last_cursor_x != cursor_x) {
     bg_cursor_x = cursor_x;
     last_cursor_x = cursor_x;
   }
@@ -2877,7 +2871,7 @@ void TFT_eSPI::drawGlyph(uint16_t code, uint16_t font)
   if (code < 0x21)
   {
     if (code == 0x20) {
-      if (_fillbg) fillRect(bg_cursor_x, cursor_y, (cursor_x + gFonts[font].spaceWidth) - bg_cursor_x, gFonts[font].yAdvance, bg);
+      if (_fillbg) fillRect(bg_cursor_x, cursor_y, (cursor_x + gFonts[font].spaceWidth) - bg_cursor_x, gFonts[font].yAdvance, textbgcolor);
       cursor_x += gFonts[font].spaceWidth;
       bg_cursor_x = cursor_x;
       last_cursor_x = cursor_x;
@@ -2958,16 +2952,16 @@ void TFT_eSPI::drawGlyph(uint16_t code, uint16_t font)
 
         if (pixel)
         {
-          if (bl) { drawFastHLine( bxs, y + cy, bl, bg); bl = 0; }
+          if (bl) { drawFastHLine( bxs, y + cy, bl, textbgcolor); bl = 0; }
           if (pixel != 0xFF)
           {
             if (fl) {
-              if (fl==1) drawPixel(fxs, y + cy, fg);
-              else drawFastHLine( fxs, y + cy, fl, fg);
+              if (fl==1) drawPixel(fxs, y + cy, textcolor);
+              else drawFastHLine( fxs, y + cy, fl, textcolor);
               fl = 0;
             }
-            if (getColor) bg = getColor(x + cx, y + cy);
-            drawPixel(x + cx, y + cy, alphaBlend(pixel, fg, bg));
+            if (getColor) textbgcolor = getColor(x + cx, y + cy);
+            drawPixel(x + cx, y + cy, alphaBlend(pixel, textcolor, textbgcolor));
           }
           else
           {
@@ -2977,7 +2971,7 @@ void TFT_eSPI::drawGlyph(uint16_t code, uint16_t font)
         }
         else
         {
-          if (fl) { drawFastHLine( fxs, y + cy, fl, fg); fl = 0; }
+          if (fl) { drawFastHLine( fxs, y + cy, fl, textcolor); fl = 0; }
           if (_fillbg) {
             if (x >= bx) {
               if (bl==0) bxs = x + cx;
@@ -2986,8 +2980,8 @@ void TFT_eSPI::drawGlyph(uint16_t code, uint16_t font)
           }
         }
       }
-      if (fl) { drawFastHLine( fxs, y + cy, fl, fg); fl = 0; }
-      if (bl) { drawFastHLine( bxs, y + cy, bl, bg); bl = 0; }
+      if (fl) { drawFastHLine( fxs, y + cy, fl, textcolor); fl = 0; }
+      if (bl) { drawFastHLine( bxs, y + cy, bl, textcolor); bl = 0; }
     }
 
     // Fill area below glyph
@@ -3005,7 +2999,7 @@ void TFT_eSPI::drawGlyph(uint16_t code, uint16_t font)
   else
   {
     // Point code not in font so draw a rectangle and move on cursor
-    drawRect(cursor_x, cursor_y + gFonts[font].maxAscent - gFonts[font].ascent, gFonts[font].spaceWidth, gFonts[font].ascent, fg);
+    drawRect(cursor_x, cursor_y + gFonts[font].maxAscent - gFonts[font].ascent, gFonts[font].spaceWidth, gFonts[font].ascent, textcolor);
     cursor_x += gFonts[font].spaceWidth + 1;
   }
   bg_cursor_x = cursor_x;
@@ -4474,10 +4468,8 @@ int16_t TFT_eSprite::drawChar(uint16_t uniCode, int32_t x, int32_t y, uint8_t fo
 
 void TFT_eSprite::drawGlyph(uint16_t code, uint16_t font)
 {
-  uint16_t fg = textcolor;
-  uint16_t bg = textbgcolor;
   bool getBG  = false;
-  if (fg == bg) getBG = true;
+  if (textcolor == textbgcolor) getBG = true;
 
   // Check if cursor has moved
   if (last_cursor_x != cursor_x) {
@@ -4487,7 +4479,7 @@ void TFT_eSprite::drawGlyph(uint16_t code, uint16_t font)
 
   if (code < 0x21) {
     if (code == 0x20) {
-      if (_fillbg) fillRect(bg_cursor_x, cursor_y, (cursor_x + gFonts[font].spaceWidth) - bg_cursor_x, gFonts[font].yAdvance, bg);
+      if (_fillbg) fillRect(bg_cursor_x, cursor_y, (cursor_x + gFonts[font].spaceWidth) - bg_cursor_x, gFonts[font].yAdvance, textbgcolor);
       cursor_x += gFonts[font].spaceWidth;
       bg_cursor_x = cursor_x;
       last_cursor_x = cursor_x;
@@ -4511,7 +4503,7 @@ void TFT_eSprite::drawGlyph(uint16_t code, uint16_t font)
     bool newSprite = !_created;
     if (newSprite) {
       createSprite(gWidth[font][gNum], gFonts[font].yAdvance);
-      if(fg != bg) fillSprite(bg);
+      if(textcolor != textbgcolor) fillSprite(textbgcolor);
       cursor_x = -gdX[font][gNum];
       bg_cursor_x = cursor_x;
       last_cursor_x = cursor_x;
@@ -4566,22 +4558,22 @@ void TFT_eSprite::drawGlyph(uint16_t code, uint16_t font)
         pixel = pgm_read_byte(gPtr + gBitmap[font][gNum] + x + gWidth[font][gNum] * y);
 
         if (pixel) {
-          if (bl) { drawFastHLine( bxs, y + cy, bl, bg); bl = 0; }
+          if (bl) { drawFastHLine( bxs, y + cy, bl, textbgcolor); bl = 0; }
           if (pixel != 0xFF)
           {
             if (fl) {
-              if (fl==1) drawPixel(fxs, y + cy, fg);
-              else drawFastHLine( fxs, y + cy, fl, fg);
+              if (fl==1) drawPixel(fxs, y + cy, textcolor);
+              else drawFastHLine( fxs, y + cy, fl, textcolor);
               fl = 0;
             }
-            if (getBG) bg = readPixel(x + cx, y + cy);
-            drawPixel(x + cx, y + cy, alphaBlend(pixel, fg, bg));
+            if (getBG) textbgcolor = readPixel(x + cx, y + cy);
+            drawPixel(x + cx, y + cy, alphaBlend(pixel, textcolor, textbgcolor));
           } else {
             if (fl==0) fxs = x + cx;
             fl++;
           }
         } else {
-          if (fl) { drawFastHLine( fxs, y + cy, fl, fg); fl = 0; }
+          if (fl) { drawFastHLine( fxs, y + cy, fl, textcolor); fl = 0; }
           if (_fillbg) {
             if (x >= bx) {
               if (bl==0) bxs = x + cx;
@@ -4590,8 +4582,8 @@ void TFT_eSprite::drawGlyph(uint16_t code, uint16_t font)
           }
         }
       }
-      if (fl) { drawFastHLine( fxs, y + cy, fl, fg); fl = 0; }
-      if (bl) { drawFastHLine( bxs, y + cy, bl, bg); bl = 0; }
+      if (fl) { drawFastHLine( fxs, y + cy, fl, textcolor); fl = 0; }
+      if (bl) { drawFastHLine( bxs, y + cy, bl, textbgcolor); bl = 0; }
     }
 
     // Fill area below glyph
@@ -4609,7 +4601,7 @@ void TFT_eSprite::drawGlyph(uint16_t code, uint16_t font)
     }
   }
   else {
-    drawRect(cursor_x, cursor_y + gFonts[font].maxAscent - gFonts[font].ascent, gFonts[font].spaceWidth, gFonts[font].ascent, fg);
+    drawRect(cursor_x, cursor_y + gFonts[font].maxAscent - gFonts[font].ascent, gFonts[font].spaceWidth, gFonts[font].ascent, textcolor);
     cursor_x += gFonts[font].spaceWidth + 1;
   }
   bg_cursor_x = cursor_x;

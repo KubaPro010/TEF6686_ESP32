@@ -351,7 +351,7 @@ WiFiClient RemoteClient;
 WiFiUDP Udp;
 WebServer webserver(80);
 
-ScrollingTextDisplay rtplusDisplay(&GeneralTextSprite, 147, 180, 165, 19);
-ScrollingTextDisplay eonDisplay(&GeneralTextSprite, 174, 180, 165, 19);
+ScrollingTextDisplay rtplusDisplay(&GeneralTextSprite, 147, 173, 19);
+ScrollingTextDisplay eonDisplay(&GeneralTextSprite, 174, 173, 19);
 ScrollingTextDisplay eccDisplay(&FullLineSprite, 198, 270);
 ScrollingTextDisplay rtDisplay(&FullLineSprite, 220, 270);
