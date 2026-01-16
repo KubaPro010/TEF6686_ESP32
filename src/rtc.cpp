@@ -45,7 +45,8 @@ inline byte sumValueFromBinary(byte binary, byte length) {
 
 void sync_from_rx_rtc(int32_t offset = 0) {
     if(!rx_rtc_avail) return;
-    struct tm timeinfo = {0};
+    struct tm timeinfo;
+    memset(&timeinfo, 0, sizeof(timeinfo));
 
     Wire.beginTransmission(RX8010SJ_ADDRESS);
     Wire.write(0x10);
