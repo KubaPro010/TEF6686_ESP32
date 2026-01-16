@@ -638,7 +638,7 @@ void ShowAFEON() {
         } else eon_numbers = radio.eon_counter - 10;
 
         for (byte i = 0; i < eon_numbers; i++) {
-          if (eonpicodeold[i + y] == nullptr) strcpy(eonpicodeold[i + y], "");
+          if (eonpicodeold[i + y][0] == '\0') strcpy(eonpicodeold[i + y], "");
           if (eonpsold[i + y] == nullptr) eonpsold[i + y] = "";
           if (mappedfreqold[i + y] == 0) mappedfreqold[i + y] = 0;
           if (mappedfreqold2[i + y] == 0) mappedfreqold2[i + y] = 0;

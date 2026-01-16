@@ -21,9 +21,9 @@ using fs::FS;
 #include "nonvolatile.h"
 #include "utils.h"
 #include "system_console.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "esp_task_wdt.h"
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
+#include <esp_task_wdt.h>
 #pragma endregion
 
 Console console(&tft);
@@ -3926,7 +3926,6 @@ uint8_t doAutoMemory(uint16_t startfreq, uint16_t stopfreq, uint8_t startmem, ui
           SignalSprite.pushImage(-107, -95, 292, 170, popupbackground_wo);
           SquelchSprite.pushImage(-177, -135, 292, 170, popupbackground_wo);
           break;
-
         default:
           SignalSprite.pushImage(-107, -95, 292, 170, popupbackground);
           SquelchSprite.pushImage(-177, -135, 292, 170, popupbackground);
@@ -3964,11 +3963,11 @@ uint8_t doAutoMemory(uint16_t startfreq, uint16_t stopfreq, uint8_t startmem, ui
 }
 
 extern "C" void app_main() {
-    initArduino();
-    setup();
-    esp_task_wdt_add(NULL);
-    while(true) {
-      esp_task_wdt_reset();
-      loop();
-    }
+  initArduino();
+  setup();
+  esp_task_wdt_add(NULL);
+  while(true) {
+    esp_task_wdt_reset();
+    loop();
+  }
 }
