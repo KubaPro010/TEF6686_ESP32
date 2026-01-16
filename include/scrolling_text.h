@@ -20,7 +20,7 @@ private:
 
   static const unsigned long SCROLL_INTERVAL = 5;
   static const unsigned long HOLD_DURATION = 2000;
-  static const int SCROLL_GAP = 10;
+  static const int SCROLL_GAP = 25;
 
 public:
   ScrollingTextDisplay(TFT_eSprite* spr, int y, int maxW, int x = 35, int inuseH = -1 ) :

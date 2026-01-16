@@ -352,4 +352,4 @@ ScrollingTextDisplay lpsDisplay(&PSSprite, 0, 150);
 ScrollingTextDisplay rtplusDisplay(&GeneralTextSprite, 147, 173, 35, 19);
 ScrollingTextDisplay eonDisplay(&GeneralTextSprite, 174, 173, 35, 19);
 ScrollingTextDisplay eccDisplay(&FullLineSprite, 198, 270);
-ScrollingTextDisplay rtDisplay(&FullLineSprite, 220, 268); // 268 bc of the A/B thing
+ScrollingTextDisplay rtDisplay(&FullLineSprite, 220, 270);
