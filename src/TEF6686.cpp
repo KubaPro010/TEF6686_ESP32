@@ -1486,7 +1486,11 @@ void TEF6686::readRDS(byte showrdserrors) {
 
       case RDS_GROUP_15A: {
           if (pslong_process && rds.stationNameLong.length() > 0) rds.hasLongPS = true;
-          uint8_t offset = (rds.rdsB & 7) * 4;
+          uint8_t segment = rds.rdsB & 7;
+          uint8_t offset = segment * 4;
+
+          if(segments_received_lps[segment] >= (rds.rdsCerror + rds.rdsBerror)) segments_received_lps[segment] = rds.rdsCerror + rds.rdsBerror;
+          else return;
 
           pslong_buffer2[offset + 0] = pslong_buffer[offset + 0];
           pslong_buffer2[offset + 1] = pslong_buffer[offset + 1];
@@ -1629,6 +1633,7 @@ void TEF6686::clearRDS(bool fullsearchrds) {
   afmethodBprobe = afmethodBtrigger = _hasEnhancedRT = false;
   rds.ps12error = rds.ps34error = rds.ps56error = rds.ps78error = true;
   memset(segments_received, 99, sizeof(segments_received));
+  memset(segments_received_lps, 99, sizeof(segments_received_lps));
 }
 
 void TEF6686::tone(uint16_t time, int16_t amplitude, uint16_t frequency) {

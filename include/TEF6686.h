@@ -619,6 +619,7 @@ class TEF6686 {
     bool togglebit;
     bool runningbit;
     uint8_t segments_received[16];
+    uint8_t segments_received_lps[8];
     bool initab;
     bool afinit;
     bool errorfreepi;

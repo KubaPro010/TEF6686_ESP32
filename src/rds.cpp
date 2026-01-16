@@ -437,32 +437,9 @@ void showPS() {
           stationNameLongOld = stationNameLongString;
         }
 
-        // Handle scrolling logic for long PS
-        if (PSSprite.textWidth(trimTrailingSpaces(radio.rds.stationNameLong)) < 150) {
-            xPos2 = 0;
-            PSSprite.fillSprite(BackgroundColor);
-            PSSprite.setTextColor(RDSstatus ? RDSColor : RDSDropoutColor, RDSstatus ? RDSColorSmooth : RDSDropoutColorSmooth, false);
-            PSSprite.drawString(stationNameLongString, xPos2, 2);
-        } else {
-          if (millis() - pslongticker >= 5) {
-            if (xPos2 == 0 && millis() - pslongtickerhold < 2000) {
-                // Hold at position 0
-            } else {
-                xPos2--;
-                pslongtickerhold = millis();
-            }
-            
-            if (xPos2 < -PSLongWidth) xPos2 = 0;
-            pslongticker = millis();
-          }
-          
-          PSSprite.fillSprite(BackgroundColor);
-          PSSprite.setTextColor(RDSstatus ? RDSColor : RDSDropoutColor, RDSstatus ? RDSColorSmooth : RDSDropoutColorSmooth, false);
-          PSSprite.drawString(stationNameLongString, xPos2 + 8, 2);
-          PSSprite.drawString(stationNameLongString, xPos2 + PSLongWidth, 2);
-        }
+        lpsDisplay.update(stationNameLongString, RDSstatus, RDSColor, RDSColorSmooth, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor);
       } else {
-        xPos2 = 0;
+        lpsDisplay.reset();
         PSSprite.fillSprite(BackgroundColor);
 
         for (int i = 0; i < 7; i++) {
@@ -491,7 +468,7 @@ void showPS() {
         if (PSold != radio.rds.stationName) ps12errorold = ps34errorold = ps56errorold = ps78errorold = true;
       }
 
-      if (!screenmute) PSSprite.pushSprite(36, advancedRDS ? 72 : 185);
+      if (!screenmute) PSSprite.pushSprite(36, advancedRDS ? 72 : 185, TFT_TRANSPARENT);
 
       if (wifi && radio.rds.stationName.length() > 0 && PSold != radio.rds.stationName) {
         Udp.beginPacket(remoteip, 9030);
@@ -762,34 +739,7 @@ void ShowAFEON() {
       }
     }
 
-    if (FullLineSprite.textWidth(trimTrailingSpaces(AIDString)) < 270) {
-      xPos = 0;
-      FullLineSprite.fillSprite(BackgroundColor);
-      FullLineSprite.setTextColor(ActiveColor, ActiveColorSmooth, false);
-      FullLineSprite.drawString(AIDString, xPos, 2);
-      FullLineSprite.drawLine(283, 0, 283, 19, FrameColor);
-      FullLineSprite.pushSprite(5, 220);
-    } else {
-      if (millis() - rtticker >= 5) {
-        if (xPos < -AIDWidth) xPos = 0;
-        if (xPos == 0) {
-          if (millis() - rttickerhold >= 2000) {
-            xPos--;
-            rttickerhold = millis();
-          }
-        } else {
-          xPos--;
-          rttickerhold = millis();
-        }
-        FullLineSprite.fillSprite(BackgroundColor);
-        FullLineSprite.setTextColor(ActiveColor, ActiveColorSmooth, false);
-        FullLineSprite.drawString(AIDString, xPos, 2);
-        FullLineSprite.drawString(AIDString, xPos + AIDWidth, 2);
-        FullLineSprite.drawLine(314, 0, 314, 19, FrameColor);
-        FullLineSprite.pushSprite(5, 220);
-        rtticker = millis();
-      }
-    }
+    aidDisplay.update(AIDString, true, ActiveColor, ActiveColorSmooth, 0, 0, BackgroundColor);
   }
 }
 

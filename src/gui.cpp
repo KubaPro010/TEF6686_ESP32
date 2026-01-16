@@ -608,9 +608,7 @@ void BuildAFScreen() {
   rds_clockold = "";
   dropout = false;
   rdsreset = true;
-  rtplusDisplay.reset();
-  eonDisplay.reset();
-  eccDisplay.reset();
+  aidDisplay.reset();
   for (byte i = 0; i < 20; i++) {
     mappedfreqold[i] = 0;
     mappedfreqold2[i] = 0;
@@ -2980,9 +2978,8 @@ void BuildAdvancedRDS() {
   dropout = false;
   rdsreset = true;
   ShowMemoryPos();
-  xPos = 0;
-  xPos2 = 0;
   rtplusDisplay.reset();
+  lpsDisplay.reset();
   eonDisplay.reset();
   eccDisplay.reset();
   rtDisplay.reset();
@@ -3109,6 +3106,7 @@ void BuildDisplay() {
   BWreset = true;
   dropout = false;
   rtplusDisplay.reset();
+  lpsDisplay.reset();
   eonDisplay.reset();
   eccDisplay.reset();
   rtDisplay.reset();
@@ -3124,8 +3122,6 @@ void BuildDisplay() {
   radio.rds.hasTMC.call();
   radio.rds.hasCT.call();
   radio.rds.hasRTplus.call();
-  xPos = 0;
-  xPos2 = 0;
   MPold = 99;
   USold = 99;
 }

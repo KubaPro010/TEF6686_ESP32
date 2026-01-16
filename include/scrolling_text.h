@@ -15,14 +15,16 @@ private:
   bool isScrolling;
   std::function<void(TFT_eSprite*, bool)> postDrawCallback;
   int usedH;
+  bool hold;
+  int xOffset;
 
   static const unsigned long SCROLL_INTERVAL = 5;
   static const unsigned long HOLD_DURATION = 2000;
   static const int SCROLL_GAP = 10;
 
 public:
-  ScrollingTextDisplay(TFT_eSprite* spr, int y, int maxW, int inuseH = -1 ) :
-    sprite(spr), yPos(y), maxWidth(maxW), xPos(0), textWidth(0), lastTick(0), holdTick(0), isScrolling(false), postDrawCallback(nullptr), usedH(inuseH) {}
+  ScrollingTextDisplay(TFT_eSprite* spr, int y, int maxW, int x = 35, int inuseH = -1 ) :
+    sprite(spr), yPos(y), maxWidth(maxW), xPos(0), textWidth(0), lastTick(0), holdTick(0), isScrolling(false), postDrawCallback(nullptr), usedH(inuseH), hold(false), xOffset(x) {}
 
   void setPostDrawCallback(std::function<void(TFT_eSprite*, bool)> callback) {
     postDrawCallback = callback;
@@ -39,12 +41,13 @@ public:
       if(!isScrolling) holdTick = millis();
       isScrolling = true;
       if(millis() - lastTick >= SCROLL_INTERVAL) {
-        if(xPos <= -(textWidth + SCROLL_GAP)) xPos = 0;
+        if(xPos <= -(textWidth + SCROLL_GAP)) {xPos += textWidth + SCROLL_GAP; hold = true;}
 
-        if(xPos == 0) {
+        if(hold) {
           if(millis() - holdTick >= HOLD_DURATION) {
             xPos--;
             holdTick = millis();
+            hold = false;
           }
         } else {
           xPos--;
@@ -97,6 +100,6 @@ private:
     }
 
     if(postDrawCallback) postDrawCallback(sprite, false);
-    sprite->pushSprite(35, yPos, TFT_TRANSPARENT);
+    if(yPos != 0) sprite->pushSprite(xOffset, yPos, TFT_TRANSPARENT);
   }
 };
