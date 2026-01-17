@@ -191,7 +191,7 @@ bool TFT_eSPI::initDMA(bool ctrl_cs)
     .command_bits = 0,
     .address_bits = 0,
     .dummy_bits = 0,
-    .mode = TFT_SPI_MODE,
+    .mode = SPI_MODE0,
     .duty_cycle_pos = 0,
     .cs_ena_pretrans = 0,
     .cs_ena_posttrans = 0,
@@ -238,7 +238,7 @@ bool TFT_eSPI::initDMA(bool ctrl_cs)
 inline void TFT_eSPI::begin_tft_write() {
   if (locked) {
     locked = false; // Flag to show SPI access now unlocked
-    spi.beginTransaction(SPISettings(spi_write_speed * 1000000, MSBFIRST, TFT_SPI_MODE));
+    spi.beginTransaction(SPISettings(spi_write_speed * 1000000, MSBFIRST, SPI_MODE0));
     CS_L;
     SET_BUS_WRITE_MODE;
   }
@@ -247,7 +247,7 @@ inline void TFT_eSPI::begin_tft_write() {
 void TFT_eSPI::begin_nin_write() {
   if (locked) {
     locked = false; // Flag to show SPI access now unlocked
-    spi.beginTransaction(SPISettings(spi_write_speed * 1000000, MSBFIRST, TFT_SPI_MODE));
+    spi.beginTransaction(SPISettings(spi_write_speed * 1000000, MSBFIRST, SPI_MODE0));
     CS_L;
     SET_BUS_WRITE_MODE;
   }
@@ -281,7 +281,7 @@ inline void TFT_eSPI::begin_tft_read() {
   dmaWait();
   if (locked) {
     locked = false;
-    spi.beginTransaction(SPISettings(SPI_READ_FREQUENCY, MSBFIRST, TFT_SPI_MODE));
+    spi.beginTransaction(SPISettings(SPI_READ_FREQUENCY, MSBFIRST, SPI_MODE0));
     CS_L;
   }
   SET_BUS_READ_MODE;

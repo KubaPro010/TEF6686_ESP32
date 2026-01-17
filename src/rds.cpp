@@ -5,8 +5,8 @@
 String HexStringold;
 float smoothBER = 0;
 
-int PSLongWidth, AIDWidth, lengths[7];
-String stationNameLongOld, AIDStringold;
+int AIDWidth, lengths[7];
+String AIDStringold;
 bool rtABold, ps12errorold, ps34errorold, ps56errorold, ps78errorold;
 
 void ShowAdvancedRDS() {
@@ -431,11 +431,6 @@ void showPS() {
       if (!screenmute) tftReplace(ACENTER, PSold, radio.rds.stationName, 160, 201, BWAutoColor, BWAutoColorSmooth, BackgroundColor, 16);
     } else if (!rdsstatscreen) {
       if (radio.rds.hasLongPS && showlongps) {
-        if (radio.rds.stationNameLong != stationNameLongOld) {
-          PSLongWidth = PSSprite.textWidth(radio.rds.stationNameLong); // Measure new width
-          stationNameLongOld = radio.rds.stationNameLong;
-        }
-
         lpsDisplay.update(radio.rds.stationNameLong, RDSstatus, RDSColor, RDSColorSmooth, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor);
       } else {
         lpsDisplay.reset();

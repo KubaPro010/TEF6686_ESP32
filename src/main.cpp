@@ -1079,7 +1079,10 @@ void setAutoSpeedSPI() {
 }
 
 void endMenu() {
-  if(rds_settings_changed) radio.clearRDS(fullsearchrds);
+  if(rds_settings_changed) {
+    radio.clearRDS(fullsearchrds);
+    RDSstatus = false;
+  }
   rds_settings_changed = menu = false;
   menuopen = false;
   LowLevelInit = true;
@@ -1175,7 +1178,7 @@ void setup() {
   bool tef_found = false;
 
   Wire.begin();
-  Wire.setClock(400000);
+  Wire.setClock(100000);
   delay(1);
 
   Serial.begin(115200);
@@ -2833,9 +2836,9 @@ void DoMemoryPosTune() {
   if (RDSSPYTCP) RemoteClient.print("G:\r\nRESET-------\r\n\r\n");
   if (XDRGTKUSB || XDRGTKTCP) DataPrint("T" + String((frequency + ConverterSet * 100) * 10) + "\n");
 
-  String stationText = "";
+  String stationName = "";
   if (presets[memorypos].RDSPS[0] != '\0') {
-    for (byte i = 0; i < 9; i++) stationText += presets[memorypos].RDSPS[i];
+    for (byte i = 0; i < 9; i++) stationName += presets[memorypos].RDSPS[i];
   }
 
   if (presets[memorypos].RDSPI[0] != '\0') {
@@ -2848,7 +2851,7 @@ void DoMemoryPosTune() {
     for (byte i = 0; i < 6; i++) radio.rds.picode[i] = '\0';
   }
 
-  radio.rds.stationName = stationText;
+  radio.rds.stationName = stationName;
 
   BWset = presets[memorypos].bw;
   doBW();
@@ -3980,22 +3983,4 @@ uint8_t doAutoMemory(uint16_t startfreq, uint16_t stopfreq, uint8_t startmem, ui
   SQ = false;
 
   return error;
-}
-
-extern "C" {
-  void app_main() {
-    rtc_wdt_disable();
-    rtc_wdt_protect_off();
-
-    initArduino();
-
-    setup();
-
-    rtc_wdt_enable();
-    rtc_wdt_protect_on();
-    while(true) {
-      loop();
-      rtc_wdt_feed();
-    }
-  }
 }

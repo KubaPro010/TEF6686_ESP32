@@ -1,7 +1,5 @@
 #pragma once
 
-#define TFT_ESPI_VERSION "2.5.43"
-
 #include <Arduino.h>
 #include <SPI.h>
 
@@ -9,7 +7,6 @@
 
 #include <pgmspace.h>
 
-#define PROCESSOR_ID 0x32
 #define SPI_PORT VSPI
 #include "soc/spi_reg.h"
 #include "driver/spi_master.h"
@@ -22,7 +19,7 @@
 
 #define FS_NO_GLOBALS
 #include <FS.h>
-#include "SPIFFS.h" // ESP32 only
+#include "SPIFFS.h"
 
 #define DC_C GPIO.out_w1tc = (1 << TFT_DC)//;GPIO.out_w1tc = (1 << TFT_DC)
 #define DC_D GPIO.out_w1ts = (1 << TFT_DC)//;GPIO.out_w1ts = (1 << TFT_DC)
@@ -33,17 +30,13 @@
 #define WR_L
 #define WR_H
 
-#ifndef TFT_MISO
-  #define TFT_MISO -1
-#endif
-
-#ifndef TFT_MOSI
-  #define TFT_MOSI 23
-#endif
-
-#ifndef TFT_SCLK
-  #define TFT_SCLK 18
-#endif
+#define TFT_MISO -1
+#define TFT_MOSI 23
+#define TFT_SCLK 18
+#define TFT_CS 5
+#define TFT_DC 17
+#define TFT_RST 16
+#define TOUCH_CS 32
 
 #define TFT_WRITE_BITS(D, B) *_spi_mosi_dlen = B-1;    \
                               *_spi_w = D;             \
@@ -73,18 +66,9 @@
 // Write same value twice
 #define tft_Write_32D(C) TFT_WRITE_BITS((uint16_t)((C)<<8 | (C)>>8)<<16 | (uint16_t)((C)<<8 | (C)>>8), 32)
 
-////////////////////////////////////////////////////////////////////////////////////////
-// Macros to read from display using SPI or software SPI
-////////////////////////////////////////////////////////////////////////////////////////
-#if !defined (TFT_PARALLEL_8_BIT)
-  #define tft_Read_8() spi.transfer(0)
-#endif
+#define tft_Read_8() spi.transfer(0)
 
 #define DAT8TO32(P) ( (uint32_t)P[0]<<8 | P[1] | P[2]<<24 | P[3]<<16 )
-
-#ifndef TFT_SPI_MODE
-  #define TFT_SPI_MODE SPI_MODE0
-#endif
 
 //These enumerate the text plotting alignment (reference datum point)
 #define TL_DATUM 0 // Top left (default)
