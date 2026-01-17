@@ -5531,7 +5531,6 @@ void DoMenu() {
 void Infoboxprint(const char* input) {
   int length = strlen(input);
   int newlineIndex = -1;
-  uint8_t font = (language == LANGUAGE_CHS) ? 6 : 7; // six seven
 
   for (int i = 0; i < length; i++) {
     if (input[i] == '\n') {
@@ -5554,17 +5553,15 @@ void Infoboxprint(const char* input) {
       tftPrint(ACENTER, line1, 155, 40, ActiveColor, ActiveColorSmooth, 28);
       tftPrint(ACENTER, line2, 155, 70, ActiveColor, ActiveColorSmooth, 28);
     } else {
-      FrequencySprite.drawString(line1, 100, 5, font);
-      FrequencySprite.drawString(line2, 100, 25, font);
+      FrequencySprite.drawString(line1, 100, 5, 6);
+      FrequencySprite.drawString(line2, 100, 25, 6);
     }
     free(line1);
     free(line2);
   } else {
-    if (menu) {
-      tftPrint(ACENTER, input, 155, 78, ActiveColor, ActiveColorSmooth, 28);
-    } else if (setupmode) {
-      tftPrint(ACENTER, input, 155, 70, ActiveColor, ActiveColorSmooth, 28);
-    } else FrequencySprite.drawString(input, 100, 15, font);
+    if (menu) tftPrint(ACENTER, input, 155, 78, ActiveColor, ActiveColorSmooth, 28);
+    else if (setupmode) tftPrint(ACENTER, input, 155, 70, ActiveColor, ActiveColorSmooth, 28);
+    else FrequencySprite.drawString(input, 100, 15, 6);
   }
 }
 
