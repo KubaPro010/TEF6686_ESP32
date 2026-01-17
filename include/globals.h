@@ -15,7 +15,6 @@
 #include "scrolling_text.h"
 #include "rtc.hpp"
 
-
 extern bool RDSstatus;
 extern bool RDSstatusold;
 extern TFT_eSPI tft;
@@ -334,6 +333,7 @@ extern unsigned long tottimer;
 extern unsigned long tuningtimer;
 extern unsigned long udplogtimer;
 extern unsigned long udptimer;
+extern bool rds_settings_changed;
 extern const size_t language_totalnumber;
 extern const size_t language_entrynumber;
 

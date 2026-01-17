@@ -5,11 +5,11 @@
 class Console {
 public:
     explicit Console(TFT_eSPI* display) : tft(display), y(0) {}
-    void print(String text) {
-        tft->setTextColor(TFT_WHITE, TFT_BLACK);
+    void print(String text, uint16_t background = TFT_BLACK) {
+        tft->setTextColor(TFT_WHITE, background);
         tft->setTextDatum(TL_DATUM);
         auto data = "[" + String(millis() / 1000.0f) + "] " + text;
-        tft->fillRect(0, y, tft->textWidth(data), tft->fontHeight(0), TFT_BLACK);
+        tft->fillRect(0, y, tft->textWidth(data), tft->fontHeight(0), background);
         tft->drawString(data, 0, y, 0);
         y += tft->fontHeight(0);
     }

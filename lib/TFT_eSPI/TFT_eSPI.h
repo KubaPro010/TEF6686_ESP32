@@ -311,6 +311,8 @@ class TFT_eSPI { friend class TFT_eSprite;
 
   virtual void drawGlyph(uint16_t code, uint16_t font);
 
+  bool     booted;
+
   typedef struct
   {
     const uint8_t* gArray;           //array start pointer
@@ -412,8 +414,6 @@ uint8_t spi_write_speed;
   bool     isDigits;
   bool     textwrapX, textwrapY;
   bool     _swapBytes;
-
-  bool     _booted;
 
   uint32_t _lastColor;
 

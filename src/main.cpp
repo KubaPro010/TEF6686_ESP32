@@ -24,6 +24,8 @@ using fs::FS;
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include <esp_task_wdt.h>
+#include "esp_pm.h"
+#include "rtc_wdt.h"
 #pragma endregion
 
 Console console(&tft);
@@ -233,7 +235,7 @@ void SetTunerPatch() {
     analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 15, 255));
 
     if(FORBIDDEN_TUNER(TEF)) {
-      tftPrint(ACENTER, textUI(34), 150, 78, ActiveColor, ActiveColorSmooth, 28);
+      tftPrint(ACENTER, textUI(32), 150, 78, ActiveColor, ActiveColorSmooth, 28);
       for (;;);
     }
     EEPROM.writeByte(EE_BYTE_TEF, TEF);
@@ -1077,8 +1079,8 @@ void setAutoSpeedSPI() {
 }
 
 void endMenu() {
-  radio.clearRDS(fullsearchrds);
-  menu = false;
+  if(rds_settings_changed) radio.clearRDS(fullsearchrds);
+  rds_settings_changed = menu = false;
   menuopen = false;
   LowLevelInit = true;
   submenu = false;
@@ -1364,7 +1366,7 @@ void setup() {
   if (digitalRead(BWBUTTON) == LOW && digitalRead(ROTARY_BUTTON) == LOW && digitalRead(MODEBUTTON) == HIGH && digitalRead(BANDBUTTON) == HIGH) {
     analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 15, 255));
     DefaultSettings();
-    Infoboxprint(textUI(65));
+    Infoboxprint(textUI(63));
     tftPrint(ACENTER, textUI(2), 155, 130, ActiveColor, ActiveColorSmooth, 28);
     while (digitalRead(ROTARY_BUTTON) == LOW && digitalRead(BWBUTTON) == LOW) delay(50);
     esp_restart();
@@ -1372,8 +1374,8 @@ void setup() {
 
   if (digitalRead(BWBUTTON) == LOW && digitalRead(ROTARY_BUTTON) == HIGH && digitalRead(MODEBUTTON) == LOW && digitalRead(BANDBUTTON) == HIGH) {
     analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 15, 255));
-    Infoboxprint(textUI(281));
-    tftPrint(ACENTER, textUI(282), 155, 100, ActiveColor, ActiveColorSmooth, 28);
+    Infoboxprint(textUI(279));
+    tftPrint(ACENTER, textUI(280), 155, 100, ActiveColor, ActiveColorSmooth, 28);
     tft.calibrateTouch(TouchCalData, PrimaryColor, BackgroundColor, 30);
     EEPROM.writeUInt(EE_UINT16_CALTOUCH1, TouchCalData[0]);
     EEPROM.writeUInt(EE_UINT16_CALTOUCH2, TouchCalData[1]);
@@ -1385,7 +1387,7 @@ void setup() {
 
   if (digitalRead(BWBUTTON) == LOW && digitalRead(ROTARY_BUTTON) == HIGH && digitalRead(MODEBUTTON) == HIGH && digitalRead(BANDBUTTON) == LOW) {
     analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 15, 255));
-    Infoboxprint(textUI(68));
+    Infoboxprint(textUI(66));
     tftPrint(ACENTER, textUI(2), 155, 130, ActiveColor, ActiveColorSmooth, 28);
     invertdisplay = !invertdisplay;
     tft.invertDisplay(!invertdisplay);
@@ -1403,13 +1405,13 @@ void setup() {
 
   for (int x = 0; x <= ContrastSet; x++) {
     analogWrite(CONTRASTPIN, map(x, 0, 100, 15, 255));
-    delay(9);
+    delay(8);
   }
 
   console.print("Firmware " + String(VERSION));
 
   if(!tef_found) {
-    console.print(textUI(8));
+    console.print(textUI(6));
     while (true) delay(1);
   }
 
@@ -1475,7 +1477,7 @@ void setup() {
   }
 
   if (wifi) {
-    console.print("Trying WiFi");
+    console.print("Trying WiFi, setting clock to 160 MHz");
     tryWiFi();
     delay(1750);
   } else {
@@ -1674,7 +1676,7 @@ void loop() {
             if (advancedRDS) {
               tft.drawRoundRect(10, 30, 300, 170, 2, ActiveColor);
               tft.fillRoundRect(12, 32, 296, 166, 2, BackgroundColor);
-              tftPrint(ACENTER, textUI(33), 160, 100, ActiveColor, ActiveColorSmooth, 28);
+              tftPrint(ACENTER, textUI(31), 160, 100, ActiveColor, ActiveColorSmooth, 28);
             } else ShowFreq(1);
           }
 
@@ -2363,18 +2365,18 @@ void SelectBand() {
     ShowTuneMode();
     ShowStepSize();
 
+    tftPrint(ALEFT, textUI(99), 70, 32, BackgroundColor, BackgroundColor, 16);
+    tftPrint(ALEFT, textUI(100), 70, 32, BackgroundColor, BackgroundColor, 16);
     tftPrint(ALEFT, textUI(101), 70, 32, BackgroundColor, BackgroundColor, 16);
     tftPrint(ALEFT, textUI(102), 70, 32, BackgroundColor, BackgroundColor, 16);
     tftPrint(ALEFT, textUI(103), 70, 32, BackgroundColor, BackgroundColor, 16);
-    tftPrint(ALEFT, textUI(104), 70, 32, BackgroundColor, BackgroundColor, 16);
-    tftPrint(ALEFT, textUI(105), 70, 32, BackgroundColor, BackgroundColor, 16);
 
     switch (band) {
-      case BAND_LW: tftPrint(ALEFT, textUI(101), 70, 32, (bandforbidden ? GreyoutColor : PrimaryColor), (bandforbidden ? BackgroundColor : PrimaryColorSmooth), 16); break;
-      case BAND_MW: tftPrint(ALEFT, textUI(102), 70, 32, (bandforbidden ? GreyoutColor : PrimaryColor), (bandforbidden ? BackgroundColor : PrimaryColorSmooth), 16); break;
-      case BAND_SW: tftPrint(ALEFT, textUI(103), 70, 32, (bandforbidden ? GreyoutColor : PrimaryColor), (bandforbidden ? BackgroundColor : PrimaryColorSmooth), 16); break;
-      case BAND_FM: tftPrint(ALEFT, textUI(104), 70, 32, (bandforbidden ? GreyoutColor : PrimaryColor), (bandforbidden ? BackgroundColor : PrimaryColorSmooth), 16); break;
-      case BAND_OIRT: tftPrint(ALEFT, textUI(105), 70, 32, (bandforbidden ? GreyoutColor : PrimaryColor), (bandforbidden ? BackgroundColor : PrimaryColorSmooth), 16); break;
+      case BAND_LW: tftPrint(ALEFT, textUI(99), 70, 32, (bandforbidden ? GreyoutColor : PrimaryColor), (bandforbidden ? BackgroundColor : PrimaryColorSmooth), 16); break;
+      case BAND_MW: tftPrint(ALEFT, textUI(100), 70, 32, (bandforbidden ? GreyoutColor : PrimaryColor), (bandforbidden ? BackgroundColor : PrimaryColorSmooth), 16); break;
+      case BAND_SW: tftPrint(ALEFT, textUI(101), 70, 32, (bandforbidden ? GreyoutColor : PrimaryColor), (bandforbidden ? BackgroundColor : PrimaryColorSmooth), 16); break;
+      case BAND_FM: tftPrint(ALEFT, textUI(102), 70, 32, (bandforbidden ? GreyoutColor : PrimaryColor), (bandforbidden ? BackgroundColor : PrimaryColorSmooth), 16); break;
+      case BAND_OIRT: tftPrint(ALEFT, textUI(103), 70, 32, (bandforbidden ? GreyoutColor : PrimaryColor), (bandforbidden ? BackgroundColor : PrimaryColorSmooth), 16); break;
     }
   }
   leave = false;
@@ -2432,8 +2434,6 @@ void ModeButtonPress() {
           Stereostatusold = false;
           SStatusold = 2000;
           BWOld = 0;
-          radio.clearRDS(fullsearchrds);
-          RDSstatus = false;
           if (frequency % 10 != 0) {
             if (fmdefaultstepsize == 1) Round100K(frequency); else Round50K(frequency);
             EEPROM.writeUInt(EE_UINT16_FREQUENCY_FM, frequency);
@@ -2920,11 +2920,11 @@ void ShowFreq(int mode) {
             FrequencySprite.drawString(String(freq / 100) + "." + (freq % 100 < 10 ? "0" : "") + String(freq % 100) + " ", 218, -6, freqfont);
             freqold = freq;
             break;
-          case 1: Infoboxprint(textUI(33)); break;
-          case 2: Infoboxprint(textUI(289)); break;
-          case 3: Infoboxprint(textUI(290)); break;
-          case 4: Infoboxprint(textUI(294)); break;
-          case 5: Infoboxprint(textUI(283)); break;
+          case 1: Infoboxprint(textUI(31)); break;
+          case 2: Infoboxprint(textUI(287)); break;
+          case 3: Infoboxprint(textUI(288)); break;
+          case 4: Infoboxprint(textUI(292)); break;
+          case 5: Infoboxprint(textUI(281)); break;
         }
 
         FrequencySprite.pushSprite(46, 46);
@@ -3888,7 +3888,7 @@ uint8_t doAutoMemory(uint16_t startfreq, uint16_t stopfreq, uint8_t startmem, ui
 
   tft.drawRect(59, 109, 202, 8, FrameColor);
   tft.fillRect(60, 110, 200, 6, GreyoutColor);
-  tftPrint(ARIGHT, textUI(271), 120, 155, ActiveColor, ActiveColorSmooth, 16);
+  tftPrint(ARIGHT, textUI(269), 120, 155, ActiveColor, ActiveColorSmooth, 16);
 
   for (frequency = startfreq * 10; frequency <= stopfreq * 10; frequency += 10) {
     if (stopScanning) break;
@@ -3982,12 +3982,20 @@ uint8_t doAutoMemory(uint16_t startfreq, uint16_t stopfreq, uint8_t startmem, ui
   return error;
 }
 
-extern "C" void app_main() {
-  initArduino();
-  setup();
-  esp_task_wdt_add(NULL);
-  while(true) {
-    esp_task_wdt_reset();
-    loop();
+extern "C" {
+  void app_main() {
+    rtc_wdt_disable();
+    rtc_wdt_protect_off();
+
+    initArduino();
+
+    setup();
+
+    rtc_wdt_enable();
+    rtc_wdt_protect_on();
+    while(true) {
+      loop();
+      rtc_wdt_feed();
+    }
   }
 }

@@ -397,7 +397,7 @@ TFT_eSPI::TFT_eSPI(int16_t w, int16_t h)
   inTransaction = false;
   lockTransaction = false;
 
-  _booted = true;
+  booted = true;
 
   addr_row = 0xFFFF;
   addr_col = 0xFFFF;
@@ -410,31 +410,31 @@ void TFT_eSPI::initBus() {
 #ifdef TFT_CS
   if (TFT_CS >= 0) {
     pinMode(TFT_CS, OUTPUT);
-    digitalWrite(TFT_CS, HIGH); // Chip select high (inactive)
+    gpio_set_level((gpio_num_t)TFT_CS, 1);
   }
 #endif
 
 if (TOUCH_CS >= 0) {
   pinMode(TOUCH_CS, OUTPUT);
-  digitalWrite(TOUCH_CS, HIGH); // Chip select high (inactive)
+  gpio_set_level((gpio_num_t)TOUCH_CS, 1);
 }
 
 #ifdef TFT_DC
   if (TFT_DC >= 0) {
     pinMode(TFT_DC, OUTPUT);
-    digitalWrite(TFT_DC, HIGH); // Data/Command high = data mode
+    gpio_set_level((gpio_num_t)TFT_DC, 1);
   }
 #endif
 
   if (TFT_RST >= 0) {
     pinMode(TFT_RST, OUTPUT);
-    digitalWrite(TFT_RST, HIGH); // Set high, do not share pin with another SPI device
+    gpio_set_level((gpio_num_t)TFT_RST, 1);
   }
 }
 
 void TFT_eSPI::init()
 {
-  if (_booted) {
+  if (booted) {
     initBus();
 
     #if defined (TFT_MOSI) && !defined (TFT_SPI_OVERLAP)
@@ -451,7 +451,7 @@ void TFT_eSPI::init()
   // Set to output once again in case MISO is used for CS
   if (TFT_CS >= 0) {
     pinMode(TFT_CS, OUTPUT);
-    digitalWrite(TFT_CS, HIGH); // Chip select high (inactive)
+    gpio_set_level((gpio_num_t)TFT_CS, 1);
   }
 #endif
 
@@ -460,23 +460,23 @@ void TFT_eSPI::init()
 #if defined (TFT_DC)
   if (TFT_DC >= 0) {
     pinMode(TFT_DC, OUTPUT);
-    digitalWrite(TFT_DC, HIGH); // Data/Command high = data mode
+    gpio_set_level((gpio_num_t)TFT_DC, 1);
   }
 #endif
 
-    _booted = false;
+    booted = false;
     end_tft_write();
-  } // end of: if just _booted
+  } // end of: if just booted
 
   // Toggle RST low to reset
   if (TFT_RST >= 0) {
     pinMode(TFT_RST, OUTPUT);
     writecommand(0x00); // Put SPI bus in known state for TFT with CS tied low
-    digitalWrite(TFT_RST, HIGH);
+    gpio_set_level((gpio_num_t)TFT_RST, 1);
     delay(3);
-    digitalWrite(TFT_RST, LOW);
+    gpio_set_level((gpio_num_t)TFT_RST, 0);
     delay(12);
-    digitalWrite(TFT_RST, HIGH);
+    gpio_set_level((gpio_num_t)TFT_RST, 1);
   }
 
   delay(50); // Wait for reset to complete
@@ -3015,11 +3015,11 @@ inline void TFT_eSPI::begin_touch_read_write() {
   CS_H; // Just in case it has been left low
   if (locked) {locked = false; spi.beginTransaction(SPISettings(SPI_TOUCH_FREQUENCY, MSBFIRST, SPI_MODE0));}
   SET_BUS_READ_MODE;
-  digitalWrite(TOUCH_CS, LOW);
+  gpio_set_level((gpio_num_t)TOUCH_CS, 0);
 }
 
 inline void TFT_eSPI::end_touch_read_write() {
-  digitalWrite(TOUCH_CS, HIGH);
+  gpio_set_level((gpio_num_t)TOUCH_CS, 1);
   if(!inTransaction) {if (!locked) {locked = true; spi.endTransaction();}}
 }
 

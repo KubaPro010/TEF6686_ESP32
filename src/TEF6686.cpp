@@ -1303,17 +1303,17 @@ void TEF6686::readRDS(byte showrdserrors) {
             runningbit = bitRead(rds.rdsB, 3);
 
             switch (rds.rdsplusTag1) {
-              case 0: rds.rdsplusTag1 = 168; break;
-              case 1 ... 53: rds.rdsplusTag1 += 110; break;
-              case 59 ... 63: rds.rdsplusTag1 += 104; break;
-              default: rds.rdsplusTag1 = 168; break;
+              case 0: rds.rdsplusTag1 = 166; break;
+              case 1 ... 53: rds.rdsplusTag1 += 108; break;
+              case 59 ... 63: rds.rdsplusTag1 += 102; break;
+              default: rds.rdsplusTag1 = 166; break;
             }
 
             switch (rds.rdsplusTag2) {
-              case 0: rds.rdsplusTag2 = 168; break;
-              case 1 ... 53: rds.rdsplusTag2 += 110; break;
-              case 59 ... 63: rds.rdsplusTag2 += 104; break;
-              default: rds.rdsplusTag2 = 168; break;
+              case 0: rds.rdsplusTag2 = 166; break;
+              case 1 ... 53: rds.rdsplusTag2 += 108; break;
+              case 59 ... 63: rds.rdsplusTag2 += 102; break;
+              default: rds.rdsplusTag2 = 166; break;
             }
 
             if (togglebit) {

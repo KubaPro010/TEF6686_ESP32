@@ -320,6 +320,7 @@ unsigned long tottimer;
 unsigned long tuningtimer;
 unsigned long udplogtimer;
 unsigned long udptimer;
+bool rds_settings_changed;
 const size_t language_totalnumber = sizeof(myLanguage) / sizeof(myLanguage[0]);
 const size_t language_entrynumber = sizeof(myLanguage[0]) / sizeof(myLanguage[0][0]);
 
