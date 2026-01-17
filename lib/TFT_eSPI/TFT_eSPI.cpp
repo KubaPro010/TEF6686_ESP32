@@ -7,10 +7,10 @@ SPIClass spi = SPIClass(VSPI);
 spi_device_handle_t dmaHAL;
 spi_host_device_t spi_host = VSPI_HOST;
 
-volatile uint32_t* _spi_cmd = (volatile uint32_t*)(SPI_CMD_REG(SPI_PORT));
-volatile uint32_t* _spi_user = (volatile uint32_t*)(SPI_USER_REG(SPI_PORT));
-volatile uint32_t* _spi_mosi_dlen = (volatile uint32_t*)(SPI_MOSI_DLEN_REG(SPI_PORT));
-volatile uint32_t* _spi_w = (volatile uint32_t*)(SPI_W0_REG(SPI_PORT));
+volatile uint32_t* _spi_cmd = (volatile uint32_t*)(SPI_CMD_REG(VSPI));
+volatile uint32_t* _spi_user = (volatile uint32_t*)(SPI_USER_REG(VSPI));
+volatile uint32_t* _spi_mosi_dlen = (volatile uint32_t*)(SPI_MOSI_DLEN_REG(VSPI));
+volatile uint32_t* _spi_w = (volatile uint32_t*)(SPI_W0_REG(VSPI));
 
 void TFT_eSPI::pushBlock(uint16_t color, uint32_t len) {
 
@@ -45,31 +45,31 @@ void TFT_eSPI::pushSwapBytePixels(const void* data_in, uint32_t len) {
   uint32_t color[16];
 
   if (len > 31) {
-    WRITE_PERI_REG(SPI_MOSI_DLEN_REG(SPI_PORT), 511);
+    WRITE_PERI_REG(SPI_MOSI_DLEN_REG(VSPI), 511);
     while(len>31) {
       uint32_t i = 0;
       while(i<16) {
         color[i++] = DAT8TO32(data);
         data+=4;
       }
-      while (READ_PERI_REG(SPI_CMD_REG(SPI_PORT))&SPI_USR);
-      WRITE_PERI_REG(SPI_W0_REG(SPI_PORT),  color[0]);
-      WRITE_PERI_REG(SPI_W1_REG(SPI_PORT),  color[1]);
-      WRITE_PERI_REG(SPI_W2_REG(SPI_PORT),  color[2]);
-      WRITE_PERI_REG(SPI_W3_REG(SPI_PORT),  color[3]);
-      WRITE_PERI_REG(SPI_W4_REG(SPI_PORT),  color[4]);
-      WRITE_PERI_REG(SPI_W5_REG(SPI_PORT),  color[5]);
-      WRITE_PERI_REG(SPI_W6_REG(SPI_PORT),  color[6]);
-      WRITE_PERI_REG(SPI_W7_REG(SPI_PORT),  color[7]);
-      WRITE_PERI_REG(SPI_W8_REG(SPI_PORT),  color[8]);
-      WRITE_PERI_REG(SPI_W9_REG(SPI_PORT),  color[9]);
-      WRITE_PERI_REG(SPI_W10_REG(SPI_PORT), color[10]);
-      WRITE_PERI_REG(SPI_W11_REG(SPI_PORT), color[11]);
-      WRITE_PERI_REG(SPI_W12_REG(SPI_PORT), color[12]);
-      WRITE_PERI_REG(SPI_W13_REG(SPI_PORT), color[13]);
-      WRITE_PERI_REG(SPI_W14_REG(SPI_PORT), color[14]);
-      WRITE_PERI_REG(SPI_W15_REG(SPI_PORT), color[15]);
-      SET_PERI_REG_MASK(SPI_CMD_REG(SPI_PORT), SPI_USR);
+      while (READ_PERI_REG(SPI_CMD_REG(VSPI))&SPI_USR);
+      WRITE_PERI_REG(SPI_W0_REG(VSPI),  color[0]);
+      WRITE_PERI_REG(SPI_W1_REG(VSPI),  color[1]);
+      WRITE_PERI_REG(SPI_W2_REG(VSPI),  color[2]);
+      WRITE_PERI_REG(SPI_W3_REG(VSPI),  color[3]);
+      WRITE_PERI_REG(SPI_W4_REG(VSPI),  color[4]);
+      WRITE_PERI_REG(SPI_W5_REG(VSPI),  color[5]);
+      WRITE_PERI_REG(SPI_W6_REG(VSPI),  color[6]);
+      WRITE_PERI_REG(SPI_W7_REG(VSPI),  color[7]);
+      WRITE_PERI_REG(SPI_W8_REG(VSPI),  color[8]);
+      WRITE_PERI_REG(SPI_W9_REG(VSPI),  color[9]);
+      WRITE_PERI_REG(SPI_W10_REG(VSPI), color[10]);
+      WRITE_PERI_REG(SPI_W11_REG(VSPI), color[11]);
+      WRITE_PERI_REG(SPI_W12_REG(VSPI), color[12]);
+      WRITE_PERI_REG(SPI_W13_REG(VSPI), color[13]);
+      WRITE_PERI_REG(SPI_W14_REG(VSPI), color[14]);
+      WRITE_PERI_REG(SPI_W15_REG(VSPI), color[15]);
+      SET_PERI_REG_MASK(SPI_CMD_REG(VSPI), SPI_USR);
       len -= 32;
     }
   }
@@ -82,30 +82,30 @@ void TFT_eSPI::pushSwapBytePixels(const void* data_in, uint32_t len) {
       color[i++] = DAT8TO32(data);
       data+=4;
     }
-    while (READ_PERI_REG(SPI_CMD_REG(SPI_PORT))&SPI_USR);
-    WRITE_PERI_REG(SPI_MOSI_DLEN_REG(SPI_PORT), 255);
-    WRITE_PERI_REG(SPI_W0_REG(SPI_PORT),  color[0]);
-    WRITE_PERI_REG(SPI_W1_REG(SPI_PORT),  color[1]);
-    WRITE_PERI_REG(SPI_W2_REG(SPI_PORT),  color[2]);
-    WRITE_PERI_REG(SPI_W3_REG(SPI_PORT),  color[3]);
-    WRITE_PERI_REG(SPI_W4_REG(SPI_PORT),  color[4]);
-    WRITE_PERI_REG(SPI_W5_REG(SPI_PORT),  color[5]);
-    WRITE_PERI_REG(SPI_W6_REG(SPI_PORT),  color[6]);
-    WRITE_PERI_REG(SPI_W7_REG(SPI_PORT),  color[7]);
-    SET_PERI_REG_MASK(SPI_CMD_REG(SPI_PORT), SPI_USR);
+    while (READ_PERI_REG(SPI_CMD_REG(VSPI))&SPI_USR);
+    WRITE_PERI_REG(SPI_MOSI_DLEN_REG(VSPI), 255);
+    WRITE_PERI_REG(SPI_W0_REG(VSPI),  color[0]);
+    WRITE_PERI_REG(SPI_W1_REG(VSPI),  color[1]);
+    WRITE_PERI_REG(SPI_W2_REG(VSPI),  color[2]);
+    WRITE_PERI_REG(SPI_W3_REG(VSPI),  color[3]);
+    WRITE_PERI_REG(SPI_W4_REG(VSPI),  color[4]);
+    WRITE_PERI_REG(SPI_W5_REG(VSPI),  color[5]);
+    WRITE_PERI_REG(SPI_W6_REG(VSPI),  color[6]);
+    WRITE_PERI_REG(SPI_W7_REG(VSPI),  color[7]);
+    SET_PERI_REG_MASK(SPI_CMD_REG(VSPI), SPI_USR);
     len -= 16;
   }
 
   if (len)
   {
-    while (READ_PERI_REG(SPI_CMD_REG(SPI_PORT))&SPI_USR);
-    WRITE_PERI_REG(SPI_MOSI_DLEN_REG(SPI_PORT), (len << 4) - 1);
+    while (READ_PERI_REG(SPI_CMD_REG(VSPI))&SPI_USR);
+    WRITE_PERI_REG(SPI_MOSI_DLEN_REG(VSPI), (len << 4) - 1);
     for (uint32_t i=0; i <= (len<<1); i+=4) {
-      WRITE_PERI_REG(SPI_W0_REG(SPI_PORT)+i, DAT8TO32(data)); data+=4;
+      WRITE_PERI_REG(SPI_W0_REG(VSPI)+i, DAT8TO32(data)); data+=4;
     }
-    SET_PERI_REG_MASK(SPI_CMD_REG(SPI_PORT), SPI_USR);
+    SET_PERI_REG_MASK(SPI_CMD_REG(VSPI), SPI_USR);
   }
-  while (READ_PERI_REG(SPI_CMD_REG(SPI_PORT))&SPI_USR);
+  while (READ_PERI_REG(SPI_CMD_REG(VSPI))&SPI_USR);
 
 }
 
@@ -119,37 +119,37 @@ void TFT_eSPI::pushPixels(const void* data_in, uint32_t len){
   uint32_t *data = (uint32_t*)data_in;
 
   if (len > 31) {
-    WRITE_PERI_REG(SPI_MOSI_DLEN_REG(SPI_PORT), 511);
+    WRITE_PERI_REG(SPI_MOSI_DLEN_REG(VSPI), 511);
     while(len>31) {
-      while (READ_PERI_REG(SPI_CMD_REG(SPI_PORT))&SPI_USR);
-      WRITE_PERI_REG(SPI_W0_REG(SPI_PORT),  *data++);
-      WRITE_PERI_REG(SPI_W1_REG(SPI_PORT),  *data++);
-      WRITE_PERI_REG(SPI_W2_REG(SPI_PORT),  *data++);
-      WRITE_PERI_REG(SPI_W3_REG(SPI_PORT),  *data++);
-      WRITE_PERI_REG(SPI_W4_REG(SPI_PORT),  *data++);
-      WRITE_PERI_REG(SPI_W5_REG(SPI_PORT),  *data++);
-      WRITE_PERI_REG(SPI_W6_REG(SPI_PORT),  *data++);
-      WRITE_PERI_REG(SPI_W7_REG(SPI_PORT),  *data++);
-      WRITE_PERI_REG(SPI_W8_REG(SPI_PORT),  *data++);
-      WRITE_PERI_REG(SPI_W9_REG(SPI_PORT),  *data++);
-      WRITE_PERI_REG(SPI_W10_REG(SPI_PORT), *data++);
-      WRITE_PERI_REG(SPI_W11_REG(SPI_PORT), *data++);
-      WRITE_PERI_REG(SPI_W12_REG(SPI_PORT), *data++);
-      WRITE_PERI_REG(SPI_W13_REG(SPI_PORT), *data++);
-      WRITE_PERI_REG(SPI_W14_REG(SPI_PORT), *data++);
-      WRITE_PERI_REG(SPI_W15_REG(SPI_PORT), *data++);
-      SET_PERI_REG_MASK(SPI_CMD_REG(SPI_PORT), SPI_USR);
+      while (READ_PERI_REG(SPI_CMD_REG(VSPI))&SPI_USR);
+      WRITE_PERI_REG(SPI_W0_REG(VSPI),  *data++);
+      WRITE_PERI_REG(SPI_W1_REG(VSPI),  *data++);
+      WRITE_PERI_REG(SPI_W2_REG(VSPI),  *data++);
+      WRITE_PERI_REG(SPI_W3_REG(VSPI),  *data++);
+      WRITE_PERI_REG(SPI_W4_REG(VSPI),  *data++);
+      WRITE_PERI_REG(SPI_W5_REG(VSPI),  *data++);
+      WRITE_PERI_REG(SPI_W6_REG(VSPI),  *data++);
+      WRITE_PERI_REG(SPI_W7_REG(VSPI),  *data++);
+      WRITE_PERI_REG(SPI_W8_REG(VSPI),  *data++);
+      WRITE_PERI_REG(SPI_W9_REG(VSPI),  *data++);
+      WRITE_PERI_REG(SPI_W10_REG(VSPI), *data++);
+      WRITE_PERI_REG(SPI_W11_REG(VSPI), *data++);
+      WRITE_PERI_REG(SPI_W12_REG(VSPI), *data++);
+      WRITE_PERI_REG(SPI_W13_REG(VSPI), *data++);
+      WRITE_PERI_REG(SPI_W14_REG(VSPI), *data++);
+      WRITE_PERI_REG(SPI_W15_REG(VSPI), *data++);
+      SET_PERI_REG_MASK(SPI_CMD_REG(VSPI), SPI_USR);
       len -= 32;
     }
   }
 
   if (len) {
-    while (READ_PERI_REG(SPI_CMD_REG(SPI_PORT))&SPI_USR);
-    WRITE_PERI_REG(SPI_MOSI_DLEN_REG(SPI_PORT), (len << 4) - 1);
-    for (uint32_t i=0; i <= (len<<1); i+=4) WRITE_PERI_REG((SPI_W0_REG(SPI_PORT) + i), *data++);
-    SET_PERI_REG_MASK(SPI_CMD_REG(SPI_PORT), SPI_USR);
+    while (READ_PERI_REG(SPI_CMD_REG(VSPI))&SPI_USR);
+    WRITE_PERI_REG(SPI_MOSI_DLEN_REG(VSPI), (len << 4) - 1);
+    for (uint32_t i=0; i <= (len<<1); i+=4) WRITE_PERI_REG((SPI_W0_REG(VSPI) + i), *data++);
+    SET_PERI_REG_MASK(SPI_CMD_REG(VSPI), SPI_USR);
   }
-  while (READ_PERI_REG(SPI_CMD_REG(SPI_PORT))&SPI_USR);
+  while (READ_PERI_REG(SPI_CMD_REG(VSPI))&SPI_USR);
 }
 
 void TFT_eSPI::dmaWait()

@@ -21,11 +21,6 @@ using fs::FS;
 #include "nonvolatile.h"
 #include "utils.h"
 #include "system_console.h"
-#include <freertos/FreeRTOS.h>
-#include <freertos/task.h>
-#include <esp_task_wdt.h>
-#include "esp_pm.h"
-#include "rtc_wdt.h"
 #pragma endregion
 
 Console console(&tft);

@@ -22,46 +22,15 @@
   SOFTWARE.
 */
 
-#ifndef ESP32TIME_H
-#define ESP32TIME_H
+#pragma once
 
 #include <Arduino.h>
 
 class ESP32Time {
-	
+
 	public:
-		ESP32Time();
-		ESP32Time(long offset);
-		void setTime(unsigned long epoch = 1609459200, int ms = 0) const;	// default (1609459200) = 1st Jan 2021
-		void setTime(int sc, int mn, int hr, int dy, int mt, int yr, int ms = 0) const;
-		void setTimeStruct(tm t) const;
+		void setTime(unsigned long epoch, int ms = 0) const;
 		tm getTimeStruct() const;
-		String getTime(String format) const;
-		
-		String getTime() const;
-		String getDateTime(bool mode = false) const;
-		String getTimeDate(bool mode = false) const;
-		String getDate(bool mode = false) const;
-		String getAmPm(bool lowercase = false) const;
-		
+
 		unsigned long getEpoch() const;
-		unsigned long getMillis() const;
-		unsigned long getMicros() const;
-		int getSecond() const;
-		int getMinute() const;
-		int getHour(bool mode = false) const;
-		int getDay() const;
-		int getDayofWeek() const;
-		int getDayofYear() const;
-		int getMonth() const;
-		int getYear() const;
-		
-		long offset = 0;
-		unsigned long getLocalEpoch() const;
-		
-		
-
 };
-
-
-#endif

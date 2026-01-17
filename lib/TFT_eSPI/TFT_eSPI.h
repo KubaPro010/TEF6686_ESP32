@@ -3,11 +3,17 @@
 #include <Arduino.h>
 #include <SPI.h>
 
-#include <User_Setup_Select.h>
+#define SPI_FREQUENCY 7500000
+#define SPI_READ_FREQUENCY 20000000
+#define SPI_TOUCH_FREQUENCY 2500000
+
+#define TFT_WIDTH  240
+#define TFT_HEIGHT 320
+
+#include <ILI9341_Defines.h>
 
 #include <pgmspace.h>
 
-#define SPI_PORT VSPI
 #include "soc/spi_reg.h"
 #include "driver/spi_master.h"
 #include "hal/gpio_ll.h"

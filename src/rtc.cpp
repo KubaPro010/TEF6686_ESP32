@@ -5,7 +5,7 @@
 bool rtcset;
 bool NTPupdated;
 
-ESP32Time rtc(0);
+ESP32Time rtc;
 bool rx_rtc_avail = false;
 
 inline int16_t readFromModule(byte address) {
