@@ -7,6 +7,7 @@
 
 uint8_t dropped_groups = 0;
 bool lastBitState = false;
+bool fullsearchrds = false;
 
 uint16_t TEF6686::getBlockA() {
   uint16_t blockA;
@@ -146,15 +147,20 @@ void TEF6686::init(byte TEF) {
   devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Max, 4, 0, 4000);
   devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_Ana_Out, 4, 128, 1);
   devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_Output_Source, 4, 128, 224);
+
+  uint16_t device;
+  getIdentification(&device, NULL, NULL);
+
+  if(device == 1 || device == 3) fullsearchrds = true;
 }
 
 void TEF6686::getIdentification(uint16_t *device, uint16_t *hw_version, uint16_t *sw_version) {
   uint8_t buf[6];
   devTEF_Get_Cmd(TEF_APPL, Cmd_Get_Identification, buf, sizeof(buf));
 
-  *device = Convert8bto16b(buf);
-  *hw_version = Convert8bto16b(buf + 2);
-  *sw_version = Convert8bto16b(buf + 4);
+  if(device != NULL) *device = Convert8bto16b(buf);
+  if(hw_version != NULL) *hw_version = Convert8bto16b(buf + 2);
+  if(sw_version != NULL) *sw_version = Convert8bto16b(buf + 4);
 }
 
 void TEF6686::power(bool mode) {
@@ -232,7 +238,7 @@ bool TEF6686::getStereoStatus() {
   r = devTEF_Get_Cmd(TEF_FM, Cmd_Get_Signal_Status, buf, sizeof(buf));
   status = Convert8bto16b(buf);
 
-  bool stereo = 0;
+  bool stereo = false;
   if(r) stereo = ((status >> 15) & 1) ? 1 : 0;
   return stereo;
 }
@@ -258,17 +264,17 @@ void TEF6686::setUnMute() {
 }
 
 void TEF6686::setAGC(uint8_t agc) {
-  devTEF_Set_Cmd(TEF_FM, Cmd_Set_RFAGC, 4, agc * 10, 0);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_RFAGC, 2, agc * 10);
 }
 
 void TEF6686::setAMAGC(uint8_t agc) {
-  devTEF_Set_Cmd(TEF_AM, Cmd_Set_RFAGC, 4, agc * 10, 0);
+  devTEF_Set_Cmd(TEF_AM, Cmd_Set_RFAGC, 2, agc * 10);
 }
 
-void TEF6686::setDeemphasis(uint8_t timeconstant) {
+void TEF6686::setDeemphasis(RADIO_FM_DEEMPHASIS timeconstant) {
   switch (timeconstant) {
-    case 1: devTEF_Set_Cmd(TEF_FM, Cmd_Set_Deemphasis, 2, 500); break;
-    case 2: devTEF_Set_Cmd(TEF_FM, Cmd_Set_Deemphasis, 2, 750); break;
+    case DEEMPHASIS_50: devTEF_Set_Cmd(TEF_FM, Cmd_Set_Deemphasis, 2, 500); break;
+    case DEEMPHASIS_75: devTEF_Set_Cmd(TEF_FM, Cmd_Set_Deemphasis, 2, 750); break;
     default: devTEF_Set_Cmd(TEF_FM, Cmd_Set_Deemphasis, 2, 0); break;
   }
 }
@@ -351,15 +357,15 @@ void TEF6686::getStatus(int16_t *level, uint16_t *USN, uint16_t *WAM, int16_t *o
 void TEF6686::getStatusAM(int16_t *level, uint16_t *noise, uint16_t *cochannel, int16_t *offset, uint16_t *bandwidth, uint16_t *modulation, int8_t *snr) {
   uint8_t buf[14];
   devTEF_Get_Cmd(TEF_AM, Cmd_Get_Quality_Data, buf, sizeof(buf));
-  *level = Convert8bto16b(buf + 2);
-  *noise = Convert8bto16b(buf + 4);
-  *cochannel = Convert8bto16b(buf + 6);
-  *offset = Convert8bto16b(buf + 8);
-  *bandwidth = Convert8bto16b(buf + 10) / 10;
-  *modulation = Convert8bto16b(buf + 12) / 10;
-  if (*level < -200) *level = -200;
-  if (*level > 1200) *level = 1200;
-  *snr = int(0.46222375 * (float)(*level) / 10 - 0.082495118 * (float)(*noise / 50) / 10) + 10;
+  if(level != NULL) *level = Convert8bto16b(buf + 2);
+  if(noise != NULL) *noise = Convert8bto16b(buf + 4);
+  if(cochannel != NULL) *cochannel = Convert8bto16b(buf + 6);
+  if(offset != NULL) *offset = Convert8bto16b(buf + 8);
+  if(bandwidth != NULL) *bandwidth = Convert8bto16b(buf + 10) / 10;
+  if(modulation != NULL) *modulation = Convert8bto16b(buf + 12) / 10;
+  if(level != NULL && *level < -200) *level = -200;
+  if(level != NULL && *level > 1200) *level = 1200;
+  if(snr != NULL) *snr = int(0.46222375 * (float)(*level) / 10 - 0.082495118 * (float)(*noise / 50) / 10) + 10;
 }
 
 void TEF6686::readRDS(byte showrdserrors) {
@@ -1555,7 +1561,7 @@ void TEF6686::readRDS(byte showrdserrors) {
   }
 }
 
-void TEF6686::clearRDS(bool fullsearchrds) {
+void TEF6686::clearRDS() {
   devTEF_Set_Cmd(TEF_FM, Cmd_Set_RDS, 6, fullsearchrds ? 3 : 1, 1, 0);
   rds.piBuffer.clear();
   rds.stationName = rds.stationText = rds.stationNameLong = "";

@@ -24,8 +24,8 @@ using fs::FS;
 #pragma endregion
 
 Console console(&tft);
-RTC_NOINIT_ATTR bool gpio_chip = false;
-RTC_NOINIT_ATTR bool tef_found = false;
+RTC_DATA_ATTR bool gpio_chip = false;
+RTC_DATA_ATTR bool tef_found = false;
 
 template<typename... Args>
 void panic(Args... args) {
@@ -838,7 +838,7 @@ void TuneFreq(int temp) {
   aftest = true;
   aftimer = millis();
 
-  radio.clearRDS(fullsearchrds);
+  radio.clearRDS();
   if (RDSSPYUSB) Serial.print("G:\r\nRESET-------\r\n\r\n");
   if (RDSSPYTCP) RemoteClient.print("G:\r\nRESET-------\r\n\r\n");
 }
@@ -986,7 +986,7 @@ void startFMDXScan() {
 void doBandToggle() {
   if (tunemode != TUNE_MEM) {
     ToggleBand(band);
-    radio.clearRDS(fullsearchrds);
+    radio.clearRDS();
     StoreFrequency();
     SelectBand();
     if (XDRGTKUSB || XDRGTKTCP) {
@@ -1026,7 +1026,7 @@ void NumpadProcess(int num) {
           if (band == BAND_FM) DataPrint("M0\nT" + String(frequency * 10) + "\n"); else if (band == BAND_OIRT) DataPrint("M0\nT" + String(frequency_OIRT * 10) + "\n"); else DataPrint("M1\nT" + String(frequency_AM) + "\n");
         }
         if (!memorystore) {
-          if (!memtune) radio.clearRDS(fullsearchrds);
+          if (!memtune) radio.clearRDS();
           memtune = false;
           ShowFreq(0);
           store = true;
@@ -1089,7 +1089,7 @@ void setAutoSpeedSPI() {
 
 void endMenu() {
   if(rds_settings_changed) {
-    radio.clearRDS(fullsearchrds);
+    radio.clearRDS();
     RDSstatus = false;
   }
   rds_settings_changed = menu = false;
@@ -1205,11 +1205,77 @@ void setup_periph() {
   Serial.end();
 
   Wire.setClock(100000);
+}
+
+void later_setup_periph() {
+  if(gpio_chip) {
+    console.print("XL9555 found, setting up");
+    // Configures the GPIO chip for input in every pin
+    Wire.beginTransmission(XL9555_ADDRESS);
+    Wire.write(0x06);
+    Wire.write(0xFF);
+    Wire.write(0xFF);
+    Wire.endTransmission();
+  } else console.print("XL9555 found not found on address " + String(XL9555_ADDRESS, HEX) + ". Numpad will not work");
 
   if(tef_found) {
     // The tuner being missing here, would cause a infinite loop with no exit and no error, as it resets and polls the chip if it reset, if no response then we try again, and now, you see?
     radio.init(TEF);
   }
+
+  uint16_t device, hw, sw;
+  radio.getIdentification(&device, &hw, &sw);
+  if (TEF != (highByte(hw) * 100 + highByte(sw))) SetTunerPatch();
+
+  if (lowByte(device) == 14) {
+    fmsi = false;
+    chipmodel = 0;
+    console.print("Detected a TEF6686 Lithio");
+  } else if (lowByte(device) == 1) {
+    chipmodel = 1;
+    console.print("Detected a TEF6687 Lithio FMSI");
+  } else if (lowByte(device) == 9) {
+    chipmodel = 2;
+    fmsi = false;
+    console.print("Detected a TEF6688 Lithio DR");
+  } else if (lowByte(device) == 3) {
+    chipmodel = 3;
+    console.print("Detected a TEF6689 Lithio FMSI DR");
+  } else panic("Unknown TEF device");
+  console.print("Chip Patch: v" + String(TEF));
+
+  if(VolSet != 0) radio.setVolume(VolSet);
+  radio.setOffset(LevelOffset);
+  radio.setAMOffset(AMLevelOffset);
+  radio.setAMCoChannel(amcodect, amcodectcount);
+  radio.setAMAttenuation(amgain);
+  radio.setStereoLevel(StereoLevel);
+  radio.setHighCutLevel(HighCutLevel);
+  radio.setHighCutOffset(HighCutOffset);
+  radio.clearRDS();
+  radio.setMute();
+  if (!StereoToggle) radio.setMono(true);
+  radio.setSoftmuteFM(softmutefm);
+  radio.setSoftmuteAM(softmuteam);
+  radio.setAMNoiseBlanker(amnb);
+  radio.setFMNoiseBlanker(fmnb);
+  if(audiomode != 0) radio.setAudio(audiomode);
+  if(fmdeemphasis != DEEMPHASIS_50) radio.setDeemphasis(fmdeemphasis);
+  if(fmagc != 92) radio.setAGC(fmagc);
+  if(amagc != 100) radio.setAMAGC(amagc);
+  if (fmsi) radio.setFMSI(2);
+
+  if(rx_rtc_avail) {
+    bool reset = init_rtc();
+    if(reset) console.print("RX8010SJ was reset, no time");
+    else {
+      rtcset = true;
+      console.print("RX8010SJ is used as a time source");
+    }
+  } else console.print("RX8010SJ is not available at address " + String(RX8010SJ_ADDRESS, HEX));
+
+  if(analogRead(BATTERY_PIN) < 200) batterydetect = false;
+  else console.print("Battery detected.");
 }
 
 void read_encoder();
@@ -1226,7 +1292,7 @@ void setup() {
   EEPROM.begin(EE_TOTAL_CNT);
 
   setupmode = true;
-  
+
   Wire.begin();
   Wire.setClock(100000);
 
@@ -1285,7 +1351,6 @@ void setup() {
   }
 
   tft.init();
-  tft.initDMA();
 
   tft.loadFont(FONT48, 2);
 
@@ -1436,56 +1501,11 @@ void setup() {
     while (true) delay(1);
   }
 
-  rtc.setTime(0);
-  if(rx_rtc_avail) {
-    bool reset = init_rtc();
-    if(reset) console.print("RX8010SJ was reset, no time");
-    else {
-      rtcset = true;
-      console.print("RX8010SJ is used as a time source");
-    }
-  } else console.print("RX8010SJ is not available at address " + String(RX8010SJ_ADDRESS, HEX));
-
-  if(gpio_chip) {
-    console.print("XL9555 found, setting up");
-    // Configures the GPIO chip for input in every pin
-    Wire.beginTransmission(XL9555_ADDRESS);
-    Wire.write(0x06);
-    Wire.write(0xFF);
-    Wire.write(0xFF);
-    Wire.endTransmission();
-  } else console.print("XL9555 found not found on address " + String(XL9555_ADDRESS, HEX) + ". Numpad will not work");
 
   TEF = EEPROM.readByte(EE_BYTE_TEF);
   if(FORBIDDEN_TUNER(TEF)) SetTunerPatch();
 
-  uint16_t device, hw, sw;
-  radio.getIdentification(&device, &hw, &sw);
-  if (TEF != (highByte(hw) * 100 + highByte(sw))) SetTunerPatch();
-
-  if (lowByte(device) == 14) {
-    fullsearchrds = false;
-    fmsi = false;
-    chipmodel = 0;
-    console.print("Detected a TEF6686 Lithio");
-  } else if (lowByte(device) == 1) {
-    fullsearchrds = true;
-    chipmodel = 1;
-    console.print("Detected a TEF6687 Lithio FMSI");
-  } else if (lowByte(device) == 9) {
-    fullsearchrds = false;
-    chipmodel = 2;
-    fmsi = false;
-    console.print("Detected a TEF6688 Lithio DR");
-  } else if (lowByte(device) == 3) {
-    fullsearchrds = true;
-    chipmodel = 3;
-    console.print("Detected a TEF6689 Lithio FMSI DR");
-  }
-  console.print("Chip Patch: v" + String(TEF));
-
-  if(analogRead(BATTERY_PIN) < 200) batterydetect = false;
-  else console.print("Battery detected.");
+  if(esp_reset_reason() != ESP_RST_DEEPSLEEP) later_setup_periph();
 
   if(!SPIFFS.exists("/logbook.csv")) {
     handleCreateNewLogbook();
@@ -1505,28 +1525,6 @@ void setup() {
 
   console.print("Init done.");
 
-  radio.setVolume(VolSet);
-  radio.setOffset(LevelOffset);
-  radio.setAMOffset(AMLevelOffset);
-  if (band > BAND_GAP) {
-    radio.setAMCoChannel(amcodect, amcodectcount);
-    radio.setAMAttenuation(amgain);
-  }
-  radio.setStereoLevel(StereoLevel);
-  radio.setHighCutLevel(HighCutLevel);
-  radio.setHighCutOffset(HighCutOffset);
-  radio.clearRDS(fullsearchrds);
-  radio.setMute();
-  if (!StereoToggle) radio.setMono(true);
-  radio.setSoftmuteFM(softmutefm);
-  radio.setSoftmuteAM(softmuteam);
-  radio.setAMNoiseBlanker(amnb);
-  radio.setFMNoiseBlanker(fmnb);
-  radio.setAudio(audiomode);
-  radio.setDeemphasis(fmdeemphasis);
-  radio.setAGC(fmagc);
-  radio.setAMAGC(amagc);
-  if (fmsi) radio.setFMSI(2); else radio.setFMSI(1);
   LowLevelInit = true;
 
   BuildDisplay();
@@ -1624,7 +1622,7 @@ void loop() {
         }
         doLog();
         DoMemoryPosTune();
-        radio.clearRDS(fullsearchrds);
+        radio.clearRDS();
         autologged = false;
         ShowMemoryPos();
       } else {
@@ -1735,7 +1733,7 @@ void loop() {
         dropout = true;
         if (radio.afmethodB) {
           afmethodBold = true;
-          radio.clearRDS(fullsearchrds);
+          radio.clearRDS();
         }
       }
       if (XDRGTKUSB || XDRGTKTCP) DataPrint("T" + String((frequency + ConverterSet * 100) * 10) + "\n");
@@ -1756,7 +1754,7 @@ void loop() {
           dropout = true;
           if (radio.afmethodB) {
             afmethodBold = true;
-            radio.clearRDS(fullsearchrds);
+            radio.clearRDS();
           }
           if (XDRGTKUSB || XDRGTKTCP) DataPrint("T" + String((frequency + ConverterSet * 100) * 10) + "\n");
           if (screenmute) {
@@ -1776,7 +1774,7 @@ void loop() {
             dropout = true;
             if (radio.afmethodB) {
               afmethodBold = true;
-              radio.clearRDS(fullsearchrds);
+              radio.clearRDS();
             }
             if (XDRGTKUSB || XDRGTKTCP) DataPrint("T" + String((frequency + ConverterSet * 100) * 10) + "\n");
             store = true;
@@ -2367,7 +2365,7 @@ void SelectBand() {
     tftReplace(ALEFT, "kHz", "MHz", 258, 76, ActiveColor, ActiveColorSmooth, BackgroundColor, 28);
   }
 
-  if (!leave) radio.clearRDS(fullsearchrds);
+  if (!leave) radio.clearRDS();
   ShowFreq(0);
 
   if (!screenmute) {
@@ -2690,7 +2688,7 @@ void KeyUp() {
           if (band == BAND_FM) DataPrint("M0\nT" + String(frequency * 10) + "\n"); else if (band == BAND_OIRT) DataPrint("M0\nT" + String(frequency_OIRT * 10) + "\n"); else DataPrint("M1\nT" + String(frequency_AM) + "\n");
         }
         if (!memorystore) {
-          if (!memtune) radio.clearRDS(fullsearchrds);
+          if (!memtune) radio.clearRDS();
           memtune = false;
           ShowFreq(0);
           store = true;
@@ -2751,7 +2749,7 @@ void KeyDown() {
           if (band == BAND_FM) DataPrint("M0\nT" + String(frequency * 10) + "\n"); else if (band == BAND_OIRT) DataPrint("M0\nT" + String(frequency_OIRT * 10) + "\n"); else DataPrint("M1\nT" + String(frequency_AM) + "\n");
         }
         if (!memorystore) {
-          if (!memtune) radio.clearRDS(fullsearchrds);
+          if (!memtune) radio.clearRDS();
           memtune = false;
           ShowFreq(0);
           store = true;
@@ -2797,7 +2795,7 @@ void ShowMemoryPos() {
 
 void DoMemoryPosTune() {
   if (spispeed == 7) tft.setSPISpeed(50);
-  radio.clearRDS(fullsearchrds);
+  radio.clearRDS();
 
   if (IsStationEmpty()) {
     memoryposstatus = MEM_DARK;
@@ -3639,7 +3637,7 @@ void TuneUp() {
     radio.SetFreqAM(frequency_AM);
     frequency_SW = frequency_AM;
   }
-  radio.clearRDS(fullsearchrds);
+  radio.clearRDS();
   if (RDSSPYUSB) Serial.print("G:\r\nRESET-------\r\n\r\n");
   if (RDSSPYTCP) RemoteClient.print("G:\r\nRESET-------\r\n\r\n");
 }
@@ -3726,7 +3724,7 @@ void TuneDown() {
     radio.SetFreqAM(frequency_AM);
     frequency_SW = frequency_AM;
   }
-  radio.clearRDS(fullsearchrds);
+  radio.clearRDS();
   if (RDSSPYUSB) Serial.print("G:\r\nRESET-------\r\n\r\n");
   if (RDSSPYTCP) RemoteClient.print("G:\r\nRESET-------\r\n\r\n");
 }
@@ -3904,7 +3902,7 @@ uint8_t doAutoMemory(uint16_t startfreq, uint16_t stopfreq, uint8_t startmem, ui
     percent = (currentIteration * 100) / totalIterations;
 
     radio.SetFreq(frequency);
-    radio.clearRDS(fullsearchrds);
+    radio.clearRDS();
     delay(50);
     radio.getStatus(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus, &CN);
     if ((USN < fmscansens * 30) && (WAM < 230) && (OStatus < 80 && OStatus > -80)) {
@@ -3982,7 +3980,7 @@ uint8_t doAutoMemory(uint16_t startfreq, uint16_t stopfreq, uint8_t startmem, ui
 
   frequency = _current;
   radio.SetFreq(frequency);
-  radio.clearRDS(fullsearchrds);
+  radio.clearRDS();
   radio.setUnMute();
   SQ = false;
 

@@ -349,7 +349,7 @@ void ShowErrors() {
 void showPI() {
   if ((radio.rds.region != 0 && (String(radio.rds.picode) != PIold || radio.rds.stationIDtext != stationIDold || radio.rds.stationStatetext != stationStateold)) || (radio.rds.region == 0 && String(radio.rds.picode) != PIold)) {
     if (!rdsstatscreen && !afscreen && !radio.rds.rdsAerror && !radio.rds.rdsBerror && !radio.rds.rdsCerror && !radio.rds.rdsDerror && radio.rds.rdsA != radio.rds.correctPI && PIold.length() > 1) {
-      radio.clearRDS(fullsearchrds);
+      radio.clearRDS();
       if (RDSSPYUSB) Serial.print("G:\r\nRESET-------\r\n\r\n");
       if (RDSSPYTCP) RemoteClient.print("G:\r\nRESET-------\r\n\r\n");
     }

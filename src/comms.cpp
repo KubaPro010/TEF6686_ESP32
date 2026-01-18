@@ -47,7 +47,7 @@ void Communication() {
               uint16_t freqtemp = packet.substring(2).toInt();
               if(BAND_FM) freqtemp -= ConverterSet * 1000;
               if(seek) seek = false;
-              radio.clearRDS(fullsearchrds);
+              radio.clearRDS();
 
               if(freqtemp >= LowEdgeOIRTSet && freqtemp <= HighEdgeOIRTSet) {
                 frequency_OIRT = freqtemp;
@@ -78,8 +78,7 @@ void Communication() {
 
             case 'S': {if (!scandxmode) startFMDXScan(); break;}
             case 'E': {if (scandxmode) cancelDXScan(); break;}
-
-            case 'R': {radio.clearRDS(fullsearchrds); break;}
+            case 'R': {radio.clearRDS(); break;}
           }
           return;
         }
@@ -152,7 +151,7 @@ void Communication() {
             }
           }
 
-          radio.clearRDS(fullsearchrds);
+          radio.clearRDS();
           ShowFreq(0);
           store = true;
           externaltune = false;
@@ -207,7 +206,7 @@ void Communication() {
         frequency = freq.toInt();
         if (scandxmode) cancelDXScan();
         radio.SetFreq(frequency);
-        radio.clearRDS(fullsearchrds);
+        radio.clearRDS();
         if (band != BAND_FM) {
           band = BAND_FM;
           SelectBand();
@@ -371,7 +370,7 @@ void Communication() {
         if (scandxmode) cancelDXScan();
         radio.SetFreq(frequency);
         if (afscreen) BuildAdvancedRDS();
-        radio.clearRDS(fullsearchrds);
+        radio.clearRDS();
         if (band != BAND_FM) {
           band = BAND_FM;
           SelectBand();
@@ -619,7 +618,7 @@ void XDRGTKRoutine() {
           DataPrint("M0\n");
           DataPrint("T" + String((frequency + ConverterSet * 100) * 10) + "\n");
           radio.SetFreq(frequency);
-          radio.clearRDS(fullsearchrds);
+          radio.clearRDS();
           RDSstatus = false;
         }
         store = true;
@@ -630,7 +629,7 @@ void XDRGTKRoutine() {
 
         if(BAND_FM) freqtemp -= ConverterSet * 1000;
         if(seek) seek = false;
-        radio.clearRDS(fullsearchrds);
+        radio.clearRDS();
 
         if (freqtemp >= LWLowEdgeSet && freqtemp <= LWHighEdgeSet) {
           frequency_LW = freqtemp;

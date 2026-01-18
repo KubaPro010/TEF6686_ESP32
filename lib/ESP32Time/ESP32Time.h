@@ -23,9 +23,7 @@
 */
 
 #pragma once
-
-#include <Arduino.h>
-
+#include <time.h>
 class ESP32Time {
 
 	public:

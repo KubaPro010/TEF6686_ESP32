@@ -542,13 +542,13 @@ class TEF6686 {
     void setMono(bool mono);
     bool getStereoStatus();
     void init(byte TEF);
-    void clearRDS(bool fullsearchrds);
+    void clearRDS();
     void power(bool mode);
     void setAGC(uint8_t agc);
     void setAMAGC(uint8_t agc);
     void setiMS(bool mph);
     void setEQ(bool eq);
-    void setDeemphasis(uint8_t timeconstant);
+    void setDeemphasis(RADIO_FM_DEEMPHASIS timeconstant);
     void setAudio(uint8_t audio);
     void setFMABandw();
     void setFMBandw(uint16_t bandwidth);

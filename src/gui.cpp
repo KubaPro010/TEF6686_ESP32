@@ -3490,11 +3490,11 @@ void MenuUpDown(bool dir) {
 
           case ITEM7:
             if (dir) {
-              fmdeemphasis++;
+              fmdeemphasis = (RADIO_FM_DEEMPHASIS)(fmdeemphasis+1);
               if (fmdeemphasis > DEEMPHASIS_COUNT - 1) fmdeemphasis = DEEMPHASIS_NONE;
             } else {
-              fmdeemphasis--;
-              if (fmdeemphasis > DEEMPHASIS_COUNT - 1) fmdeemphasis = DEEMPHASIS_COUNT - 1;
+              fmdeemphasis = (RADIO_FM_DEEMPHASIS)(fmdeemphasis-1);
+              if (fmdeemphasis > DEEMPHASIS_COUNT - 1) fmdeemphasis = (RADIO_FM_DEEMPHASIS)(DEEMPHASIS_COUNT - 1);
             }
 
             OneBigLineSprite.setTextDatum(TL_DATUM);
@@ -3952,7 +3952,7 @@ void MenuUpDown(bool dir) {
             break;
 
           case ITEM9:
-            if (fullsearchrds) {
+            if (chipmodel == 1 || chipmodel == 3) {
               fmsi = !fmsi;
               OneBigLineSprite.drawString((fmsi ? textUI(28) : textUI(27)), 135, 0);
               OneBigLineSprite.pushSprite(24, 118);
@@ -5083,13 +5083,10 @@ void DoMenu() {
             break;
 
           case ITEM9:
-            if (fullsearchrds) {
+            if(chipmodel == 1 || chipmodel == 3) {
               Infoboxprint(textUI(203));
-
               OneBigLineSprite.drawString((fmsi ? textUI(28) : textUI(27)), 135, 0);
-            } else {
-              Infoboxprint(textUI(204));
-            }
+            } else Infoboxprint(textUI(204));
             OneBigLineSprite.pushSprite(24, 118);
             break;
 

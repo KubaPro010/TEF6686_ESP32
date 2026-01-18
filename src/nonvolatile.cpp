@@ -193,7 +193,7 @@ void loadData() {
   amgain = EEPROM.readByte(EE_BYTE_AM_RF_GAIN);
   radio.rds.sortaf = EEPROM.readByte(EE_BYTE_SORTAF);
   stationlistid = EEPROM.readByte(EE_BYTE_STATIONLISTID);
-  fmdeemphasis = EEPROM.readByte(EE_BYTE_FM_DEEMPHASIS);
+  fmdeemphasis = (RADIO_FM_DEEMPHASIS)EEPROM.readByte(EE_BYTE_FM_DEEMPHASIS);
   BWsetFM = EEPROM.readByte(EE_BYTE_BWSET_FM);
   BWsetAM = EEPROM.readByte(EE_BYTE_BWSET_AM);
   nowToggleSWMIBand = EEPROM.readByte(EE_BYTE_BANDAUTOSW);
