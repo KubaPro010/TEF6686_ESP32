@@ -7,6 +7,47 @@
 #define SPI_READ_FREQUENCY 20000000
 #define SPI_TOUCH_FREQUENCY 2500000
 
+#define SPI_SET_CLOCK_FREQ(target_freq_hz) \
+    do { \
+        uint32_t sys_freq = getApbFrequency(); \
+        if(sys_freq == target_freq_hz) { \
+          *_spi_clock = 1 << 31;\
+          return; \
+        } \
+        uint32_t pre_div = 1; \
+        uint32_t cnt_n = 1; \
+        \
+        /* Find optimal dividers: sys_freq / pre_div / cnt_n = target_freq */ \
+        uint32_t total_div = (sys_freq + (target_freq_hz) - 1) / (target_freq_hz); \
+        \
+        /* Try to balance pre_div and cnt_n for best accuracy */ \
+        for (uint32_t p = 1; p <= 0x2000; p++) { \
+            uint32_t c = (total_div + p - 1) / p; \
+            if (c >= 1 && c <= 0x40) { \
+                pre_div = p; \
+                cnt_n = c; \
+                break; \
+            } \
+        } \
+        \
+        /* Adjust to register format (values are minus one) */ \
+        pre_div = (pre_div > 1) ? (pre_div - 1) : 0; \
+        cnt_n = (cnt_n > 1) ? (cnt_n - 1) : 0; \
+        \
+        /* Calculate cnt_h for 50% duty cycle */ \
+        uint32_t cnt_h = (cnt_n > 0) ? ((cnt_n + 1) / 2 - 1) : 0; \
+        \
+        /* Build register value */ \
+        uint32_t reg_val = 0; \
+        reg_val |= (0 << 31);           /* SPI_CLK_EQU_SYSCLK = 0 (use dividers) */ \
+        reg_val |= (pre_div << 18);     /* SPI_CLKDIV_PRE */ \
+        reg_val |= (cnt_n << 12);       /* SPI_CLKCNT_N */ \
+        reg_val |= (cnt_h << 6);        /* SPI_CLKCNT_H */ \
+        reg_val |= (cnt_n << 0);        /* SPI_CLKCNT_L = SPI_CLKCNT_N */ \
+        \
+        *_spi_clock = reg_val; \
+    } while(0)
+
 #define TFT_WIDTH  240
 #define TFT_HEIGHT 320
 
@@ -72,7 +113,7 @@
 // Write same value twice
 #define tft_Write_32D(C) TFT_WRITE_BITS((uint16_t)((C)<<8 | (C)>>8)<<16 | (uint16_t)((C)<<8 | (C)>>8), 32)
 
-#define tft_Read_8() spi.transfer(0)
+#define tft_Read_8() transfer(0)
 
 #define DAT8TO32(P) ( (uint32_t)P[0]<<8 | P[1] | P[2]<<24 | P[3]<<16 )
 

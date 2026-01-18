@@ -1,16 +1,36 @@
 #include "TFT_eSPI.h"
 #include <Arduino.h>
 #include <SPI.h>
-
+#include "soc/dport_access.h"
+#include "soc/dport_reg.h"
 SPIClass spi = SPIClass(VSPI);
-
 spi_device_handle_t dmaHAL;
 spi_host_device_t spi_host = VSPI_HOST;
 
 volatile uint32_t* _spi_cmd = (volatile uint32_t*)(SPI_CMD_REG(VSPI));
+volatile uint32_t* _spi_ctrl = (volatile uint32_t*)(SPI_CTRL_REG(VSPI));
 volatile uint32_t* _spi_user = (volatile uint32_t*)(SPI_USER_REG(VSPI));
 volatile uint32_t* _spi_mosi_dlen = (volatile uint32_t*)(SPI_MOSI_DLEN_REG(VSPI));
+volatile uint32_t* _spi_miso_dlen = (volatile uint32_t*)(SPI_MISO_DLEN_REG(VSPI));
 volatile uint32_t* _spi_w = (volatile uint32_t*)(SPI_W0_REG(VSPI));
+volatile uint32_t* _spi_clock = (volatile uint32_t*)(SPI_CLOCK_REG(VSPI));
+
+uint8_t transfer(uint8_t val) {
+  *_spi_miso_dlen = 7;
+  tft_Write_8(val);
+  return *_spi_w & 0xff;
+}
+
+#define MSB_16_SET(var, val) { (var) = (((val) & 0xFF00) >> 8) | (((val) & 0xFF) << 8); }
+uint16_t transfer16(uint16_t val) {
+  if(!(*_spi_ctrl & SPI_WR_BIT_ORDER)) MSB_16_SET(val, val);
+
+  *_spi_miso_dlen = 15;
+  tft_Write_16S(val);
+  uint16_t out = *_spi_w & 0xffff;
+  if(!(*_spi_ctrl & SPI_RD_BIT_ORDER)) MSB_16_SET(out, out);
+  return out;
+}
 
 void TFT_eSPI::pushBlock(uint16_t color, uint32_t len) {
 
@@ -238,7 +258,7 @@ bool TFT_eSPI::initDMA(bool ctrl_cs)
 inline void TFT_eSPI::begin_tft_write() {
   if (locked) {
     locked = false; // Flag to show SPI access now unlocked
-    spi.beginTransaction(SPISettings(spi_write_speed * 1000000, MSBFIRST, SPI_MODE0));
+    SPI_SET_CLOCK_FREQ(spi_write_speed * 1000000);
     CS_L;
     SET_BUS_WRITE_MODE;
   }
@@ -247,7 +267,7 @@ inline void TFT_eSPI::begin_tft_write() {
 void TFT_eSPI::begin_nin_write() {
   if (locked) {
     locked = false; // Flag to show SPI access now unlocked
-    spi.beginTransaction(SPISettings(spi_write_speed * 1000000, MSBFIRST, SPI_MODE0));
+    SPI_SET_CLOCK_FREQ(spi_write_speed * 1000000);
     CS_L;
     SET_BUS_WRITE_MODE;
   }
@@ -255,24 +275,22 @@ void TFT_eSPI::begin_nin_write() {
 
 inline void TFT_eSPI::end_tft_write() {
   if(!inTransaction) {      // Flag to stop ending transaction during multiple graphics calls
-    if (!locked) {          // Locked when beginTransaction has been called
+    if (!locked) {          // Locked when  has been called
       locked = true;        // Flag to show SPI access now locked
       SPI_BUSY_CHECK;       // Check send complete and clean out unused rx data
       CS_H;
       SET_BUS_READ_MODE;    // In case bus has been configured for tx only
-      spi.endTransaction();
     }
   }
 }
 
 inline void TFT_eSPI::end_nin_write() {
   if(!inTransaction) {      // Flag to stop ending transaction during multiple graphics calls
-    if (!locked) {          // Locked when beginTransaction has been called
+    if (!locked) {          // Locked when  has been called
       locked = true;        // Flag to show SPI access now locked
       SPI_BUSY_CHECK;       // Check send complete and clean out unused rx data
       CS_H;
       SET_BUS_READ_MODE;    // In case SPI has been configured for tx only
-      spi.endTransaction();
     }
   }
 }
@@ -281,7 +299,7 @@ inline void TFT_eSPI::begin_tft_read() {
   dmaWait();
   if (locked) {
     locked = false;
-    spi.beginTransaction(SPISettings(SPI_READ_FREQUENCY, MSBFIRST, SPI_MODE0));
+    SPI_SET_CLOCK_FREQ(SPI_READ_FREQUENCY);
     CS_L;
   }
   SET_BUS_READ_MODE;
@@ -292,7 +310,6 @@ inline void TFT_eSPI::end_tft_read() {
     if (!locked) {
       locked = true;
       CS_H;
-      spi.endTransaction();
     }
   }
   SET_BUS_WRITE_MODE;
@@ -432,16 +449,13 @@ if (TOUCH_CS >= 0) {
   }
 }
 
-void TFT_eSPI::init()
-{
+#define OR_REGISTER(register, value) WRITE_PERI_REG(register, READ_PERI_REG(register) | value)
+void TFT_eSPI::init() {
   if (booted) {
     initBus();
 
-    #if defined (TFT_MOSI) && !defined (TFT_SPI_OVERLAP)
-      spi.begin(TFT_SCLK, TFT_MISO, TFT_MOSI, -1); // This will set MISO to input
-    #else
-      spi.begin(); // This will set MISO to input
-    #endif
+    spi.begin(TFT_SCLK, TFT_MISO, TFT_MOSI, -1); // This will set MISO to input
+
     lockTransaction = false;
     inTransaction = false;
     locked = true;
@@ -3013,14 +3027,14 @@ void TFT_eSPI::drawGlyph(uint16_t code, uint16_t font) {
 inline void TFT_eSPI::begin_touch_read_write() {
   dmaWait();
   CS_H; // Just in case it has been left low
-  if (locked) {locked = false; spi.beginTransaction(SPISettings(SPI_TOUCH_FREQUENCY, MSBFIRST, SPI_MODE0));}
+  if (locked) {locked = false; SPI_SET_CLOCK_FREQ(SPI_TOUCH_FREQUENCY);}
   SET_BUS_READ_MODE;
   gpio_set_level((gpio_num_t)TOUCH_CS, 0);
 }
 
 inline void TFT_eSPI::end_touch_read_write() {
   gpio_set_level((gpio_num_t)TOUCH_CS, 1);
-  if(!inTransaction) {if (!locked) {locked = true; spi.endTransaction();}}
+  if(!inTransaction) {if (!locked) {locked = true;}}
 }
 
 uint8_t TFT_eSPI::getTouchRaw(uint16_t *x, uint16_t *y){
@@ -3028,31 +3042,31 @@ uint8_t TFT_eSPI::getTouchRaw(uint16_t *x, uint16_t *y){
 
   begin_touch_read_write();
 
-  spi.transfer(0xd0);
-  spi.transfer(0);
-  spi.transfer(0xd0);
-  spi.transfer(0);
-  spi.transfer(0xd0);
-  spi.transfer(0);
-  spi.transfer(0xd0);
+  transfer(0xd0);
+  transfer(0);
+  transfer(0xd0);
+  transfer(0);
+  transfer(0xd0);
+  transfer(0);
+  transfer(0xd0);
 
-  tmp = spi.transfer(0);                   // Read first 8 bits
+  tmp = transfer(0);                   // Read first 8 bits
   tmp = tmp <<5;
-  tmp |= 0x1f & (spi.transfer(0x90)>>3);   // Read last 8 bits and start new XP conversion
+  tmp |= 0x1f & (transfer(0x90)>>3);   // Read last 8 bits and start new XP conversion
 
   *x = tmp;
 
   // Start XP sample request for y position, read 4 times and keep last sample
-  spi.transfer(0);                       // Read first 8 bits
-  spi.transfer(0x90);                    // Read last 8 bits and start new XP conversion
-  spi.transfer(0);                       // Read first 8 bits
-  spi.transfer(0x90);                    // Read last 8 bits and start new XP conversion
-  spi.transfer(0);                       // Read first 8 bits
-  spi.transfer(0x90);                    // Read last 8 bits and start new XP conversion
+  transfer(0);                       // Read first 8 bits
+  transfer(0x90);                    // Read last 8 bits and start new XP conversion
+  transfer(0);                       // Read first 8 bits
+  transfer(0x90);                    // Read last 8 bits and start new XP conversion
+  transfer(0);                       // Read first 8 bits
+  transfer(0x90);                    // Read last 8 bits and start new XP conversion
 
-  tmp = spi.transfer(0);                 // Read first 8 bits
+  tmp = transfer(0);                 // Read first 8 bits
   tmp = tmp <<5;
-  tmp |= 0x1f & (spi.transfer(0)>>3);    // Read last 8 bits
+  tmp |= 0x1f & (transfer(0)>>3);    // Read last 8 bits
 
   *y = tmp;
 
@@ -3071,9 +3085,9 @@ uint16_t TFT_eSPI::getTouchRawZ() {
 
   // Z sample request
   int16_t tz = 0xFFF;
-  spi.transfer(0xb0);               // Start new Z1 conversion
-  tz += spi.transfer16(0xc0) >> 3;  // Read Z1 and start Z2 conversion
-  tz -= spi.transfer16(0x00) >> 3;  // Read Z2
+  transfer(0xb0);               // Start new Z1 conversion
+  tz += transfer16(0xc0) >> 3;  // Read Z1 and start Z2 conversion
+  tz -= transfer16(0x00) >> 3;  // Read Z2
 
   end_touch_read_write();
 
