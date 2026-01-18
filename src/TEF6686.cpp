@@ -104,6 +104,8 @@ uint16_t TEF6686::TestAF() {
 }
 
 void TEF6686::init(byte TEF) {
+  auto old_clock = Wire.getClock();
+  Wire.setClock(400000);
   Tuner_Reset();
 
   while(devTEF_APPL_Get_Operation_Status() != 0) delay(2);
@@ -132,6 +134,7 @@ void TEF6686::init(byte TEF) {
 
   while(devTEF_APPL_Get_Operation_Status() != 2) delay(2); // Wait for it to start
 
+  Wire.setClock(old_clock);
   devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Mph, 6, 0, 360, 300);
   devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Max, 4, 0, 4000);
   devTEF_Set_Cmd(TEF_FM, Cmd_Set_LowCut_Max, 4, 0, 100);

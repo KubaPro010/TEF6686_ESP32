@@ -315,7 +315,7 @@
 #define EE_BYTE_AMSCANSENS            2200
 #define EE_BYTE_FMSCANSENS            2201
 #define EE_BYTE_FREQFONT              2202
-#define EE_BYTE_SKIN                  2203
+// Empty space, this was not used
 #define EE_BYTE_XDRGTKMUTE            2204
 #define EE_BYTE_FMAGC                 2205
 #define EE_BYTE_AMAGC                 2206

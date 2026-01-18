@@ -1,8 +1,6 @@
 #include "globals.h"
 #include "Tuner_Patch_Lithio_V102_p224.h"
-#ifndef DEEPELEC_DP_66X
 #include "Tuner_Patch_Lithio_V205_p512.h"
-#endif
 #include <Wire.h>
 
 bool Tuner_WriteBuffer(unsigned char *buf, uint16_t len) {
@@ -64,11 +62,9 @@ void Tuner_Patch(byte TEF) {
     case 102:
       Tuner_Patch_Load(pPatchBytes102, PatchSize102);
       break;
-#ifndef DEEPELEC_DP_66X
     case 205:
       Tuner_Patch_Load(pPatchBytes205, PatchSize205);
       break;
-#endif
   }
   Wire.beginTransmission(TEF668X_ADDRESS);
   Wire.write(0x1c);
@@ -84,11 +80,9 @@ void Tuner_Patch(byte TEF) {
     case 102:
       Tuner_Patch_Load(pLutBytes102, LutSize102);
       break;
-#ifndef DEEPELEC_DP_66X
     case 205:
       Tuner_Patch_Load(pLutBytes205, LutSize205);
       break;
-#endif
   }
   Wire.beginTransmission(TEF668X_ADDRESS);
   Wire.write(0x1c);

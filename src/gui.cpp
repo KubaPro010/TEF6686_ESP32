@@ -8,7 +8,7 @@ bool setWiFiConnectParam = false;
 
 void doTheme() {  // Use this to put your own colors in: http://www.barth-dev.de/online/rgb565-color-picker/
   switch (CurrentTheme) {
-    case 0:  // Default PE5PVB theme
+    case 0:  // Essence
       PrimaryColor = Yellow;
       PrimaryColorSmooth = YellowSmooth;
       SecondaryColor = Skyblue;
@@ -2845,7 +2845,7 @@ void BuildMenu() {
     tftPrint(ACENTER, textUI(29), 160, 6, PrimaryColor, PrimaryColorSmooth, 16);
   } else {
     tftPrint(ALEFT, textUI(181), (hardwaremodel == PORTABLE_TOUCH_ILI9341 ? 20 : 8), 6, PrimaryColor, PrimaryColorSmooth, 16);
-    tftPrint(ARIGHT, textUI(189 + menupage - 1), 312, 6, ActiveColor, ActiveColorSmooth, 16);
+    tftPrint(ARIGHT, textUI(186 + menupage - 1), 312, 6, ActiveColor, ActiveColorSmooth, 16);
   }
 
   if (hardwaremodel == PORTABLE_TOUCH_ILI9341) {

@@ -24,7 +24,18 @@ using fs::FS;
 #pragma endregion
 
 Console console(&tft);
-bool gpio_chip = false;
+RTC_NOINIT_ATTR bool gpio_chip = false;
+RTC_NOINIT_ATTR bool tef_found = false;
+
+template<typename... Args>
+void panic(Args... args) {
+  radio.power(1);
+  tft.fillScreen(TFT_RED);
+  console.reset();
+
+  (console.print(args), ...);
+  while (true);
+}
 
 #pragma region helpers
 inline void Round30K(unsigned int freq) {
@@ -66,7 +77,7 @@ inline void deepSleep() {
   MuteScreen(1);
   StoreFrequency();
   radio.power(1);
-  esp_sleep_enable_ext0_wakeup((gpio_num_t)ROTARY_BUTTON, LOW);
+  esp_sleep_enable_ext0_wakeup((gpio_num_t)ROTARY_PIN_A, LOW);
   esp_deep_sleep_start();
 }
 
@@ -96,7 +107,7 @@ inline void EdgeBeeper() {
   radio.tone(50, -5, 2000);
 }
 
-inline const char* textUI(uint16_t number) {
+const char* textUI(uint16_t number) {
   if (number >= language_entrynumber) return "Overflow";
   else return (const char*)pgm_read_ptr(&(myLanguage[language][number]));
 }
@@ -167,7 +178,10 @@ void ShowBW() {
   else if(!BWtune) return;
 
   if (BW != BWOld || BWreset) {
-    if (BWset == 0) tftReplace(ARIGHT, String(BWOld, DEC), String(BW, DEC), 203, 4, BWAutoColor, BWAutoColorSmooth, BackgroundColor, 28); else tftReplace(ARIGHT, String (BWOld, DEC), String(BW, DEC), 203, 4, PrimaryColor, PrimaryColorSmooth, BackgroundColor, 28);
+    if(BW == 0) panic("BW is 0");
+    else if(BW > 311) panic("BW larger than 311");
+
+    if(BWset == 0) tftReplace(ARIGHT, String(BWOld, DEC), String(BW, DEC), 203, 4, BWAutoColor, BWAutoColorSmooth, BackgroundColor, 28); else tftReplace(ARIGHT, String (BWOld, DEC), String(BW, DEC), 203, 4, PrimaryColor, PrimaryColorSmooth, BackgroundColor, 28);
     BWOld = BW;
     BWreset = false;
     if (wifi) {
@@ -1156,26 +1170,8 @@ void MuteScreen(bool setting) {
 }
 #pragma endregion
 
-void read_encoder();
-void setup() {
-  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
-  gpio_set_drive_capability((gpio_num_t) 5, GPIO_DRIVE_CAP_0);
-  gpio_set_drive_capability((gpio_num_t) 16, GPIO_DRIVE_CAP_0);
-  gpio_set_drive_capability((gpio_num_t) 17, GPIO_DRIVE_CAP_0);
-  gpio_set_drive_capability((gpio_num_t) 18, GPIO_DRIVE_CAP_0);
-  gpio_set_drive_capability((gpio_num_t) 19, GPIO_DRIVE_CAP_0);
-  gpio_set_drive_capability((gpio_num_t) 21, GPIO_DRIVE_CAP_0);
-  gpio_set_drive_capability((gpio_num_t) 22, GPIO_DRIVE_CAP_0);
-  gpio_set_drive_capability((gpio_num_t) 23, GPIO_DRIVE_CAP_0);
-
-  setupmode = true;
-
-  bool tef_found = false;
-
-  Wire.begin();
-  Wire.setClock(100000);
-  delay(1);
-
+void setup_periph() {
+  Wire.setClock(400000);
   Serial.begin(115200);
   Serial.println();
   byte error, address;
@@ -1208,12 +1204,39 @@ void setup() {
   Serial.flush();
   Serial.end();
 
+  Wire.setClock(100000);
+
+  if(tef_found) {
+    // The tuner being missing here, would cause a infinite loop with no exit and no error, as it resets and polls the chip if it reset, if no response then we try again, and now, you see?
+    radio.init(TEF);
+  }
+}
+
+void read_encoder();
+void setup() {
+  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
+  gpio_set_drive_capability((gpio_num_t) 5, GPIO_DRIVE_CAP_0);
+  gpio_set_drive_capability((gpio_num_t) 16, GPIO_DRIVE_CAP_0);
+  gpio_set_drive_capability((gpio_num_t) 17, GPIO_DRIVE_CAP_0);
+  gpio_set_drive_capability((gpio_num_t) 18, GPIO_DRIVE_CAP_0);
+  gpio_set_drive_capability((gpio_num_t) 19, GPIO_DRIVE_CAP_0);
+  gpio_set_drive_capability((gpio_num_t) 21, GPIO_DRIVE_CAP_0);
+  gpio_set_drive_capability((gpio_num_t) 22, GPIO_DRIVE_CAP_0);
+  gpio_set_drive_capability((gpio_num_t) 23, GPIO_DRIVE_CAP_0);
   EEPROM.begin(EE_TOTAL_CNT);
+
+  setupmode = true;
+  
+  Wire.begin();
+  Wire.setClock(100000);
+
   loadData();
 
   if (spispeed == SPI_SPEED_DEFAULT) tft.setSPISpeed(SPI_FREQUENCY / 1000000);
   else if (spispeed == 7) setAutoSpeedSPI();
   else tft.setSPISpeed(spispeed * 10);
+
+  if(esp_reset_reason() != ESP_RST_DEEPSLEEP) setup_periph();
 
   LWLowEdgeSet = FREQ_LW_LOW_EDGE_MIN;
   LWHighEdgeSet = FREQ_LW_HIGH_EDGE_MAX;
@@ -1436,9 +1459,6 @@ void setup() {
   TEF = EEPROM.readByte(EE_BYTE_TEF);
   if(FORBIDDEN_TUNER(TEF)) SetTunerPatch();
 
-  // The tuner being missing here, would cause a infinite loop with no exit and no error, as it resets and polls the chip if it reset, if no response then we try again, and now, you see?
-  radio.init(TEF);
-
   uint16_t device, hw, sw;
   radio.getIdentification(&device, &hw, &sw);
   if (TEF != (highByte(hw) * 100 + highByte(sw))) SetTunerPatch();
@@ -1448,7 +1468,6 @@ void setup() {
     fmsi = false;
     chipmodel = 0;
     console.print("Detected a TEF6686 Lithio");
-#ifndef DEEPELEC_DP_66X
   } else if (lowByte(device) == 1) {
     fullsearchrds = true;
     chipmodel = 1;
@@ -1462,7 +1481,6 @@ void setup() {
     fullsearchrds = true;
     chipmodel = 3;
     console.print("Detected a TEF6689 Lithio FMSI DR");
-#endif
   }
   console.print("Chip Patch: v" + String(TEF));
 
@@ -3078,11 +3096,8 @@ void ShowSignalLevel() {
 
 void ShowOffset() {
   if (OStatus != OStatusold) {
-    if (millis() >= offsetupdatetimer + TIMER_OFFSET_TIMER) {
-      offsetupdatetimer = millis();
-    } else {
-      return;
-    }
+    if (millis() >= offsetupdatetimer + TIMER_OFFSET_TIMER) offsetupdatetimer = millis();
+    else return;
 
     int baseX = 13; // Left boundary
     int baseY = 2; // Top boundary
@@ -3206,9 +3221,7 @@ void ShowModLevel() {
         float h = map(i, gradientStart, gradientEnd, hsv1.h, hsv2.h);
         float s = map(i, gradientStart, gradientEnd, hsv1.s * 100, hsv2.s * 100) / 100.0;
         float v = map(i, gradientStart, gradientEnd, hsv1.v * 100, hsv2.v * 100) / 100.0;
-
-        uint16_t gradientColor = HSVtoRGB565(h, s, v);
-        tft.fillRect(16 + 2 * i, 133, 2, 6, gradientColor);
+        tft.fillRect(16 + 2 * i, 133, 2, 6, HSVtoRGB565(h, s, v));
       }
     }
 
@@ -3234,7 +3247,7 @@ void doSquelch() {
 
   if (unit == 0) SquelchShow = Squelch / 10;
   if (unit == 1) SquelchShow = ((Squelch * 100) + 10875) / 1000;
-  if (unit == 2) SquelchShow = round((float(Squelch) / 10.0 - 10.0 * log10(75) - 90.0) * 10.0) / 10;
+  if (unit == 2) SquelchShow = round(((float)Squelch / 10.0 - 10.0 * log10(75) - 90.0) * 10.0) / 10;
   if (Squelch > 920) Squelch = 920;
 
   if (autosquelch) {
@@ -3415,12 +3428,10 @@ void doTuneMode() {
         else tunemode = TUNE_AUTO;
       } else tunemode = TUNE_AUTO;
       break;
-
     case TUNE_MI_BAND:
     case TUNE_AUTO:
       tunemode = TUNE_MEM;
       break;
-
     case TUNE_MEM:
       if (!bandforbidden) tunemode = TUNE_MAN;
       break;
@@ -3506,7 +3517,7 @@ void ShowBattery() {
   if (millis() >= batupdatetimer + TIMER_BAT_TIMER) batupdatetimer = millis();
   else return;
 
-  float v = analogReadMilliVolts(BATTERY_PIN) * 0.002;
+  float v = analogReadMilliVolts(BATTERY_PIN) * 0.002; // 0.002 converts to volts plus corrects the /2 voltage divider
   byte battery = map(constrain(v, BATTERY_LOW_VALUE, BATTERY_FULL_VALUE), BATTERY_LOW_VALUE, BATTERY_FULL_VALUE, 0, BAT_LEVEL_STAGE);
   byte batteryprobe = map(constrain(v, BATTERY_LOW_VALUE, BATTERY_FULL_VALUE), BATTERY_LOW_VALUE, BATTERY_FULL_VALUE, 0, 20);
   if (batteryold != batteryprobe) {
@@ -3785,7 +3796,7 @@ void read_encoder() {
   old_AB <<= 2;
   if (digitalRead(ROTARY_PIN_A)) old_AB |= 0x02;
   if (digitalRead(ROTARY_PIN_B)) old_AB |= 0x01;
-  encval += enc_states[( old_AB & 0x0f )];
+  encval += enc_states[old_AB & 0xf];
   if (!(255 - old_AB)) encval = 0;
 
   if (encval > 3) {
@@ -3803,8 +3814,7 @@ void read_encoder() {
 
 void tftReplace(int8_t offset, const String & textold, const String & text, int16_t x, int16_t y, int color, int smoothcolor, int background, uint8_t fontsize) {
   uint8_t selectedFont = 0;
-  if (fontsize == 16) selectedFont = 0;
-  else if (fontsize == 28) selectedFont = 1;
+  if (fontsize == 28) selectedFont = 1;
   else if (fontsize == 48) selectedFont = 2;
 
   switch (offset) {
@@ -3825,8 +3835,7 @@ void tftReplace(int8_t offset, const String & textold, const String & text, int1
 
 void tftPrint(int8_t offset, const String & text, int16_t x, int16_t y, int color, int smoothcolor, uint8_t fontsize) {
   uint8_t selectedFont = 0;
-  if (fontsize == 16) selectedFont = 0;
-  else if (fontsize == 28) selectedFont = 1;
+  if (fontsize == 28) selectedFont = 1;
   else if (fontsize == 48) selectedFont = 2;
 
   tft.setTextColor(color, smoothcolor, (fontsize == 52 ? true : false));

@@ -6,7 +6,7 @@ bool rtcset;
 bool NTPupdated;
 
 ESP32Time rtc;
-bool rx_rtc_avail = false;
+RTC_NOINIT_ATTR bool rx_rtc_avail = false;
 
 inline int16_t readFromModule(byte address) {
     Wire.beginTransmission(RX8010SJ_ADDRESS);
