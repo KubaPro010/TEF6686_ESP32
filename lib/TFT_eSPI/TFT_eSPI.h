@@ -1,11 +1,12 @@
 #pragma once
 
 #include <Arduino.h>
-#include <SPI.h>
 
 #define SPI_FREQUENCY 7500000
 #define SPI_READ_FREQUENCY 20000000
 #define SPI_TOUCH_FREQUENCY 2500000
+
+#define OR_REGISTER(register, value) WRITE_PERI_REG(register, READ_PERI_REG(register | value))
 
 #define SPI_SET_CLOCK_FREQ(target_freq_hz) \
     do { \
@@ -312,7 +313,7 @@ class TFT_eSPI { friend class TFT_eSprite;
            // 16-bit colour alphaBlend with alpha dither (dither reduces colour banding)
   uint16_t alphaBlend(uint8_t alpha, uint16_t fgc, uint16_t bgc, uint8_t dither);
 
-  bool     initDMA(bool ctrl_cs = false);  // Initialise the DMA engine and attach to SPI bus - typically used in setup()
+  bool     initDMA();  // Initialise the DMA engine and attach to SPI bus - typically used in setup()
   void     dmaWait(); // wait until DMA is complete
 
   bool     DMA_Enabled = false;   // Flag for DMA enabled state

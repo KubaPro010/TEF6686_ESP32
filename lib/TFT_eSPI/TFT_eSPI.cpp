@@ -1,9 +1,8 @@
 #include "TFT_eSPI.h"
 #include <Arduino.h>
-#include <SPI.h>
 #include "soc/dport_access.h"
 #include "soc/dport_reg.h"
-SPIClass spi = SPIClass(VSPI);
+
 spi_device_handle_t dmaHAL;
 spi_host_device_t spi_host = VSPI_HOST;
 
@@ -21,14 +20,14 @@ uint8_t transfer(uint8_t val) {
   return *_spi_w & 0xff;
 }
 
-#define MSB_16_SET(var, val) { (var) = (((val) & 0xFF00) >> 8) | (((val) & 0xFF) << 8); }
+#define MSB_16_SET(var) { (var) = (((val) & 0xFF00) >> 8) | (((var) & 0xFF) << 8); }
 uint16_t transfer16(uint16_t val) {
-  if(!(*_spi_ctrl & SPI_WR_BIT_ORDER)) MSB_16_SET(val, val);
+  if(!(*_spi_ctrl & SPI_WR_BIT_ORDER)) MSB_16_SET(val);
 
   *_spi_miso_dlen = 15;
   tft_Write_16S(val);
   uint16_t out = *_spi_w & 0xffff;
-  if(!(*_spi_ctrl & SPI_RD_BIT_ORDER)) MSB_16_SET(out, out);
+  if(!(*_spi_ctrl & SPI_RD_BIT_ORDER)) MSB_16_SET(out);
   return out;
 }
 
@@ -94,8 +93,7 @@ void TFT_eSPI::pushSwapBytePixels(const void* data_in, uint32_t len) {
     }
   }
 
-  if (len > 15)
-  {
+  if (len > 15) {
     uint32_t i = 0;
     while(i<8)
     {
@@ -116,8 +114,7 @@ void TFT_eSPI::pushSwapBytePixels(const void* data_in, uint32_t len) {
     len -= 16;
   }
 
-  if (len)
-  {
+  if (len) {
     while (READ_PERI_REG(SPI_CMD_REG(VSPI))&SPI_USR);
     WRITE_PERI_REG(SPI_MOSI_DLEN_REG(VSPI), (len << 4) - 1);
     for (uint32_t i=0; i <= (len<<1); i+=4) {
@@ -184,8 +181,7 @@ void TFT_eSPI::dmaWait()
   spiBusyCheck = 0;
 }
 
-bool TFT_eSPI::initDMA(bool ctrl_cs)
-{
+bool TFT_eSPI::initDMA() {
   if (DMA_Enabled) return false;
 
   esp_err_t ret;
@@ -204,9 +200,6 @@ bool TFT_eSPI::initDMA(bool ctrl_cs)
     .intr_flags = 0
   };
 
-  int8_t pin = -1;
-  if (ctrl_cs) pin = TFT_CS;
-
   spi_device_interface_config_t devcfg = {
     .command_bits = 0,
     .address_bits = 0,
@@ -217,7 +210,7 @@ bool TFT_eSPI::initDMA(bool ctrl_cs)
     .cs_ena_posttrans = 0,
     .clock_speed_hz = SPI_FREQUENCY,
     .input_delay_ns = 0,
-    .spics_io_num = pin,
+    .spics_io_num = -1,
     .flags = SPI_DEVICE_NO_DUMMY, //0,
     .queue_size = 1,
     .pre_cb = 0,
@@ -449,12 +442,24 @@ if (TOUCH_CS >= 0) {
   }
 }
 
-#define OR_REGISTER(register, value) WRITE_PERI_REG(register, READ_PERI_REG(register) | value)
 void TFT_eSPI::init() {
   if (booted) {
     initBus();
 
-    spi.begin(TFT_SCLK, TFT_MISO, TFT_MOSI, -1); // This will set MISO to input
+    initDMA();
+    // DPORT_SET_PERI_REG_MASK(DPORT_PERIP_CLK_EN_REG, DPORT_SPI3_CLK_EN);
+    // DPORT_CLEAR_PERI_REG_MASK(DPORT_PERIP_RST_EN_REG, DPORT_SPI3_RST);
+    // SET_BUS_READ_MODE;
+    // *_spi_ctrl = 0;
+    // for(int i = 0; i < 16; i++) _spi_w[i] = 0;
+    // SPI_SET_CLOCK_FREQ(SPI_FREQUENCY);
+
+    // pinMode(TFT_SCLK, OUTPUT);
+    // pinMode(TFT_MOSI, OUTPUT);
+    // pinMode(TFT_MISO, INPUT);
+    // pinMatrixOutAttach(TFT_SCLK, VSPICLK_OUT_IDX, false, false);
+    // pinMatrixInAttach(TFT_MISO, VSPIQ_OUT_IDX, false);
+    // pinMatrixOutAttach(TFT_MOSI, VSPID_IN_IDX, false, false);
 
     lockTransaction = false;
     inTransaction = false;
