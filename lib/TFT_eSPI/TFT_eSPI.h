@@ -204,9 +204,7 @@ class TFT_eSPI { friend class TFT_eSprite;
                    drawFastHLine(int32_t x, int32_t y, int32_t w, uint32_t color),
                    fillRect(int32_t x, int32_t y, int32_t w, int32_t h, uint32_t color);
 
-  virtual int16_t  drawChar(uint16_t uniCode, int32_t x, int32_t y, uint8_t font),
-                   drawChar(uint16_t uniCode, int32_t x, int32_t y),
-                   height(),
+  virtual int16_t height(),
                    width();
   virtual uint16_t readPixel(int32_t x, int32_t y);
   virtual void setWindow(int32_t xs, int32_t ys, int32_t xe, int32_t ye);
@@ -313,10 +311,6 @@ class TFT_eSPI { friend class TFT_eSprite;
            // 16-bit colour alphaBlend with alpha dither (dither reduces colour banding)
   uint16_t alphaBlend(uint8_t alpha, uint16_t fgc, uint16_t bgc, uint8_t dither);
 
-  bool     initDMA();  // Initialise the DMA engine and attach to SPI bus - typically used in setup()
-  void     dmaWait(); // wait until DMA is complete
-
-  bool     DMA_Enabled = false;   // Flag for DMA enabled state
   uint8_t  spiBusyCheck = 0;      // Number of ESP32 transfer buffers to check
 
   // Bare metal functions
@@ -410,8 +404,6 @@ class TFT_eSPI { friend class TFT_eSprite;
 
   getColorCallback getColor = nullptr; // Smooth font callback function pointer
 
-  bool locked, inTransaction, lockTransaction; // SPI transaction and mutex lock flags
-
   void loadMetrics(uint8_t font); // Function of Fear, which is Unhandled Exception, writing to 0x000000000
   uint32_t readInt32();
 
@@ -497,8 +489,6 @@ class TFT_eSprite : public TFT_eSPI {
   bool     pushSprite(int32_t tx, int32_t ty, int32_t sx, int32_t sy, int32_t sw, int32_t sh);
   bool     pushToSprite(TFT_eSprite *dspr, int32_t x, int32_t y);
   bool     pushToSprite(TFT_eSprite *dspr, int32_t x, int32_t y, uint16_t transparent);
-  int16_t  drawChar(uint16_t uniCode, int32_t x, int32_t y, uint8_t font),
-           drawChar(uint16_t uniCode, int32_t x, int32_t y);
   int16_t  width(),
            height();
   void     drawGlyph(uint16_t code, uint16_t font);

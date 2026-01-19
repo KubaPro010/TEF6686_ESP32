@@ -1571,7 +1571,7 @@ void loop() {
   }
 
   if (hardwaremodel == PORTABLE_TOUCH_ILI9341 && touch_detect) {
-    if (tft.getTouchRawZ() > 100) {
+    if (tft.getTouchRawZ() > 250) {
       uint16_t x, y;
       tft.getTouch(&x, &y);
       if (x > 0 || y > 0) {

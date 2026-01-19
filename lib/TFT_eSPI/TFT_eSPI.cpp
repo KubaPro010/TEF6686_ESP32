@@ -3,9 +3,6 @@
 #include "soc/dport_access.h"
 #include "soc/dport_reg.h"
 
-spi_device_handle_t dmaHAL;
-spi_host_device_t spi_host = VSPI_HOST;
-
 volatile uint32_t* _spi_cmd = (volatile uint32_t*)(SPI_CMD_REG(VSPI));
 volatile uint32_t* _spi_ctrl = (volatile uint32_t*)(SPI_CTRL_REG(VSPI));
 volatile uint32_t* _spi_user = (volatile uint32_t*)(SPI_USER_REG(VSPI));
@@ -15,13 +12,15 @@ volatile uint32_t* _spi_w = (volatile uint32_t*)(SPI_W0_REG(VSPI));
 volatile uint32_t* _spi_clock = (volatile uint32_t*)(SPI_CLOCK_REG(VSPI));
 
 uint8_t transfer(uint8_t val) {
+  SPI_BUSY_CHECK;
   *_spi_miso_dlen = 7;
   tft_Write_8(val);
   return *_spi_w & 0xff;
 }
 
-#define MSB_16_SET(var) { (var) = (((val) & 0xFF00) >> 8) | (((var) & 0xFF) << 8); }
+#define MSB_16_SET(var) { (var) = (((var) & 0xFF00) >> 8) | (((var) & 0xFF) << 8); }
 uint16_t transfer16(uint16_t val) {
+  SPI_BUSY_CHECK;
   if(!(*_spi_ctrl & SPI_WR_BIT_ORDER)) MSB_16_SET(val);
 
   *_spi_miso_dlen = 15;
@@ -37,7 +36,7 @@ void TFT_eSPI::pushBlock(uint16_t color, uint32_t len) {
   uint32_t color32 = (color<<8 | color >>8)<<16 | (color<<8 | color >>8);
   uint32_t i = 0;
   uint32_t rem = len & 0x1F;
-  len =  len - rem;
+  len = len - rem;
 
   if (rem) {
     while (*_spi_cmd&SPI_USR);
@@ -69,7 +68,7 @@ void TFT_eSPI::pushSwapBytePixels(const void* data_in, uint32_t len) {
       uint32_t i = 0;
       while(i<16) {
         color[i++] = DAT8TO32(data);
-        data+=4;
+        data += 4;
       }
       while (READ_PERI_REG(SPI_CMD_REG(VSPI))&SPI_USR);
       WRITE_PERI_REG(SPI_W0_REG(VSPI),  color[0]);
@@ -95,10 +94,9 @@ void TFT_eSPI::pushSwapBytePixels(const void* data_in, uint32_t len) {
 
   if (len > 15) {
     uint32_t i = 0;
-    while(i<8)
-    {
+    while(i<8) {
       color[i++] = DAT8TO32(data);
-      data+=4;
+      data +=4 ;
     }
     while (READ_PERI_REG(SPI_CMD_REG(VSPI))&SPI_USR);
     WRITE_PERI_REG(SPI_MOSI_DLEN_REG(VSPI), 255);
@@ -118,7 +116,7 @@ void TFT_eSPI::pushSwapBytePixels(const void* data_in, uint32_t len) {
     while (READ_PERI_REG(SPI_CMD_REG(VSPI))&SPI_USR);
     WRITE_PERI_REG(SPI_MOSI_DLEN_REG(VSPI), (len << 4) - 1);
     for (uint32_t i=0; i <= (len<<1); i+=4) {
-      WRITE_PERI_REG(SPI_W0_REG(VSPI)+i, DAT8TO32(data)); data+=4;
+      WRITE_PERI_REG(SPI_W0_REG(VSPI)+i, DAT8TO32(data)); data += 4;
     }
     SET_PERI_REG_MASK(SPI_CMD_REG(VSPI), SPI_USR);
   }
@@ -169,63 +167,6 @@ void TFT_eSPI::pushPixels(const void* data_in, uint32_t len){
   while (READ_PERI_REG(SPI_CMD_REG(VSPI))&SPI_USR);
 }
 
-void TFT_eSPI::dmaWait()
-{
-  if (!DMA_Enabled || !spiBusyCheck) return;
-  spi_transaction_t *rtrans;
-  esp_err_t ret;
-  for (int i = 0; i < spiBusyCheck; ++i) {
-    ret = spi_device_get_trans_result(dmaHAL, &rtrans, portMAX_DELAY);
-    assert(ret == ESP_OK);
-  }
-  spiBusyCheck = 0;
-}
-
-bool TFT_eSPI::initDMA() {
-  if (DMA_Enabled) return false;
-
-  esp_err_t ret;
-  spi_bus_config_t buscfg = {
-    .mosi_io_num = TFT_MOSI,
-    .miso_io_num = TFT_MISO,
-    .sclk_io_num = TFT_SCLK,
-    .quadwp_io_num = -1,
-    .quadhd_io_num = -1,
-    .data4_io_num = -1,
-    .data5_io_num = -1,
-    .data6_io_num = -1,
-    .data7_io_num = -1,
-    .max_transfer_sz = TFT_WIDTH * TFT_HEIGHT * 2 + 8, // TFT screen size
-    .flags = 0,
-    .intr_flags = 0
-  };
-
-  spi_device_interface_config_t devcfg = {
-    .command_bits = 0,
-    .address_bits = 0,
-    .dummy_bits = 0,
-    .mode = SPI_MODE0,
-    .duty_cycle_pos = 0,
-    .cs_ena_pretrans = 0,
-    .cs_ena_posttrans = 0,
-    .clock_speed_hz = SPI_FREQUENCY,
-    .input_delay_ns = 0,
-    .spics_io_num = -1,
-    .flags = SPI_DEVICE_NO_DUMMY, //0,
-    .queue_size = 1,
-    .pre_cb = 0,
-    .post_cb = 0
-  };
-  ret = spi_bus_initialize(spi_host, &buscfg, 1);
-  ESP_ERROR_CHECK(ret);
-  ret = spi_bus_add_device(spi_host, &devcfg, &dmaHAL);
-  ESP_ERROR_CHECK(ret);
-
-  DMA_Enabled = true;
-  spiBusyCheck = 0;
-  return true;
-}
-
 // Clipping macro for pushImage
 #define PI_CLIP                                        \
   if (_vpOoB) return;                                  \
@@ -249,62 +190,37 @@ bool TFT_eSPI::initDMA() {
 
 
 inline void TFT_eSPI::begin_tft_write() {
-  if (locked) {
-    locked = false; // Flag to show SPI access now unlocked
-    SPI_SET_CLOCK_FREQ(spi_write_speed * 1000000);
-    CS_L;
-    SET_BUS_WRITE_MODE;
-  }
+  SPI_SET_CLOCK_FREQ(spi_write_speed * 1000000);
+  CS_L;
+  SET_BUS_WRITE_MODE;
 }
 
 void TFT_eSPI::begin_nin_write() {
-  if (locked) {
-    locked = false; // Flag to show SPI access now unlocked
-    SPI_SET_CLOCK_FREQ(spi_write_speed * 1000000);
-    CS_L;
-    SET_BUS_WRITE_MODE;
-  }
+  SPI_SET_CLOCK_FREQ(spi_write_speed * 1000000);
+  CS_L;
+  SET_BUS_WRITE_MODE;
 }
 
 inline void TFT_eSPI::end_tft_write() {
-  if(!inTransaction) {      // Flag to stop ending transaction during multiple graphics calls
-    if (!locked) {          // Locked when  has been called
-      locked = true;        // Flag to show SPI access now locked
-      SPI_BUSY_CHECK;       // Check send complete and clean out unused rx data
-      CS_H;
-      SET_BUS_READ_MODE;    // In case bus has been configured for tx only
-    }
-  }
+  SPI_BUSY_CHECK;       // Check send complete and clean out unused rx data
+  CS_H;
+  SET_BUS_READ_MODE;    // In case bus has been configured for tx only
 }
 
 inline void TFT_eSPI::end_nin_write() {
-  if(!inTransaction) {      // Flag to stop ending transaction during multiple graphics calls
-    if (!locked) {          // Locked when  has been called
-      locked = true;        // Flag to show SPI access now locked
-      SPI_BUSY_CHECK;       // Check send complete and clean out unused rx data
-      CS_H;
-      SET_BUS_READ_MODE;    // In case SPI has been configured for tx only
-    }
-  }
+  SPI_BUSY_CHECK;       // Check send complete and clean out unused rx data
+  CS_H;
+  SET_BUS_READ_MODE;    // In case SPI has been configured for tx only
 }
 
 inline void TFT_eSPI::begin_tft_read() {
-  dmaWait();
-  if (locked) {
-    locked = false;
-    SPI_SET_CLOCK_FREQ(SPI_READ_FREQUENCY);
-    CS_L;
-  }
+  SPI_SET_CLOCK_FREQ(SPI_READ_FREQUENCY);
+  CS_L;
   SET_BUS_READ_MODE;
 }
 
 inline void TFT_eSPI::end_tft_read() {
-  if(!inTransaction) {
-    if (!locked) {
-      locked = true;
-      CS_H;
-    }
-  }
+  CS_H;
   SET_BUS_WRITE_MODE;
 }
 
@@ -383,8 +299,7 @@ bool TFT_eSPI::clipWindow(int32_t *xs, int32_t *ys, int32_t *xe, int32_t *ye)
   return true;  // Area is wholly or partially inside viewport
 }
 
-TFT_eSPI::TFT_eSPI(int16_t w, int16_t h)
-{
+TFT_eSPI::TFT_eSPI(int16_t w, int16_t h) {
   _init_width  = _width  = w;
   _init_height = _height = h;
 
@@ -402,10 +317,6 @@ TFT_eSPI::TFT_eSPI(int16_t w, int16_t h)
   textdatum = TL_DATUM;
 
   _swapBytes = false;
-
-  locked = true;
-  inTransaction = false;
-  lockTransaction = false;
 
   booted = true;
 
@@ -446,25 +357,20 @@ void TFT_eSPI::init() {
   if (booted) {
     initBus();
 
-    initDMA();
-    // DPORT_SET_PERI_REG_MASK(DPORT_PERIP_CLK_EN_REG, DPORT_SPI3_CLK_EN);
-    // DPORT_CLEAR_PERI_REG_MASK(DPORT_PERIP_RST_EN_REG, DPORT_SPI3_RST);
-    // SET_BUS_READ_MODE;
-    // *_spi_ctrl = 0;
-    // for(int i = 0; i < 16; i++) _spi_w[i] = 0;
-    // SPI_SET_CLOCK_FREQ(SPI_FREQUENCY);
+    DPORT_SET_PERI_REG_MASK(DPORT_PERIP_CLK_EN_REG, DPORT_SPI3_CLK_EN);
+    DPORT_CLEAR_PERI_REG_MASK(DPORT_PERIP_RST_EN_REG, DPORT_SPI3_RST);
+    SET_BUS_READ_MODE;
+    *_spi_ctrl = 0;
+    for(int i = 0; i < 16; i++) _spi_w[i] = 0;
+    SPI_SET_CLOCK_FREQ(SPI_FREQUENCY);
 
-    // pinMode(TFT_SCLK, OUTPUT);
-    // pinMode(TFT_MOSI, OUTPUT);
-    // pinMode(TFT_MISO, INPUT);
-    // pinMatrixOutAttach(TFT_SCLK, VSPICLK_OUT_IDX, false, false);
-    // pinMatrixInAttach(TFT_MISO, VSPIQ_OUT_IDX, false);
-    // pinMatrixOutAttach(TFT_MOSI, VSPID_IN_IDX, false, false);
-
-    lockTransaction = false;
-    inTransaction = false;
-    locked = true;
-
+    pinMode(TFT_SCLK, OUTPUT);
+    pinMode(TFT_MOSI, OUTPUT);
+    pinMode(TFT_MISO, INPUT);
+    pinMatrixOutAttach(TFT_SCLK, VSPICLK_OUT_IDX, false, false);
+    pinMatrixInAttach(TFT_MISO, VSPID_IN_IDX, false);
+    pinMatrixOutAttach(TFT_MOSI, VSPID_IN_IDX, false, false);
+    SET_PERI_REG_MASK(SPI_DMA_CONF_REG(VSPI), SPI_DMA_RX_EN | SPI_DMA_TX_EN);
 
 #if defined (TFT_CS)
   // Set to output once again in case MISO is used for CS
@@ -559,9 +465,6 @@ uint16_t TFT_eSPI::readPixel(int32_t x0, int32_t y0) {
   // Range checking
   if ((x0 < _vpX) || (y0 < _vpY) ||(x0 >= _vpW) || (y0 >= _vpH)) return 0;
   // This function can get called during anti-aliased font rendering
-  // so a transaction may be in progress
-  bool wasInTransaction = inTransaction;
-  if (inTransaction) { inTransaction= false; end_tft_write();}
 
   uint16_t color = 0;
 
@@ -582,9 +485,6 @@ uint16_t TFT_eSPI::readPixel(int32_t x0, int32_t y0) {
 
   end_tft_read();
 
-  // Reinstate the transaction if one was in progress
-  if(wasInTransaction) { begin_tft_write(); inTransaction = true; }
-
   return color;
 }
 
@@ -592,7 +492,6 @@ void TFT_eSPI::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *d
   PI_CLIP;
 
   begin_tft_write();
-  inTransaction = true;
 
   setWindow(x, y, x + dw - 1, y + dh - 1);
 
@@ -608,7 +507,6 @@ void TFT_eSPI::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *d
     }
   }
 
-  inTransaction = lockTransaction;
   end_tft_write();
 }
 
@@ -616,7 +514,6 @@ void TFT_eSPI::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *d
   PI_CLIP;
 
   begin_tft_write();
-  inTransaction = true;
 
   data += dx + dy * w;
 
@@ -656,7 +553,6 @@ void TFT_eSPI::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *d
     data += w;
   }
 
-  inTransaction = lockTransaction;
   end_tft_write();
 }
 
@@ -664,7 +560,6 @@ void TFT_eSPI::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const uint1
   PI_CLIP;
 
   begin_tft_write();
-  inTransaction = true;
 
   data += dx + dy * w;
 
@@ -678,7 +573,6 @@ void TFT_eSPI::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const uint1
     pushPixels(buffer, dw);
   }
 
-  inTransaction = lockTransaction;
   end_tft_write();
 }
 
@@ -686,7 +580,6 @@ void TFT_eSPI::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const uint1
   PI_CLIP;
 
   begin_tft_write();
-  inTransaction = true;
 
   data += dx + dy * w;
 
@@ -726,7 +619,6 @@ void TFT_eSPI::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const uint1
     data += w;
   }
 
-  inTransaction = lockTransaction;
   end_tft_write();
 }
 
@@ -734,7 +626,6 @@ void TFT_eSPI::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const uint8
   PI_CLIP;
 
   begin_tft_write();
-  inTransaction = true;
   bool swap = _swapBytes;
 
   setWindow(x, y, x + dw - 1, y + dh - 1); // Sets CS low and sent RAMWR
@@ -837,7 +728,6 @@ void TFT_eSPI::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const uint8
   }
 
   _swapBytes = swap; // Restore old value
-  inTransaction = lockTransaction;
   end_tft_write();
 }
 
@@ -846,7 +736,6 @@ void TFT_eSPI::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint8_t *da
   PI_CLIP;
 
   begin_tft_write();
-  inTransaction = true;
   bool swap = _swapBytes;
 
   setWindow(x, y, x + dw - 1, y + dh - 1); // Sets CS low and sent RAMWR
@@ -952,7 +841,6 @@ void TFT_eSPI::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint8_t *da
   }
 
   _swapBytes = swap; // Restore old value
-  inTransaction = lockTransaction;
   end_tft_write();
 }
 
@@ -961,7 +849,6 @@ void TFT_eSPI::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint8_t *da
   PI_CLIP;
 
   begin_tft_write();
-  inTransaction = true;
   bool swap = _swapBytes;
 
 
@@ -1144,7 +1031,6 @@ void TFT_eSPI::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint8_t *da
     }
   }
   _swapBytes = swap; // Restore old value
-  inTransaction = lockTransaction;
   end_tft_write();
 }
 
@@ -1164,8 +1050,6 @@ void TFT_eSPI::drawCircleHelper( int32_t x0, int32_t y0, int32_t rr, uint8_t cor
   int32_t xe    = 0;
   int32_t xs    = 0;
   int32_t len   = 0;
-
-  inTransaction = true;
 
   do {
     while (f < 0) {
@@ -1214,7 +1098,6 @@ void TFT_eSPI::drawCircleHelper( int32_t x0, int32_t y0, int32_t rr, uint8_t cor
     xs = xe;
   } while (xe < rr--);
 
-  inTransaction = lockTransaction;
   end_tft_write();              // Does nothing if Sprite class uses this function
 }
 
@@ -1223,9 +1106,6 @@ void TFT_eSPI::fillCircle(int32_t x0, int32_t y0, int32_t r, uint32_t color) {
   int32_t  dx = 1;
   int32_t  dy = r+r;
   int32_t  p  = -(r>>1);
-
-  //begin_tft_write();          // Sprite class can use this function, avoiding begin_tft_write()
-  inTransaction = true;
 
   drawFastHLine(x0 - r, y0, dy+1, color);
 
@@ -1248,7 +1128,6 @@ void TFT_eSPI::fillCircle(int32_t x0, int32_t y0, int32_t r, uint32_t color) {
 
   }
 
-  inTransaction = lockTransaction;
   end_tft_write();              // Does nothing if Sprite class uses this function
 }
 
@@ -1288,8 +1167,6 @@ void TFT_eSPI::drawEllipse(int16_t x0, int16_t y0, int32_t rx, int32_t ry, uint1
   int32_t fy2 = 4 * ry2;
   int32_t s;
 
-  inTransaction = true;
-
   for (x = 0, y = ry, s = 2*ry2+rx2*(1-2*ry); ry2*x <= rx2*y; x++) {
     // These are ordered to minimise coordinate changes in x or y
     // drawPixel can then send fewer bounding box commands
@@ -1318,7 +1195,6 @@ void TFT_eSPI::drawEllipse(int16_t x0, int16_t y0, int32_t rx, int32_t ry, uint1
     s += rx2 * ((4 * y) + 6);
   }
 
-  inTransaction = lockTransaction;
   end_tft_write();              // Does nothing if Sprite class uses this function
 }
 
@@ -1333,8 +1209,6 @@ void TFT_eSPI::fillEllipse(int16_t x0, int16_t y0, int32_t rx, int32_t ry, uint1
   int32_t fy2 = 4 * ry2;
   int32_t s;
 
-  inTransaction = true;
-
   for (x = 0, y = ry, s = 2*ry2+rx2*(1-2*ry); ry2*x <= rx2*y; x++) {
     drawFastHLine(x0 - x, y0 - y, x + x + 1, color);
     drawFastHLine(x0 - x, y0 + y, x + x + 1, color);
@@ -1357,7 +1231,6 @@ void TFT_eSPI::fillEllipse(int16_t x0, int16_t y0, int32_t rx, int32_t ry, uint1
     s += rx2 * ((4 * y) + 6);
   }
 
-  inTransaction = lockTransaction;
   end_tft_write();              // Does nothing if Sprite class uses this function
 }
 
@@ -1366,24 +1239,17 @@ void TFT_eSPI::fillScreen(uint32_t color) {
   fillRect(0, 0, _width, _height, color);
 }
 
-void TFT_eSPI::drawRect(int32_t x, int32_t y, int32_t w, int32_t h, uint32_t color)
-{
-  inTransaction = true;
+void TFT_eSPI::drawRect(int32_t x, int32_t y, int32_t w, int32_t h, uint32_t color) {
 
   drawFastHLine(x, y, w, color);
   drawFastHLine(x, y + h - 1, w, color);
   drawFastVLine(x, y+1, h-2, color);
   drawFastVLine(x + w - 1, y+1, h-2, color);
 
-  inTransaction = lockTransaction;
   end_tft_write();              // Does nothing if Sprite class uses this function
 }
 
-void TFT_eSPI::drawRoundRect(int32_t x, int32_t y, int32_t w, int32_t h, int32_t r, uint32_t color)
-{
-  //begin_tft_write();          // Sprite class can use this function, avoiding begin_tft_write()
-  inTransaction = true;
-
+void TFT_eSPI::drawRoundRect(int32_t x, int32_t y, int32_t w, int32_t h, int32_t r, uint32_t color) {
   // smarter version
   drawFastHLine(x + r  , y    , w - r - r, color); // Top
   drawFastHLine(x + r  , y + h - 1, w - r - r, color); // Bottom
@@ -1395,15 +1261,10 @@ void TFT_eSPI::drawRoundRect(int32_t x, int32_t y, int32_t w, int32_t h, int32_t
   drawCircleHelper(x + w - r - 1, y + h - r - 1, r, 4, color);
   drawCircleHelper(x + r    , y + h - r - 1, r, 8, color);
 
-  inTransaction = lockTransaction;
   end_tft_write();              // Does nothing if Sprite class uses this function
 }
 
-void TFT_eSPI::fillRoundRect(int32_t x, int32_t y, int32_t w, int32_t h, int32_t r, uint32_t color)
-{
-  //begin_tft_write();          // Sprite class can use this function, avoiding begin_tft_write()
-  inTransaction = true;
-
+void TFT_eSPI::fillRoundRect(int32_t x, int32_t y, int32_t w, int32_t h, int32_t r, uint32_t color) {
   // smarter version
   fillRect(x, y + r, w, h - r - r, color);
 
@@ -1411,16 +1272,10 @@ void TFT_eSPI::fillRoundRect(int32_t x, int32_t y, int32_t w, int32_t h, int32_t
   fillCircleHelper(x + r, y + h - r - 1, r, 1, w - r - r - 1, color);
   fillCircleHelper(x + r    , y + r, r, 2, w - r - r - 1, color);
 
-  inTransaction = lockTransaction;
   end_tft_write();              // Does nothing if Sprite class uses this function
 }
 
 
-/***************************************************************************************
-** Function name:           fillTriangle
-** Description:             Draw a filled triangle using 3 arbitrary points
-***************************************************************************************/
-// Fill a triangle - original Adafruit function works well and code footprint is small
 void TFT_eSPI::fillTriangle ( int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t color)
 {
   int32_t a, b, y, last;
@@ -1445,9 +1300,6 @@ void TFT_eSPI::fillTriangle ( int32_t x0, int32_t y0, int32_t x1, int32_t y1, in
     drawFastHLine(a, y0, b - a + 1, color);
     return;
   }
-
-  //begin_tft_write();          // Sprite class can use this function, avoiding begin_tft_write()
-  inTransaction = true;
 
   int32_t
   dx01 = x1 - x0,
@@ -1492,15 +1344,10 @@ void TFT_eSPI::fillTriangle ( int32_t x0, int32_t y0, int32_t x1, int32_t y1, in
     drawFastHLine(a, y, b - a + 1, color);
   }
 
-  inTransaction = lockTransaction;
   end_tft_write();              // Does nothing if Sprite class uses this function
 }
 
-void TFT_eSPI::drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint16_t color)
-{
-  //begin_tft_write();          // Sprite class can use this function, avoiding begin_tft_write()
-  inTransaction = true;
-
+void TFT_eSPI::drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint16_t color) {
   int32_t i, j, byteWidth = (w + 7) / 8;
 
   for (j = 0; j < h; j++) {
@@ -1509,15 +1356,10 @@ void TFT_eSPI::drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w
     }
   }
 
-  inTransaction = lockTransaction;
   end_tft_write();              // Does nothing if Sprite class uses this function
 }
 
-void TFT_eSPI::drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint16_t fgcolor, uint16_t bgcolor)
-{
-  //begin_tft_write();          // Sprite class can use this function, avoiding begin_tft_write()
-  inTransaction = true;
-
+void TFT_eSPI::drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint16_t fgcolor, uint16_t bgcolor) {
   int32_t i, j, byteWidth = (w + 7) / 8;
 
   for (j = 0; j < h; j++) {
@@ -1528,7 +1370,6 @@ void TFT_eSPI::drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w
     }
   }
 
-  inTransaction = lockTransaction;
   end_tft_write();              // Does nothing if Sprite class uses this function
 }
 
@@ -1796,14 +1637,9 @@ void TFT_eSPI::pushColor(uint16_t color, uint32_t len)
 
 void TFT_eSPI::startWrite() {
   begin_tft_write();
-  lockTransaction = true; // Lock transaction for all sequentially run sketch functions
-  inTransaction = true;
 }
 
 void TFT_eSPI::endWrite() {
-  lockTransaction = false; // Release sketch induced transaction lock
-  inTransaction = false;
-  dmaWait();          // Safety check - user code should have checked this!
   end_tft_write();         // Release SPI bus
 }
 
@@ -1822,12 +1658,10 @@ void TFT_eSPI::pushColors(uint16_t *data, uint32_t len, bool swap)
   end_tft_write();
 }
 
-void TFT_eSPI::drawLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, uint32_t color)
-{
+void TFT_eSPI::drawLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, uint32_t color) {
   if (_vpOoB) return;
 
   //begin_tft_write();       // Sprite class can use this function, avoiding begin_tft_write()
-  inTransaction = true;
 
   bool steep = abs(y1 - y0) > abs(x1 - x0);
   if (steep) {
@@ -1875,7 +1709,6 @@ void TFT_eSPI::drawLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, uint32_t
     if (dlen) drawFastHLine(xs, y0, dlen, color);
   }
 
-  inTransaction = lockTransaction;
   end_tft_write();
 }
 
@@ -1927,7 +1760,6 @@ void TFT_eSPI::drawArc(int32_t x, int32_t y, int32_t r, int32_t ir, uint32_t sta
     if (endAngle == 0) return;
     startAngle = 0;
   }
-  inTransaction = true;
 
   int32_t xs = 0;        // x start position for quadrant scan
   uint8_t alpha = 0;     // alpha value for blending pixels
@@ -2063,7 +1895,6 @@ void TFT_eSPI::drawArc(int32_t x, int32_t y, int32_t r, int32_t ir, uint32_t sta
   if (startAngle <= 180 && endAngle >= 180) drawFastVLine(x, y - r + 1, w, fg_color); // Top
   if (startAngle <= 270 && endAngle >= 270) drawFastHLine(x + r - w, y, w, fg_color); // Right
 
-  inTransaction = lockTransaction;
   end_tft_write();
 }
 
@@ -2073,8 +1904,6 @@ void TFT_eSPI::drawSmoothCircle(int32_t x, int32_t y, int32_t r, uint32_t fg_col
 
 void TFT_eSPI::fillSmoothCircle(int32_t x, int32_t y, int32_t r, uint32_t color, uint32_t bg_color) {
   if (r <= 0) return;
-
-  inTransaction = true;
 
   drawFastHLine(x - r, y, 2 * r + 1, color);
   int32_t xs = 1;
@@ -2114,7 +1943,6 @@ void TFT_eSPI::fillSmoothCircle(int32_t x, int32_t y, int32_t r, uint32_t color,
     drawFastHLine(x + cx - r, y + cy - r, 2 * (r - cx) + 1, color);
     drawFastHLine(x + cx - r, y - cy + r, 2 * (r - cx) + 1, color);
   }
-  inTransaction = lockTransaction;
   end_tft_write();
 }
 
@@ -2129,8 +1957,6 @@ void TFT_eSPI::drawSmoothRoundRect(int32_t x, int32_t y, int32_t r, int32_t ir, 
 
   if (w < 0) w = 0;
   if (h < 0) h = 0;
-
-  inTransaction = true;
 
   x += r;
   y += r;
@@ -2203,14 +2029,10 @@ void TFT_eSPI::drawSmoothRoundRect(int32_t x, int32_t y, int32_t r, int32_t ir, 
   if ((quadrants & 0x3) == 0x3) fillRect(x, y - r + 1, w + 1, t, fg_color);     // Top
   if ((quadrants & 0x6) == 0x6) fillRect(x + r - t + w, y, t, h + 1, fg_color); // Right
 
-  inTransaction = lockTransaction;
   end_tft_write();
 }
 
-void TFT_eSPI::fillSmoothRoundRect(int32_t x, int32_t y, int32_t w, int32_t h, int32_t r, uint32_t color, uint32_t bg_color)
-{
-  inTransaction = true;
-
+void TFT_eSPI::fillSmoothRoundRect(int32_t x, int32_t y, int32_t w, int32_t h, int32_t r, uint32_t color, uint32_t bg_color) {
   int32_t xs = 0;
   int32_t cx = 0;
 
@@ -2251,7 +2073,6 @@ void TFT_eSPI::fillSmoothRoundRect(int32_t x, int32_t y, int32_t w, int32_t h, i
     drawFastHLine(x + cx - r, y + cy - r, 2 * (r - cx) + 1 + w, color);
     drawFastHLine(x + cx - r, y - cy + r + h, 2 * (r - cx) + 1 + w, color);
   }
-  inTransaction = lockTransaction;
   end_tft_write();
 }
 
@@ -2278,7 +2099,6 @@ void TFT_eSPI::drawWedgeLine(float ax, float ay, float bx, float by, float ar, f
   float xpax, ypay, bax = bx - ax, bay = by - ay;
 
   begin_nin_write();
-  inTransaction = true;
 
   int32_t xs = x0;
   // Scan bounding box from ys down, calculate pixel intensity from distance to line
@@ -2334,7 +2154,6 @@ void TFT_eSPI::drawWedgeLine(float ax, float ay, float bx, float by, float ar, f
     }
   }
 
-  inTransaction = lockTransaction;
   end_nin_write();
 }
 
@@ -2502,42 +2321,6 @@ uint16_t TFT_eSPI::alphaBlend(uint8_t alpha, uint16_t fgc, uint16_t bgc, uint8_t
   }
 
   return alphaBlend(alpha, fgc, bgc);
-}
-
-int16_t TFT_eSPI::drawChar(uint16_t uniCode, int32_t x, int32_t y) {
-  return drawChar(uniCode, x, y, textfont);
-}
-
-int16_t TFT_eSPI::drawChar(uint16_t uniCode, int32_t x, int32_t y, uint8_t font) {
-  if (_vpOoB || !uniCode) return 0;
-
-  if (font == 1) return 0;
-  if ((font>1) && (font<9) && ((uniCode < 32) || (uniCode > 127))) return 0;
-
-  int32_t width  = 0;
-  int32_t height = 0;
-  uint32_t flash_address = 0;
-  uniCode -= 32;
-
-  int32_t xd = x + _xDatum;
-  int32_t yd = y + _yDatum;
-
-  if ((xd + width * textsize < _vpX || xd >= _vpW) && (yd + height * textsize < _vpY || yd >= _vpH)) return width * textsize ;
-
-  int32_t w = width;
-  int32_t pX = 0;
-  int32_t pY = y;
-  uint8_t line = 0;
-  bool clip = xd < _vpX || xd + width  * textsize >= _vpW || yd < _vpY || yd + height * textsize >= _vpH;
-
-  flash_address = flash_address;
-  w = w;
-  pX = pX;
-  pY = pY;
-  line = line;
-  clip = clip;
-
-  return width * textsize;
 }
 
 int16_t TFT_eSPI::drawString(const String& string, int32_t poX, int32_t poY) {
@@ -2938,7 +2721,7 @@ void TFT_eSPI::drawGlyph(uint16_t code, uint16_t font) {
     int16_t  bx = 0;
     uint8_t pixel;
 
-    startWrite(); // Avoid slow ESP32 transaction overhead for every pixel
+    startWrite();
 
     int16_t fillwidth  = 0;
     int16_t fillheight = 0;
@@ -3030,16 +2813,14 @@ void TFT_eSPI::drawGlyph(uint16_t code, uint16_t font) {
 #endif
 
 inline void TFT_eSPI::begin_touch_read_write() {
-  dmaWait();
   CS_H; // Just in case it has been left low
-  if (locked) {locked = false; SPI_SET_CLOCK_FREQ(SPI_TOUCH_FREQUENCY);}
+  SPI_SET_CLOCK_FREQ(SPI_TOUCH_FREQUENCY);
   SET_BUS_READ_MODE;
   gpio_set_level((gpio_num_t)TOUCH_CS, 0);
 }
 
 inline void TFT_eSPI::end_touch_read_write() {
   gpio_set_level((gpio_num_t)TOUCH_CS, 1);
-  if(!inTransaction) {if (!locked) {locked = true;}}
 }
 
 uint8_t TFT_eSPI::getTouchRaw(uint16_t *x, uint16_t *y){
@@ -3055,8 +2836,7 @@ uint8_t TFT_eSPI::getTouchRaw(uint16_t *x, uint16_t *y){
   transfer(0);
   transfer(0xd0);
 
-  tmp = transfer(0);                   // Read first 8 bits
-  tmp = tmp <<5;
+  tmp = transfer(0) << 5;                   // Read first 8 bits
   tmp |= 0x1f & (transfer(0x90)>>3);   // Read last 8 bits and start new XP conversion
 
   *x = tmp;
@@ -3069,8 +2849,7 @@ uint8_t TFT_eSPI::getTouchRaw(uint16_t *x, uint16_t *y){
   transfer(0);                       // Read first 8 bits
   transfer(0x90);                    // Read last 8 bits and start new XP conversion
 
-  tmp = transfer(0);                 // Read first 8 bits
-  tmp = tmp <<5;
+  tmp = transfer(0) << 5;                 // Read first 8 bits
   tmp |= 0x1f & (transfer(0)>>3);    // Read last 8 bits
 
   *y = tmp;
@@ -3080,10 +2859,6 @@ uint8_t TFT_eSPI::getTouchRaw(uint16_t *x, uint16_t *y){
   return true;
 }
 
-/***************************************************************************************
-** Function name:           getTouchRawZ
-** Description:             read raw pressure on touchpad and return Z value.
-***************************************************************************************/
 uint16_t TFT_eSPI::getTouchRawZ() {
 
   begin_touch_read_write();
@@ -3108,8 +2883,7 @@ uint8_t TFT_eSPI::validTouch(uint16_t *x, uint16_t *y, uint16_t threshold){
   // Wait until pressure stops increasing to debounce pressure
   uint16_t z1 = 1;
   uint16_t z2 = 0;
-  while (z1 > z2)
-  {
+  while (z1 > z2) {
     z2 = z1;
     z1 = getTouchRawZ();
     delay(1);
@@ -3134,10 +2908,6 @@ uint8_t TFT_eSPI::validTouch(uint16_t *x, uint16_t *y, uint16_t threshold){
   return true;
 }
 
-/***************************************************************************************
-** Function name:           getTouch
-** Description:             read callibrated position. Return false if not pressed.
-***************************************************************************************/
 uint8_t TFT_eSPI::getTouch(uint16_t *x, uint16_t *y, uint16_t threshold){
   uint16_t x_tmp, y_tmp;
 
@@ -3146,9 +2916,8 @@ uint8_t TFT_eSPI::getTouch(uint16_t *x, uint16_t *y, uint16_t threshold){
 
   uint8_t n = 5;
   uint8_t valid = 0;
-  while (n--)
-  {
-    if (validTouch(&x_tmp, &y_tmp, threshold)) valid++;;
+  while (n--) {
+    if (validTouch(&x_tmp, &y_tmp, threshold)) valid++;
   }
 
   if (valid<1) { _pressTime = 0; return false; }
@@ -3164,10 +2933,6 @@ uint8_t TFT_eSPI::getTouch(uint16_t *x, uint16_t *y, uint16_t threshold){
   return valid;
 }
 
-/***************************************************************************************
-** Function name:           convertRawXY
-** Description:             convert raw touch x,y values to screen coordinates
-***************************************************************************************/
 void TFT_eSPI::convertRawXY(uint16_t *x, uint16_t *y)
 {
   uint16_t x_tmp = *x, y_tmp = *y, xx, yy;
@@ -3328,9 +3093,6 @@ TFT_eSprite::TFT_eSprite(TFT_eSPI *tft) {
   _yptr = 0;
 
   _colorMap = nullptr;
-
-  // Ensure end_tft_write() does nothing in inherited functions.
-  lockTransaction = true;
 }
 
 void* TFT_eSprite::createSprite(int16_t w, int16_t h, uint8_t frames) {
@@ -4273,8 +4035,7 @@ void TFT_eSprite::drawLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, uint3
   }
 }
 
-void TFT_eSprite::drawFastVLine(int32_t x, int32_t y, int32_t h, uint32_t color)
-{
+void TFT_eSprite::drawFastVLine(int32_t x, int32_t y, int32_t h, uint32_t color) {
   if (!_created || _vpOoB) return;
 
   x+= _xDatum;
@@ -4317,8 +4078,7 @@ void TFT_eSprite::drawFastVLine(int32_t x, int32_t y, int32_t h, uint32_t color)
   }
 }
 
-void TFT_eSprite::drawFastHLine(int32_t x, int32_t y, int32_t w, uint32_t color)
-{
+void TFT_eSprite::drawFastHLine(int32_t x, int32_t y, int32_t w, uint32_t color) {
   if (!_created || _vpOoB) return;
 
   x+= _xDatum;
@@ -4364,8 +4124,7 @@ void TFT_eSprite::drawFastHLine(int32_t x, int32_t y, int32_t w, uint32_t color)
   }
 }
 
-void TFT_eSprite::fillRect(int32_t x, int32_t y, int32_t w, int32_t h, uint32_t color)
-{
+void TFT_eSprite::fillRect(int32_t x, int32_t y, int32_t w, int32_t h, uint32_t color) {
   if (!_created || _vpOoB) return;
 
   x+= _xDatum;
@@ -4448,45 +4207,7 @@ void TFT_eSprite::fillRect(int32_t x, int32_t y, int32_t w, int32_t h, uint32_t 
   }
 }
 
-int16_t TFT_eSprite::drawChar(uint16_t uniCode, int32_t x, int32_t y) {
-  return drawChar(uniCode, x, y, textfont);
-}
-
-int16_t TFT_eSprite::drawChar(uint16_t uniCode, int32_t x, int32_t y, uint8_t font) {
-  if (_vpOoB || !uniCode) return 0;
-
-  if (font==1) return 0;
-
-  if ((font>1) && (font<9) && ((uniCode < 32) || (uniCode > 127))) return 0;
-
-  int32_t width  = 0;
-  int32_t height = 0;
-  uint32_t flash_address = 0;
-  uniCode -= 32;
-
-  int32_t xd = x + _xDatum;
-  int32_t yd = y + _yDatum;
-
-  if ((xd + width * textsize < _vpX || xd >= _vpW) && (yd + height * textsize < _vpY || yd >= _vpH)) return width * textsize ;
-
-  int32_t w = width;
-  int32_t pX      = 0;
-  int32_t pY      = y;
-  uint8_t line = 0;
-  bool clip = xd < _vpX || xd + width  * textsize >= _vpW || yd < _vpY || yd + height * textsize >= _vpH;
-
-  flash_address = flash_address;
-  w = w;
-  pX = pX;
-  pY = pY;
-  line = line;
-  clip = clip;
-
-  return width * textsize;    // x +
-}
-
-void TFT_eSprite::drawGlyph(uint16_t code, uint16_t font)
-{
+void TFT_eSprite::drawGlyph(uint16_t code, uint16_t font) {
   bool getBG  = false;
   if (textcolor == textbgcolor) getBG = true;
 
