@@ -45,6 +45,9 @@ inline byte sumValueFromBinary(byte binary, byte length) {
 
 void sync_from_rx_rtc(int32_t offset = 0) {
     if(!rx_rtc_avail) return;
+    auto old_clock = Wire.getClock();
+    Wire.setClock(400000);
+
     struct tm timeinfo;
     memset(&timeinfo, 0, sizeof(timeinfo));
 
@@ -66,10 +69,12 @@ void sync_from_rx_rtc(int32_t offset = 0) {
 
         timeinfo.tm_mday = sumValueFromBinary(Wire.read(), 6);
         timeinfo.tm_mon = sumValueFromBinary(Wire.read(), 5) - 1;
-        timeinfo.tm_year = sumValueFromBinary(Wire.read(), 8) + 100;
+        timeinfo.tm_year = sumValueFromBinary(Wire.read(), 8) + 126;
 
         rtc.setTime(mktime(&timeinfo) + offset);
     }
+
+    Wire.setClock(old_clock);
 }
 
 bool init_rtc() {
@@ -102,7 +107,7 @@ bool init_rtc() {
         Wire.write(1 << 2);
         Wire.write(toBCD(14));
         Wire.write(1);
-        Wire.write(toBCD(26));
+        Wire.write(0);
         Wire.endTransmission();
         writeToModule(0x1F, 0); // Unset stop bit
         return true;
@@ -111,7 +116,7 @@ bool init_rtc() {
         writeToModule(0x1F, 0);
         return true;
     }
-    sync_from_rx_rtc();
+    sync_from_rx_rtc(1); // mystery offset
     return false;
 }
 
@@ -128,7 +133,7 @@ void set_time(time_t time) {
     Wire.write(1 << timeinfo->tm_wday);
     Wire.write(toBCD(timeinfo->tm_mday));
     Wire.write(toBCD(timeinfo->tm_mon + 1));
-    Wire.write(toBCD((1900 + timeinfo->tm_year) % 100));
+    Wire.write(toBCD((1900 + timeinfo->tm_year - 26) % 100));
     Wire.endTransmission();
     writeToModule(0x1F, 0);
 }

@@ -685,7 +685,7 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "Filtr RDS", // 57
     "Pokaż błędy PI", // 58
     "Użyj blokady szumów", // 59
-    "Wskaźnik modulacji", // 60
+    "Miernik fonii", // 60
     "Reduktor szumów AM", // 61
     "Reduktor szumów FM", // 62
     "Załadowano domyślne", // 63
@@ -985,7 +985,7 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "RDS filter", // 57
     "Prikaži PI greške", // 58
     "Prikaži squelch", // 59
-    "Mjerač modulacije", // 60
+    "Mjerač zvuka", // 60
     "AM prigušivač šuma", // 61
     "FM prigušivač šuma", // 62
     "Zadane postavke učitane", // 63
@@ -2785,7 +2785,7 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "Filtre RDS", // 57
     "Afficher les erreurs\nde décodage PI", // 58
     "Utiliser le squelch", // 59
-    "Mesure de la modulation", // 60
+    "Mesure de l'intensité sonore", // 60
     "Réducteur de bruit AM", // 61
     "Réducteur de bruit FM", // 62
     "Réglages par défaut\nchargés", // 63
@@ -3985,7 +3985,7 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "Filtro RDS", // 57
     "Mostra errori PI", // 58
     "Usa squelch", // 59
-    "Misuratore modulazione", // 60
+    "Misuratore del suono", // 60
     "Filtro anti-rumore AM", // 61
     "Filtro anti-rumore FM", // 62
     "Impostazioni predefinite caricate", // 63
@@ -4585,7 +4585,7 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "RDS-filter", // 57
     "Vis PI-feil", // 58
     "Bruk squelch", // 59
-    "Modulasjonsmåler", // 60
+    "Lydmåler", // 60
     "AM-støydemper", // 61
     "FM-støydemper", // 62
     "Standarder lastet", // 63
@@ -5785,7 +5785,7 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "RDS-suodatin", // 57
     "Näytä PI-virheet", // 58
     "Käytä squelchiä", // 59
-    "Modulaatiomittari", // 60
+    "Äänimittari", // 60
     "AM Melupeitto", // 61
     "FM Melupeitto", // 62
     "Oletusarvot ladattu", // 63
@@ -6085,7 +6085,7 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "RDS-filter", // 57
     "Vis PI-fejl", // 58
     "Brug squelch", // 59
-    "Modulationsmåler", // 60
+    "Lydmåler", // 60
     "AM-støjfjerner", // 61
     "FM-støjfjerner", // 62
     "Standardindstillinger\nindlæst", // 63
@@ -6385,7 +6385,7 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "RDS-filter", // 57
     "Visa PI-fel", // 58
     "Använd brusspärr", // 59
-    "Modulationsmätare", // 60
+    "Ljudmätare", // 60
     "AM noise blanker", // 61
     "FM noise blanker", // 62
     "Standarder laddade", // 63

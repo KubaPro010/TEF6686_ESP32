@@ -893,7 +893,7 @@ void ShowOneLine(byte position, byte item, bool selected) {
 
           FullLineSprite.setTextDatum(TR_DATUM);
           FullLineSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
-          FullLineSprite.drawString((showmodulation ? textUI(28) : textUI(27)), 298, 2);
+          FullLineSprite.drawString((showaudio ? textUI(28) : textUI(27)), 298, 2);
           break;
 
         case RDSSETTINGS:
@@ -1972,7 +1972,7 @@ void ShowOneButton(byte position, byte item, bool selected) {
           PSSprite.drawString(shortLine(removeNewline(textUI(60))), 75, 1);
 
           PSSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
-          PSSprite.drawString((showmodulation ? textUI(28) : textUI(27)), 75, 15);
+          PSSprite.drawString((showaudio ? textUI(28) : textUI(27)), 75, 15);
           break;
 
         case RDSSETTINGS:
@@ -2969,7 +2969,6 @@ void BuildAdvancedRDS() {
   stationIDold = " ";
   stationStateold = " ";
   af_counterold = 254;
-  dynamicPTYold = false;
   hasafold = false;
   haseonold = false;
   BWreset = true;
@@ -2987,6 +2986,7 @@ void BuildAdvancedRDS() {
   radio.rds.PTYN.call();
   radio.rds.ECC.call();
   radio.rds.hasArtificialhead.call();
+  radio.rds.hasDynamicPTY.call();
   radio.rds.hasCompressed.call();
   radio.rds.hasStereo.call();
   radio.rds.TP.call();
@@ -3021,18 +3021,18 @@ void BuildDisplay() {
   tft.drawLine(257, 144, 257, 180, FrameColor);
   tft.drawLine(248, 30, 248, 0, FrameColor);
 
-  if (!showmodulation) tft.drawLine(16, 143, 189, 143, GreyoutColor); else tft.drawLine(16, 143, 189, 143, ActiveColor);
+  if (!showaudio) tft.drawLine(16, 143, 189, 143, GreyoutColor); else tft.drawLine(16, 143, 189, 143, ActiveColor);
 
   for (byte segments = 0; segments < 93; segments++) {
     if (segments > 54) {
       if (((segments - 53) % 10) == 0) {
         tft.fillRect(22 + (2 * segments), 112, 2, 2, BarSignificantColor);
-        if (!showmodulation) tft.fillRect(22 + (2 * segments), 141, 2, 2, GreyoutColor); else tft.fillRect(22 + (2 * segments), 141, 2, 2, BarSignificantColor);
+        if (!showaudio) tft.fillRect(22 + (2 * segments), 141, 2, 2, GreyoutColor); else tft.fillRect(22 + (2 * segments), 141, 2, 2, BarSignificantColor);
       }
     } else {
       if (((segments + 1) % 6) == 0) {
         tft.fillRect(22 + (2 * segments), 112, 2, 2, BarInsignificantColor);
-        if (!showmodulation) tft.fillRect(22 + (2 * segments), 141, 2, 2, GreyoutColor); else tft.fillRect(22 + (2 * segments), 141, 2, 2, BarInsignificantColor);
+        if (!showaudio) tft.fillRect(22 + (2 * segments), 141, 2, 2, GreyoutColor); else tft.fillRect(22 + (2 * segments), 141, 2, 2, BarInsignificantColor);
       }
     }
   }
@@ -3054,7 +3054,7 @@ void BuildDisplay() {
   tftPrint(ALEFT, "+10", 127, 115, ActiveColor, ActiveColorSmooth, 16);
   tftPrint(ALEFT, "+30", 160, 115, ActiveColor, ActiveColorSmooth, 16);
 
-  if (!showmodulation) {
+  if (!showaudio) {
     tftPrint(ACENTER, "A", 7, 128, GreyoutColor, BackgroundColor, 16);
     tftPrint(ALEFT, "10", 24, 144, GreyoutColor, BackgroundColor, 16);
     tftPrint(ALEFT, "30", 54, 144, GreyoutColor, BackgroundColor, 16);
@@ -3545,9 +3545,9 @@ void MenuUpDown(bool dir) {
             break;
 
           case ITEM3:
-            showmodulation = !showmodulation;
+            showaudio = !showaudio;
 
-            OneBigLineSprite.drawString((showmodulation ? textUI(28) : textUI(27)), 135, 0);
+            OneBigLineSprite.drawString((showaudio ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
 
@@ -4816,7 +4816,7 @@ void DoMenu() {
           case ITEM3:
             Infoboxprint(textUI(60));
 
-            OneBigLineSprite.drawString((showmodulation ? textUI(28) : textUI(27)), 135, 0);
+            OneBigLineSprite.drawString((showaudio ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
 
@@ -5511,7 +5511,7 @@ void DoMenu() {
   } else {
     if (menupage == CONNECTIVITY && menuoption == ITEM2) {
       tryWiFi();
-      delay(2000);
+      delay(1750);
     }
     if (menupage == DISPLAYSETTINGS && menuoption == ITEM5) {
       doTheme();

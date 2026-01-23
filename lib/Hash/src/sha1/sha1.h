@@ -13,15 +13,10 @@
     100% Public Domain
 */
 
-#ifndef SHA1_H_
-#define SHA1_H_
+#pragma once
 
-#ifdef ESP32
 #define ICACHE_FLASH_ATTR
 #define STATIC static
-#else
-#define STATIC
-#endif
 
 typedef struct {
     uint32_t state[5];
@@ -33,7 +28,3 @@ STATIC void SHA1Transform(uint32_t state[5], uint8_t buffer[64]);
 STATIC void SHA1Init(SHA1_CTX* context);
 STATIC void SHA1Update(SHA1_CTX* context, uint8_t* data, uint32_t len);
 STATIC void SHA1Final(unsigned char digest[20], SHA1_CTX* context);
-
-#endif /* SHA1_H_ */
-
-/* ================ end of sha1.h ================ */

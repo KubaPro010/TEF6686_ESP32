@@ -316,7 +316,7 @@ TFT_eSPI::TFT_eSPI(int16_t w, int16_t h) {
   textwrapX = false;
   textdatum = TL_DATUM;
 
-  _swapBytes = false;
+  _swapBytes = true;
 
   booted = true;
 
@@ -404,7 +404,7 @@ void TFT_eSPI::init() {
     gpio_set_level((gpio_num_t)TFT_RST, 1);
   }
 
-  delay(50); // Wait for reset to complete
+  delay(35); // Wait for reset to complete
 
   begin_tft_write();
 
@@ -3079,7 +3079,7 @@ TFT_eSprite::TFT_eSprite(TFT_eSPI *tft) {
   _iwidth    = 0; // Initialise width and height to 0 (it does not exist yet)
   _iheight   = 0;
   _bpp = 16;
-  _swapBytes = false;   // Do not swap pushImage colour bytes by default
+  _swapBytes = true;   // Do not swap pushImage colour bytes by default
 
   _created = false;
   _vpOoB   = true;
@@ -3310,40 +3310,29 @@ void TFT_eSprite::pushSprite(int32_t x, int32_t y)
 {
   if (!_created) return;
 
-  if (_bpp == 16)
-  {
+  if (_bpp == 16) {
     bool oldSwapBytes = _tft->getSwapBytes();
     _tft->setSwapBytes(false);
     _tft->pushImage(x, y, _dwidth, _dheight, _img );
     _tft->setSwapBytes(oldSwapBytes);
-  }
-  else if (_bpp == 4)
-  {
+  } else if (_bpp == 4) {
     _tft->pushImage(x, y, _dwidth, _dheight, _img4, false, _colorMap);
-  }
-  else _tft->pushImage(x, y, _dwidth, _dheight, _img8, (bool)(_bpp == 8));
+  } else _tft->pushImage(x, y, _dwidth, _dheight, _img8, (bool)(_bpp == 8));
 }
 
 void TFT_eSprite::pushSprite(int32_t x, int32_t y, uint16_t transp)
 {
   if (!_created) return;
 
-  if (_bpp == 16)
-  {
+  if (_bpp == 16) {
     bool oldSwapBytes = _tft->getSwapBytes();
     _tft->setSwapBytes(false);
     _tft->pushImage(x, y, _dwidth, _dheight, _img, transp );
     _tft->setSwapBytes(oldSwapBytes);
-  }
-  else if (_bpp == 8)
-  {
+  } else if (_bpp == 8) {
     transp = (uint8_t)((transp & 0xE000)>>8 | (transp & 0x0700)>>6 | (transp & 0x0018)>>3);
     _tft->pushImage(x, y, _dwidth, _dheight, _img8, (uint8_t)transp, (bool)true);
-  }
-  else if (_bpp == 4)
-  {
-    _tft->pushImage(x, y, _dwidth, _dheight, _img4, (uint8_t)(transp & 0x0F), false, _colorMap);
-  }
+  } else if (_bpp == 4) _tft->pushImage(x, y, _dwidth, _dheight, _img4, (uint8_t)(transp & 0x0F), false, _colorMap);
   else _tft->pushImage(x, y, _dwidth, _dheight, _img8, 0, (bool)false);
 }
 

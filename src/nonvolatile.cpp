@@ -67,7 +67,7 @@ void saveData() {
   EEPROM.writeByte(EE_BYTE_RDS_FILTER, radio.rds.filter);
   EEPROM.writeByte(EE_BYTE_RDS_PIERRORS, radio.rds.pierrors);
   EEPROM.writeByte(EE_BYTE_USESQUELCH, usesquelch);
-  EEPROM.writeByte(EE_BYTE_SHOWMODULATION, showmodulation);
+  EEPROM.writeByte(EE_BYTE_SHOWAUDIO, showaudio);
   EEPROM.writeByte(EE_BYTE_AM_NB, amnb);
   EEPROM.writeByte(EE_BYTE_FM_NB, fmnb);
   EEPROM.writeByte(EE_BYTE_AUDIOMODE, audiomode);
@@ -172,7 +172,7 @@ void loadData() {
   frequency_SW = EEPROM.readUInt(EE_UINT16_FREQUENCY_SW);
   XDRGTK_key = EEPROM.readString(EE_STRING_XDRGTK_KEY);
   usesquelch = EEPROM.readByte(EE_BYTE_USESQUELCH);
-  showmodulation = EEPROM.readByte(EE_BYTE_SHOWMODULATION);
+  showaudio = EEPROM.readByte(EE_BYTE_SHOWAUDIO);
   amnb = EEPROM.readByte(EE_BYTE_AM_NB);
   fmnb = EEPROM.readByte(EE_BYTE_FM_NB);
   audiomode = EEPROM.readByte(EE_BYTE_AUDIOMODE);
@@ -282,7 +282,7 @@ void DefaultSettings() {
   EEPROM.writeUInt(EE_UINT16_FREQUENCY_SW, 1800);
   EEPROM.writeString(EE_STRING_XDRGTK_KEY, "password");
   EEPROM.writeByte(EE_BYTE_USESQUELCH, 1);
-  EEPROM.writeByte(EE_BYTE_SHOWMODULATION, 1);
+  EEPROM.writeByte(EE_BYTE_SHOWAUDIO, 1);
   EEPROM.writeByte(EE_BYTE_AM_NB, 0);
   EEPROM.writeByte(EE_BYTE_FM_NB, 0);
   EEPROM.writeByte(EE_BYTE_AUDIOMODE, 0);

@@ -27,11 +27,7 @@
 #include <sys/time.h>
 #include "esp_attr.h"
 
-#ifdef RTC_DATA_ATTR
 RTC_DATA_ATTR static bool overflow;
-#else
-static bool overflow;
-#endif
 
 /*!
     @brief  set the internal RTC time

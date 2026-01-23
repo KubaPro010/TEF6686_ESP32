@@ -462,7 +462,7 @@ typedef struct _rds_ {
   bool rdsDerror;
   Detector<bool, 1> hasArtificialhead{false};
   Detector<bool, 1> hasCompressed{false};
-  bool hasDynamicPTY;
+  Detector<bool, 1> hasDynamicPTY{false};
   Detector<bool, 1> hasStereo{false};
   bool hasRDS;
   bool hasECC;
@@ -534,9 +534,9 @@ class TEF6686 {
     void SetFreq(uint16_t frequency);
     void SetFreqAM(uint16_t frequency);
     void getProcessing(uint16_t &highcut, uint16_t &stereo, uint16_t &sthiblend, uint8_t &stband_1, uint8_t &stband_2, uint8_t &stband_3, uint8_t &stband_4);
-    void getStatus(int16_t *level, uint16_t *USN, uint16_t *WAM, int16_t *offset, uint16_t *bandwidth, uint16_t *modulation, int8_t *snr);
-    void getStatusAM(int16_t *level, uint16_t *noise, uint16_t *cochannel, int16_t *offset, uint16_t *bandwidth, uint16_t *modulation, int8_t *snr);
-    void getIdentification(uint16_t *device, uint16_t *hw_version, uint16_t *sw_version);
+    void getStatus(int16_t *level, uint16_t *USN, uint16_t *WAM, int16_t *offset, uint16_t *bandwidth, uint16_t *audiolevel, int8_t *snr);
+    void getStatusAM(int16_t *level, uint16_t *noise, uint16_t *cochannel, int16_t *offset, uint16_t *bandwidth, uint16_t *audiolevel, int8_t *snr);
+    uint16_t getIdentification(uint16_t *hw_version, uint16_t *sw_version);
     void setSoftmuteFM(uint8_t mode);
     void setSoftmuteAM(uint8_t mode);
     void setMono(bool mono);

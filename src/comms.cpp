@@ -411,7 +411,7 @@ void XDRGTKRoutine() {
     }
   }
 
-  if (XDRGTKdata) {
+  if(XDRGTKdata) {
     switch (buff[0])
     {
       case 'A': {
@@ -423,8 +423,8 @@ void XDRGTKRoutine() {
               radio.setAGC(92);
               fmagc = 92;
             } else {
-              radio.setAMAGC(102);
-              amagc = 102;
+              radio.setAMAGC(100);
+              amagc = 100;
             }
             break;
           case 1:
@@ -508,35 +508,18 @@ void XDRGTKRoutine() {
       } case 'F': {
         XDRBWset = atoi(buff + 1);
         DataPrint("F" + String(XDRBWset) + "\n");
-        if (XDRBWset < 0) {
-          BWset = 0;
-        } else if (XDRBWset < 16) {
-          BWset = XDRBWset + 1;
-        }
+        if (XDRBWset < 0) BWset = 0;
+        else if (XDRBWset < 16) BWset = XDRBWset + 1;
         doBW();
         break;
       } case 'G': {
-        byte offsetg = atoi(buff + 1);
-        if (offsetg == 0) {
-          iMSset = 1;
-          EQset = 1;
-          DataPrint("G00\n");
-        }
-        if (offsetg == 10) {
-          iMSset = 1;
-          EQset = 0;
-          DataPrint("G10\n");
-        }
-        if (offsetg == 1) {
-          iMSset = 0;
-          EQset = 1;
-          DataPrint("G01\n");
-        }
-        if (offsetg == 11) {
-          iMSset = 0;
-          EQset = 0;
-          DataPrint("G11\n");
-        }
+        uint8_t offsetg = strtoul(buff + 1, NULL, 2);
+        iMSset = (offsetg & 2) == 2;
+        EQset = (offsetg & 1) == 1;
+        if (offsetg == 0) DataPrint("G00\n");
+        else if (offsetg == 2) DataPrint("G10\n");
+        else if (offsetg == 1) DataPrint("G01\n");
+        else if (offsetg == 3) DataPrint("G11\n");
         updateiMS();
         updateEQ();
         break;
@@ -747,7 +730,7 @@ void XDRGTKRoutine() {
             doBW();
             break;
           case 'w': {
-            unsigned int bwtemp = atoi(buff + 2);
+            uint32_t bwtemp = atoi(buff + 2);
             switch (bwtemp) {
               case 0: BWset = 0; break;
               case 56000: BWset = 1; break;
@@ -770,7 +753,6 @@ void XDRGTKRoutine() {
             doBW();
             break;
           }
-
           case '\0':
             radio.setMute();
             if (!screenmute) tft.drawBitmap(249, 4, Speaker, 28, 24, PrimaryColor);
@@ -808,7 +790,7 @@ void XDRGTKRoutine() {
         }
         break;
       } case 'W': {
-        unsigned int bwtemp = atoi(buff + 1);
+        uint32_t bwtemp = atoi(buff + 1);
         switch (bwtemp) {
           case 0: BWset = 0; break;
           case 56000: BWset = 1; break;
@@ -851,8 +833,8 @@ void XDRGTKRoutine() {
         if (BAND_FM) DataPrint("T" + String((frequency + ConverterSet * 100) * 10) + "\n");
         else if (BAND_OIRT) DataPrint("T" + String(frequency_OIRT * 10) + "\n");
         else DataPrint("T" + String(frequency_AM) + "\n");
-        if (StereoToggle) DataPrint("B0\n"); else DataPrint("B1\n");
-        if (XDRGTKMuteScreen) MuteScreen(1);
+        if(StereoToggle) DataPrint("B0\n"); else DataPrint("B1\n");
+        if(XDRGTKMuteScreen) MuteScreen(1);
         break;
       } case 'X': {
         XDRGTKTCP = false;
@@ -889,7 +871,7 @@ void XDRGTKRoutine() {
 
 void passwordcrypt() {
   int generated = 0;
-  while (generated < 16) {
+  while(generated < 16) {
     byte randomValue = random(0, 26);
     char letter = randomValue + 'a';
     if (randomValue > 26) letter = (randomValue - 26);

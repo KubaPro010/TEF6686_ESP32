@@ -39,6 +39,46 @@
 #define TIMER_SNR_TIMER             30
 #define TIMER_BAT_TIMER             750
 
+// Signal quality thresholds for scanning
+#define SCAN_SIGNAL_THRESHOLD_USN_MULTIPLIER  30
+#define SCAN_SIGNAL_THRESHOLD_WAM            230
+#define SCAN_SIGNAL_THRESHOLD_OSTATUS        80
+#define SCAN_SIGNAL_THRESHOLD_OSTATUS_WIDE   100
+
+// Timing constants (milliseconds)
+#define DELAY_TUNE_MS                50
+#define DELAY_UI_UPDATE_MS           200
+#define DELAY_BUTTON_DEBOUNCE_MS      50
+#define DELAY_BUTTON_DEBOUNCE_EXTRA_MS 75
+#define DELAY_KEYPAD_TIMEOUT_MS      2000
+#define DELAY_RDS_READ_MS            50
+#define DELAY_TOUCH_REPEAT_MS         500
+#define TOT_MULTIPLIER_MS            60000
+#define NTP_UPDATE_INTERVAL_MS        1800000
+#define UDP_LOG_INTERVAL_MS           500
+#define SCAN_HOLD_DEFAULT_MS         500
+
+// UI layout coordinates
+#define STEREO_ICON_X                32
+#define STEREO_ICON_Y                5
+#define WIFI_ICON_X                  282
+#define WIFI_ICON_Y                  3
+#define WIFI_ICON_WIDTH              30
+#define WIFI_ICON_HEIGHT             25
+#define SPEAKER_ICON_X               249
+#define SPEAKER_ICON_Y               4
+#define SPEAKER_ICON_WIDTH           28
+#define SPEAKER_ICON_HEIGHT          24
+
+// Touch thresholds
+#define TOUCH_RAW_Z_THRESHOLD        250
+
+// Battery detection
+#define BATTERY_DETECT_THRESHOLD     200
+
+// Squelch values
+#define SQUELCH_MAX_VALUE            920
+
 #define BAT_LEVEL_STAGE             8
 #define BATTERY_LOW_VALUE           3.2
 #define BATTERY_FULL_VALUE          4.12
@@ -283,7 +323,7 @@
 #define EE_BYTE_RDS_FILTER            2137
 #define EE_BYTE_RDS_PIERRORS          2138
 #define EE_BYTE_USESQUELCH            2139
-#define EE_BYTE_SHOWMODULATION        2140
+#define EE_BYTE_SHOWAUDIO             2140
 #define EE_BYTE_AM_NB                 2141
 #define EE_BYTE_FM_NB                 2142
 #define EE_BYTE_AUDIOMODE             2143

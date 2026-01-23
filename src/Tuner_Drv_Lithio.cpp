@@ -2,41 +2,38 @@
 #include <stdarg.h>
 
 void devTEF_Set_Cmd(TEF_MODULE module, uint8_t cmd, uint16_t len, ...) {
-  uint16_t i, temp;
-  uint8_t buf[20];
+  if(len > 10) return;
+  uint8_t buf[22];
   va_list vArgs;
   va_start(vArgs, len);
   buf[0] = module;
   buf[1] = cmd;
   buf[2] = 1;
 
-  for (i = 0; i < len; i++) {
-    temp = va_arg(vArgs, int);
-    buf[3 + i++] = High_16bto8b(temp);
-    buf[3 + i] = Low_16bto8b(temp);
+  for (uint16_t i = 0; i < len; i++) {
+      uint16_t temp = va_arg(vArgs, int);
+      buf[3 + 2*i] = High_16bto8b(temp);
+      buf[3 + 2*i + 1] = Low_16bto8b(temp);
   }
 
   va_end(vArgs);
-  Tuner_WriteBuffer(buf, len + 3);
+  Tuner_WriteBuffer(buf, len * 2 + 3);
 }
 
 bool devTEF_Get_Cmd(TEF_MODULE module, uint8_t cmd, uint8_t *receive, uint16_t len) {
-  uint8_t buf[3];
-  buf[0] = module;
-  buf[1] = cmd;
-  buf[2] = 1;
+  uint8_t buf[3] = {module, cmd, 1};
 
-  Tuner_WriteBuffer(buf, 3);
+  Tuner_WriteBuffer(buf, sizeof(buf));
   return Tuner_ReadBuffer(receive, len);
 }
 
 uint8_t devTEF_APPL_Get_Operation_Status() {
   uint8_t buf[2];
-  while(!devTEF_Get_Cmd(TEF_APPL, Cmd_Get_Operation_Status, buf, sizeof(buf))) delay(3);
+  while(!devTEF_Get_Cmd(TEF_APPL, Cmd_Get_Operation_Status, buf, sizeof(buf))) delay(1);
   return Convert8bto16b(buf);
 }
 
-void devTEF_Radio_Get_Quality_Status(uint16_t *status, int16_t *level, uint16_t *usn, uint16_t *wam, int16_t *offset, uint16_t *bandwidth, uint16_t *mod, int8_t *snr) {
+void devTEF_Radio_Get_Quality_Status(uint16_t *status, int16_t *level, uint16_t *usn, uint16_t *wam, int16_t *offset, uint16_t *bandwidth, uint16_t *audiolevel, int8_t *snr) {
   uint8_t buf[14];
   devTEF_Get_Cmd(TEF_FM, Cmd_Get_Quality_Data, buf, sizeof(buf));
   if(status != NULL) *status = Convert8bto16b(buf);
@@ -45,7 +42,7 @@ void devTEF_Radio_Get_Quality_Status(uint16_t *status, int16_t *level, uint16_t 
   if(wam != NULL) *wam = Convert8bto16b(buf + 6);
   if(offset != NULL) *offset = Convert8bto16b(buf + 8);
   if(bandwidth != NULL) *bandwidth = Convert8bto16b(buf + 10) / 10;
-  if(mod != NULL) *mod = Convert8bto16b(buf + 12) / 10;
+  if(audiolevel != NULL) *audiolevel = Convert8bto16b(buf + 12) / 10;
   if (*level < -200) *level = -200;
   if (*level > 1200) *level = 1200;
   if(snr != NULL) *snr = int(0.46222375 * (float)(*level) / 10 - 0.082495118 * (float)(*usn) / 10) + 10;
@@ -74,7 +71,7 @@ void devTEF_Radio_Get_RDS_Data(uint16_t *status, uint16_t *A_block, uint16_t *B_
 }
 
 void devTEF_Radio_Set_Wavegen(bool mode, int16_t amplitude, uint16_t freq) {
-  devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_Input, 2, mode ? 240 : 0);
-  if (mode) devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_WaveGen, 12, 5, 0, amplitude * 10, freq, amplitude * 10, freq);
-  else devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_WaveGen, 12, 0);
+  devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_Input, 1, mode ? 240 : 0);
+  if (mode) devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_WaveGen, 6, 5, 0, amplitude * 10, freq, amplitude * 10, freq);
+  else devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_WaveGen, 6, 0);
 }

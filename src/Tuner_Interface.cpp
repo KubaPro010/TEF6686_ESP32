@@ -13,7 +13,7 @@ bool Tuner_WriteBuffer(unsigned char *buf, uint16_t len) {
 
 bool Tuner_ReadBuffer(unsigned char *buf, uint16_t len) {
   Wire.requestFrom(TEF668X_ADDRESS, len);
-  if (Wire.available() == len) {
+  if (Wire.available() >= len) {
     for (uint16_t i = 0; i < len; i++) buf[i] = Wire.read();
     return true;
   }

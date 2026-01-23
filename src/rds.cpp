@@ -17,21 +17,20 @@ void ShowAdvancedRDS() {
     if (radio.rds.rdsDerror) tft.fillCircle(200, 41, 5, SignificantColor); else tft.fillCircle(200, 41, 5, InsignificantColor);
   }
 
-  if (radio.rds.hasDynamicPTY != dynamicPTYold) {
-    if (radio.rds.hasDynamicPTY) tft.fillCircle(310, 137, 5, InsignificantColor); else tft.fillCircle(310, 137, 5, SignificantColor);
-    dynamicPTYold = radio.rds.hasDynamicPTY;
+  if(radio.rds.hasDynamicPTY.changed(0)) {
+    if(radio.rds.hasDynamicPTY.get()) tft.fillCircle(310, 137, 5, InsignificantColor); else tft.fillCircle(310, 137, 5, SignificantColor);
   }
 
-  if (radio.rds.hasArtificialhead.changed(0)) {
-    if (radio.rds.hasArtificialhead) tft.fillCircle(310, 153, 5, InsignificantColor); else tft.fillCircle(310, 153, 5, SignificantColor);
+  if(radio.rds.hasArtificialhead.changed(0)) {
+    if(radio.rds.hasArtificialhead) tft.fillCircle(310, 153, 5, InsignificantColor); else tft.fillCircle(310, 153, 5, SignificantColor);
   }
 
-  if (radio.rds.hasCompressed.changed(0)) {
-    if (radio.rds.hasCompressed) tft.fillCircle(310, 168, 5, InsignificantColor); else tft.fillCircle(310, 168, 5, SignificantColor);
+  if(radio.rds.hasCompressed.changed(0)) {
+    if(radio.rds.hasCompressed) tft.fillCircle(310, 168, 5, InsignificantColor); else tft.fillCircle(310, 168, 5, SignificantColor);
   }
 
-  if (radio.rds.hasStereo.changed(0)) {
-    if (radio.rds.hasStereo) tft.fillCircle(310, 183, 5, InsignificantColor); else tft.fillCircle(310, 183, 5, SignificantColor);
+  if(radio.rds.hasStereo.changed(0)) {
+    if(radio.rds.hasStereo) tft.fillCircle(310, 183, 5, InsignificantColor); else tft.fillCircle(310, 183, 5, SignificantColor);
   }
 
   if (radio.rds.PTYN.changed(0) || rdsreset) {
