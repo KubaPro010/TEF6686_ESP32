@@ -2521,11 +2521,10 @@ int16_t TFT_eSPI::drawFloat(float floatNumber, uint8_t dp, int32_t poX, int32_t 
 }
 
 void TFT_eSPI::setTextFont(uint8_t f) {
-  textfont = (f > 7) ? 1 : f; // Don't allow font > 7
+  textfont = (f > FONT_COUNT) ? 1 : f; // Don't allow font > 7
 }
 
-void TFT_eSPI::loadFont(const uint8_t array[], uint8_t font)
-{
+void TFT_eSPI::loadFont(const uint8_t array[], uint8_t font) {
   if (array == nullptr) return;
   fontPtr = (uint8_t*)array;
   unloadFont(font);
@@ -2593,45 +2592,50 @@ void TFT_eSPI::loadMetrics(uint8_t font)
   gFonts[font].spaceWidth = (gFonts[font].ascent + gFonts[font].descent) * 2/7;  // Guess at space width
 }
 
-void TFT_eSPI::unloadFont(uint8_t font)
-{
+void TFT_eSPI::unloadFont(uint8_t font) {
+  if (!fontOwned[font]) {
+    gUnicode[font] = NULL;
+    gHeight[font] = NULL;
+    gWidth[font] = NULL;
+    gxAdvance[font] = NULL;
+    gdY[font] = NULL;
+    gdX[font] = NULL;
+    gBitmap[font] = NULL;
+    gFonts[font].gArray = nullptr;
+    return;
+  }
+
   if (gUnicode[font]) {
     free(gUnicode[font]);
     gUnicode[font] = NULL;
   }
 
-  if (gHeight[font])
-  {
+  if (gHeight[font]) {
     free(gHeight[font]);
     gHeight[font] = NULL;
   }
 
-  if (gWidth[font])
-  {
+  if (gWidth[font]) {
     free(gWidth[font]);
     gWidth[font] = NULL;
   }
 
-  if (gxAdvance[font])
-  {
+  if (gxAdvance[font]) {
     free(gxAdvance[font]);
     gxAdvance[font] = NULL;
   }
 
-  if (gdY[font])
-  {
+  if (gdY[font]) {
     free(gdY[font]);
     gdY[font] = NULL;
   }
 
-  if (gdX[font])
-  {
+  if (gdX[font]) {
     free(gdX[font]);
     gdX[font] = NULL;
   }
 
-  if (gBitmap[font])
-  {
+  if (gBitmap[font]) {
     free(gBitmap[font]);
     gBitmap[font] = NULL;
   }
@@ -3079,7 +3083,7 @@ TFT_eSprite::TFT_eSprite(TFT_eSPI *tft) {
   _iwidth    = 0; // Initialise width and height to 0 (it does not exist yet)
   _iheight   = 0;
   _bpp = 16;
-  _swapBytes = true;   // Do not swap pushImage colour bytes by default
+  _swapBytes = true;
 
   _created = false;
   _vpOoB   = true;
@@ -3306,8 +3310,7 @@ void TFT_eSprite::deleteSprite() {
   }
 }
 
-void TFT_eSprite::pushSprite(int32_t x, int32_t y)
-{
+void TFT_eSprite::pushSprite(int32_t x, int32_t y) {
   if (!_created) return;
 
   if (_bpp == 16) {
@@ -4336,3 +4339,19 @@ void TFT_eSprite::drawGlyph(uint16_t code, uint16_t font) {
   bg_cursor_x = cursor_x;
   last_cursor_x = cursor_x;
 }
+
+  void TFT_eSprite::copyFontFromTFT(uint8_t source, uint8_t destination) {
+    unloadFont(destination); // Make sure there is nothing there
+
+    gUnicode[destination] = _tft->gUnicode[source];
+    gHeight[destination] = _tft->gHeight[source];
+    gWidth[destination] = _tft->gWidth[source];
+    gxAdvance[destination] = _tft->gxAdvance[source];
+    gdY[destination] = _tft->gdY[source];
+    gdX[destination] = _tft->gdX[source];
+    gBitmap[destination] = _tft->gBitmap[source];
+
+    memcpy(&gFonts[destination], &_tft->gFonts[source], sizeof(fontMetrics));
+
+    fontOwned[destination] = false;
+  }

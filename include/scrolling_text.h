@@ -13,7 +13,7 @@ private:
   unsigned long lastTick;
   unsigned long holdTick;
   bool isScrolling;
-  std::function<void(TFT_eSprite*, bool)> postDrawCallback;
+  std::function<void(TFT_eSprite*)> postDrawCallback;
   int usedH;
   bool hold;
   int xOffset;
@@ -26,17 +26,17 @@ public:
   ScrollingTextDisplay(TFT_eSprite* spr, int y, int maxW, int x = 35, int inuseH = -1 ) :
     sprite(spr), yPos(y), maxWidth(maxW), xPos(0), textWidth(0), lastTick(0), holdTick(0), isScrolling(false), postDrawCallback(nullptr), usedH(inuseH), hold(false), xOffset(x) {}
 
-  void setPostDrawCallback(std::function<void(TFT_eSprite*, bool)> callback) {
+  void setPostDrawCallback(std::function<void(TFT_eSprite*)> callback) {
     postDrawCallback = callback;
   }
 
-  void update(const String& text, bool status, uint16_t activeColor, uint16_t activeSmooth, uint16_t dropoutColor, uint16_t dropoutSmooth, uint16_t backgroundColor) {
+  void update(const String& text, bool status, uint16_t activeColor, uint16_t activeSmooth, uint16_t dropoutColor, uint16_t dropoutSmooth, uint16_t backgroundColor, uint8_t font = 255) {
     textWidth = sprite->textWidth(text);
 
     if(textWidth < maxWidth) {
       xPos = 0;
       isScrolling = false;
-      drawText(text, status, activeColor, activeSmooth, dropoutColor, dropoutSmooth, backgroundColor);
+      drawText(text, status, activeColor, activeSmooth, dropoutColor, dropoutSmooth, backgroundColor, font);
     } else {
       if(!isScrolling) holdTick = millis();
       isScrolling = true;
@@ -54,7 +54,7 @@ public:
           holdTick = millis();
         }
 
-        drawText(text, status, activeColor, activeSmooth, dropoutColor, dropoutSmooth, backgroundColor);
+        drawText(text, status, activeColor, activeSmooth, dropoutColor, dropoutSmooth, backgroundColor, font);
         lastTick = millis();
       }
     }
@@ -75,7 +75,9 @@ public:
   }
 
 private:
-  void drawText(const String& text, bool status, uint16_t activeColor, uint16_t activeSmooth, uint16_t dropoutColor, uint16_t dropoutSmooth, uint16_t backgroundColor) {
+  void drawText(const String& text, bool status, uint16_t activeColor, uint16_t activeSmooth, uint16_t dropoutColor, uint16_t dropoutSmooth, uint16_t backgroundColor, uint8_t font) {
+    if(font > FONT_COUNT) font = sprite->textfont;
+
     if(usedH > 0) {
       sprite->fillSprite(TFT_TRANSPARENT);
       sprite->fillRect(0, 0, maxWidth, usedH, backgroundColor);
@@ -85,8 +87,8 @@ private:
       if(status) sprite->setTextColor(activeColor, activeSmooth, false);
       else sprite->setTextColor(dropoutColor, dropoutSmooth, false);
 
-      sprite->drawString(text, xPos, 0);
-      if(isScrolling) sprite->drawString(text, xPos + textWidth + SCROLL_GAP, 0);
+      sprite->drawString(text, xPos, 0, font);
+      if(isScrolling) sprite->drawString(text, xPos + textWidth + SCROLL_GAP, 0, font);
 
       sprite->resetViewport();
     } else {
@@ -95,11 +97,11 @@ private:
       if(status) sprite->setTextColor(activeColor, activeSmooth, false);
       else sprite->setTextColor(dropoutColor, dropoutSmooth, false);
 
-      sprite->drawString(text, xPos, 0);
-      if(isScrolling) sprite->drawString(text, xPos + textWidth + SCROLL_GAP, 0);
+      sprite->drawString(text, xPos, 0, font);
+      if(isScrolling) sprite->drawString(text, xPos + textWidth + SCROLL_GAP, 0, font);
     }
 
-    if(postDrawCallback) postDrawCallback(sprite, false);
+    if(postDrawCallback) postDrawCallback(sprite);
     if(yPos != 0) sprite->pushSprite(xOffset, yPos, TFT_TRANSPARENT);
   }
 };

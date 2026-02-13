@@ -3,6 +3,7 @@
 #include "globals.h"
 #include "utils.h"
 #include "menugraphics.h"
+#include "main.h"
 
 static const char* const unitString[] = {"dBμV", "dBf", "dBm"};
 static const char* const FreqFont[] = {"Classic", "Roubenstil", "Motoya", "Aura2", "Comic", "Modern"};
@@ -25,27 +26,10 @@ String shortLine(String text);
 void showMenuOpenTouchButtons();
 void showBWSelector();
 
-extern void ShowFreq(int mode);
 extern void ShowBandSelectionFM(bool notglanceview, bool normaldisplay);
 extern void ShowBandSelectionAM(bool notglanceview, bool normaldisplay);
 extern void ScreensaverTimerSet(byte value);
-extern void ShowMemoryPos();
-extern void ShowTuneMode();
-extern void updateBW();
-extern void ShowStepSize();
-extern void updateiMS();
-extern void updateEQ();
 extern void doTheme();
 extern void tryWiFi();
-extern void TuneUp();
-extern void endMenu();
-extern void startFMDXScan();
-extern void DoMemoryPosTune();
-extern void UpdateFonts();
-extern void tftPrint(int8_t offset, const String & text, int16_t x, int16_t y, int color, int smoothcolor, uint8_t fontsize);
-extern void setAutoSpeedSPI();
-extern void showAutoSquelch(bool mode);
-extern uint8_t doAutoMemory(uint16_t startfreq, uint16_t stopfreq, uint8_t startmem, uint8_t stopmem, bool rdsonly, uint8_t doublepi);
 extern void ClearMemoryRange(uint8_t start, uint8_t stop);
 extern bool handleCreateNewLogbook();
-extern const char* textUI(uint16_t number);

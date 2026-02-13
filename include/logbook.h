@@ -6,6 +6,7 @@ using fs::FS;
 #include <SPIFFS.h>
 #include "globals.h"
 #include "rtc.hpp"
+#include "main.h"
 
 void handleRoot();
 void handleDownloadCSV();
@@ -17,5 +18,3 @@ void handleLogo();
 void printLogbookCSV();
 void sendUDPlog();
 IPAddress makeBroadcastAddress(IPAddress ip);
-
-extern const char* textUI(uint16_t number);

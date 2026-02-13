@@ -480,11 +480,10 @@ void BuildRDSStatScreen() {
   // Only build screen if not already active
   if (!rdsstatscreen) {
     // Set page flags
-    afscreen      = false;
-    advancedRDS   = false;
+    afscreen = false;
+    advancedRDS = false;
     rdsstatscreen = true;
 
-    // --- Draw frame and static lines ---
     tft.fillScreen(BackgroundColor);
     tft.drawRect(0, 0, 320, 240, FrameColor);
     tft.drawLine(0, 30, 320, 30, FrameColor);
@@ -499,22 +498,18 @@ void BuildRDSStatScreen() {
     tft.drawLine(160, 50, 160, 218, FrameColor);
     tft.drawLine(240, 50, 240, 218, FrameColor);
 
-    // --- Column headers ---
-    tftPrint(ALEFT, "kHz", 205, 4, ActiveColor, ActiveColorSmooth, 28);
+    tftPrint(ALEFT, "kHz", 205, 4, ActiveColor, ActiveColorSmooth, 28); // 28, not 16 can't force latin font
 
-    // --- Labels above packet columns ---
-    tftPrint(ALEFT, "ERRORS", 3, 34, ActiveColor, ActiveColorSmooth, 16);
-    tftPrint(ALEFT, "A:", 66, 34, ActiveColor, ActiveColorSmooth, 16);
-    tftPrint(ALEFT, "B:", 104, 34, ActiveColor, ActiveColorSmooth, 16);
-    tftPrint(ALEFT, "C:", 142, 34, ActiveColor, ActiveColorSmooth, 16);
-    tftPrint(ALEFT, "D:", 180, 34, ActiveColor, ActiveColorSmooth, 16);
-    tftPrint(ALEFT, "BER", 250, 34, ActiveColor, ActiveColorSmooth, 16);
+    tftPrint16(ALEFT, "ERRORS", 3, 34, ActiveColor, ActiveColorSmooth);
+    tftPrint16(ALEFT, "A:", 66, 34, ActiveColor, ActiveColorSmooth);
+    tftPrint16(ALEFT, "B:", 104, 34, ActiveColor, ActiveColorSmooth);
+    tftPrint16(ALEFT, "C:", 142, 34, ActiveColor, ActiveColorSmooth);
+    tftPrint16(ALEFT, "D:", 180, 34, ActiveColor, ActiveColorSmooth);
+    tftPrint16(ALEFT, "BER", 250, 34, ActiveColor, ActiveColorSmooth);
 
-    // --- Group labels setup ---
     const uint16_t xcol[4] = {10, 90, 170, 250};       // column X positions
     const uint16_t rowY[8] = {56, 76, 96, 116, 136, 156, 176, 196}; // row Y positions
 
-    // Labels for each group (A/B)
     const char* const groups[16][2] = {
       {"0A", "0B"}, {"1A", "1B"}, {"2A", "2B"}, {"3A", "3B"},
       {"4A", "4B"}, {"5A", "5B"}, {"6A", "6B"}, {"7A", "7B"},
@@ -526,8 +521,8 @@ void BuildRDSStatScreen() {
     for (uint8_t col = 0; col < 4; col++) {      // 4 columns
       for (uint8_t row = 0; row < 4; row++) {    // 4 groups per column
         uint8_t g = col * 4 + row;               // group index 0..15
-        tftPrint(ALEFT, groups[g][0], xcol[col], rowY[row * 2], ActiveColor, ActiveColorSmooth, 16);   // A
-        tftPrint(ALEFT, groups[g][1], xcol[col], rowY[row * 2 + 1], ActiveColor, ActiveColorSmooth, 16); // B
+        tftPrint16(ALEFT, groups[g][0], xcol[col], rowY[row * 2], ActiveColor, ActiveColorSmooth);   // A
+        tftPrint16(ALEFT, groups[g][1], xcol[col], rowY[row * 2 + 1], ActiveColor, ActiveColorSmooth); // B
       }
     }
 
@@ -535,8 +530,8 @@ void BuildRDSStatScreen() {
     const uint16_t pctX[4] = {70, 150, 230, 310};
     for (uint8_t c = 0; c < 4; c++) {
       for (uint8_t y = 56; y < 216; y += 20) {
-        tftPrint(ARIGHT, "0.0", pctX[c] - 10, y, GreyoutColor, BackgroundColor, 16); // placeholder value
-        tftPrint(ACENTER, "%", pctX[c], y, GreyoutColor, BackgroundColor, 16);
+        tftPrint16(ARIGHT, "0.0", pctX[c] - 10, y, GreyoutColor, BackgroundColor); // placeholder value
+        tftPrint16(ACENTER, "%", pctX[c], y, GreyoutColor, BackgroundColor);
       }
     }
 
@@ -2901,30 +2896,29 @@ void BuildAdvancedRDS() {
   tft.drawLine(210, 30, 210, 193, FrameColor);
   tft.drawLine(248, 30, 248, 0, FrameColor);
 
-  tftPrint(ALEFT, "ERRORS", 3, 34, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ARIGHT, "MHz", 310, 35, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ARIGHT, unitString[unit], 310, 51, ActiveColor, ActiveColorSmooth, 16);
-  if (radio.rds.region == 0) {
-    tftPrint(ALEFT, "PI", 216, 81, ActiveColor, ActiveColorSmooth, 16);
-  } else {
-    tftPrint(ALEFT, "PI", 216, 72, ActiveColor, ActiveColorSmooth, 16);
-    tftPrint(ALEFT, "ID", 216, 89, ActiveColor, ActiveColorSmooth, 16);
+  tftPrint16(ALEFT, "ERRORS", 3, 34, ActiveColor, ActiveColorSmooth);
+  tftPrint16(ARIGHT, "MHz", 310, 35, ActiveColor, ActiveColorSmooth);
+  tftPrint16(ARIGHT, unitString[unit], 310, 51, ActiveColor, ActiveColorSmooth);
+  if (radio.rds.region == 0) tftPrint16(ALEFT, "PI", 216, 81, ActiveColor, ActiveColorSmooth);
+  else {
+    tftPrint16(ALEFT, "PI", 216, 72, ActiveColor, ActiveColorSmooth);
+    tftPrint16(ALEFT, "ID", 216, 89, ActiveColor, ActiveColorSmooth);
   }
-  tftPrint(ALEFT, "PS", 3, 81, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ALEFT, "PTY", 3, 109, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ALEFT, "RT+", 3, 147, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ALEFT, "EON", 3, 174, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ALEFT, "ECC", 3, 199, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ALEFT, "RT", 3, 222, ActiveColor, ActiveColorSmooth, 16);
+  tftPrint16(ALEFT, "PS", 3, 81, ActiveColor, ActiveColorSmooth);
+  tftPrint16(ALEFT, "PTY", 3, 109, ActiveColor, ActiveColorSmooth);
+  tftPrint16(ALEFT, "RT+", 3, 147, ActiveColor, ActiveColorSmooth);
+  tftPrint16(ALEFT, "EON", 3, 174, ActiveColor, ActiveColorSmooth);
+  tftPrint16(ALEFT, "ECC", 3, 199, ActiveColor, ActiveColorSmooth);
+  tftPrint16(ALEFT, "RT", 3, 222, ActiveColor, ActiveColorSmooth);
 
-  tftPrint(ALEFT, "A:", 66, 34, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ALEFT, "B:", 104, 34, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ALEFT, "C:", 142, 34, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ALEFT, "D:", 180, 34, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ARIGHT, "Dynamic PTY", 300, 130, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ARIGHT, "Artificial head", 300, 145, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ARIGHT, "Compressed", 300, 160, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ARIGHT, "Has stereo", 300, 175, ActiveColor, ActiveColorSmooth, 16);
+  tftPrint16(ALEFT, "A:", 66, 34, ActiveColor, ActiveColorSmooth);
+  tftPrint16(ALEFT, "B:", 104, 34, ActiveColor, ActiveColorSmooth);
+  tftPrint16(ALEFT, "C:", 142, 34, ActiveColor, ActiveColorSmooth);
+  tftPrint16(ALEFT, "D:", 180, 34, ActiveColor, ActiveColorSmooth);
+  tftPrint16(ARIGHT, "Dynamic PTY", 300, 130, ActiveColor, ActiveColorSmooth);
+  tftPrint16(ARIGHT, "Artificial head", 300, 145, ActiveColor, ActiveColorSmooth);
+  tftPrint16(ARIGHT, "Compressed", 300, 160, ActiveColor, ActiveColorSmooth);
+  tftPrint16(ARIGHT, "Has stereo", 300, 175, ActiveColor, ActiveColorSmooth);
 
   tft.fillCircle(86, 41, 5, SignificantColor);
   tft.fillCircle(124, 41, 5, SignificantColor);
@@ -2946,13 +2940,13 @@ void BuildAdvancedRDS() {
   if (!StereoToggle) tft.drawBitmap(38, 5, Mono, 22, 22, SecondaryColor);
   else tft.drawBitmap(32, 5, Stereo, 32, 22, GreyoutColor);
 
-  tftPrint(ALEFT, "TP", 2, 51, GreyoutColor, BackgroundColor, 16);
-  tftPrint(ALEFT, "TA", 24, 51, GreyoutColor, BackgroundColor, 16);
-  tftPrint(ALEFT, "AF", 50, 51, GreyoutColor, BackgroundColor, 16);
-  tftPrint(ALEFT, "-B", 68, 51, GreyoutColor, BackgroundColor, 16);
-  tftPrint(ALEFT, "TMC", 88, 51, GreyoutColor, BackgroundColor, 16);
-  tftPrint(ALEFT, "RT+", 123, 51, GreyoutColor, BackgroundColor, 16);
-  tftPrint(ALEFT, "EON", 153, 51, GreyoutColor, BackgroundColor, 16);
+  tftPrint16(ALEFT, "TP", 2, 51, GreyoutColor, BackgroundColor);
+  tftPrint16(ALEFT, "TA", 24, 51, GreyoutColor, BackgroundColor);
+  tftPrint16(ALEFT, "AF", 50, 51, GreyoutColor, BackgroundColor);
+  tftPrint16(ALEFT, "-B", 68, 51, GreyoutColor, BackgroundColor);
+  tftPrint16(ALEFT, "TMC", 88, 51, GreyoutColor, BackgroundColor);
+  tftPrint16(ALEFT, "RT+", 123, 51, GreyoutColor, BackgroundColor);
+  tftPrint16(ALEFT, "EON", 153, 51, GreyoutColor, BackgroundColor);
 
   RDSstatusold = !RDSstatusold;
   ShowFreq(0);

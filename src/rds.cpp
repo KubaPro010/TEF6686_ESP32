@@ -36,17 +36,17 @@ void ShowAdvancedRDS() {
   if (radio.rds.PTYN.changed(0) || rdsreset) {
     if (!screenmute) {
       if (radio.rds.PTYN.getPrev() != "PTYN N/A" || radio.rds.hasPTYN) {
-        tftPrint(ALEFT, "PTYN N/A", 216, 109, BackgroundColor, BackgroundColor, 16);
-        tftPrint(ALEFT, radio.rds.PTYN.getPrev(), 216, 109, BackgroundColor, BackgroundColor, 16);
+        tftPrint16(ALEFT, "PTYN N/A", 216, 109, BackgroundColor, BackgroundColor);
+        tftPrint16(ALEFT, radio.rds.PTYN.getPrev(), 216, 109, BackgroundColor, BackgroundColor);
       }
       if (!radio.rds.hasPTYN) radio.rds.PTYN = "PTYN N/A";
-      tftPrint(ALEFT, String(radio.rds.PTYN), 216, 109, RDSColor, RDSColorSmooth, 16);
+      tftPrint16(ALEFT, String(radio.rds.PTYN), 216, 109, RDSColor, RDSColorSmooth); // PTYN is UCS-2, meaning no chinese characters. Americans...
     }
   }
 
   if (hasafold != radio.rds.hasAF) {
     if (!screenmute) {
-      if (radio.rds.hasAF) tftPrint(ALEFT, "AF", 50, 51, RDSColor, RDSColorSmooth, 16); else tftPrint(ALEFT, "AF", 50, 51, GreyoutColor, BackgroundColor, 16);
+      if (radio.rds.hasAF) tftPrint16(ALEFT, "AF", 50, 51, RDSColor, RDSColorSmooth); else tftPrint16(ALEFT, "AF", 50, 51, GreyoutColor, BackgroundColor);
     }
     hasafold = radio.rds.hasAF;
   }
@@ -64,13 +64,19 @@ void ShowAdvancedRDS() {
       Udp.endPacket();
     }
   }
-  if(!screenmute) eccDisplay.update(ECCString, RDSstatus, RDSColor, RDSColorSmooth, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor);
+  if(!screenmute) {
+    uint8_t font = 0;
+    if(radio.rds.ECC.get() == 190) font = 1;
+    else if(radio.rds.ECC.get() == 192) font = 1;
+    else if(radio.rds.ECC.get() == 201) font = 1;
+    eccDisplay.update(ECCString, RDSstatus, RDSColor, RDSColorSmooth, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor, font);
+  }
 
   String eonstring;
   if (radio.eon_counter > 0) for (byte i = 0; i < radio.eon_counter; i++) eonstring += String(radio.eon[i].picode) + (radio.eon[i].ps.length() > 0 ? String(": " + String(radio.eon[i].ps)) : "") + (radio.eon[i].mappedfreq > 0 ? String(" " + String(radio.eon[i].mappedfreq / 100) + "." + String((radio.eon[i].mappedfreq % 100) / 10))  : "") + (radio.eon[i].mappedfreq2 > 0 ? String(" / " + String(radio.eon[i].mappedfreq2 / 100) + "." + String((radio.eon[i].mappedfreq2 % 100) / 10))  : "") + (radio.eon[i].mappedfreq3 > 0 ? String(" /  " + String(radio.eon[i].mappedfreq3 / 100) + "." + String((radio.eon[i].mappedfreq3 % 100) / 10))  : "") + (i == radio.eon_counter - 1 ? "" : " | "); else eonstring = textUI(85);
   if (radio.rds.hasEON.changed(0)) {
     if (!screenmute)  {
-      if (radio.eon_counter > 0) tftPrint(ALEFT, "EON", 153, 51, RDSColor, RDSColorSmooth, 16); else tftPrint(ALEFT, "EON", 153, 51, GreyoutColor, BackgroundColor, 16);
+      if (radio.eon_counter > 0) tftPrint16(ALEFT, "EON", 153, 51, RDSColor, RDSColorSmooth); else tftPrint16(ALEFT, "EON", 153, 51, GreyoutColor, BackgroundColor);
     }
   }
 
@@ -80,23 +86,23 @@ void ShowAdvancedRDS() {
   if (radio.rds.hasRTplus) rtplusstring = (radio.rds.rdsplusTag1 != 169 ? String(textUI(radio.rds.rdsplusTag1)) + ": " + String(radio.rds.RTContent1) : "") + (radio.rds.rdsplusTag2 != 169 ? " - " + String(textUI(radio.rds.rdsplusTag2)) + ": " + String(radio.rds.RTContent2) : ""); else rtplusstring = textUI(86);
   if (radio.rds.hasRTplus.changed(0)) {
     if (!screenmute) {
-      if (radio.rds.hasRTplus) tftPrint(ALEFT, "RT+", 123, 51, RDSColor, RDSColorSmooth, 16); else tftPrint(ALEFT, "RT+", 123, 51, GreyoutColor, BackgroundColor, 16);
+      if (radio.rds.hasRTplus) tftPrint16(ALEFT, "RT+", 123, 51, RDSColor, RDSColorSmooth); else tftPrint16(ALEFT, "RT+", 123, 51, GreyoutColor, BackgroundColor);
     }
   }
 
   if(!screenmute) rtplusDisplay.update(rtplusstring, RDSstatus, RDSColor, RDSColorSmooth, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor);
 
   if (radio.rds.TP.changed(0) && !screenmute) {
-    if (radio.rds.TP) tftPrint(ALEFT, "TP", 2, 51, RDSColor, RDSColorSmooth, 16); else tftPrint(ALEFT, "TP", 2, 51, GreyoutColor, BackgroundColor, 16);
+    if (radio.rds.TP) tftPrint16(ALEFT, "TP", 2, 51, RDSColor, RDSColorSmooth); else tftPrint16(ALEFT, "TP", 2, 51, GreyoutColor, BackgroundColor);
   }
 
   if (radio.rds.TA.changed(0) && !screenmute) {
-    if (radio.rds.TA) tftPrint(ALEFT, "TA", 24, 51, RDSColor, RDSColorSmooth, 16); else tftPrint(ALEFT, "TA", 24, 51, GreyoutColor, BackgroundColor, 16);
+    if (radio.rds.TA) tftPrint16(ALEFT, "TA", 24, 51, RDSColor, RDSColorSmooth); else tftPrint16(ALEFT, "TA", 24, 51, GreyoutColor, BackgroundColor);
   }
 
   if (afmethodBold != radio.afmethodB || rdsreset) {
     if (!screenmute) {
-      if (radio.afmethodB) tftPrint(ALEFT, "-B", 68, 51, RDSColor, RDSColorSmooth, 16); else tftPrint(ALEFT, "-B", 68, 51, GreyoutColor, BackgroundColor, 16);
+      if (radio.afmethodB) tftPrint16(ALEFT, "-B", 68, 51, RDSColor, RDSColorSmooth); else tftPrint16(ALEFT, "-B", 68, 51, GreyoutColor, BackgroundColor);
     }
     afmethodBold = radio.afmethodB;
   }
@@ -109,7 +115,7 @@ void ShowAdvancedRDS() {
 
   if (radio.rds.hasTMC.changed(0)) {
     if (!screenmute) {
-      if (radio.rds.hasTMC) tftPrint(ALEFT, "TMC", 88, 51, RDSColor, RDSColorSmooth, 16); else tftPrint(ALEFT, "TMC", 88, 51, GreyoutColor, BackgroundColor, 16);
+      if (radio.rds.hasTMC) tftPrint16(ALEFT, "TMC", 88, 51, RDSColor, RDSColorSmooth); else tftPrint16(ALEFT, "TMC", 88, 51, GreyoutColor, BackgroundColor);
     }
   }
 
@@ -152,7 +158,7 @@ void readRds() {
           else {
             tftPrint(ALEFT, PIold, 240, advancedRDS ? 72 : 184, RDSDropoutColor, RDSDropoutColorSmooth, 16);
             tftPrint(ALEFT, stationIDold, 240, advancedRDS ? 89 : 201, RDSDropoutColor, RDSDropoutColorSmooth, 16);
-            tftPrint( 1, stationStateold, 318, advancedRDS ? 89 : 201, RDSDropoutColor, RDSDropoutColorSmooth, 16);
+            tftPrint(1, stationStateold, 318, advancedRDS ? 89 : 201, RDSDropoutColor, RDSDropoutColorSmooth, 16);
           }
 
           if (!radio.rds.hasLongPS) {
@@ -558,11 +564,11 @@ void ShowAFEON() {
     if (radio.eon_counter > 9) {
       if (!afpage) {
         afpage = true;
-        tftPrint(ARIGHT, String(afpagenr) + "/2", 315, 201, BackgroundColor, BackgroundColor, 16);
+        tftPrint16(ARIGHT, String(afpagenr) + "/2", 315, 201, BackgroundColor, BackgroundColor);
       }
     }
 
-    if (afpage) tftPrint(ARIGHT, String(afpagenr) + "/3", 315, 201, ActiveColor, ActiveColorSmooth, 16); else tftPrint(ARIGHT, String(afpagenr) + "/2", 315, 201, ActiveColor, ActiveColorSmooth, 16);
+    if (afpage) tftPrint16(ARIGHT, String(afpagenr) + "/3", 315, 201, ActiveColor, ActiveColorSmooth); else tftPrint16(ARIGHT, String(afpagenr) + "/2", 315, 201, ActiveColor, ActiveColorSmooth);
 
     if (radio.rds.hasAF && afpagenr == 1) {
       if (!hasafold) {

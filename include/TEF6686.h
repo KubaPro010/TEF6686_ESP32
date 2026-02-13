@@ -104,10 +104,10 @@ static const char* const ECCtext[] {
   "Kingdom of Morroco", // 2
   "Republica Moldova", // 3
   "People's Democratic Republic of Algeria", // 4
-  "Κυπριακή Δημοκρατία / (Republic of Cyprus)", // 5
+  "Κυπριακή Δημοκρατία [Republic of Cyprus]", // 5
   "Česká republika", // 6
   "Ireland", // 7
-  "Eesti Vabariik / (Republic of Estonia)", // 8
+  "Eesti Vabariik [Republic of Estonia]", // 8
   "Principat d'Andorra", // 9
   "Repubblica di San Marino", // 10
   "Rzeczpospolita Polska", // 11
@@ -118,17 +118,17 @@ static const char* const ECCtext[] {
   "The former Yugoslav Republic of Macedonia", // 16
   "Repubblica Italiana", // 17
   "Hashemite Kingdom of Jordan", // 18
-  "Slovenská republika", // 19
-  "Koninkrijk België / Royaume de Belgique", // 20
-  "Suomen tasavalta / (Republic of Finland)", // 21
+  "Slovenská republika [Republic of Slovakia]", // 19
+  "Koninkrijk België / Royaume de Belgique [Kingdom of Belgium]", // 20
+  "Suomen tasavalta [Republic of Finland]", // 21
   "Syrian Arab Republic", // 22
-  "Republic of Serbia", // 23
-  "Україна / (Ukraine)", // 24
-  "Российская Федерация / (Russian Federation)", // 25
-  "Groussherzogtum Lëtzebuerg / (Grand Duchy of Luxembourg)", // 26
+  "Републике Србије [Republic of Serbia]", // 23
+  "Україна [Ukraine]", // 24
+  "Российская Федерация [Russian Federation]", // 25
+  "Groussherzogtum Lëtzebuerg [Grand Duchy of Luxembourg]", // 26
   "Republic of Tunisia", // 27
   "State of Palestine", // 28
-  "Република България / (Republic of Bulgaria)", // 29
+  "Република България [Republic of Bulgaria]", // 29
   "Republic of Portugal (Madeira)", // 30
   "Koninkrijk der Nederlanden", // 31
   "Republic of Portugal", // 32
@@ -146,13 +146,13 @@ static const char* const ECCtext[] {
   "Principality of Monaco", // 44
   "Republic of Malta", // 45
   "United Kingdom of Great Britain and Northern Ireland", // 46
-  "Lietuvos Respublika / (Republic of Lithuania)", // 47
-  "Republika Hrvatska / (Republic of Croatia)", // 48
+  "Lietuvos Respublika [Republic of Lithuania]", // 47
+  "Republika Hrvatska [Republic of Croatia]", // 48
   "Libya", // 49
   "Kingdom of Spain (Canary Islands)", // 50
   "România", // 51
-  "Reino de España / (Kingdom of Spain)", // 52
-  "Konungariket Sverige / (Kingdom of Sweden)", // 53
+  "Reino de España [Kingdom of Spain]", // 52
+  "Konungariket Sverige [Kingdom of Sweden]", // 53
   "Arab Republic of Egypt", // 54
   "République de France", // 55
   "Kongeriket Norge", // 56
@@ -239,7 +239,7 @@ static const char* const ECCtext[] {
   "República Federativa do Brasil", // 137
   "Canada", // 138
   "United Kingdom of Great Britain and Northern Ireland (Cayman Islands)", // 139
-  "Republic of Chile", // 140
+  "República de Chile", // 140
   "Republic of Colombia", // 141
   "Republic of Costa Rica", // 142
   "Republic of Cuba", // 143
@@ -250,20 +250,20 @@ static const char* const ECCtext[] {
   "United Kingdom of Great Britain and Northern Ireland (Falkland Islands)", // 148
   "Kingdom of Denmark (Greenland, NOT USA)", // 149
   "Grenada", // 150
-  "Republic of France (Guadeloupe)", // 151
+  "République française (Guadeloupe)", // 151
   "Republic of Guatemala", // 152
   "Republic of Guyana", // 153
   "Republic of Haiti", // 154
   "Republic of Honduras", // 155
   "Jamaica", // 156
-  "Republic of France (Martinique)", // 157
+  "République française (Martinique)", // 157
   "Estados Unidos Mexicanos", // 158
   "United Kingdom of Great Britain and Northern Ireland (Montserrat)", // 159
-  "Netherlands Antilles (does not exist)", // 160
+  "Netherlands Antilles", // 160
   "Republic of Nicaragua", // 161
   "Republic of Panama", // 162
-  "Republic of Paraguay", // 163
-  "Republic of Peru", // 164
+  "República del Paraguay", // 163
+  "República del Perú", // 164
   "United States of America (Puerto Rico)", // 165
   "Saint Kitts and Nevis", // 166
   "Saint Lucia", // 167
@@ -289,9 +289,9 @@ static const char* const ECCtext[] {
   "Kingdom of Bhutan", // 187
   "Negara Brunei Darussalam", // 188
   "Kingdom of Cambodia", // 189
-  "People's Republic of China", // 190
+  "中华人民共和国 [PRC]", // 190
   "Republic of Fiji", // 191
-  "People's Republic of China (Hong Kong)", // 192
+  "中华人民共和国（香港 [PRC, HK]", // 192
   "Republic of India", // 193
   "Republic of Indonesia", // 194
   "Islamic Republic of Iran", // 195
@@ -300,7 +300,7 @@ static const char* const ECCtext[] {
   "Democratic People's Republic of Korea (North Korea)", // 198
   "Republic of Korea (South Korea)", // 199
   "Lao People's Democratic Republic", // 200
-  "People's Republic of China (Macao)", // 201
+  "中华人民共和国（澳门) [PRC, M]", // 201
   "Malaysia", // 202
   "Republic of Maldives", // 203
   "United States of America (Marshall Islands)", // 204
@@ -324,7 +324,7 @@ static const char* const ECCtext[] {
   "Commonwealth of the Bahamas", // 222
   "United Kingdom of Great Britain and Northern Ireland (Bermuda) / Federative Republic of Brazil", // 223
   "Federative Republic of Brazil / Republic of Ecuador", // 224
-  "Netherlands Antilles (does not exist) / Federative Republic of Brazil", // 225
+  "Netherlands Antilles / Federative Republic of Brazil", // 225
   "United States of America", // 226
   "People's Republic of Bangladesh", // 227
   "Rzeczpospolita Zachodniej Polski" // 228 - doesn't exist, YET, we don't want a fucking pimp for president here
