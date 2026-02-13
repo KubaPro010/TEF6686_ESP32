@@ -2543,6 +2543,7 @@ void TFT_eSPI::loadFont(const uint8_t array[], uint8_t font) {
   gFonts[font].spaceWidth = gFonts[font].yAdvance / 4;
 
   loadMetrics(font);
+  fontOwned[font] = true;
 }
 
 void TFT_eSPI::loadMetrics(uint8_t font)
@@ -4340,18 +4341,18 @@ void TFT_eSprite::drawGlyph(uint16_t code, uint16_t font) {
   last_cursor_x = cursor_x;
 }
 
-  void TFT_eSprite::copyFontFromTFT(uint8_t source, uint8_t destination) {
-    unloadFont(destination); // Make sure there is nothing there
+void TFT_eSprite::copyFontFromTFT(uint8_t source, uint8_t destination) {
+  unloadFont(destination); // Make sure there is nothing there
 
-    gUnicode[destination] = _tft->gUnicode[source];
-    gHeight[destination] = _tft->gHeight[source];
-    gWidth[destination] = _tft->gWidth[source];
-    gxAdvance[destination] = _tft->gxAdvance[source];
-    gdY[destination] = _tft->gdY[source];
-    gdX[destination] = _tft->gdX[source];
-    gBitmap[destination] = _tft->gBitmap[source];
+  gUnicode[destination] = _tft->gUnicode[source];
+  gHeight[destination] = _tft->gHeight[source];
+  gWidth[destination] = _tft->gWidth[source];
+  gxAdvance[destination] = _tft->gxAdvance[source];
+  gdY[destination] = _tft->gdY[source];
+  gdX[destination] = _tft->gdX[source];
+  gBitmap[destination] = _tft->gBitmap[source];
 
-    memcpy(&gFonts[destination], &_tft->gFonts[source], sizeof(fontMetrics));
+  memcpy(&gFonts[destination], &_tft->gFonts[source], sizeof(fontMetrics));
 
-    fontOwned[destination] = false;
-  }
+  fontOwned[destination] = false;
+}

@@ -401,23 +401,17 @@ class TFT_eSPI { friend class TFT_eSprite;
   } fontMetrics;
 
   fontMetrics gFonts[FONT_COUNT] = {
-    { nullptr, 0, 0, 0, 0, 0, 0, 0 },
-    { nullptr, 0, 0, 0, 0, 0, 0, 0 },
-    { nullptr, 0, 0, 0, 0, 0, 0, 0 },
-    { nullptr, 0, 0, 0, 0, 0, 0, 0 },
-    { nullptr, 0, 0, 0, 0, 0, 0, 0 },
-    { nullptr, 0, 0, 0, 0, 0, 0, 0 },
     { nullptr, 0, 0, 0, 0, 0, 0, 0 }
   };
 
   // These are for the metrics for each individual glyph (so we don't need to seek this in file and waste time)
-  uint16_t* gUnicode[FONT_COUNT] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL};  //UTF-16 code, the codes are searched so do not need to be sequential
-  uint8_t*  gHeight[FONT_COUNT] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL};   //cheight
-  uint8_t*  gWidth[FONT_COUNT] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL};    //cwidth
-  uint8_t*  gxAdvance[FONT_COUNT] = {NULL, NULL, NULL, NULL, NULL, NULL}; //setWidth
-  int16_t*  gdY[FONT_COUNT] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL};       //topExtent
-  int8_t*   gdX[FONT_COUNT] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL};       //leftExtent
-  uint32_t* gBitmap[FONT_COUNT] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL};   //file pointer to greyscale bitmap
+  uint16_t* gUnicode[FONT_COUNT] = {NULL};  //UTF-16 code, the codes are searched so do not need to be sequential
+  uint8_t*  gHeight[FONT_COUNT] = {NULL};   //cheight
+  uint8_t*  gWidth[FONT_COUNT] = {NULL};    //cwidth
+  uint8_t*  gxAdvance[FONT_COUNT] = {NULL}; //setWidth
+  int16_t*  gdY[FONT_COUNT] = {NULL};       //topExtent
+  int8_t*   gdX[FONT_COUNT] = {NULL};       //leftExtent
+  uint32_t* gBitmap[FONT_COUNT] = {NULL};   //file pointer to greyscale bitmap
 
   bool fontOwned[FONT_COUNT] = {false};
 
