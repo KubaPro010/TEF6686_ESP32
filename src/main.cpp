@@ -1130,7 +1130,7 @@ void endMenu() {
   if (af == 2) radio.rds.afreg = true; else radio.rds.afreg = false;
   Serial.end();
   if (wifi) remoteip = IPAddress (WiFi.localIP()[0], WiFi.localIP()[1], WiFi.localIP()[2], subnetclient);
-  if (USBmode) Serial.begin(19200); else Serial.begin(115200);
+  if (USBmode) Serial.updateBaudRate(19200); else Serial.updateBaudRate(115200);
 
   leave = true;
   if (language == LANGUAGE_CHS) PSSprite.setTextFont(3); else PSSprite.setTextFont(2);
@@ -1202,7 +1202,6 @@ void MuteScreen(bool setting) {
 
 void setup_periph() {
   Wire.setClock(400000);
-  Serial.begin(115200);
   Serial.println();
   byte error, address;
   for (address = 1; address < 108; address++) {
@@ -1232,7 +1231,6 @@ void setup_periph() {
   }
 
   Serial.flush();
-  Serial.end();
 
   Wire.setClock(100000);
 }
@@ -1305,7 +1303,7 @@ void later_setup_periph() {
   } else console.print("RX8010SJ is not available at address " + String(RX8010SJ_ADDRESS, HEX));
 
   if(analogRead(BATTERY_PIN) < BATTERY_DETECT_THRESHOLD) batterydetect = false;
-  else console.print("Battery detected.");
+  else console.print("Battery detected");
 }
 
 void read_encoder();
@@ -1325,6 +1323,7 @@ void setup() {
   EEPROM.begin(EE_TOTAL_CNT);
 
   setupmode = true;
+  Serial.begin(115200);
 
   Wire.begin();
   Wire.setClock(100000);
@@ -1355,7 +1354,7 @@ void setup() {
     for (int y = 0; y < 5; y++) presets[i].RDSPI[y] = EEPROM.readByte((i * 5) + y + EE_PRESETS_RDSPI_START);
   }
 
-  if (USBmode) Serial.begin(19200); else Serial.begin(115200);
+  if (USBmode) Serial.updateBaudRate(19200); else Serial.updateBaudRate(115200);
 
   if (iMSset && EQset) iMSEQ = 2;
   if (!iMSset && EQset) iMSEQ = 3;
@@ -1633,6 +1632,11 @@ void handleTimers() {
 }
 
 void loop() {
+  if(i2c_pc_control) {
+    total_pc_control();
+    if(i2c_pc_control) return;
+  }
+
   handleWiFi();
   handleTouch();
   Communication();

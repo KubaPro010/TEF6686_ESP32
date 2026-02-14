@@ -359,6 +359,11 @@ void Communication() {
           }
         }
       } else if (data_str.startsWith("l") || data_str.startsWith("L")) printLogbookCSV();
+      else if(data_str.charAt(0) == '~' && data_str.charAt(1) == '/') {
+        MuteScreen(true);
+        i2c_pc_control = i2c_pc_control_init = true;
+        Serial.flush();
+      }
     }
 
     if (RDSSPYUSB && Serial.available()) {
@@ -914,5 +919,106 @@ void tryWiFi() {
     webserver.stop();
     Udp.stop();
     WiFi.mode(WIFI_OFF);
+  }
+}
+
+void total_pc_control() {
+  if(i2c_pc_control_init) {
+    Serial.write(1);
+    Serial.write(0xff);
+    Serial.flush();
+    i2c_pc_control_init = false;
+  }
+  if(Serial.available()) {
+    uint8_t userlen = Serial.read();
+    if(userlen == '~' && Serial.read() == '/') {
+      Serial.write(1);
+      Serial.write(0xff);
+      Serial.flush(true);
+      return;
+    }
+
+    uint8_t *data = (uint8_t*)malloc(userlen);
+    if(data == NULL) return;
+    auto len = Serial.read(data, userlen);
+    if(len != userlen) {
+      free(data);
+      return; // Incomplete data
+    }
+    switch (data[0]) {
+    case 0: { // Set clock
+      if(len < 5) break;
+      uint32_t clock = ((uint32_t)data[1] << 24) |
+                 ((uint32_t)data[2] << 16) |
+                 ((uint32_t)data[3] << 8)  |
+                 ((uint32_t)data[4]);
+      Wire.setClock(clock);
+      Serial.write(1);
+      Serial.write(0);
+    } break;
+    case 1: { // Send data
+      if(len < 3) break;
+      Wire.beginTransmission(data[1]);
+      for(int i = 0; i < (len-2); i++) Wire.write(data[2+i]);
+      auto out = Wire.endTransmission();
+      Serial.write(2);
+      Serial.write(1);
+      Serial.write(out);
+    } break;
+    case 2: { // Send and receive data
+      if(len < 4) break; // Need at least: cmd, addr, datalen, recvlen
+      uint8_t addr = data[1];
+      uint8_t datalen = data[2];
+      
+      if(len < 3 + datalen + 1) break; // Validate buffer size
+      
+      Wire.beginTransmission(addr);
+      for(int i = 0; i < datalen; i++) Wire.write(data[3+i]);
+      auto out = Wire.endTransmission(false);
+      
+      uint8_t recvlen_requested = data[3+datalen];
+      uint8_t recvlen = Wire.requestFrom(addr, recvlen_requested);
+
+      Serial.write(recvlen+2);
+      Serial.write(2);
+      Serial.write(out);
+      while(Wire.available()) Serial.write(Wire.read());
+    } break;
+    case 3: { // Quit
+      i2c_pc_control = false;
+      MuteScreen(false);
+      Serial.write(1);
+      Serial.write(3);
+      Serial.flush();
+      Serial.updateBaudRate(115200);
+    } break;
+    case 4: { // Version
+      Serial.write(2);
+      Serial.write(4);
+      Serial.write(0);
+    } break;
+    case 5: { // Reboot
+      Serial.write(1);
+      Serial.write(5);
+      Serial.flush();
+      delay(5);
+      esp_restart();
+    } break;
+    case 6: { // Change baud
+      if(len < 5) break;
+      uint32_t clock = ((uint32_t)data[1] << 24) |
+                 ((uint32_t)data[2] << 16) |
+                 ((uint32_t)data[3] << 8)  |
+                 ((uint32_t)data[4]);
+      Serial.write(1);
+      Serial.write(6);
+      Serial.flush(true);
+      Serial.updateBaudRate(clock);
+    } break;
+    default:
+      break;
+    }
+    free(data);
+    Serial.flush(true);
   }
 }

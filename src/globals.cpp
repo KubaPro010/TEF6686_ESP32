@@ -324,6 +324,9 @@ bool rds_settings_changed;
 const size_t language_totalnumber = sizeof(myLanguage) / sizeof(myLanguage[0]);
 const size_t language_entrynumber = sizeof(myLanguage[0]) / sizeof(myLanguage[0][0]);
 
+volatile bool i2c_pc_control = false;
+volatile bool i2c_pc_control_init = false;
+
 mem presets[EE_PRESETS_CNT];
 TEF6686 radio;
 TFT_eSPI tft = TFT_eSPI();

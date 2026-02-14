@@ -336,6 +336,9 @@ extern bool rds_settings_changed;
 extern const size_t language_totalnumber;
 extern const size_t language_entrynumber;
 
+extern volatile bool i2c_pc_control;
+extern volatile bool i2c_pc_control_init;
+
 extern mem presets[EE_PRESETS_CNT];
 extern TEF6686 radio;
 

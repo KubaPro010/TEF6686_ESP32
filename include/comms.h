@@ -9,6 +9,7 @@ void Communication();
 void XDRGTKRoutine();
 void passwordcrypt();
 void tryWiFi();
+void total_pc_control();
 
 extern void BuildDisplay();
 extern void BuildAdvancedRDS();

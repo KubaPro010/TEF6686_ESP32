@@ -2,6 +2,8 @@
 #include <Arduino.h>
 #include <TFT_eSPI.h>
 
+#define CONSOLE_FONT 2
+
 class Console {
 public:
     explicit Console(TFT_eSPI* display) : tft(display), y(0) {}
@@ -9,9 +11,9 @@ public:
         tft->setTextColor(TFT_WHITE, background);
         tft->setTextDatum(TL_DATUM);
         auto data = "[" + String(millis() / 1000.0f) + "] " + text;
-        tft->fillRect(0, y, tft->textWidth(data), tft->fontHeight(2), background);
-        tft->drawString(data, 0, y, 2);
-        y += tft->fontHeight(2);
+        tft->fillRect(0, y, tft->textWidth(data, CONSOLE_FONT), tft->fontHeight(CONSOLE_FONT), background);
+        tft->drawString(data, 0, y, CONSOLE_FONT);
+        y += tft->fontHeight(CONSOLE_FONT);
     }
     void reset() {
         y = 0;
