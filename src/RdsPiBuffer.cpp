@@ -19,7 +19,7 @@ RdsPiBuffer::State RdsPiBuffer::add(uint16_t value, bool error) {
     return this->getState(value);
 }
 
-void RdsPiBuffer::clear(){
+void RdsPiBuffer::clear() {
     this->fill = 0;
     this->pos = (uint8_t)-1;
 }

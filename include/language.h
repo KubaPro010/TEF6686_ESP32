@@ -24,7 +24,7 @@ Process:
 }
 */
 
-static const char* const myLanguage[22][298] PROGMEM = {
+static const char* const myLanguage[22][297] PROGMEM = {
   { "English", // English
     "Rotary direction changed", // 1
     "Please release button", // 2
@@ -112,16 +112,16 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "No AF available", // 84
     "No EON available", // 85
     "No RT+ available", // 86
-    "FM default stepsize", // 78
-    "Screensaver", // 79
-    "Sec", // 80
-    "Clock mode", // 81
-    "1% brightness", // 82
-    "25% brightness", // 83
-    "50% brightness", // 84
-    "AM RF Level offset", // 85
-    "Signalmeter unit", // 86
-    "Use AF", // 87
+    "FM default stepsize", // 87
+    "Screensaver", // 88
+    "Sec", // 89
+    "Clock mode", // 90
+    "1% brightness", // 91
+    "25% brightness", // 92
+    "50% brightness", // 93
+    "AM RF Level offset", // 94
+    "Signalmeter unit", // 95
+    "Use AF", // 96
     "Select FM Band", // 97
     "Select AM Band", // 98
     "LW", // 99
@@ -226,103 +226,102 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "Large", // 198
     "All", // 199
     "Fast PS", // 200
-    "Default", // 201 TODO: remove
-    "Mute screen on\nXDRGTK connection", // 202
-    "FMSI stereo\nimprovement", // 203
-    "Function only available\non TEF6687/6689!", // 204
-    "Function not available\non selected skin!", // 205
-    "Begin scanning\nmemory channels", // 206
-    "Stop scanning\nmemory channels", // 207
-    "Wait time", // 208
-    "Start DX scanning", // 209
-    "FM DX Options", // 210
-    "Abort! The start channel\nis marked as skipped.", // 211
-    "Auto sort AF", // 212
-    "Memory channels", // 213
-    "Exclude", // 214
-    "Only", // 215
-    "Auto cancel scan", // 216
-    "Correct PI", // 217
-    "Signal", // 218
-    "Mute audio\nwhile scanning", // 219
-    "AIR", // 220
-    "5 sec. bandbutton press", // 221
-    "Power off", // 222
-    "Screen off", // 223
-    "Disabled", // 224
-    "None", // 225
-    "News", // 226
-    "Current Affairs", // 227
-    "Information", // 228
-    "Sport", // 229
-    "Education", // 230
-    "Drama", // 231
-    "Culture", // 232
-    "Science", // 233
-    "Varied", // 234
-    "Pop Music", // 235
-    "Rock Music", // 236
-    "Easy Listening", // 237
-    "Light Classical", // 238
-    "Serious Classical", // 239
-    "Other Music", // 240
-    "Weather", // 241
-    "Finance", // 242
-    "Children's Progs", // 243
-    "Social Affairs", // 244
-    "Religion", // 245
-    "Phone-In", // 246
-    "Travel", // 247
-    "Leisure", // 248
-    "Jazz Music", // 249
-    "Country Music", // 250
-    "National Music", // 251
-    "Oldies Music", // 252
-    "Folk Music", // 253
-    "Documentary", // 254
-    "Alarm Test", // 255
-    "Alarm!!!", // 256
-    "Initial", // 257
-    "Always", // 258
-    "Show clock", // 259
-    "Show long PS", // 260
-    "Start frequency", // 261
-    "Stop frequency", // 262
-    "Start memory channel", // 263
-    "Stop memory channel", // 264
-    "Only store with RDS", // 265
-    "Start auto memory", // 266
-    "Auto memory", // 267
-    "Stationlist ID", // 268
-    "Found", // 269
-    "Abort! Out of memorychannels", // 270
-    "Abort! User pressed button", // 271
-    "Scan finished without errors", // 272
-    "Clear memory channels", // 273
-    "cleared", // 274
-    "Prevent double PI", // 275
-    "Range", // 276
-    "Full", // 277
-    "Wait time on\nsignal only", // 278
-    "Press highlighted corner", // 279
-    "To calibrate touchscreen", // 280
-    "Hold BW button to\nstop DX scanner", // 281
-    "Select Bandwidth", // 282
-    "Your logbook", // 283
-    "Download logbook", // 284
-    "Logbook is empty", // 285
-    "Go to bottom", // 286
-    "Entry added\nto the logbook", // 287
-    "Error adding\nentry to the logbook", // 288
-    "Clear logbook", // 289
-    "Logbook cleared", // 290
-    "Clear failed", // 291
-    "Can't add entry!\nLogbook is full!", // 292
-    "Autologger", // 293
-    "Auto DST on NTP time", // 294
-    "Set NTP time offset", // 295
-    "The logbook contains over 130 entries, which the viewer cannot process. Please download the CSV file to process it.", // 296
-    "Canada" // 297
+    "Mute screen on\nXDRGTK connection", // 201
+    "FMSI stereo\nimprovement", // 202
+    "Function only available\non TEF6687/6689!", // 203
+    "Function not available\non selected skin!", // 204
+    "Begin scanning\nmemory channels", // 205
+    "Stop scanning\nmemory channels", // 206
+    "Wait time", // 207
+    "Start DX scanning", // 208
+    "FM DX Options", // 209
+    "Abort! The start channel\nis marked as skipped.", // 210
+    "Auto sort AF", // 211
+    "Memory channels", // 212
+    "Exclude", // 213
+    "Only", // 214
+    "Auto cancel scan", // 215
+    "Correct PI", // 216
+    "Signal", // 217
+    "Mute audio\nwhile scanning", // 218
+    "AIR", // 219
+    "5 sec. bandbutton press", // 220
+    "Power off", // 221
+    "Screen off", // 222
+    "Disabled", // 223
+    "None", // 224
+    "News", // 225
+    "Current Affairs", // 226
+    "Information", // 227
+    "Sport", // 228
+    "Education", // 229
+    "Drama", // 230
+    "Culture", // 231
+    "Science", // 232
+    "Varied", // 233
+    "Pop Music", // 234
+    "Rock Music", // 235
+    "Easy Listening", // 236
+    "Light Classical", // 237
+    "Serious Classical", // 238
+    "Other Music", // 239
+    "Weather", // 240
+    "Finance", // 241
+    "Children's Progs", // 242
+    "Social Affairs", // 243
+    "Religion", // 244
+    "Phone-In", // 245
+    "Travel", // 246
+    "Leisure", // 247
+    "Jazz Music", // 248
+    "Country Music", // 249
+    "National Music", // 250
+    "Oldies Music", // 251
+    "Folk Music", // 252
+    "Documentary", // 253
+    "Alarm Test", // 254
+    "Alarm!!!", // 255
+    "Initial", // 256
+    "Always", // 257
+    "Show clock", // 258
+    "Show long PS", // 259
+    "Start frequency", // 260
+    "Stop frequency", // 261
+    "Start memory channel", // 262
+    "Stop memory channel", // 263
+    "Only store with RDS", // 264
+    "Start auto memory", // 265
+    "Auto memory", // 266
+    "Stationlist ID", // 267
+    "Found", // 268
+    "Abort! Out of memorychannels", // 269
+    "Abort! User pressed button", // 270
+    "Scan finished without errors", // 271
+    "Clear memory channels", // 272
+    "cleared", // 273
+    "Prevent double PI", // 274
+    "Range", // 275
+    "Full", // 276
+    "Wait time on\nsignal only", // 277
+    "Press highlighted corner", // 278
+    "To calibrate touchscreen", // 279
+    "Hold BW button to\nstop DX scanner", // 280
+    "Select Bandwidth", // 281
+    "Your logbook", // 282
+    "Download logbook", // 283
+    "Logbook is empty", // 284
+    "Go to bottom", // 285
+    "Entry added\nto the logbook", // 286
+    "Error adding\nentry to the logbook", // 287
+    "Clear logbook", // 288
+    "Logbook cleared", // 289
+    "Clear failed", // 290
+    "Can't add entry!\nLogbook is full!", // 291
+    "Autologger", // 292
+    "Auto DST on NTP time", // 293
+    "Set NTP time offset", // 294
+    "The logbook contains over 130 entries, which the viewer cannot process. Please download the CSV file to process it.", // 295
+    "Canada" // 296
   },
 
   { "Nederlands", // Dutch
@@ -526,103 +525,102 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "Middel", // 198
     "Alles", // 199
     "Snelle PS", // 200
-    "Standaard", // 201
-    "Scherm uit bij\nXDRGTK verbinding", // 202
-    "FMSI stereo\nverbetering", // 203
-    "Alleen beschikbaar op\nTEF6687/6689!", // 204
-    "Niet beschikbaar op\ngekozen uiterlijk!", // 205
-    "Begin zoeken\ngeheugenkanaal", // 206
-    "Eind zoeken\ngeheugenkanaal", // 207
-    "Wachttijd", // 208
-    "Start DX zoeken", // 209
-    "FM DX Opties", // 210
-    "Fout! Startkanaal is\ngemarkeerd als skip", // 211
-    "Auto AF sorteren", // 212
-    "Geheugenkanalen", // 213
-    "Uitsluiten", // 214
-    "Enkel", // 215
-    "Auto afbreken", // 216
-    "Correcte PI", // 217
-    "Signaal", // 218
-    "Geen geluid\ntijdens scannen", // 219
-    "AIR", // 220
-    "5 sec.\nbandbutton ingedrukt", // 221
-    "Uitschakelen", // 222
-    "Scherm uit", // 223
-    "Geen functie", // 224
-    "Niet gedefinieerd", // 225
-    "Nieuws", // 226
-    "Actualiteit", // 227
-    "Informatie", // 228
-    "Sport", // 229
-    "Educatie", // 230
-    "Drama", // 231
-    "Cultuur", // 232
-    "Wetenschap", // 233
-    "Varia", // 234
-    "Popmuziek", // 235
-    "Rockmuziek", // 236
-    "Melodie", // 237
-    "Licht klassiek", // 238
-    "Klassieke muziek", // 239
-    "Muziek", // 240
-    "Het weer", // 241
-    "Economie", // 242
-    "Voor kinderen", // 243
-    "Maatschappelijk", // 244
-    "Religie", // 245
-    "Doe mee !", // 246
-    "Reizen", // 247
-    "Vrije tijd", // 248
-    "Jazz", // 249
-    "Countrymuziek", // 250
-    "Nationale muziek", // 251
-    "Gouwe ouwe", // 252
-    "Volksmuziek", // 253
-    "Documentaires", // 254
-    "Alarmtest", // 255
-    "Alarm ! ALARM !", // 256
-    "Initieel", // 257
-    "Altijd", // 258
-    "Toon klok", // 259
-    "Toon long PS", // 260
-    "Start frequentie", // 261
-    "Stop frequentie", // 262
-    "Start geheugen\nkanaal", // 263
-    "Stop geheugen\nkanaal", // 264
-    "Alleen met\nRDS opslaan", // 265
-    "Start auto\ngeheugen kanaal", // 266
-    "Auto geheugen kanaal", // 267
-    "Stationlist ID", // 268
-    "Gevonden", // 269
-    "Afgebroken! Geheugen vol", // 270
-    "Afgebroken! Knop ingedrukt", // 271
-    "Zoeken zonder fouten voltooid", // 272
-    "Wis geheugenkanalen", // 273
-    "gewist", // 274
-    "Voorkom dubbele PI", // 275
-    "Bereik", // 276
-    "Volledig", // 277
-    "Wachttijd alleen\nbij signaal", // 278
-    "Druk op aangegeven hoeken", // 279
-    "om scherm te calibreren", // 280
-    "Houdt BW knop lang\ningedrukt om te stoppen", // 281
-    "Selecteer bandbreedte", // 282
-    "Jouw logboek", // 283
-    "Download logboek", // 284
-    "Logboek is leeg", // 285
-    "Ga naar einde", // 286
-    "Toegevoegd aan\nhet logboek", // 287
-    "Toevoegen aan\nlogboek mislukt!", // 288
-    "Logboek legen", // 289
-    "Logboek geleegd", // 290
-    "Legen mislukt", // 291
-    "Toevoegen mislukt!\nLogboek is vol!", // 292
-    "Automatisch loggen", // 293
-    "Auto zomertijd\nop NTP tijd", // 294
-    "NTP tijdverschil\ninstellen", // 295
-    "Het logboek bevat meer dan 130 items, die de viewer niet kan verwerken. Download alstublieft het CSV-bestand om het te bekijken.", // 296
-    "Canada" // 297
+    "Scherm uit bij\nXDRGTK verbinding", // 201
+    "FMSI stereo\nverbetering", // 202
+    "Alleen beschikbaar op\nTEF6687/6689!", // 203
+    "Niet beschikbaar op\ngekozen uiterlijk!", // 204
+    "Begin zoeken\ngeheugenkanaal", // 205
+    "Eind zoeken\ngeheugenkanaal", // 206
+    "Wachttijd", // 207
+    "Start DX zoeken", // 208
+    "FM DX Opties", // 209
+    "Fout! Startkanaal is\ngemarkeerd als skip", // 210
+    "Auto AF sorteren", // 211
+    "Geheugenkanalen", // 212
+    "Uitsluiten", // 213
+    "Enkel", // 214
+    "Auto afbreken", // 215
+    "Correcte PI", // 216
+    "Signaal", // 217
+    "Geen geluid\ntijdens scannen", // 218
+    "AIR", // 219
+    "5 sec.\nbandbutton ingedrukt", // 220
+    "Uitschakelen", // 221
+    "Scherm uit", // 222
+    "Geen functie", // 223
+    "Niet gedefinieerd", // 224
+    "Nieuws", // 225
+    "Actualiteit", // 226
+    "Informatie", // 227
+    "Sport", // 228
+    "Educatie", // 229
+    "Drama", // 230
+    "Cultuur", // 231
+    "Wetenschap", // 232
+    "Varia", // 233
+    "Popmuziek", // 234
+    "Rockmuziek", // 235
+    "Melodie", // 236
+    "Licht klassiek", // 237
+    "Klassieke muziek", // 238
+    "Muziek", // 239
+    "Het weer", // 240
+    "Economie", // 241
+    "Voor kinderen", // 242
+    "Maatschappelijk", // 243
+    "Religie", // 244
+    "Doe mee !", // 245
+    "Reizen", // 246
+    "Vrije tijd", // 247
+    "Jazz", // 248
+    "Countrymuziek", // 249
+    "Nationale muziek", // 250
+    "Gouwe ouwe", // 251
+    "Volksmuziek", // 252
+    "Documentaires", // 253
+    "Alarmtest", // 254
+    "Alarm ! ALARM !", // 255
+    "Initieel", // 256
+    "Altijd", // 257
+    "Toon klok", // 258
+    "Toon long PS", // 259
+    "Start frequentie", // 260
+    "Stop frequentie", // 261
+    "Start geheugen\nkanaal", // 262
+    "Stop geheugen\nkanaal", // 263
+    "Alleen met\nRDS opslaan", // 264
+    "Start auto\ngeheugen kanaal", // 265
+    "Auto geheugen kanaal", // 266
+    "Stationlist ID", // 267
+    "Gevonden", // 268
+    "Afgebroken! Geheugen vol", // 269
+    "Afgebroken! Knop ingedrukt", // 270
+    "Zoeken zonder fouten voltooid", // 271
+    "Wis geheugenkanalen", // 272
+    "gewist", // 273
+    "Voorkom dubbele PI", // 274
+    "Bereik", // 275
+    "Volledig", // 276
+    "Wachttijd alleen\nbij signaal", // 277
+    "Druk op aangegeven hoeken", // 278
+    "om scherm te calibreren", // 279
+    "Houdt BW knop lang\ningedrukt om te stoppen", // 280
+    "Selecteer bandbreedte", // 281
+    "Jouw logboek", // 282
+    "Download logboek", // 283
+    "Logboek is leeg", // 284
+    "Ga naar einde", // 285
+    "Toegevoegd aan\nhet logboek", // 286
+    "Toevoegen aan\nlogboek mislukt!", // 287
+    "Logboek legen", // 288
+    "Logboek geleegd", // 289
+    "Legen mislukt", // 290
+    "Toevoegen mislukt!\nLogboek is vol!", // 291
+    "Automatisch loggen", // 292
+    "Auto zomertijd\nop NTP tijd", // 293
+    "NTP tijdverschil\ninstellen", // 294
+    "Het logboek bevat meer dan 130 items, die de viewer niet kan verwerken. Download alstublieft het CSV-bestand om het te bekijken.", // 295
+    "Canada" // 296
   },
 
   { "Polski", // Polish
@@ -826,103 +824,102 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "Duże", // 198
     "Wszystkie", // 199
     "Szybki PS", // 200
-    "Domyslny", // 201
-    "Wylacz ekran gdy\npołączony z XDR-GTK", // 202
-    "Ulepszenie \nstereo FMSI", // 203
-    "Funkcja dostępna tylko\nna TEF6687/6689!", // 204
-    "Funkcja niedostępna\nz wybranym motywem!", // 205
-    "Rozpocznij skanowanie\nkanałów pamięci", // 206
-    "Zatrzymaj skanowanie\nkanałów pamięci", // 207
-    "Czas oczekiwania", // 208
-    "Rozpocznij skanowanie DX", // 209
-    "Opcje FM DX", // 210
-    "Błąd! Początkowy kanał\njest pominięty.", // 211
-    "Automat. sortowanie AF", // 212
-    "Kanały pamięci", // 213
-    "Wyklucz", // 214
-    "Uwzględnij", // 215
-    "Automatyczne\nanulowanie skanowania", // 216
-    "Poprawne PI", // 217
-    "Sygnał", // 218
-    "Wycisz dźwięk\npodczas skanowania", // 219
-    "AIR", // 220
-    "5 sek. naciśnięcie przyc. BAND", // 221
-    "Wyłącz", // 222
-    "Wyłącz ekran", // 223
-    "Wyłączone", // 224
-    "Niezdefiniowany", // 225
-    "Wiadomości", // 226
-    "Sprawy bieżące", // 227
-    "Informacje", // 228
-    "Sport", // 229
-    "Edukacja", // 230
-    "Dramat", // 231
-    "Kultura", // 232
-    "Nauka", // 233
-    "Różne", // 234
-    "Muzyka Popowa", // 235
-    "Muzyka Rockowa", // 236
-    "Muzyka lekka", // 237
-    "Lekka muz. klas.", // 238
-    "Muz. klas. pow.", // 239
-    "Inna muzyka", // 240
-    "Pogoda", // 241
-    "Finanse", // 242
-    "Prog. dla dzieci", // 243
-    "Sprawy społeczne", // 244
-    "Religia", // 245
-    "Telefon.Udział.", // 246
-    "Podróże", // 247
-    "Czas wolny", // 248
-    "Muzyka Jazz", // 249
-    "Muzyka Country", // 250
-    "Muzyka narodowa", // 251
-    "Stare przeboje", // 252
-    "Muzyka ludowa", // 253
-    "Dokument", // 254
-    "Alarm Test", // 255
-    "Alarm", // 256
-    "Na start", // 257
-    "Zawsze", // 258
-    "Pokaż zegar", // 259
-    "Pokaż długi PS", // 260
-    "Częstotliwość początkowa", // 261
-    "Częstotliwość końcowa", // 262
-    "Początkowy kanał pamięci", // 263
-    "Końcowy kanał pamięci", // 264
-    "Zapisuj tylko z RDS", // 265
-    "Rozpocznij auto zapamiętywanie", // 266
-    "Auto zapamiętywanie", // 267
-    "Identyfikator Stationlist", // 268
-    "Znaleziono", // 269
-    "Przerywam! Brak wolnych kanałów", // 270
-    "Przerywam! Naciśnięto przycisk", // 271
-    "Skanowanie zakończone pomyślnie", // 272
-    "Wyczyść kanały pamięci", // 273
-    "wyczyszczono", // 274
-    "Unikaj podwójnego PI", // 275
-    "Zakres", // 276
-    "Pełne", // 277
-    "Czekaj tylko gdy\nwykryto stację", // 278
-    "Naciśnij zaznaczony róg", // 279
-    "Aby skalibrować ekran", // 280
-    "Aby zatrzymać,\nprzytrzymaj przycisk BW", // 281
-    "Wybierz szer. pasma", // 282
-    "Twój wykaz", // 283
-    "Pobierz wykaz", // 284
-    "Wykaz jest pusty", // 285
-    "Przejdź na dół", // 286
-    "Dodano do wykazu", // 287
-    "Bład aktualizacji!", // 288
-    "Wyczyść wykaz", // 289
-    "Wykaz wyczyszczony", // 290
-    "Błąd wyczyszczenia", // 291
-    "Wykaz pełny!", // 292
-    "Autologowanie stacji", // 293
-    "Auto czas letni wg NTP", // 294
-    "Ustaw odchyl. czasu NTP", // 295
-    "Wykaz zawiera ponad 130 wpisów, których przeglądarka nie może pokazać. Pobierz plik CSV, aby je przetworzyć.", // 296
-    "Kanada" // 297
+    "Wylacz ekran gdy\npołączony z XDR-GTK", // 201
+    "Ulepszenie \nstereo FMSI", // 202
+    "Funkcja dostępna tylko\nna TEF6687/6689!", // 203
+    "Funkcja niedostępna\nz wybranym motywem!", // 204
+    "Rozpocznij skanowanie\nkanałów pamięci", // 205
+    "Zatrzymaj skanowanie\nkanałów pamięci", // 206
+    "Czas oczekiwania", // 207
+    "Rozpocznij skanowanie DX", // 208
+    "Opcje FM DX", // 209
+    "Błąd! Początkowy kanał\njest pominięty.", // 210
+    "Automat. sortowanie AF", // 211
+    "Kanały pamięci", // 212
+    "Wyklucz", // 213
+    "Uwzględnij", // 214
+    "Automatyczne\nanulowanie skanowania", // 215
+    "Poprawne PI", // 216
+    "Sygnał", // 217
+    "Wycisz dźwięk\npodczas skanowania", // 218
+    "AIR", // 219
+    "5 sek. naciśnięcie przyc. BAND", // 220
+    "Wyłącz", // 221
+    "Wyłącz ekran", // 222
+    "Wyłączone", // 223
+    "Niezdefiniowany", // 224
+    "Wiadomości", // 225
+    "Sprawy bieżące", // 226
+    "Informacje", // 227
+    "Sport", // 228
+    "Edukacja", // 229
+    "Dramat", // 230
+    "Kultura", // 231
+    "Nauka", // 232
+    "Różne", // 233
+    "Muzyka Popowa", // 234
+    "Muzyka Rockowa", // 235
+    "Muzyka lekka", // 236
+    "Lekka muz. klas.", // 237
+    "Muz. klas. pow.", // 238
+    "Inna muzyka", // 239
+    "Pogoda", // 240
+    "Finanse", // 241
+    "Prog. dla dzieci", // 242
+    "Sprawy społeczne", // 243
+    "Religia", // 244
+    "Telefon.Udział.", // 245
+    "Podróże", // 246
+    "Czas wolny", // 247
+    "Muzyka Jazz", // 248
+    "Muzyka Country", // 249
+    "Muzyka narodowa", // 250
+    "Stare przeboje", // 251
+    "Muzyka ludowa", // 252
+    "Dokument", // 253
+    "Alarm Test", // 254
+    "Alarm", // 255
+    "Na start", // 256
+    "Zawsze", // 257
+    "Pokaż zegar", // 258
+    "Pokaż długi PS", // 259
+    "Częstotliwość początkowa", // 260
+    "Częstotliwość końcowa", // 261
+    "Początkowy kanał pamięci", // 262
+    "Końcowy kanał pamięci", // 263
+    "Zapisuj tylko z RDS", // 264
+    "Rozpocznij auto zapamiętywanie", // 265
+    "Auto zapamiętywanie", // 266
+    "Identyfikator Stationlist", // 267
+    "Znaleziono", // 268
+    "Przerywam! Brak wolnych kanałów", // 269
+    "Przerywam! Naciśnięto przycisk", // 270
+    "Skanowanie zakończone pomyślnie", // 271
+    "Wyczyść kanały pamięci", // 272
+    "wyczyszczono", // 273
+    "Unikaj podwójnego PI", // 274
+    "Zakres", // 275
+    "Pełne", // 276
+    "Czekaj tylko gdy\nwykryto stację", // 277
+    "Naciśnij zaznaczony róg", // 278
+    "Aby skalibrować ekran", // 279
+    "Aby zatrzymać,\nprzytrzymaj przycisk BW", // 280
+    "Wybierz szer. pasma", // 281
+    "Twój wykaz", // 282
+    "Pobierz wykaz", // 283
+    "Wykaz jest pusty", // 284
+    "Przejdź na dół", // 285
+    "Dodano do wykazu", // 286
+    "Bład aktualizacji!", // 287
+    "Wyczyść wykaz", // 288
+    "Wykaz wyczyszczony", // 289
+    "Błąd wyczyszczenia", // 290
+    "Wykaz pełny!", // 291
+    "Autologowanie stacji", // 292
+    "Auto czas letni wg NTP", // 293
+    "Ustaw odchyl. czasu NTP", // 294
+    "Wykaz zawiera ponad 130 wpisów, których przeglądarka nie może pokazać. Pobierz plik CSV, aby je przetworzyć.", // 295
+    "Kanada" // 296
   },
 
   { "Hrvatski", // Croatian
@@ -1126,103 +1123,102 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "Veliko", // 198
     "Sve", // 199
     "Brzi PS", // 200
-    "Zadano", // 201
-    "Isključi zaslon\ntijekom veze XDRGTK-om", // 202
-    "Poboljšanje\nFMSI stereo-a", // 203
-    "Funkcija dostupna samo\nna TEF6687/6689!", // 204
-    "Funkcija nije dostupna\na odabranoj temi dizajna!", // 205
-    "Pokreni skeniranje\nmemorijskih kanala", // 206
-    "Zaustavi skeniranje\nmemorijskih kanala", // 207
-    "Vrijeme čekanja", // 208
-    "Pokreni DX skeniranje", // 209
-    "FM DX opcije", // 210
-    "Prekid! Početni kanal je\noznačen kao preskočen.", // 211
-    "Autom. sortiranje AF-a", // 212
-    "Memorijski kanali", // 213
-    "Isključeno", // 214
-    "Samo", // 215
-    "Autom. otkazivanje skeniranja", // 216
-    "Točan PI", // 217
-    "Signal", // 218
-    "Isključi zvuk\ntijekom skeniranja", // 219
-    "AIR", // 220
-    "Pritisnite tipku band 5 sekundi", // 221
-    "Isključivanje", // 222
-    "Isključi zaslon", // 223
-    "Onemogućeno", // 224
-    "Neodređeno", // 225
-    "Vijesti", // 226
-    "Aktualno", // 227
-    "Obavijesti", // 228
-    "Sport", // 229
-    "Obrazovanje", // 230
-    "Drama", // 231
-    "Kultura", // 232
-    "Znanost", // 233
-    "Razno", // 234
-    "Pop glazba", // 235
-    "Rock glazba", // 236
-    "Zabavna glazba", // 237
-    "Lagana klasična", // 238
-    "Ozbiljna glazba", // 239
-    "Ostala glazba", // 240
-    "Vrijeme", // 241
-    "Financije", // 242
-    "Dječji program", // 243
-    "Društvena događ", // 244
-    "Religija", // 245
-    "Kontakt program", // 246
-    "Putovanja", // 247
-    "Slobodno vrijeme", // 248
-    "Jazz glazba", // 249
-    "Country glazba", // 250
-    "Domaća glazba", // 251
-    "Stari hitovi", // 252
-    "Narodna glazba", // 253
-    "Dokumentarno", // 254
-    "Testni alarm!", // 255
-    "Alarm !", // 256
-    "Početno", // 257
-    "Uvijek", // 258
-    "Prikaži sat", // 259
-    "Prikaži dugi PS", // 260
-    "Početna frekvencija", // 261
-    "Završna frekvencija", // 262
-    "Početni memorijski kanal", // 263
-    "Završni memorijski kanal", // 264
-    "Samo spremi s RDS-om", // 265
-    "Pokreni autom. memoriju", // 266
-    "Autom. memorija", // 267
-    "ID StationList", // 268
-    "Pronađeno", // 269
-    "Prekid! Nema memorijskih kanala", // 270
-    "Prekid! Korisnik je pritisnuo gumb", // 271
-    "Skeniranje završeno bez grešaka", // 272
-    "Očisti memorijske kanale", // 273
-    "Očišćeno", // 274
-    "Spriječi dupli PI", // 275
-    "Raspon", // 276
-    "Puno", // 277
-    "Vrijeme čekanja na\nsignal samo", // 278
-    "Pritisnite istaknuti kut", // 279
-    "Za kalibraciju zaslona osjetljivog na dodir", // 280
-    "Držite BW gumb za\nzaustavljanje DX skenera", // 281
-    "Odabir širine pojasa", // 282
-    "Vaš dnevnik", // 283
-    "Preuzmi dnevnik", // 284
-    "Dnevnik je prazan", // 285
-    "Idi na dno", // 286
-    "Unos dodan u dnevnik", // 287
-    "Greška pri dodavanju unosa u dnevnik", // 288
-    "Očisti dnevnik", // 289
-    "Dnevnik očišćen", // 290
-    "Čišćenje nije uspjelo", // 291
-    "Ne mogu dodati unos!\nDnevnik je pun!", // 292
-    "Autologger", // 293
-    "Auto DST na NTP vremenu", // 294
-    "Postavi NTP pomak vremena", // 295
-    "Dnevnik sadrži preko 130 unosa, koje preglednik ne može obraditi. Preuzmite CSV datoteku za obradu.", // 296
-    "Canada" // 297
+    "Isključi zaslon\ntijekom veze XDRGTK-om", // 201
+    "Poboljšanje\nFMSI stereo-a", // 202
+    "Funkcija dostupna samo\nna TEF6687/6689!", // 203
+    "Funkcija nije dostupna\na odabranoj temi dizajna!", // 204
+    "Pokreni skeniranje\nmemorijskih kanala", // 205
+    "Zaustavi skeniranje\nmemorijskih kanala", // 206
+    "Vrijeme čekanja", // 207
+    "Pokreni DX skeniranje", // 208
+    "FM DX opcije", // 209
+    "Prekid! Početni kanal je\noznačen kao preskočen.", // 210
+    "Autom. sortiranje AF-a", // 211
+    "Memorijski kanali", // 212
+    "Isključeno", // 213
+    "Samo", // 214
+    "Autom. otkazivanje skeniranja", // 215
+    "Točan PI", // 216
+    "Signal", // 217
+    "Isključi zvuk\ntijekom skeniranja", // 218
+    "AIR", // 219
+    "Pritisnite tipku band 5 sekundi", // 220
+    "Isključivanje", // 221
+    "Isključi zaslon", // 222
+    "Onemogućeno", // 223
+    "Neodređeno", // 224
+    "Vijesti", // 225
+    "Aktualno", // 226
+    "Obavijesti", // 227
+    "Sport", // 228
+    "Obrazovanje", // 229
+    "Drama", // 230
+    "Kultura", // 231
+    "Znanost", // 232
+    "Razno", // 233
+    "Pop glazba", // 234
+    "Rock glazba", // 235
+    "Zabavna glazba", // 236
+    "Lagana klasična", // 237
+    "Ozbiljna glazba", // 238
+    "Ostala glazba", // 239
+    "Vrijeme", // 240
+    "Financije", // 241
+    "Dječji program", // 242
+    "Društvena događ", // 243
+    "Religija", // 244
+    "Kontakt program", // 245
+    "Putovanja", // 246
+    "Slobodno vrijeme", // 247
+    "Jazz glazba", // 248
+    "Country glazba", // 249
+    "Domaća glazba", // 250
+    "Stari hitovi", // 251
+    "Narodna glazba", // 252
+    "Dokumentarno", // 253
+    "Testni alarm!", // 254
+    "Alarm !", // 255
+    "Početno", // 256
+    "Uvijek", // 257
+    "Prikaži sat", // 258
+    "Prikaži dugi PS", // 259
+    "Početna frekvencija", // 260
+    "Završna frekvencija", // 261
+    "Početni memorijski kanal", // 262
+    "Završni memorijski kanal", // 263
+    "Samo spremi s RDS-om", // 264
+    "Pokreni autom. memoriju", // 265
+    "Autom. memorija", // 266
+    "ID StationList", // 267
+    "Pronađeno", // 268
+    "Prekid! Nema memorijskih kanala", // 269
+    "Prekid! Korisnik je pritisnuo gumb", // 270
+    "Skeniranje završeno bez grešaka", // 271
+    "Očisti memorijske kanale", // 272
+    "Očišćeno", // 273
+    "Spriječi dupli PI", // 274
+    "Raspon", // 275
+    "Puno", // 276
+    "Vrijeme čekanja na\nsignal samo", // 277
+    "Pritisnite istaknuti kut", // 278
+    "Za kalibraciju zaslona osjetljivog na dodir", // 279
+    "Držite BW gumb za\nzaustavljanje DX skenera", // 280
+    "Odabir širine pojasa", // 281
+    "Vaš dnevnik", // 282
+    "Preuzmi dnevnik", // 283
+    "Dnevnik je prazan", // 284
+    "Idi na dno", // 285
+    "Unos dodan u dnevnik", // 286
+    "Greška pri dodavanju unosa u dnevnik", // 287
+    "Očisti dnevnik", // 288
+    "Dnevnik očišćen", // 289
+    "Čišćenje nije uspjelo", // 290
+    "Ne mogu dodati unos!\nDnevnik je pun!", // 291
+    "Autologger", // 292
+    "Auto DST na NTP vremenu", // 293
+    "Postavi NTP pomak vremena", // 294
+    "Dnevnik sadrži preko 130 unosa, koje preglednik ne može obraditi. Preuzmite CSV datoteku za obradu.", // 295
+    "Canada" // 296
   },
 
   { "Ελληνικά", // Greek
@@ -1426,103 +1422,102 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "Μεγάλο", // 198
     "Όλα", // 199
     "Γρήγορο PS", // 200
-    "Προεπιλογή", // 201
-    "Μαύρη οθόνη σε\nσύνδεση XDRGTK", // 202
-    "FMSI βελτίωση\nήχου στέρεο", // 203
-    "Λειτουργία διαθέσιμη\nμόνο στα TEF6687/6689!", // 204
-    "Λειτουργία μη διαθέσιμη\nσε αυτή την εμφάνιση!", // 205
-    "Εκκίνηση ανίχνευσης\nκαναλιών μνήμης", // 206
-    "Διακοπή ανίχνευσης\nκαναλιών μνήμης", // 207
-    "Χρόνος αναμονής", // 208
-    "Εκκίνηση DX ανίχνευσης", // 209
-    "Επιλογές FM DX", // 210
-    "Ματαίωση! Λείπει\nτο κανάλι εκκίνησης.", // 211
-    "Αυτόματη ταξινόμηση\nAF", // 212
-    "Κανάλια μνήμης", // 213
-    "Εξαίρεση", // 214
-    "Μόνο", // 215
-    "Αυτόματη ακύρωση\nανίχνευσης", // 216
-    "Σωστό PI", // 217
-    "Σήμα", // 218
-    "Σίγαση ήχου\nκατά την ανίχνευση", // 219
-    "AIR", // 220
-    "Πιέση πλήκτρου\nμπάντας 5 δευτ.", // 221
-    "Σβήσιμο", // 222
-    "Σβήσιμο οθόνης", // 223
-    "Ανενεργό", // 224
-    "Κανένα", // 225
-    "Ειδήσεις", // 226
-    "Επικαιρότητα", // 227
-    "Πληροφόρηση", // 228
-    "Σπορ", // 229
-    "Εκπαίδευση", // 230
-    "Δράμα", // 231
-    "Πολιτισμός", // 232
-    "Επιστήμη", // 233
-    "Ποικίλο", // 234
-    "Ποπ μουσική", // 235
-    "Ροκ μουσική", // 236
-    "Εύκολη ακρόαση", // 237
-    "Ελαφρά κλασική", // 238
-    "Σοβαρή κλασική", // 239
-    "Άλλη μουσική", // 240
-    "Καιρός", // 241
-    "Οικονομικά", // 242
-    "Παιδικό πρόγραμμα", // 243
-    "Κοινωνικά", // 244
-    "Θρησκεία", // 245
-    "Τηλεφωνικά", // 246
-    "Ταξίδια", // 247
-    "Ελεύθερος χρόνος", // 248
-    "Τζαζ μουσική", // 249
-    "Κάντρι μουσική", // 250
-    "Εθνική μουσική", // 251
-    "Παλαιές επιτυχίες", // 252
-    "Παραδοσιακή μουσική", // 253
-    "Ντοκιμαντέρ", // 254
-    "Δοκιμή συναγερμού", // 255
-    "Συναγερμός!!!", // 256
-    "Αρχικό", // 257
+    "Μαύρη οθόνη σε\nσύνδεση XDRGTK", // 201
+    "FMSI βελτίωση\nήχου στέρεο", // 202
+    "Λειτουργία διαθέσιμη\nμόνο στα TEF6687/6689!", // 203
+    "Λειτουργία μη διαθέσιμη\nσε αυτή την εμφάνιση!", // 204
+    "Εκκίνηση ανίχνευσης\nκαναλιών μνήμης", // 205
+    "Διακοπή ανίχνευσης\nκαναλιών μνήμης", // 206
+    "Χρόνος αναμονής", // 207
+    "Εκκίνηση DX ανίχνευσης", // 208
+    "Επιλογές FM DX", // 209
+    "Ματαίωση! Λείπει\nτο κανάλι εκκίνησης.", // 210
+    "Αυτόματη ταξινόμηση\nAF", // 211
+    "Κανάλια μνήμης", // 212
+    "Εξαίρεση", // 213
+    "Μόνο", // 214
+    "Αυτόματη ακύρωση\nανίχνευσης", // 215
+    "Σωστό PI", // 216
+    "Σήμα", // 217
+    "Σίγαση ήχου\nκατά την ανίχνευση", // 218
+    "AIR", // 219
+    "Πιέση πλήκτρου\nμπάντας 5 δευτ.", // 220
+    "Σβήσιμο", // 221
+    "Σβήσιμο οθόνης", // 222
+    "Ανενεργό", // 223
+    "Κανένα", // 224
+    "Ειδήσεις", // 225
+    "Επικαιρότητα", // 226
+    "Πληροφόρηση", // 227
+    "Σπορ", // 228
+    "Εκπαίδευση", // 229
+    "Δράμα", // 230
+    "Πολιτισμός", // 231
+    "Επιστήμη", // 232
+    "Ποικίλο", // 233
+    "Ποπ μουσική", // 234
+    "Ροκ μουσική", // 235
+    "Εύκολη ακρόαση", // 236
+    "Ελαφρά κλασική", // 237
+    "Σοβαρή κλασική", // 238
+    "Άλλη μουσική", // 239
+    "Καιρός", // 240
+    "Οικονομικά", // 241
+    "Παιδικό πρόγραμμα", // 242
+    "Κοινωνικά", // 243
+    "Θρησκεία", // 244
+    "Τηλεφωνικά", // 245
+    "Ταξίδια", // 246
+    "Ελεύθερος χρόνος", // 247
+    "Τζαζ μουσική", // 248
+    "Κάντρι μουσική", // 249
+    "Εθνική μουσική", // 250
+    "Παλαιές επιτυχίες", // 251
+    "Παραδοσιακή μουσική", // 252
+    "Ντοκιμαντέρ", // 253
+    "Δοκιμή συναγερμού", // 254
+    "Συναγερμός!!!", // 255
+    "Αρχικό", // 256
     "Πάντα", //261
-    "Εμφάνιση ρολογιού", // 259
-    "Εμφάνιση μεγάλου PS", // 260
-    "Συχνότητα εκκίνησης", // 261
-    "Τελική συχνότητα", // 262
-    "Αρχικό κανάλι μνήμης", // 263
-    "Τελικό κανάλι μνήμης", // 264
-    "Αποθήκευση μόνο\nμε RDS", // 265
-    "Εκκίνηση\nαυτόματης μνήμης", // 266
-    "Αυτόματη μνήμη", // 267
-    "ID λίστας σταθμών", // 268
-    "Βρέθηκαν", // 269
-    "Ματαίωση! Τα κανάλια\nμνήμης εξαντλήθηκαν", // 270
-    "Ματαίωση! Πιέση\nπλήκτρου χρήστη", // 271
-    "Η ανίχνευση ολοκληρώθηκε\nχωρίς σφάλματα", // 272
-    "Εκκαθάριση\nκαναλιών μνήμης", // 273
-    "έγινε εκκαθάριση", // 274
-    "Αποφυγή διπλού PI", // 275
-    "Εύρος", // 276
-    "Πλήρης", // 277
-    "Αναμονή μόνο σε\nυπάρξη σήματος", // 278
-    "Πιέστε την επισημασμένη\nγωνία για βαθμονόμηση", // 279
-    "της οθόνης αφής", // 280
-    "Κρατήστε το BW για\nδιακοπή της DX σάρωσης", // 281
-    "Επιλογή εύρους μπάντας", // 282
-    "Το βιβλίο καταγραφών σας", // 283
-    "Λήψη βιβλίου καταγραφών", // 284
-    "Το βιβλίο καταγραφών είναι άδειο", // 285
-    "Μετάβαση στον πάτο", // 286
-    "Προστέθηκε\nστις καταγραφές", // 287
-    "Σφάλμα προσθήκης\nστις καταγραφές", // 288
-    "Εκκαθάριση βιβλίου\nκαταγραφών", // 289
-    "Εκκαθαρίστηκε", // 290
-    "Αποτυχία εκκαθάρισης", // 291
-    "Αδυναμία προσθήκης!\nΒιβλίο γεμάτο!", // 292
-    "Αυτόματη καταγραφή", // 293
-    "Αυτόματο DST\nσε ώρα NTP", // 294
-    "Ολίσθηση ώρας NTP", // 295
-    "Το βιβλίο περιέχει πάνω από 130 καταγραφές, και είναι αδύνατη η επεξεργασία τους από το χρήστη. Κάντε λήψη του αρχείου CSV για να το επεξεργαστείτε.", // 296
-    "Καναδάς" // 297
+    "Εμφάνιση ρολογιού", // 258
+    "Εμφάνιση μεγάλου PS", // 259
+    "Συχνότητα εκκίνησης", // 260
+    "Τελική συχνότητα", // 261
+    "Αρχικό κανάλι μνήμης", // 262
+    "Τελικό κανάλι μνήμης", // 263
+    "Αποθήκευση μόνο\nμε RDS", // 264
+    "Εκκίνηση\nαυτόματης μνήμης", // 265
+    "Αυτόματη μνήμη", // 266
+    "ID λίστας σταθμών", // 267
+    "Βρέθηκαν", // 268
+    "Ματαίωση! Τα κανάλια\nμνήμης εξαντλήθηκαν", // 269
+    "Ματαίωση! Πιέση\nπλήκτρου χρήστη", // 270
+    "Η ανίχνευση ολοκληρώθηκε\nχωρίς σφάλματα", // 271
+    "Εκκαθάριση\nκαναλιών μνήμης", // 272
+    "έγινε εκκαθάριση", // 273
+    "Αποφυγή διπλού PI", // 274
+    "Εύρος", // 275
+    "Πλήρης", // 276
+    "Αναμονή μόνο σε\nυπάρξη σήματος", // 277
+    "Πιέστε την επισημασμένη\nγωνία για βαθμονόμηση", // 278
+    "της οθόνης αφής", // 279
+    "Κρατήστε το BW για\nδιακοπή της DX σάρωσης", // 280
+    "Επιλογή εύρους μπάντας", // 281
+    "Το βιβλίο καταγραφών σας", // 282
+    "Λήψη βιβλίου καταγραφών", // 283
+    "Το βιβλίο καταγραφών είναι άδειο", // 284
+    "Μετάβαση στον πάτο", // 285
+    "Προστέθηκε\nστις καταγραφές", // 286
+    "Σφάλμα προσθήκης\nστις καταγραφές", // 287
+    "Εκκαθάριση βιβλίου\nκαταγραφών", // 288
+    "Εκκαθαρίστηκε", // 289
+    "Αποτυχία εκκαθάρισης", // 290
+    "Αδυναμία προσθήκης!\nΒιβλίο γεμάτο!", // 291
+    "Αυτόματη καταγραφή", // 292
+    "Αυτόματο DST\nσε ώρα NTP", // 293
+    "Ολίσθηση ώρας NTP", // 294
+    "Το βιβλίο περιέχει πάνω από 130 καταγραφές, και είναι αδύνατη η επεξεργασία τους από το χρήστη. Κάντε λήψη του αρχείου CSV για να το επεξεργαστείτε.", // 295
+    "Καναδάς" // 296
   },
 
   { "Română", // Romanian
@@ -1726,103 +1721,102 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "Mare", // 198
     "Tot", // 199
     "PS rapid", // 200
-    "Mod implicit", // 201
-    "Ecran oprit, conectat la XDRGTK", // 202
-    "FMSI stereo îmbunătățit", // 203
-    "Funcție activă doar la\nTEF6687/6689!", // 204
-    "Funcție indisponibilă\nla acest skin!", // 205
-    "Scanare începută\nmemorare posturi", // 206
-    "Scanare terminată\nmemorare posturi", // 207
-    "Așteaptă", // 208
-    "Începe scanarea DX", // 209
-    "FM DX Opțiuni", // 210
-    "Terminat! Programul de pornire\neste ignorat.", // 211
-    "Sortare automată AF", // 212
-    "Memorare programe", // 213
-    "Exclude", // 214
-    "Doar", // 215
-    "Auto oprire scanare", // 216
-    "PI corect", // 217
-    "Semnal", // 218
-    "Audio oprit\ncând scanează", // 219
-    "AIR", // 220
-    "Apasă 5sec. butonul bandă", // 221
-    "Oprit", // 222
-    "Ecran oprit", // 223
-    "Dezactivat", // 224
-    "Nedefinit", // 225
-    "Știri", // 226
-    "Actualități", // 227
-    "Informații", // 228
-    "Sport", // 229
-    "Educație", // 230
-    "Teatru", // 231
-    "Cultură", // 232
-    "Știință", // 233
-    "Varietăți", // 234
-    "Muzică pop", // 235
-    "Muzică rock", // 236
-    "Muzică ușoară", // 237
-    "Clasic Lejer", // 238
-    "Muzică Clasică", // 239
-    "Altă Muzică", // 240
-    "Meteo", // 241
-    "Finanțe", // 242
-    "Copii", // 243
-    "Social", // 244
-    "Religie", // 245
-    "Phone-In", // 246
-    "Călătorii", // 247
-    "Timp Liber", // 248
-    "Muzică de Jazz", // 249
-    "Muzică Country", // 250
-    "Muzică Națională", // 251
-    "Muzica Retro", // 252
-    "Muzică Populară", // 253
-    "Documentar", // 254
-    "Test Alarmă", // 255
-    "Alarmă!!!", // 256
-    "Inițial", // 257
-    "Mereu", // 258
-    "Arată ceasul", // 259
-    "Arată PS lung", // 260
-    "Frecvență de început", // 261
-    "Frecvență de oprire", // 262
-    "Canal de memorie de început", // 263
-    "Canal de memorie de oprire", // 264
-    "Stochează doar cu RDS", // 265
-    "Începe memoria automată", // 266
-    "Memorie automată", // 267
-    "Listă ID posturi", // 268
-    "Găsit", // 269
-    "Anulat! Memoria canalelor este plină", // 270
-    "Anulat! Utilizatorul a apăsat un buton", // 271
-    "Scanarea s-a terminat fără erori", // 272
-    "Șterge canalele de memorie", // 273
-    "Șters", // 274
-    "Previne dublarea PI", // 275
-    "Interval", // 276
-    "Complet", // 277
-    "Timp de așteptare doar\npe semnal", // 278
-    "Apasă colțul evidențiat", // 279
-    "Pentru calibrarea ecranului tactil", // 280
-    "Ține apăsat BW pentru\noprirea scannerului DX", // 281
-    "Selectează lățimea de bandă", // 282
-    "Jurnalul tău", // 283
-    "Descarcă jurnalul", // 284
-    "Jurnalul este gol", // 285
-    "Du-te la final", // 286
-    "Adăugat în jurnal", // 287
-    "Eroare la adăugarea\nîn jurnal", // 288
-    "Șterge jurnalul", // 289
-    "Jurnal șters", // 290
-    "Ștergerea a eșuat", // 291
-    "Nu se poate adăuga!\nJurnalul este plin!", // 292
-    "Autologger", // 293
-    "Auto DST pe ora NTP", // 294
-    "Setează offsetul pentru ora NTP", // 295
-    "Jurnalul conține peste 130 de intrări, pe care vizualizatorul nu le poate procesa. Te rog descarcă fișierul CSV pentru a le procesa.", // 296
-    "Canada" // 297
+    "Ecran oprit, conectat la XDRGTK", // 201
+    "FMSI stereo îmbunătățit", // 202
+    "Funcție activă doar la\nTEF6687/6689!", // 203
+    "Funcție indisponibilă\nla acest skin!", // 204
+    "Scanare începută\nmemorare posturi", // 205
+    "Scanare terminată\nmemorare posturi", // 206
+    "Așteaptă", // 207
+    "Începe scanarea DX", // 208
+    "FM DX Opțiuni", // 209
+    "Terminat! Programul de pornire\neste ignorat.", // 210
+    "Sortare automată AF", // 211
+    "Memorare programe", // 212
+    "Exclude", // 213
+    "Doar", // 214
+    "Auto oprire scanare", // 215
+    "PI corect", // 216
+    "Semnal", // 217
+    "Audio oprit\ncând scanează", // 218
+    "AIR", // 219
+    "Apasă 5sec. butonul bandă", // 220
+    "Oprit", // 221
+    "Ecran oprit", // 222
+    "Dezactivat", // 223
+    "Nedefinit", // 224
+    "Știri", // 225
+    "Actualități", // 226
+    "Informații", // 227
+    "Sport", // 228
+    "Educație", // 229
+    "Teatru", // 230
+    "Cultură", // 231
+    "Știință", // 232
+    "Varietăți", // 233
+    "Muzică pop", // 234
+    "Muzică rock", // 235
+    "Muzică ușoară", // 236
+    "Clasic Lejer", // 237
+    "Muzică Clasică", // 238
+    "Altă Muzică", // 239
+    "Meteo", // 240
+    "Finanțe", // 241
+    "Copii", // 242
+    "Social", // 243
+    "Religie", // 244
+    "Phone-In", // 245
+    "Călătorii", // 246
+    "Timp Liber", // 247
+    "Muzică de Jazz", // 248
+    "Muzică Country", // 249
+    "Muzică Națională", // 250
+    "Muzica Retro", // 251
+    "Muzică Populară", // 252
+    "Documentar", // 253
+    "Test Alarmă", // 254
+    "Alarmă!!!", // 255
+    "Inițial", // 256
+    "Mereu", // 257
+    "Arată ceasul", // 258
+    "Arată PS lung", // 259
+    "Frecvență de început", // 260
+    "Frecvență de oprire", // 261
+    "Canal de memorie de început", // 262
+    "Canal de memorie de oprire", // 263
+    "Stochează doar cu RDS", // 264
+    "Începe memoria automată", // 265
+    "Memorie automată", // 266
+    "Listă ID posturi", // 267
+    "Găsit", // 268
+    "Anulat! Memoria canalelor este plină", // 269
+    "Anulat! Utilizatorul a apăsat un buton", // 270
+    "Scanarea s-a terminat fără erori", // 271
+    "Șterge canalele de memorie", // 272
+    "Șters", // 273
+    "Previne dublarea PI", // 274
+    "Interval", // 275
+    "Complet", // 276
+    "Timp de așteptare doar\npe semnal", // 277
+    "Apasă colțul evidențiat", // 278
+    "Pentru calibrarea ecranului tactil", // 279
+    "Ține apăsat BW pentru\noprirea scannerului DX", // 280
+    "Selectează lățimea de bandă", // 281
+    "Jurnalul tău", // 282
+    "Descarcă jurnalul", // 283
+    "Jurnalul este gol", // 284
+    "Du-te la final", // 285
+    "Adăugat în jurnal", // 286
+    "Eroare la adăugarea\nîn jurnal", // 287
+    "Șterge jurnalul", // 288
+    "Jurnal șters", // 289
+    "Ștergerea a eșuat", // 290
+    "Nu se poate adăuga!\nJurnalul este plin!", // 291
+    "Autologger", // 292
+    "Auto DST pe ora NTP", // 293
+    "Setează offsetul pentru ora NTP", // 294
+    "Jurnalul conține peste 130 de intrări, pe care vizualizatorul nu le poate procesa. Te rog descarcă fișierul CSV pentru a le procesa.", // 295
+    "Canada" // 296
   },
 
   { "Deutsch", // German
@@ -2026,103 +2020,102 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "Viel", // 198
     "Maximal", // 199
     "Schnelles PS", // 200
-    "Standard", // 201
-    "Bildschirm aus bei\nXDRGTK-Verbindung", // 202
-    "FMSI Stereo-\nVerbesserung", // 203
-    "Funktion nur für\nTEF6687/6689 verfügbar!", // 204
-    "Funktion für ausgewählten\nSkin nicht verfügbar!", // 205
-    "Starte Scan mit\nSpeicherplatz", // 206
-    "Stoppe Scan mit\nSpeicherplatz", // 207
-    "Wartezeit", // 208
-    "Starte DX-Scan", // 209
-    "UKW DX-Optionen", // 210
-    "Abbruch! Start-Speicher-\nplatz ist nicht belegt", // 211
-    "AF Autosortierung", // 212
-    "Speicherplätze scannen", // 213
-    "Nein", // 214
-    "Ja, ausschließlich", // 215
-    "Automatisches\nScan-Ende", // 216
-    "Korrekter PI-Code", // 217
-    "Signal", // 218
-    "Stumm beim Scannen", // 219
-    "AIR", // 220
-    "BAND-Knopf\n5 Sek. drücken", // 221
-    "Ausschalten", // 222
-    "Bildschirmschoner", // 223
-    "Deaktiviert", // 224
-    "Nicht definiert", // 225
-    "Nachrichten", // 226
-    "Aktuelle Info", // 227
-    "Service Programm", // 228
-    "Sport", // 229
-    "Bildung", // 230
-    "Hörspiel + Lit", // 231
-    "Kultur+Gesellsch", // 232
-    "Wissenschaft", // 233
-    "Unterhaltung", // 234
-    "Pop Musik", // 235
-    "Rock Musik", // 236
-    "Unterhalt Musik", // 237
-    "Leichte Klassik", // 238
-    "Ernste Klassik", // 239
-    "Spezielle Musik", // 240
-    "Wetter", // 241
-    "Wirtschaft", // 242
-    "Kinderprogramm", // 243
-    "Soziales", // 244
-    "Religion", // 245
-    "Anrufsendung", // 246
-    "Reiseinformation", // 247
-    "Freizeit", // 248
-    "Jazz", // 249
-    "Country Musik", // 250
-    "Landesmusik", // 251
-    "Oldies Musik", // 252
-    "Folklore", // 253
-    "Feature", // 254
-    "Alarm Test", // 255
-    "Alarm! Alarm!", // 256
-    "Anfänglich", // 257
-    "Immer", // 258
-    "Uhr anzeigen", // 259
-    "Zeige langes PS", // 260
-    "Start-Frequenz", // 261
-    "Stopp-Frequenz", // 262
-    "Start-Speicherplatz", // 263
-    "Stopp-Speicherplatz", // 264
-    "Speichern nur mit RDS", // 265
-    "Starte Auto-Speichern", // 266
-    "Auto-Speichern", // 267
-    "Stationlist-ID", // 268
-    "gefunden", // 269
-    "Abbruch! Speicherplätze voll", // 270
-    "Abbruch! Taste wurde gedrückt", // 271
-    "Scan ohne Fehler beendet", // 272
-    "Lösche Speicherplätze", // 273
-    "gelöscht", // 274
-    "Doppelte PI verhindern", // 275
-    "Bereich", // 276
-    "Voll", // 277
-    "Wartezeit nur wenn\nSignal vorhanden", // 278
-    "Markierte Ecke drücken", // 279
-    "zum Kalibrieren des Touchscrees", // 280
-    "Zum Stoppen des DX-Scans\nTaste BW lange drücken", // 281
-    "Bandbreite wählen", // 282
-    "Dein Logbuch", // 283
-    "Logbuch herunterladen", // 284
-    "Logbuch ist leer", // 285
-    "Zum Ende gehen", // 286
-    "Logbuch-Eintrag\nwurde erstellt", // 287
-    "Logbuch-Eintrag\nist fehlgeschlagen", // 288
-    "Logbuch löschen", // 289
-    "Logbuch gelöscht", // 290
-    "Löschen fehlgeschlagen", // 291
-    "Logbucheintrag nicht möglich\nLogbuch ist voll!", // 292
-    "Automatisch loggen", // 293
-    "Auto-Sommerzeit\nüber NTP", // 294
-    "NTP-Zeitversatz\neinstellen", // 295
-    "Das Logbuch enthält mehr als 130 Einträge, was das Anzeigeprogramm nicht verarbeiten kann. Bitte lade die CSV-Datei zum Verarbeiten herunter.", // 296
-    "Kanada" // 297
+    "Bildschirm aus bei\nXDRGTK-Verbindung", // 201
+    "FMSI Stereo-\nVerbesserung", // 202
+    "Funktion nur für\nTEF6687/6689 verfügbar!", // 203
+    "Funktion für ausgewählten\nSkin nicht verfügbar!", // 204
+    "Starte Scan mit\nSpeicherplatz", // 205
+    "Stoppe Scan mit\nSpeicherplatz", // 206
+    "Wartezeit", // 207
+    "Starte DX-Scan", // 208
+    "UKW DX-Optionen", // 209
+    "Abbruch! Start-Speicher-\nplatz ist nicht belegt", // 210
+    "AF Autosortierung", // 211
+    "Speicherplätze scannen", // 212
+    "Nein", // 213
+    "Ja, ausschließlich", // 214
+    "Automatisches\nScan-Ende", // 215
+    "Korrekter PI-Code", // 216
+    "Signal", // 217
+    "Stumm beim Scannen", // 218
+    "AIR", // 219
+    "BAND-Knopf\n5 Sek. drücken", // 220
+    "Ausschalten", // 221
+    "Bildschirmschoner", // 222
+    "Deaktiviert", // 223
+    "Nicht definiert", // 224
+    "Nachrichten", // 225
+    "Aktuelle Info", // 226
+    "Service Programm", // 227
+    "Sport", // 228
+    "Bildung", // 229
+    "Hörspiel + Lit", // 230
+    "Kultur+Gesellsch", // 231
+    "Wissenschaft", // 232
+    "Unterhaltung", // 233
+    "Pop Musik", // 234
+    "Rock Musik", // 235
+    "Unterhalt Musik", // 236
+    "Leichte Klassik", // 237
+    "Ernste Klassik", // 238
+    "Spezielle Musik", // 239
+    "Wetter", // 240
+    "Wirtschaft", // 241
+    "Kinderprogramm", // 242
+    "Soziales", // 243
+    "Religion", // 244
+    "Anrufsendung", // 245
+    "Reiseinformation", // 246
+    "Freizeit", // 247
+    "Jazz", // 248
+    "Country Musik", // 249
+    "Landesmusik", // 250
+    "Oldies Musik", // 251
+    "Folklore", // 252
+    "Feature", // 253
+    "Alarm Test", // 254
+    "Alarm! Alarm!", // 255
+    "Anfänglich", // 256
+    "Immer", // 257
+    "Uhr anzeigen", // 258
+    "Zeige langes PS", // 259
+    "Start-Frequenz", // 260
+    "Stopp-Frequenz", // 261
+    "Start-Speicherplatz", // 262
+    "Stopp-Speicherplatz", // 263
+    "Speichern nur mit RDS", // 264
+    "Starte Auto-Speichern", // 265
+    "Auto-Speichern", // 266
+    "Stationlist-ID", // 267
+    "gefunden", // 268
+    "Abbruch! Speicherplätze voll", // 269
+    "Abbruch! Taste wurde gedrückt", // 270
+    "Scan ohne Fehler beendet", // 271
+    "Lösche Speicherplätze", // 272
+    "gelöscht", // 273
+    "Doppelte PI verhindern", // 274
+    "Bereich", // 275
+    "Voll", // 276
+    "Wartezeit nur wenn\nSignal vorhanden", // 277
+    "Markierte Ecke drücken", // 278
+    "zum Kalibrieren des Touchscrees", // 279
+    "Zum Stoppen des DX-Scans\nTaste BW lange drücken", // 280
+    "Bandbreite wählen", // 281
+    "Dein Logbuch", // 282
+    "Logbuch herunterladen", // 283
+    "Logbuch ist leer", // 284
+    "Zum Ende gehen", // 285
+    "Logbuch-Eintrag\nwurde erstellt", // 286
+    "Logbuch-Eintrag\nist fehlgeschlagen", // 287
+    "Logbuch löschen", // 288
+    "Logbuch gelöscht", // 289
+    "Löschen fehlgeschlagen", // 290
+    "Logbucheintrag nicht möglich\nLogbuch ist voll!", // 291
+    "Automatisch loggen", // 292
+    "Auto-Sommerzeit\nüber NTP", // 293
+    "NTP-Zeitversatz\neinstellen", // 294
+    "Das Logbuch enthält mehr als 130 Einträge, was das Anzeigeprogramm nicht verarbeiten kann. Bitte lade die CSV-Datei zum Verarbeiten herunter.", // 295
+    "Kanada" // 296
   },
 
   { "Čeština", // Czech
@@ -2326,103 +2319,102 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "Velké", // 198
     "Vše", // 199
     "Rychlé načtení PS", // 200
-    "Výchozí", // 201
-    "Vypnout displej při\nXDRGTK připojení", // 202
-    "FMSI stereo\nvylepšení", // 203
-    "Funkce dostupná pouze\nu TEF6687/6689!", // 204
-    "Funkce není dostupná\nu zvoleného skinu!", // 205
-    "Začít skenování\nod předvolby č.", // 206
-    "Skončit skenování\nu předvolby č.", // 207
-    "Doba čekání", // 208
-    "Spustit DX skenování", // 209
-    "Nastavení FM DX", // 210
-    "Přerušeno! Začáteční předvolba\nje označena jako prázdná.", // 211
-    "Auto řazení AF", // 212
-    "Předvolby paměti", // 213
-    "Vyloučit", // 214
-    "Pouze", // 215
-    "Automaticky zastavit\nskenování", // 216
-    "Korektní PI", // 217
-    "Signál", // 218
-    "Ztlumit zvuk\nběhem skenování", // 219
-    "AIR", // 220
-    "Po 5 sec. stisknutí\ntl. BAND", // 221
-    "Vypnout", // 222
-    "Vypnout displej", // 223
-    "Zakázáno", // 224
-    "Nedefinovaný", // 225
-    "Zprávy", // 226
-    "Publicistika", // 227
-    "Informace", // 228
-    "Sport", // 229
-    "Vzdělání", // 230
-    "Drama", // 231
-    "Kultura", // 232
-    "Věda", // 233
-    "Různé žánry", // 234
-    "Popová hudba", // 235
-    "Rocková hudba", // 236
-    "Oddychová hudba", // 237
-    "Klasická hudba", // 238
-    "Vážná hudba", // 239
-    "Jiná hudba", // 240
-    "Počasí", // 241
-    "Finance", // 242
-    "Dětský program", // 243
-    "Společenská tém.", // 244
-    "Naboženství", // 245
-    "Telefonáty", // 246
-    "Cestování", // 247
-    "Zábava", // 248
-    "Jazzová hudba", // 249
-    "Country hudba", // 250
-    "Národní hudba", // 251
-    "Oldies hudba", // 252
-    "Folková hudba", // 253
-    "Dokumenty", // 254
-    "Alarm Test", // 255
-    "Alarm – Alarm !", // 256
-    "Počáteční", // 257
-    "Vždy", // 258
-    "Zobrazit hodiny", // 259
-    "Zobrazit long PS", // 260
-    "Počáteční frekvence", // 261
-    "Poslední frekvence", // 262
-    "Počáteční paměťový kanál", // 263
-    "Poslední paměťový kanál", // 264
-    "Ukládat jen s RDS", // 265
-    "Spustit automatickou paměť", // 266
-    "Automatická paměť", // 267
-    "ID seznamu stanic", // 268
-    "Nalezeno", // 269
-    "Přerušeno! Nedostatek paměťových kanálů", // 270
-    "Přerušeno! Uživatel stiskl tlačítko", // 271
-    "Skenování dokončen bez chyb", // 272
-    "Vymazat paměťové kanály", // 273
-    "vymazáno", // 274
-    "Zamezit dvojitému PI", // 275
-    "Rozsah", // 276
-    "Plný", // 277
-    "Čekací doba pouze na\nsignal", // 278
-    "Stiskněte zvýrazněný roh", // 279
-    "Pro kalibraci dotekové obrazovky", // 280
-    "Pro zastavení\npodržte tlačítko BW", // 281
-    "Vyberte šířku pásma", // 282
-    "Váš logbook", // 283
-    "Stáhnout logbook", // 284
-    "Logbook je prázdný", // 285
-    "Přejít na konec", // 286
-    "Přidáno do logu", // 287
-    "Chyba při přidávání\npoložky do logbooku", // 288
-    "Vymazat logbook", // 289
-    "Logbook vymazán", // 290
-    "Vymazání se nezdařilo", // 291
-    "Nelze přidat položku!\nLogbook je plný!", // 292
-    "Automatický logger", // 293
-    "Auto DST u NTP času", // 294
-    "Nastavte časový posun NTP", // 295
-    "Logbook obsahuje více než 130 položek, které prohlížeč nedokáže zpracovat. Pro zpracování všech položek si stáhněte CSV soubor.", // 296
-    "Canada" // 297
+    "Vypnout displej při\nXDRGTK připojení", // 201
+    "FMSI stereo\nvylepšení", // 202
+    "Funkce dostupná pouze\nu TEF6687/6689!", // 203
+    "Funkce není dostupná\nu zvoleného skinu!", // 204
+    "Začít skenování\nod předvolby č.", // 205
+    "Skončit skenování\nu předvolby č.", // 206
+    "Doba čekání", // 207
+    "Spustit DX skenování", // 208
+    "Nastavení FM DX", // 209
+    "Přerušeno! Začáteční předvolba\nje označena jako prázdná.", // 210
+    "Auto řazení AF", // 211
+    "Předvolby paměti", // 212
+    "Vyloučit", // 213
+    "Pouze", // 214
+    "Automaticky zastavit\nskenování", // 215
+    "Korektní PI", // 216
+    "Signál", // 217
+    "Ztlumit zvuk\nběhem skenování", // 218
+    "AIR", // 219
+    "Po 5 sec. stisknutí\ntl. BAND", // 220
+    "Vypnout", // 221
+    "Vypnout displej", // 222
+    "Zakázáno", // 223
+    "Nedefinovaný", // 224
+    "Zprávy", // 225
+    "Publicistika", // 226
+    "Informace", // 227
+    "Sport", // 228
+    "Vzdělání", // 229
+    "Drama", // 230
+    "Kultura", // 231
+    "Věda", // 232
+    "Různé žánry", // 233
+    "Popová hudba", // 234
+    "Rocková hudba", // 235
+    "Oddychová hudba", // 236
+    "Klasická hudba", // 237
+    "Vážná hudba", // 238
+    "Jiná hudba", // 239
+    "Počasí", // 240
+    "Finance", // 241
+    "Dětský program", // 242
+    "Společenská tém.", // 243
+    "Naboženství", // 244
+    "Telefonáty", // 245
+    "Cestování", // 246
+    "Zábava", // 247
+    "Jazzová hudba", // 248
+    "Country hudba", // 249
+    "Národní hudba", // 250
+    "Oldies hudba", // 251
+    "Folková hudba", // 252
+    "Dokumenty", // 253
+    "Alarm Test", // 254
+    "Alarm – Alarm !", // 255
+    "Počáteční", // 256
+    "Vždy", // 257
+    "Zobrazit hodiny", // 258
+    "Zobrazit long PS", // 259
+    "Počáteční frekvence", // 260
+    "Poslední frekvence", // 261
+    "Počáteční paměťový kanál", // 262
+    "Poslední paměťový kanál", // 263
+    "Ukládat jen s RDS", // 264
+    "Spustit automatickou paměť", // 265
+    "Automatická paměť", // 266
+    "ID seznamu stanic", // 267
+    "Nalezeno", // 268
+    "Přerušeno! Nedostatek paměťových kanálů", // 269
+    "Přerušeno! Uživatel stiskl tlačítko", // 270
+    "Skenování dokončen bez chyb", // 271
+    "Vymazat paměťové kanály", // 272
+    "vymazáno", // 273
+    "Zamezit dvojitému PI", // 274
+    "Rozsah", // 275
+    "Plný", // 276
+    "Čekací doba pouze na\nsignal", // 277
+    "Stiskněte zvýrazněný roh", // 278
+    "Pro kalibraci dotekové obrazovky", // 279
+    "Pro zastavení\npodržte tlačítko BW", // 280
+    "Vyberte šířku pásma", // 281
+    "Váš logbook", // 282
+    "Stáhnout logbook", // 283
+    "Logbook je prázdný", // 284
+    "Přejít na konec", // 285
+    "Přidáno do logu", // 286
+    "Chyba při přidávání\npoložky do logbooku", // 287
+    "Vymazat logbook", // 288
+    "Logbook vymazán", // 289
+    "Vymazání se nezdařilo", // 290
+    "Nelze přidat položku!\nLogbook je plný!", // 291
+    "Automatický logger", // 292
+    "Auto DST u NTP času", // 293
+    "Nastavte časový posun NTP", // 294
+    "Logbook obsahuje více než 130 položek, které prohlížeč nedokáže zpracovat. Pro zpracování všech položek si stáhněte CSV soubor.", // 295
+    "Canada" // 296
   },
 
   { "Magyar", // Hungarian
@@ -2626,103 +2618,102 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "Nagy", // 198
     "Mind", // 199
     "Gyors PS", // 200
-    "Alap", // 201
-    "Képernyő némítása\nXDRGTK kapcsolaton", // 202
-    "FMSI sztereó\njavítás", // 203
-    "Funkció csak a\nTEF6687/6689-hez!", // 204
-    "Funkció nem elérhető\nebben a kinézetben!", // 205
-    "Mem. csat. szkennelésének\nelkezdése", // 206
-    "Mem. csat. szkennelésének\nbefejezése", // 207
-    "Várakozási idő", // 208
-    "DX szkennelés indítása", // 209
-    "FM DX Opciók", // 210
-    "Megszakítva! A kezdőcsatorna\nkihagyottnak van jelölve.", // 211
-    "Auto AF rendezés", // 212
-    "Memóriacsatornák", // 213
-    "Kizárása", // 214
-    "Csak", // 215
-    "Auto keresés\nmegszakítása", // 216
-    "Jó PI esetén", // 217
-    "Jel esetén", // 218
-    "Hang némítása\nkeresés közben", // 219
-    "AIR", // 220
-    "5 mp. sávgombnyomás", // 221
-    "Kikapcsolás", // 222
-    "Képernyőnémítás", // 223
-    "Letiltva", // 224
-    "Nincs", // 225
-    "Hírek", // 226
-    "Aktuális események", // 227
-    "Információ", // 228
-    "Sport", // 229
-    "Oktatás", // 230
-    "Dráma", // 231
-    "Kultúra", // 232
-    "Tudomány", // 233
-    "Változatos", // 234
-    "Pop Zene", // 235
-    "Rock Zene", // 236
-    "Könnyűzene", // 237
-    "Könnyű Klasszikus", // 238
-    "Komoly Klasszikus", // 239
-    "Egyéb Zene", // 240
-    "Időjárás", // 241
-    "Pénzügy", // 242
-    "Gyermekprogramok", // 243
-    "Társadalmi ügyek", // 244
-    "Vallás", // 245
-    "Betelefonálós", // 246
-    "Utazás", // 247
-    "Szabadidő", // 248
-    "Jazz Zene", // 249
-    "Country Zene", // 250
-    "Nemzeti Zene", // 251
-    "Régi Zene", // 252
-    "Népi Zene", // 253
-    "Dokumentumfilm", // 254
-    "Riasztás Teszt", // 255
-    "Riasztás!!!", // 256
-    "Kezdeti", // 257
-    "Mindig", // 258
-    "Óra mutatása", // 259
-    "Hosszú PS mutatása", // 260
-    "Indítási frekvencia", // 261
-    "Befejezési frekvencia", // 262
-    "Memóriacsatorna\nmentés indítása", // 263
-    "Memóriacsatorna\nmentés leállítása", // 264
-    "Csak RDS-el tárolja", // 265
-    "Auto memória indítása", // 266
-    "Auto memória", // 267
-    "Stationlist ID", // 268
-    "Megtalálva", // 269
-    "Megszakítva! Nincs\nmemóriacsatorna", // 270
-    "Megszakítva! Felhasználó\nmegnyomta a gombot", // 271
-    "Szkennelés hiba\nnélkül befejeződött", // 272
-    "Memóriacsatornák törlése", // 273
-    "törölve", // 274
-    "Kettős PI\nmegakadályozása", // 275
-    "Tartomány", // 276
-    "Teljes", // 277
-    "Várakozási idő\ncsak jel esetén", // 278
-    "Nyomd meg a kiemelt sarkot", // 279
-    "Érintőképernyő kalibrálásához", // 280
-    "Tartsd lenyomva a\nBW-t a megállításhoz", // 281
-    "Sávszélesség választása", // 282
-    "A logbookod", // 283
-    "Logbook letöltése", // 284
-    "A logbook üres", // 285
-    "Ugrás az aljára", // 286
-    "Hozzáadva a loghoz", // 287
-    "Hiba a naplóhoz adáskor", // 288
-    "Logbook törlése", // 289
-    "Logbook törölve", // 290
-    "Sikertelen törlés", // 291
-    "Nem adható hozzá!\nLogbook megtelt!", // 292
-    "Auto logoló", // 293
-    "Auto nyári idő(DST)\nNTP idő szerint", // 294
-    "NTP időeltolás beállítása", // 295
-    "A napló több mint 130 bejegyzést tartalmaz, amelyeket a megtekintő nem tud feldolgozni. Kérlek, töltsd le a CSV fájlt a megtekintéshez.", // 296
-    "Kanada" // 297
+    "Képernyő némítása\nXDRGTK kapcsolaton", // 201
+    "FMSI sztereó\njavítás", // 202
+    "Funkció csak a\nTEF6687/6689-hez!", // 203
+    "Funkció nem elérhető\nebben a kinézetben!", // 204
+    "Mem. csat. szkennelésének\nelkezdése", // 205
+    "Mem. csat. szkennelésének\nbefejezése", // 206
+    "Várakozási idő", // 207
+    "DX szkennelés indítása", // 208
+    "FM DX Opciók", // 209
+    "Megszakítva! A kezdőcsatorna\nkihagyottnak van jelölve.", // 210
+    "Auto AF rendezés", // 211
+    "Memóriacsatornák", // 212
+    "Kizárása", // 213
+    "Csak", // 214
+    "Auto keresés\nmegszakítása", // 215
+    "Jó PI esetén", // 216
+    "Jel esetén", // 217
+    "Hang némítása\nkeresés közben", // 218
+    "AIR", // 219
+    "5 mp. sávgombnyomás", // 220
+    "Kikapcsolás", // 221
+    "Képernyőnémítás", // 222
+    "Letiltva", // 223
+    "Nincs", // 224
+    "Hírek", // 225
+    "Aktuális események", // 226
+    "Információ", // 227
+    "Sport", // 228
+    "Oktatás", // 229
+    "Dráma", // 230
+    "Kultúra", // 231
+    "Tudomány", // 232
+    "Változatos", // 233
+    "Pop Zene", // 234
+    "Rock Zene", // 235
+    "Könnyűzene", // 236
+    "Könnyű Klasszikus", // 237
+    "Komoly Klasszikus", // 238
+    "Egyéb Zene", // 239
+    "Időjárás", // 240
+    "Pénzügy", // 241
+    "Gyermekprogramok", // 242
+    "Társadalmi ügyek", // 243
+    "Vallás", // 244
+    "Betelefonálós", // 245
+    "Utazás", // 246
+    "Szabadidő", // 247
+    "Jazz Zene", // 248
+    "Country Zene", // 249
+    "Nemzeti Zene", // 250
+    "Régi Zene", // 251
+    "Népi Zene", // 252
+    "Dokumentumfilm", // 253
+    "Riasztás Teszt", // 254
+    "Riasztás!!!", // 255
+    "Kezdeti", // 256
+    "Mindig", // 257
+    "Óra mutatása", // 258
+    "Hosszú PS mutatása", // 259
+    "Indítási frekvencia", // 260
+    "Befejezési frekvencia", // 261
+    "Memóriacsatorna\nmentés indítása", // 262
+    "Memóriacsatorna\nmentés leállítása", // 263
+    "Csak RDS-el tárolja", // 264
+    "Auto memória indítása", // 265
+    "Auto memória", // 266
+    "Stationlist ID", // 267
+    "Megtalálva", // 268
+    "Megszakítva! Nincs\nmemóriacsatorna", // 269
+    "Megszakítva! Felhasználó\nmegnyomta a gombot", // 270
+    "Szkennelés hiba\nnélkül befejeződött", // 271
+    "Memóriacsatornák törlése", // 272
+    "törölve", // 273
+    "Kettős PI\nmegakadályozása", // 274
+    "Tartomány", // 275
+    "Teljes", // 276
+    "Várakozási idő\ncsak jel esetén", // 277
+    "Nyomd meg a kiemelt sarkot", // 278
+    "Érintőképernyő kalibrálásához", // 279
+    "Tartsd lenyomva a\nBW-t a megállításhoz", // 280
+    "Sávszélesség választása", // 281
+    "A logbookod", // 282
+    "Logbook letöltése", // 283
+    "A logbook üres", // 284
+    "Ugrás az aljára", // 285
+    "Hozzáadva a loghoz", // 286
+    "Hiba a naplóhoz adáskor", // 287
+    "Logbook törlése", // 288
+    "Logbook törölve", // 289
+    "Sikertelen törlés", // 290
+    "Nem adható hozzá!\nLogbook megtelt!", // 291
+    "Auto logoló", // 292
+    "Auto nyári idő(DST)\nNTP idő szerint", // 293
+    "NTP időeltolás beállítása", // 294
+    "A napló több mint 130 bejegyzést tartalmaz, amelyeket a megtekintő nem tud feldolgozni. Kérlek, töltsd le a CSV fájlt a megtekintéshez.", // 295
+    "Kanada" // 296
   },
 
   { "Français", // French
@@ -2926,103 +2917,102 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "Grosses", // 198
     "Toutes", // 199
     "PS rapide", // 200
-    "Défaut", // 201
-    "Arrêt écran à la\nconnexion XDRGTK", // 202
-    "Amélioration\nde la stéréo FMSI", // 203
-    "Fonction disponible\nsur TEF6687/6689!", // 204
-    "Fonction non disponible\nsur ce mode d'affichage !", // 205
-    "Début du scan\ndes canaux mémorisés", // 206
-    "Fin du scan\ndes canaux mémorisés", // 207
-    "Temps d'attente", // 208
-    "Démarrer le scan DX", // 209
-    "Options FM DX", // 210
-    "Abandon ! Le canal de\ndépart est indiqué comme ignoré.", // 211
-    "Tri automatique\nde la liste AF", // 212
-    "Canaux en mémoire", // 213
-    "Exclure", // 214
-    "Uniquement", // 215
-    "Interrompre le scan\nautomatiquement", // 216
-    "Code PI correct", // 217
-    "Signal", // 218
-    "Mettre l'audio en\nsourdine lors du scan", // 219
-    "AIR", // 220
-    "Appui de 5 sec.\nsur BAND", // 221
-    "Éteindre l'appareil", // 222
-    "Éteindre l'écran", // 223
-    "Désactivé", // 224
-    "Non défini", // 225
-    "Actualités", // 226
-    "Affaires courantes", // 227
-    "Information", // 228
-    "Sport", // 229
-    "Éducation", // 230
-    "Fiction", // 231
-    "Culture", // 232
-    "Science", // 233
-    "Varié", // 234
-    "Musique Pop", // 235
-    "Musique Rock", // 236
-    "Musique légère", // 237
-    "Classique Léger", // 238
-    "Classique Sérieux", // 239
-    "Autre Musique", // 240
-    "Météo", // 241
-    "Economie", // 242
-    "Prog. pour enfants", // 243
-    "Affaires sociales", // 244
-    "Religion", // 245
-    "Ligne ouverte", // 246
-    "Voyage", // 247
-    "Loisirs", // 248
-    "Musique Jazz", // 249
-    "Musique Country", // 250
-    "Musique Nationale", // 251
-    "Musique Rétro", // 252
-    "Folklore", // 253
-    "Documentaire", // 254
-    "TEST d'alerte", // 255
-    "Alerte !", // 256
-    "Initial", // 257
-    "Toujours", // 258
-    "Afficher l'horloge", // 259
-    "Afficher le PS long", // 260
-    "Fréquence initialle", // 261
-    "Fréquence finale", // 262
-    "Canal\nde mémoire initial", // 263
-    "Canal\nde mémoire final", // 264
-    "Mémoriser avec\nRDS uniquement", // 265
-    "Démarrer la mémorisation\nautomatique", // 266
-    "Mémorisation\nautomatique", // 267
-    "Identifiant\nStationlist", // 268
-    "Trouvé", // 269
-    "Abandon! Mémoire de\ncanaux pleine", // 270
-    "Abandon! Bouton\npressé par l'utilisateur", // 271
-    "Scan terminé\nsans erreurs", // 272
-    "Effacer les canaux\nmémorisés", // 273
-    "effacé", // 274
-    "Empêcher doublon PI", // 275
-    "Plage", // 276
-    "Complet", // 277
-    "Temps d'attente\nuniquement sur le signal", // 278
-    "Appuyez sur le coin\nindiqué pour ", // 279
-    "calibrer l'écran tactile", // 280
-    "Pressez BW pour\narrêter le scanner DX", // 281
-    "Sélectionner la bande passante", // 282
-    "Votre journal de bord", // 283
-    "Télécharger le journal de bord", // 284
-    "Journal de bord vide", // 285
-    "Aller en bas", // 286
-    "Entrée ajoutée au journal de bord", // 287
-    "Erreur lors de l'ajout\nau journal de bord", // 288
-    "Effacer le journal\nde bord", // 289
-    "Journal effacé", // 290
-    "Échec lors de\nla suppression", // 291
-    "Impossible d'ajouter l'entrée!\nJournal de bord plein!", // 292
-    "Log automatique", // 293
-    "DST automatique\nsur l'heure NTP", // 294
-    "Décalage horaire NTP", // 295
-    "Le journal de bord contient plus de 130 entrées que la liste ne peut pas afficher. Veuillez télécharger le fichier CSV.", // 296
-    "Canada" // 297
+    "Arrêt écran à la\nconnexion XDRGTK", // 201
+    "Amélioration\nde la stéréo FMSI", // 202
+    "Fonction disponible\nsur TEF6687/6689!", // 203
+    "Fonction non disponible\nsur ce mode d'affichage !", // 204
+    "Début du scan\ndes canaux mémorisés", // 205
+    "Fin du scan\ndes canaux mémorisés", // 206
+    "Temps d'attente", // 207
+    "Démarrer le scan DX", // 208
+    "Options FM DX", // 209
+    "Abandon ! Le canal de\ndépart est indiqué comme ignoré.", // 210
+    "Tri automatique\nde la liste AF", // 211
+    "Canaux en mémoire", // 212
+    "Exclure", // 213
+    "Uniquement", // 214
+    "Interrompre le scan\nautomatiquement", // 215
+    "Code PI correct", // 216
+    "Signal", // 217
+    "Mettre l'audio en\nsourdine lors du scan", // 218
+    "AIR", // 219
+    "Appui de 5 sec.\nsur BAND", // 220
+    "Éteindre l'appareil", // 221
+    "Éteindre l'écran", // 222
+    "Désactivé", // 223
+    "Non défini", // 224
+    "Actualités", // 225
+    "Affaires courantes", // 226
+    "Information", // 227
+    "Sport", // 228
+    "Éducation", // 229
+    "Fiction", // 230
+    "Culture", // 231
+    "Science", // 232
+    "Varié", // 233
+    "Musique Pop", // 234
+    "Musique Rock", // 235
+    "Musique légère", // 236
+    "Classique Léger", // 237
+    "Classique Sérieux", // 238
+    "Autre Musique", // 239
+    "Météo", // 240
+    "Economie", // 241
+    "Prog. pour enfants", // 242
+    "Affaires sociales", // 243
+    "Religion", // 244
+    "Ligne ouverte", // 245
+    "Voyage", // 246
+    "Loisirs", // 247
+    "Musique Jazz", // 248
+    "Musique Country", // 249
+    "Musique Nationale", // 250
+    "Musique Rétro", // 251
+    "Folklore", // 252
+    "Documentaire", // 253
+    "TEST d'alerte", // 254
+    "Alerte !", // 255
+    "Initial", // 256
+    "Toujours", // 257
+    "Afficher l'horloge", // 258
+    "Afficher le PS long", // 259
+    "Fréquence initialle", // 260
+    "Fréquence finale", // 261
+    "Canal\nde mémoire initial", // 262
+    "Canal\nde mémoire final", // 263
+    "Mémoriser avec\nRDS uniquement", // 264
+    "Démarrer la mémorisation\nautomatique", // 265
+    "Mémorisation\nautomatique", // 266
+    "Identifiant\nStationlist", // 267
+    "Trouvé", // 268
+    "Abandon! Mémoire de\ncanaux pleine", // 269
+    "Abandon! Bouton\npressé par l'utilisateur", // 270
+    "Scan terminé\nsans erreurs", // 271
+    "Effacer les canaux\nmémorisés", // 272
+    "effacé", // 273
+    "Empêcher doublon PI", // 274
+    "Plage", // 275
+    "Complet", // 276
+    "Temps d'attente\nuniquement sur le signal", // 277
+    "Appuyez sur le coin\nindiqué pour ", // 278
+    "calibrer l'écran tactile", // 279
+    "Pressez BW pour\narrêter le scanner DX", // 280
+    "Sélectionner la bande passante", // 281
+    "Votre journal de bord", // 282
+    "Télécharger le journal de bord", // 283
+    "Journal de bord vide", // 284
+    "Aller en bas", // 285
+    "Entrée ajoutée au journal de bord", // 286
+    "Erreur lors de l'ajout\nau journal de bord", // 287
+    "Effacer le journal\nde bord", // 288
+    "Journal effacé", // 289
+    "Échec lors de\nla suppression", // 290
+    "Impossible d'ajouter l'entrée!\nJournal de bord plein!", // 291
+    "Log automatique", // 292
+    "DST automatique\nsur l'heure NTP", // 293
+    "Décalage horaire NTP", // 294
+    "Le journal de bord contient plus de 130 entrées que la liste ne peut pas afficher. Veuillez télécharger le fichier CSV.", // 295
+    "Canada" // 296
   },
 
   { "Български", // Bulgarian
@@ -3226,103 +3216,102 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "Голям", // 198
     "Всички", // 199
     "Бърз PS", // 200
-    "По подразбиране", // 201
-    "Заглушаване на\nекран при XDRGTK", // 202
-    "Подобряване на\nстерео FMSI", // 203
-    "Функцията е достъпна\nсамо за TEF6687/6689!", // 204
-    "Функцията не е\nдостъпна за облика!", // 205
-    "Сканиране на\nканали в паметта", // 206
-    "Спиране на\nсканиране на канали", // 207
-    "Време за изчакване", // 208
-    "Стартиране на DX сканер", // 209
-    "Опции за FM DX", // 210
-    "Началният канал\nе пропуснат.", // 211
-    "Автоматично\nсортиране на AF", // 212
-    "Канали в паметта", // 213
-    "Изключване", // 214
-    "Само", // 215
-    "Автоматично прекратяване", // 216
-    "Коригиране на PI", // 217
-    "Сигнал", // 218
-    "Заглушаване на\nзвука при сканиране", // 219
-    "Въздушен", // 220
-    "5 сек. натискане\nна band бутон", // 221
-    "Изключване на\nзахранването", // 222
-    "Изключване на екрана", // 223
-    "Изключено", // 224
-    "Няма", // 225
-    "Новини", // 226
-    "Актуални събития", // 227
-    "Информация", // 228
-    "Спорт", // 229
-    "Образование", // 230
-    "Драма", // 231
-    "Култура", // 232
-    "Наука", // 233
-    "Разнообразие", // 234
-    "Поп музика", // 235
-    "Рок музика", // 236
-    "Лека музика", // 237
-    "Лека класика", // 238
-    "Сериозна класика", // 239
-    "Друга музика", // 240
-    "Време", // 241
-    "Финанси", // 242
-    "Детски програми", // 243
-    "Социални въпроси", // 244
-    "Религия", // 245
-    "Телефонен ефир", // 246
-    "Пътувания", // 247
-    "Свободно време", // 248
-    "Джаз музика", // 249
-    "Кънтри музика", // 250
-    "Национална музика", // 251
-    "Стари хитове", // 252
-    "Фолк музика", // 253
-    "Документален", // 254
-    "Тест на аларма", // 255
-    "Аларма!!!", // 256
-    "Начален", // 257
-    "Винаги", // 258
-    "Показване на\nчасовника", // 259
-    "Показване на\nдълго PS", // 260
-    "Начална честота", // 261
-    "Крайна честота", // 262
-    "Начален канал\nв паметта", // 263
-    "Краен канал в паметта", // 264
-    "Запазване само с RDS", // 265
-    "Стартиране на\nавтоматична памет", // 266
-    "Автоматична памет", // 267
-    "ID на списък с станции", // 268
-    "Намерено", // 269
-    "Няма свободни\nканали.", // 270
-    "Потребителят\nнатисна бутон.", // 271
-    "Сканирането завърши без грешки.", // 272
-    "Изчистване на\nканали в паметта", // 273
-    "Изчистено", // 274
-    "Предотвратяване на\nдублиране на PI", // 275
-    "Обхват", // 276
-    "Пълен", // 277
-    "Време за изчакване\nпри сигнал", // 278
-    "Натиснете маркирания ъгъл", // 279
-    "За калибриране\nна докосване", // 280
-    "Задръжте BW бутона\nза да спрете сканера", // 281
-    "Избор на честотна\nлента", // 282
-    "Вашият дневник", // 283
-    "Изтегляне на\nдневника", // 284
-    "Дневникът е празен", // 285
-    "Отидете в края", // 286
-    "Записът е добавен\nв дневника", // 287
-    "Грешка при добавяне в дневника", // 288
-    "Изчистване на дневника", // 289
-    "Дневникът е изчистен", // 290
-    "Изчистването не\nбе успешно", // 291
-    "Не може да се добави запис!\nДневникът е пълен!", // 292
-    "Автоматичен дневник", // 293
-    "Автоматично лятно\nвреме по NTP", // 294
-    "Отместване на NTP", // 295
-    "Дневникът съдържа над 130 записа, които не могат да бъдат обработени. Моля, изтеглете CSV файла за обработка.", // 296
-    "Канада" // 297
+    "Заглушаване на\nекран при XDRGTK", // 201
+    "Подобряване на\nстерео FMSI", // 202
+    "Функцията е достъпна\nсамо за TEF6687/6689!", // 203
+    "Функцията не е\nдостъпна за облика!", // 204
+    "Сканиране на\nканали в паметта", // 205
+    "Спиране на\nсканиране на канали", // 206
+    "Време за изчакване", // 207
+    "Стартиране на DX сканер", // 208
+    "Опции за FM DX", // 209
+    "Началният канал\nе пропуснат.", // 210
+    "Автоматично\nсортиране на AF", // 211
+    "Канали в паметта", // 212
+    "Изключване", // 213
+    "Само", // 214
+    "Автоматично прекратяване", // 215
+    "Коригиране на PI", // 216
+    "Сигнал", // 217
+    "Заглушаване на\nзвука при сканиране", // 218
+    "Въздушен", // 219
+    "5 сек. натискане\nна band бутон", // 220
+    "Изключване на\nзахранването", // 221
+    "Изключване на екрана", // 222
+    "Изключено", // 223
+    "Няма", // 224
+    "Новини", // 225
+    "Актуални събития", // 226
+    "Информация", // 227
+    "Спорт", // 228
+    "Образование", // 229
+    "Драма", // 230
+    "Култура", // 231
+    "Наука", // 232
+    "Разнообразие", // 233
+    "Поп музика", // 234
+    "Рок музика", // 235
+    "Лека музика", // 236
+    "Лека класика", // 237
+    "Сериозна класика", // 238
+    "Друга музика", // 239
+    "Време", // 240
+    "Финанси", // 241
+    "Детски програми", // 242
+    "Социални въпроси", // 243
+    "Религия", // 244
+    "Телефонен ефир", // 245
+    "Пътувания", // 246
+    "Свободно време", // 247
+    "Джаз музика", // 248
+    "Кънтри музика", // 249
+    "Национална музика", // 250
+    "Стари хитове", // 251
+    "Фолк музика", // 252
+    "Документален", // 253
+    "Тест на аларма", // 254
+    "Аларма!!!", // 255
+    "Начален", // 256
+    "Винаги", // 257
+    "Показване на\nчасовника", // 258
+    "Показване на\nдълго PS", // 259
+    "Начална честота", // 260
+    "Крайна честота", // 261
+    "Начален канал\nв паметта", // 262
+    "Краен канал в паметта", // 263
+    "Запазване само с RDS", // 264
+    "Стартиране на\nавтоматична памет", // 265
+    "Автоматична памет", // 266
+    "ID на списък с станции", // 267
+    "Намерено", // 268
+    "Няма свободни\nканали.", // 269
+    "Потребителят\nнатисна бутон.", // 270
+    "Сканирането завърши без грешки.", // 271
+    "Изчистване на\nканали в паметта", // 272
+    "Изчистено", // 273
+    "Предотвратяване на\nдублиране на PI", // 274
+    "Обхват", // 275
+    "Пълен", // 276
+    "Време за изчакване\nпри сигнал", // 277
+    "Натиснете маркирания ъгъл", // 278
+    "За калибриране\nна докосване", // 279
+    "Задръжте BW бутона\nза да спрете сканера", // 280
+    "Избор на честотна\nлента", // 281
+    "Вашият дневник", // 282
+    "Изтегляне на\nдневника", // 283
+    "Дневникът е празен", // 284
+    "Отидете в края", // 285
+    "Записът е добавен\nв дневника", // 286
+    "Грешка при добавяне в дневника", // 287
+    "Изчистване на дневника", // 288
+    "Дневникът е изчистен", // 289
+    "Изчистването не\nбе успешно", // 290
+    "Не може да се добави запис!\nДневникът е пълен!", // 291
+    "Автоматичен дневник", // 292
+    "Автоматично лятно\nвреме по NTP", // 293
+    "Отместване на NTP", // 294
+    "Дневникът съдържа над 130 записа, които не могат да бъдат обработени. Моля, изтеглете CSV файла за обработка.", // 295
+    "Канада" // 296
   },
 
   { "Русский", // Russian
@@ -3526,103 +3515,102 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "Больше", // 198
     "Все", // 199
     "Быстрый PS", // 200
-    "По умолчанию", // 201
-    "Гасить дисплей при\nработе с XDRGTK", // 202
-    "FMSI стерео\nулучшение", // 203
-    "Доступно только\nна TEF6687/6689", // 204
-    "Функция недоступна\nна этом оформлении", // 205
-    "Стартовый канал\nпамяти", // 206
-    "Конечный канал\nпамяти", // 207
-    "Время ожидания", // 208
-    "Начать DX-сканирование", // 209
-    "Настройки FM DX сканера", // 210
-    "Прервано! Стартовый канал\nпомечен для пропуска.", // 211
-    "Сортировка AF-частот", // 212
-    "Каналы памяти", // 213
-    "Кроме", // 214
-    "Только", // 215
-    "Автоматическая отмена\nсканирования", // 216
-    "При корректном PI", // 217
-    "При наличии сигнала", // 218
-    "Отключать аудио\nпри сканировании", // 219
-    "Эфир", // 220
-    "5 сек. нажатие Band", // 221
-    "Отключить тюнер", // 222
-    "Отключить экран", // 223
-    "Запрещено", // 224
-    "Не определено", // 225
-    "Новости", // 226
-    "Аналитика", // 227
-    "Информация", // 228
-    "Спорт", // 229
-    "Образование", // 230
-    "Драма", // 231
-    "Культура", // 232
-    "Наука", // 233
-    "Разное", // 234
-    "Поп М", // 235
-    "Рок М", // 236
-    "Лёгкая музыка", // 237
-    "Лёгкая классика", // 238
-    "Классика", // 239
-    "Другая музыка", // 240
-    "Погода", // 241
-    "Финансы", // 242
-    "Детские прогр", // 243
-    "Общество", // 244
-    "Религия", // 245
-    "Открытая линия", // 246
-    "Туризм", // 247
-    "Досуг", // 248
-    "Джаз", // 249
-    "Музыка кантри", // 250
-    "Национальная М", // 251
-    "Олдис", // 252
-    "Народная музыка", // 253
-    "Документалистика", // 254
-    "Тревога тест", // 255
-    "Тревога!", // 256
-    "Начальный", // 257
-    "Всегда", // 258
-    "Показать часы", // 259
-    "Показывать длинный PS", // 260
-    "Начальная частота", // 261
-    "Конечная частота", // 262
-    "Начальный канал памяти", // 263
-    "Конечный канал памяти", // 264
-    "Сохранять только с RDS", // 265
-    "Начать автозапоминание", // 266
-    "Автозапоминание", // 267
-    "Stationlist идентификатор", // 268
-    "Найдено", // 269
-    "Прервано! Нехватка памяти", // 270
-    "Прервано! Нажата кнопка", // 271
-    "Сканирование завершено без ошибок", // 272
-    "Очистить каналы памяти", // 273
-    "очищено", // 274
-    "Предотвращать дубль PI", // 275
-    "Диапазон", // 276
-    "Полный", // 277
-    "Время ожидания\nпри сигнале", // 278
-    "Нажмите на подсвеченный угол", // 279
-    "Калибровка тачскрина", // 280
-    "Переключение инверсии экрана", // 281
-    "Выбрать ширину полосы", // 282
-    "Ваш лог-файл", // 283
-    "Скачать лог-файл", // 284
-    "Лог-файл пуст", // 285
-    "Вниз", // 286
-    "Добавлено в лог-файл", // 287
-    "Обновление не удалось!", // 288
-    "Очистить лог-файл", // 289
-    "Лог-файл очищен", // 290
-    "Очистить не удалось", // 291
-    "Смещение времени NTP", // 292
-    "Автологгер", // 293
-    "Автоматическое летнее время по NTP", // 294
-    "Смещение времени NTP", // 295
-    "В логе более 130 записей, которые программа просмотра не может обработать. Загрузите файл CSV для его обработки.", // 296
-    "Канада" // 297
+    "Гасить дисплей при\nработе с XDRGTK", // 201
+    "FMSI стерео\nулучшение", // 202
+    "Доступно только\nна TEF6687/6689", // 203
+    "Функция недоступна\nна этом оформлении", // 204
+    "Стартовый канал\nпамяти", // 205
+    "Конечный канал\nпамяти", // 206
+    "Время ожидания", // 207
+    "Начать DX-сканирование", // 208
+    "Настройки FM DX сканера", // 209
+    "Прервано! Стартовый канал\nпомечен для пропуска.", // 210
+    "Сортировка AF-частот", // 211
+    "Каналы памяти", // 212
+    "Кроме", // 213
+    "Только", // 214
+    "Автоматическая отмена\nсканирования", // 215
+    "При корректном PI", // 216
+    "При наличии сигнала", // 217
+    "Отключать аудио\nпри сканировании", // 218
+    "Эфир", // 219
+    "5 сек. нажатие Band", // 220
+    "Отключить тюнер", // 221
+    "Отключить экран", // 222
+    "Запрещено", // 223
+    "Не определено", // 224
+    "Новости", // 225
+    "Аналитика", // 226
+    "Информация", // 227
+    "Спорт", // 228
+    "Образование", // 229
+    "Драма", // 230
+    "Культура", // 231
+    "Наука", // 232
+    "Разное", // 233
+    "Поп М", // 234
+    "Рок М", // 235
+    "Лёгкая музыка", // 236
+    "Лёгкая классика", // 237
+    "Классика", // 238
+    "Другая музыка", // 239
+    "Погода", // 240
+    "Финансы", // 241
+    "Детские прогр", // 242
+    "Общество", // 243
+    "Религия", // 244
+    "Открытая линия", // 245
+    "Туризм", // 246
+    "Досуг", // 247
+    "Джаз", // 248
+    "Музыка кантри", // 249
+    "Национальная М", // 250
+    "Олдис", // 251
+    "Народная музыка", // 252
+    "Документалистика", // 253
+    "Тревога тест", // 254
+    "Тревога!", // 255
+    "Начальный", // 256
+    "Всегда", // 257
+    "Показать часы", // 258
+    "Показывать длинный PS", // 259
+    "Начальная частота", // 260
+    "Конечная частота", // 261
+    "Начальный канал памяти", // 262
+    "Конечный канал памяти", // 263
+    "Сохранять только с RDS", // 264
+    "Начать автозапоминание", // 265
+    "Автозапоминание", // 266
+    "Stationlist идентификатор", // 267
+    "Найдено", // 268
+    "Прервано! Нехватка памяти", // 269
+    "Прервано! Нажата кнопка", // 270
+    "Сканирование завершено без ошибок", // 271
+    "Очистить каналы памяти", // 272
+    "очищено", // 273
+    "Предотвращать дубль PI", // 274
+    "Диапазон", // 275
+    "Полный", // 276
+    "Время ожидания\nпри сигнале", // 277
+    "Нажмите на подсвеченный угол", // 278
+    "Калибровка тачскрина", // 279
+    "Переключение инверсии экрана", // 280
+    "Выбрать ширину полосы", // 281
+    "Ваш лог-файл", // 282
+    "Скачать лог-файл", // 283
+    "Лог-файл пуст", // 284
+    "Вниз", // 285
+    "Добавлено в лог-файл", // 286
+    "Обновление не удалось!", // 287
+    "Очистить лог-файл", // 288
+    "Лог-файл очищен", // 289
+    "Очистить не удалось", // 290
+    "Смещение времени NTP", // 291
+    "Автологгер", // 292
+    "Автоматическое летнее время по NTP", // 293
+    "Смещение времени NTP", // 294
+    "В логе более 130 записей, которые программа просмотра не может обработать. Загрузите файл CSV для его обработки.", // 295
+    "Канада" // 296
   },
 
   { "Українська", // Ukranian
@@ -3826,103 +3814,102 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "Велика", // 198
     "Все", // 199
     "Швидкий PS", // 200
-    "За замовчуванням", // 201
-    "Вимкнути екран під час\nпідключення XDRGTK", // 202
-    "Покращення стерео FMSI", // 203
-    "Функція доступна лише\nна TEF6687/6689!", // 204
-    "Функція недоступна\nна даній темі!", // 205
-    "Почати сканування\nканалів пам'яті", // 206
-    "Зупинити сканування\nканалів пам'яті", // 207
-    "Час очікування", // 208
-    "Почати DX-пошук", // 209
-    "Налаштування FM DX", // 210
-    "Скасовано! Початковий канал\nпозначено як пропущений", // 211
-    "Автоматичне\nсортування AF", // 212
-    "Канали пам'яті", // 213
-    "Крім", // 214
-    "Лише", // 215
-    "Автоматичне скасування\nсканування", // 216
-    "Виправити PI", // 217
-    "Сигнал", // 218
-    "Вимкнути звук\nпід час сканування", // 219
-    "Ефір", // 220
-    "Дія, якщо тримати BAND 5 секунд", // 221
-    "Вимкнення приймача", // 222
-    "Вимкнення екрану", // 223
-    "Відключено", // 224
-    "Немає", // 225
-    "Новини", // 226
-    "Поточні події", // 227
-    "Інформація", // 228
-    "Спорт", // 229
-    "Освіта", // 230
-    "Драма", // 231
-    "Культура", // 232
-    "Наука", // 233
-    "Різне", // 234
-    "Попмузика", // 235
-    "Рок-музика", // 236
-    "Легка музика", // 237
-    "Легка класика", // 238
-    "Класика", // 239
-    "Інша музика", // 240
-    "Погода", // 241
-    "Фінанси", // 242
-    "Дитячі програми", // 243
-    "Соціальні програми", // 244
-    "Релігія", // 245
-    "Телефонні вітання", // 246
-    "Подорожі", // 247
-    "Дозвілля", // 248
-    "Джаз", // 249
-    "Кантрі", // 250
-    "Національна музика", // 251
-    "Стара музика", // 252
-    "Фольклор", // 253
-    "Документалістика", // 254
-    "Випробування тривоги", // 255
-    "Тривога!!!", // 256
-    "Початковий", // 257
-    "Завжди", // 258
-    "Показати годинник", // 259
-    "Показати довгий PS", // 260
-    "Початкова частота", // 261
-    "Кінцева частота", // 262
-    "Початковий канал пам'яті", // 263
-    "Кінцевий канал пам'яті", // 264
-    "Зберігати лише з RDS", // 265
-    "Запуск автопам'яті", // 266
-    "Автопам'ять", // 267
-    "Stationlist ID", // 268
-    "Знайдено", // 269
-    "Скасовано! Немає\nканалів пам'яті", // 270
-    "Скасовано! Користувач\nнатиснув кнопку", // 271
-    "Сканування завершено\nбез помилок", // 272
-    "Очистити канали\nпам'яті", // 273
-    "очищено", // 274
-    "Запобігти подвійному PI", // 275
-    "Діапазон", // 276
-    "Повний", // 277
-    "Час очікування лише за сигналом", // 278
-    "Натисніть виділений кут", // 279
-    "Щоб налаштувати сенсор", // 280
-    "Тримайте BAND, щоб зупинити пошук DX", // 281
-    "Вибір пропускної здатності", // 282
-    "Твій журнал", // 283
-    "Завантажити журнал", // 284
-    "Твій журнал є порожнім", // 285
-    "Вниз", // 286
-    "Додано до журналу", // 287
-    "Помилка оновлення!", // 288
-    "Очистити журнал", // 289
-    "Очищено", // 290
-    "Не вдалося очистити", // 291
-    "Твій журнал повний!", // 292
-    "Автореєстратор", // 293
-    "Автоматичний літній\nчас за NTP", // 294
-    "Встановити зміщення\nчасу NTP", // 295
-    "Журнал містить понад 130 записів, які оглядач не може обробити. Будь ласка, завантажте файл CSV, щоб обробити його.", // 296
-    "Канада" // 297
+    "Вимкнути екран під час\nпідключення XDRGTK", // 201
+    "Покращення стерео FMSI", // 202
+    "Функція доступна лише\nна TEF6687/6689!", // 203
+    "Функція недоступна\nна даній темі!", // 204
+    "Почати сканування\nканалів пам'яті", // 205
+    "Зупинити сканування\nканалів пам'яті", // 206
+    "Час очікування", // 207
+    "Почати DX-пошук", // 208
+    "Налаштування FM DX", // 209
+    "Скасовано! Початковий канал\nпозначено як пропущений", // 210
+    "Автоматичне\nсортування AF", // 211
+    "Канали пам'яті", // 212
+    "Крім", // 213
+    "Лише", // 214
+    "Автоматичне скасування\nсканування", // 215
+    "Виправити PI", // 216
+    "Сигнал", // 217
+    "Вимкнути звук\nпід час сканування", // 218
+    "Ефір", // 219
+    "Дія, якщо тримати BAND 5 секунд", // 220
+    "Вимкнення приймача", // 221
+    "Вимкнення екрану", // 222
+    "Відключено", // 223
+    "Немає", // 224
+    "Новини", // 225
+    "Поточні події", // 226
+    "Інформація", // 227
+    "Спорт", // 228
+    "Освіта", // 229
+    "Драма", // 230
+    "Культура", // 231
+    "Наука", // 232
+    "Різне", // 233
+    "Попмузика", // 234
+    "Рок-музика", // 235
+    "Легка музика", // 236
+    "Легка класика", // 237
+    "Класика", // 238
+    "Інша музика", // 239
+    "Погода", // 240
+    "Фінанси", // 241
+    "Дитячі програми", // 242
+    "Соціальні програми", // 243
+    "Релігія", // 244
+    "Телефонні вітання", // 245
+    "Подорожі", // 246
+    "Дозвілля", // 247
+    "Джаз", // 248
+    "Кантрі", // 249
+    "Національна музика", // 250
+    "Стара музика", // 251
+    "Фольклор", // 252
+    "Документалістика", // 253
+    "Випробування тривоги", // 254
+    "Тривога!!!", // 255
+    "Початковий", // 256
+    "Завжди", // 257
+    "Показати годинник", // 258
+    "Показати довгий PS", // 259
+    "Початкова частота", // 260
+    "Кінцева частота", // 261
+    "Початковий канал пам'яті", // 262
+    "Кінцевий канал пам'яті", // 263
+    "Зберігати лише з RDS", // 264
+    "Запуск автопам'яті", // 265
+    "Автопам'ять", // 266
+    "Stationlist ID", // 267
+    "Знайдено", // 268
+    "Скасовано! Немає\nканалів пам'яті", // 269
+    "Скасовано! Користувач\nнатиснув кнопку", // 270
+    "Сканування завершено\nбез помилок", // 271
+    "Очистити канали\nпам'яті", // 272
+    "очищено", // 273
+    "Запобігти подвійному PI", // 274
+    "Діапазон", // 275
+    "Повний", // 276
+    "Час очікування лише за сигналом", // 277
+    "Натисніть виділений кут", // 278
+    "Щоб налаштувати сенсор", // 279
+    "Тримайте BAND, щоб зупинити пошук DX", // 280
+    "Вибір пропускної здатності", // 281
+    "Твій журнал", // 282
+    "Завантажити журнал", // 283
+    "Твій журнал є порожнім", // 284
+    "Вниз", // 285
+    "Додано до журналу", // 286
+    "Помилка оновлення!", // 287
+    "Очистити журнал", // 288
+    "Очищено", // 289
+    "Не вдалося очистити", // 290
+    "Твій журнал повний!", // 291
+    "Автореєстратор", // 292
+    "Автоматичний літній\nчас за NTP", // 293
+    "Встановити зміщення\nчасу NTP", // 294
+    "Журнал містить понад 130 записів, які оглядач не може обробити. Будь ласка, завантажте файл CSV, щоб обробити його.", // 295
+    "Канада" // 296
   },
 
   { "Italiano", // Italian
@@ -4126,103 +4113,102 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "Grande", // 198
     "Tutto", // 199
     "PS veloce", // 200
-    "Predefinito", // 201
-    "Disattiva schermo su\nconnessione XDRGTK", // 202
-    "Miglioramento stereo FMSI", // 203
-    "Funzione disponibile solo su TEF6687/6689!", // 204
-    "Funzione non disponibile su skin selezionata!", // 205
-    "Inizia scansione\ncanali di memoria", // 206
-    "Ferma scansione\ncanali di memoria", // 207
-    "Tempo di attesa", // 208
-    "Inizia scansione DX", // 209
-    "Opzioni FM DX", // 210
-    "Abortito! Canale iniziale contrass. da saltare", // 211
-    "Auto ordina AF", // 212
-    "Canali di memoria", // 213
-    "Escludi", // 214
-    "Solo", // 215
-    "Annulla scansione automatica", // 216
-    "Correggi PI", // 217
-    "Segnale", // 218
-    "Disattiva audio\nmentre scansiona", // 219
-    "AEREO", // 220
-    "Premi per 5 sec. il pulsante di banda", // 221
-    "Spegni", // 222
-    "Schermo spento", // 223
-    "Disabilitato", // 224
-    "Nessuno", // 225
-    "Notizie", // 226
-    "Affari correnti", // 227
-    "Informazioni", // 228
-    "Sport", // 229
-    "Educazione", // 230
-    "Dramma", // 231
-    "Cultura", // 232
-    "Scienza", // 233
-    "Varietà", // 234
-    "Musica Pop", // 235
-    "Musica Rock", // 236
-    "Musica facile", // 237
-    "Classica leggera", // 238
-    "Classica seria", // 239
-    "Altra musica", // 240
-    "Meteo", // 241
-    "Finanza", // 242
-    "Programmi per bambini", // 243
-    "Affari sociali", // 244
-    "Religione", // 245
-    "Telefonata", // 246
-    "Viaggio", // 247
-    "Tempo libero", // 248
-    "Musica Jazz", // 249
-    "Musica Country", // 250
-    "Musica Nazionale", // 251
-    "Musica Oldies", // 252
-    "Musica Folk", // 253
-    "Documentario", // 254
-    "Test allarme", // 255
-    "Allarme!!!", // 256
-    "Iniziale", // 257
-    "Sempre", // 258
-    "Mostra orologio", // 259
-    "Mostra PS lungo", // 260
-    "Inizia frequenza", // 261
-    "Ferma frequenza", // 262
-    "Inizia canale memoria", // 263
-    "Ferma canale memoria", // 264
-    "Memorizza solo con RDS", // 265
-    "Inizia auto memoria", // 266
-    "Auto memoria", // 267
-    "ID Stationlist", // 268
-    "Trovato", // 269
-    "Abortito! Canali di memoria esauriti", // 270
-    "Abortito! L'utente ha premuto il pulsante", // 271
-    "Scansione terminata senza errori", // 272
-    "Cancella canali di memoria", // 273
-    "Cancellato", // 274
-    "Prevenire doppio PI", // 275
-    "Range", // 276
-    "Completo", // 277
-    "Tempo di attesa su\nsolo segnale", // 278
-    "Premi angolo evidenziato", // 279
-    "Per calibrare touchscreen", // 280
-    "Tieni premuto il tasto BW per\nfermare scanner DX", // 281
-    "Seleziona larghezza di banda", // 282
-    "Il tuo registro dei log", // 283
-    "Scarica registro dei log", // 284
-    "Registro dei log vuoto", // 285
-    "Vai in fondo", // 286
-    "Voce aggiunta\nal registro dei log", // 287
-    "Errore nell'aggiunta\nvoce al registro dei log", // 288
-    "Cancella registro", // 289
-    "Registro cancellato", // 290
-    "Cancellazione fallita", // 291
-    "Impossibile aggiungere voce!\nRegistro dei log pieno!", // 292
-    "Autologger", // 293
-    "Auto DST su tempo NTP", // 294
-    "Imposta offset orario NTP", // 295
-    "Registro dei log con + di 130 voci, il visualizzatore non può gestirle. Scarica il file CSV per gestirlo.", // 296
-    "Canada" // 297
+    "Disattiva schermo su\nconnessione XDRGTK", // 201
+    "Miglioramento stereo FMSI", // 202
+    "Funzione disponibile solo su TEF6687/6689!", // 203
+    "Funzione non disponibile su skin selezionata!", // 204
+    "Inizia scansione\ncanali di memoria", // 205
+    "Ferma scansione\ncanali di memoria", // 206
+    "Tempo di attesa", // 207
+    "Inizia scansione DX", // 208
+    "Opzioni FM DX", // 209
+    "Abortito! Canale iniziale contrass. da saltare", // 210
+    "Auto ordina AF", // 211
+    "Canali di memoria", // 212
+    "Escludi", // 213
+    "Solo", // 214
+    "Annulla scansione automatica", // 215
+    "Correggi PI", // 216
+    "Segnale", // 217
+    "Disattiva audio\nmentre scansiona", // 218
+    "AEREO", // 219
+    "Premi per 5 sec. il pulsante di banda", // 220
+    "Spegni", // 221
+    "Schermo spento", // 222
+    "Disabilitato", // 223
+    "Nessuno", // 224
+    "Notizie", // 225
+    "Affari correnti", // 226
+    "Informazioni", // 227
+    "Sport", // 228
+    "Educazione", // 229
+    "Dramma", // 230
+    "Cultura", // 231
+    "Scienza", // 232
+    "Varietà", // 233
+    "Musica Pop", // 234
+    "Musica Rock", // 235
+    "Musica facile", // 236
+    "Classica leggera", // 237
+    "Classica seria", // 238
+    "Altra musica", // 239
+    "Meteo", // 240
+    "Finanza", // 241
+    "Programmi per bambini", // 242
+    "Affari sociali", // 243
+    "Religione", // 244
+    "Telefonata", // 245
+    "Viaggio", // 246
+    "Tempo libero", // 247
+    "Musica Jazz", // 248
+    "Musica Country", // 249
+    "Musica Nazionale", // 250
+    "Musica Oldies", // 251
+    "Musica Folk", // 252
+    "Documentario", // 253
+    "Test allarme", // 254
+    "Allarme!!!", // 255
+    "Iniziale", // 256
+    "Sempre", // 257
+    "Mostra orologio", // 258
+    "Mostra PS lungo", // 259
+    "Inizia frequenza", // 260
+    "Ferma frequenza", // 261
+    "Inizia canale memoria", // 262
+    "Ferma canale memoria", // 263
+    "Memorizza solo con RDS", // 264
+    "Inizia auto memoria", // 265
+    "Auto memoria", // 266
+    "ID Stationlist", // 267
+    "Trovato", // 268
+    "Abortito! Canali di memoria esauriti", // 269
+    "Abortito! L'utente ha premuto il pulsante", // 270
+    "Scansione terminata senza errori", // 271
+    "Cancella canali di memoria", // 272
+    "Cancellato", // 273
+    "Prevenire doppio PI", // 274
+    "Range", // 275
+    "Completo", // 276
+    "Tempo di attesa su\nsolo segnale", // 277
+    "Premi angolo evidenziato", // 278
+    "Per calibrare touchscreen", // 279
+    "Tieni premuto il tasto BW per\nfermare scanner DX", // 280
+    "Seleziona larghezza di banda", // 281
+    "Il tuo registro dei log", // 282
+    "Scarica registro dei log", // 283
+    "Registro dei log vuoto", // 284
+    "Vai in fondo", // 285
+    "Voce aggiunta\nal registro dei log", // 286
+    "Errore nell'aggiunta\nvoce al registro dei log", // 287
+    "Cancella registro", // 288
+    "Registro cancellato", // 289
+    "Cancellazione fallita", // 290
+    "Impossibile aggiungere voce!\nRegistro dei log pieno!", // 291
+    "Autologger", // 292
+    "Auto DST su tempo NTP", // 293
+    "Imposta offset orario NTP", // 294
+    "Registro dei log con + di 130 voci, il visualizzatore non può gestirle. Scarica il file CSV per gestirlo.", // 295
+    "Canada" // 296
   },
 
   { "Simplified Chinese", // Simplified Chinese
@@ -4426,103 +4412,102 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "大", // 198
     "全部", // 199
     "快速 PS", // 200
-    "默认", // 201
-    "XDRGTK 连结时冻结屏幕", // 202
-    "FMSI 立体声加强", // 203
-    "此功能仅限 TEF6687/6689!", // 204
-    "此主题不支持该功能!", // 205
-    "开始扫描存储信道", // 206
-    "停止扫描存储信道", // 207
-    "扫描等待时间", // 208
-    "开始 DX 扫描", // 209
-    "FM DX 选项", // 210
-    "取消! 所选信道被跳过.", // 211
-    "自动排列 AF", // 212
-    "已存储信道", // 213
-    "不扫描", // 214
-    "只扫描", // 215
-    "自动取消扫描", // 216
-    "正确的 PI", // 217
-    "信号", // 218
-    "扫描时静音", // 219
-    "航空", // 220
-    "按下波段键 5秒", // 221
-    "关机", // 222
-    "熄屏", // 223
-    "禁止", // 224
-    "无节目", // 225
-    "News", // 226
-    "Current Affairs", // 227
-    "Information", // 228
-    "Sport", // 229
-    "Education", // 230
-    "Drama", // 231
-    "Culture", // 232
-    "Science", // 233
-    "Varied", // 234
-    "Pop Music", // 235
-    "Rock Music", // 236
-    "Easy Listening", // 237
-    "Light Classical", // 238
-    "Serious Classical", // 239
-    "Other Music", // 240
-    "Weather", // 241
-    "Finance", // 242
-    "Children's Progs", // 243
-    "Social Affairs", // 244
-    "Religion", // 245
-    "Phone-In", // 246
-    "Travel", // 247
-    "Leisure", // 248
-    "Jazz Music", // 249
-    "Country Music", // 250
-    "National Music", // 251
-    "Oldies Music", // 252
-    "Folk Music", // 253
-    "Documentary", // 254
-    "警报测试", // 255
-    "警报!!!", // 256
-    "仅初次", // 257
-    "总是", // 258
-    "显示时间", // 259
-    "显示长的 PS", // 260
-    "开始频率", // 261
-    "停止频率", // 262
-    "开始的记忆信道", // 263
-    "停止的记忆信道", // 264
-    "只存储RDS电台", // 265
-    "开始搜索并存台", // 266
-    "自动搜台并存储", // 267
-    "电台列表ID", // 268
-    "搜索到", // 269
-    "取消! 存储已满", // 270
-    "取消! 用户终止了操作", // 271
-    "成功完成搜索", // 272
-    "删除存储信道", // 273
-    "删除了", // 274
-    "防止双 PI", // 275
-    "一定范围内", // 276
-    "全部", // 277
-    "无信号不停留", // 278
-    "触摸区边沿高亮", // 279
-    "校准触摸屏", // 280
-    "按住BW按钮停止DX扫描仪", // 281
-    "选择带宽", // 282
-    "你的 log记录", // 283
-    "下载 log记录", // 284
-    "log为空", // 285
-    "跳到底部", // 286
-    "添加到log记录", // 287
-    "更新失败!", // 288
-    "清除log记录", // 289
-    "log记录已清除", // 290
-    "清除失败", // 291
-    "log记录已满!", // 292
-    "自动记录日志", // 293
-    "联网自动同步本机时间", // 294
-    "设置NTP时区", // 295
-    "该日志包含超过130个条目，观看者无法处理。请下载CSV文件进行处理。", // 296
-    "加拿大" // 297
+    "XDRGTK 连结时冻结屏幕", // 201
+    "FMSI 立体声加强", // 202
+    "此功能仅限 TEF6687/6689!", // 203
+    "此主题不支持该功能!", // 204
+    "开始扫描存储信道", // 205
+    "停止扫描存储信道", // 206
+    "扫描等待时间", // 207
+    "开始 DX 扫描", // 208
+    "FM DX 选项", // 209
+    "取消! 所选信道被跳过.", // 210
+    "自动排列 AF", // 211
+    "已存储信道", // 212
+    "不扫描", // 213
+    "只扫描", // 214
+    "自动取消扫描", // 215
+    "正确的 PI", // 216
+    "信号", // 217
+    "扫描时静音", // 218
+    "航空", // 219
+    "按下波段键 5秒", // 220
+    "关机", // 221
+    "熄屏", // 222
+    "禁止", // 223
+    "无节目", // 224
+    "News", // 225
+    "Current Affairs", // 226
+    "Information", // 227
+    "Sport", // 228
+    "Education", // 229
+    "Drama", // 230
+    "Culture", // 231
+    "Science", // 232
+    "Varied", // 233
+    "Pop Music", // 234
+    "Rock Music", // 235
+    "Easy Listening", // 236
+    "Light Classical", // 237
+    "Serious Classical", // 238
+    "Other Music", // 239
+    "Weather", // 240
+    "Finance", // 241
+    "Children's Progs", // 242
+    "Social Affairs", // 243
+    "Religion", // 244
+    "Phone-In", // 245
+    "Travel", // 246
+    "Leisure", // 247
+    "Jazz Music", // 248
+    "Country Music", // 249
+    "National Music", // 250
+    "Oldies Music", // 251
+    "Folk Music", // 252
+    "Documentary", // 253
+    "警报测试", // 254
+    "警报!!!", // 255
+    "仅初次", // 256
+    "总是", // 257
+    "显示时间", // 258
+    "显示长的 PS", // 259
+    "开始频率", // 260
+    "停止频率", // 261
+    "开始的记忆信道", // 262
+    "停止的记忆信道", // 263
+    "只存储RDS电台", // 264
+    "开始搜索并存台", // 265
+    "自动搜台并存储", // 266
+    "电台列表ID", // 267
+    "搜索到", // 268
+    "取消! 存储已满", // 269
+    "取消! 用户终止了操作", // 270
+    "成功完成搜索", // 271
+    "删除存储信道", // 272
+    "删除了", // 273
+    "防止双 PI", // 274
+    "一定范围内", // 275
+    "全部", // 276
+    "无信号不停留", // 277
+    "触摸区边沿高亮", // 278
+    "校准触摸屏", // 279
+    "按住BW按钮停止DX扫描仪", // 280
+    "选择带宽", // 281
+    "你的 log记录", // 282
+    "下载 log记录", // 283
+    "log为空", // 284
+    "跳到底部", // 285
+    "添加到log记录", // 286
+    "更新失败!", // 287
+    "清除log记录", // 288
+    "log记录已清除", // 289
+    "清除失败", // 290
+    "log记录已满!", // 291
+    "自动记录日志", // 292
+    "联网自动同步本机时间", // 293
+    "设置NTP时区", // 294
+    "该日志包含超过130个条目，观看者无法处理。请下载CSV文件进行处理。", // 295
+    "加拿大" // 296
   },
 
   { "Norsk", // Norwegian
@@ -4726,103 +4711,102 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "Mye", // 198
     "Alt", // 199
     "Rask PS", // 200
-    "Standard", // 201
-    "Demp skjerm under\nXDRGTK-tilkobling", // 202
-    "FMSI stereo forbedring", // 203
-    "Funksjon kun tilgjengelig\npå TEF6687/6689!", // 204
-    "Funksjon ikke tilgjengelig\npå valgt skin!", // 205
-    "Start skanning av\nminnekanaler", // 206
-    "Stopp skanning av\nminnekanaler", // 207
-    "Ventetid", // 208
-    "Start DX-skanning", // 209
-    "FM DX-alternativer", // 210
-    "Avbryt! Startkanalen er\nmerket som hoppet over", // 211
-    "Auto-sorter AF", // 212
-    "Minnekanaler", // 213
-    "Ekskluder", // 214
-    "Kun", // 215
-    "Auto-avbryt skanning", // 216
-    "Korriger PI", // 217
-    "Signal", // 218
-    "Demp lyd under\nskanning", // 219
-    "AIR", // 220
-    "Hold BAND-knappen i 5 sek", // 221
-    "Slå av", // 222
-    "Slå av skjerm", // 223
-    "Deaktivert", // 224
-    "Ingen", // 225
-    "Nyheter", // 226
-    "Aktualiteter", // 227
-    "Informasjon", // 228
-    "Sport", // 229
-    "Utdanning", // 230
-    "Drama", // 231
-    "Kultur", // 232
-    "Vitenskap", // 233
-    "Underholdning", // 234
-    "Popmusikk", // 235
-    "Rockmusikk", // 236
-    "Lett musikk", // 237
-    "Lett klassisk", // 238
-    "Klassisk musikk", // 239
-    "Annen musikk", // 240
-    "Værmelding", // 241
-    "Økonomi", // 242
-    "Barneprogrammer", // 243
-    "Sosiale spørsmål", // 244
-    "Religion", // 245
-    "Ring inn", // 246
-    "Reise", // 247
-    "Fritid", // 248
-    "Jazz", // 249
-    "Countrymusikk", // 250
-    "Nasjonal musikk", // 251
-    "Gammelpop", // 252
-    "Folkemusikk", // 253
-    "Dokumentar", // 254
-    "Alarmtest", // 255
-    "ALARM!", // 256
-    "Innledende", // 257
-    "Alltid", // 258
-    "Vis klokke", // 259
-    "Vis lang PS", // 260
-    "Startfrekvens", // 261
-    "Stoppfrekvens", // 262
-    "Start minnekanal", // 263
-    "Stopp minnekanal", // 264
-    "Lagre kun med RDS", // 265
-    "Start auto-minne", // 266
-    "Auto-minne", // 267
-    "Stationlist-ID", // 268
-    "Funnet", // 269
-    "Avbrutt! Ingen minnekanaler", // 270
-    "Avbrutt! Bruker trykket knapp", // 271
-    "Skanning fullført uten feil", // 272
-    "Slett minnekanaler", // 273
-    "ryddet", // 274
-    "Forhindre doble PI-er", // 275
-    "Spekter", // 276
-    "Fullt", // 277
-    "Ventetid kun\nved signal", // 278
-    "Trykk på uthevet hjørne", // 279
-    "Kalibrer berøringsskjerm", // 280
-    "Hold BW-knappen for å\nstoppe DX-skanning", // 281
-    "Velg båndbredde", // 282
-    "Din loggbok", // 283
-    "Last ned loggbok", // 284
-    "Loggbok er tom", // 285
-    "Gå til bunn", // 286
-    "Oppføring lagt til i loggen", // 287
-    "Feil ved lagring i loggen", // 288
-    "Tøm loggbok", // 289
-    "Loggbok tømt", // 290
-    "Tømming mislyktes", // 291
-    "Kan ikke lagre!\nLoggbok er full!", // 292
-    "Autologger", // 293
-    "Auto sommertid med NTP", // 294
-    "Angi NTP-tidsforskyvning", // 295
-    "Loggbok har over 130 oppføringer.\nLast ned CSV for behandling.", // 296
-    "Canada" // 297
+    "Demp skjerm under\nXDRGTK-tilkobling", // 201
+    "FMSI stereo forbedring", // 202
+    "Funksjon kun tilgjengelig\npå TEF6687/6689!", // 203
+    "Funksjon ikke tilgjengelig\npå valgt skin!", // 204
+    "Start skanning av\nminnekanaler", // 205
+    "Stopp skanning av\nminnekanaler", // 206
+    "Ventetid", // 207
+    "Start DX-skanning", // 208
+    "FM DX-alternativer", // 209
+    "Avbryt! Startkanalen er\nmerket som hoppet over", // 210
+    "Auto-sorter AF", // 211
+    "Minnekanaler", // 212
+    "Ekskluder", // 213
+    "Kun", // 214
+    "Auto-avbryt skanning", // 215
+    "Korriger PI", // 216
+    "Signal", // 217
+    "Demp lyd under\nskanning", // 218
+    "AIR", // 219
+    "Hold BAND-knappen i 5 sek", // 220
+    "Slå av", // 221
+    "Slå av skjerm", // 222
+    "Deaktivert", // 223
+    "Ingen", // 224
+    "Nyheter", // 225
+    "Aktualiteter", // 226
+    "Informasjon", // 227
+    "Sport", // 228
+    "Utdanning", // 229
+    "Drama", // 230
+    "Kultur", // 231
+    "Vitenskap", // 232
+    "Underholdning", // 233
+    "Popmusikk", // 234
+    "Rockmusikk", // 235
+    "Lett musikk", // 236
+    "Lett klassisk", // 237
+    "Klassisk musikk", // 238
+    "Annen musikk", // 239
+    "Værmelding", // 240
+    "Økonomi", // 241
+    "Barneprogrammer", // 242
+    "Sosiale spørsmål", // 243
+    "Religion", // 244
+    "Ring inn", // 245
+    "Reise", // 246
+    "Fritid", // 247
+    "Jazz", // 248
+    "Countrymusikk", // 249
+    "Nasjonal musikk", // 250
+    "Gammelpop", // 251
+    "Folkemusikk", // 252
+    "Dokumentar", // 253
+    "Alarmtest", // 254
+    "ALARM!", // 255
+    "Innledende", // 256
+    "Alltid", // 257
+    "Vis klokke", // 258
+    "Vis lang PS", // 259
+    "Startfrekvens", // 260
+    "Stoppfrekvens", // 261
+    "Start minnekanal", // 262
+    "Stopp minnekanal", // 263
+    "Lagre kun med RDS", // 264
+    "Start auto-minne", // 265
+    "Auto-minne", // 266
+    "Stationlist-ID", // 267
+    "Funnet", // 268
+    "Avbrutt! Ingen minnekanaler", // 269
+    "Avbrutt! Bruker trykket knapp", // 270
+    "Skanning fullført uten feil", // 271
+    "Slett minnekanaler", // 272
+    "ryddet", // 273
+    "Forhindre doble PI-er", // 274
+    "Spekter", // 275
+    "Fullt", // 276
+    "Ventetid kun\nved signal", // 277
+    "Trykk på uthevet hjørne", // 278
+    "Kalibrer berøringsskjerm", // 279
+    "Hold BW-knappen for å\nstoppe DX-skanning", // 280
+    "Velg båndbredde", // 281
+    "Din loggbok", // 282
+    "Last ned loggbok", // 283
+    "Loggbok er tom", // 284
+    "Gå til bunn", // 285
+    "Oppføring lagt til i loggen", // 286
+    "Feil ved lagring i loggen", // 287
+    "Tøm loggbok", // 288
+    "Loggbok tømt", // 289
+    "Tømming mislyktes", // 290
+    "Kan ikke lagre!\nLoggbok er full!", // 291
+    "Autologger", // 292
+    "Auto sommertid med NTP", // 293
+    "Angi NTP-tidsforskyvning", // 294
+    "Loggbok har over 130 oppføringer.\nLast ned CSV for behandling.", // 295
+    "Canada" // 296
   },
 
   { "Español", // Spanish
@@ -5026,103 +5010,102 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "Grande", // 198
     "Todo", // 199
     "PS rápido", // 200
-    "Predeterminado", // 201
-    "Silenciar pantalla\nen conexión XDRGTK", // 202
-    "Mejora estéreo FMSI", // 203
-    "¡Función solo para\nTEF6687/6689!", // 204
-    "¡Función no disponible\nen skin seleccionada!", // 205
-    "Iniciar escaneo\nde memorias", // 206
-    "Detener escaneo\nde memorias", // 207
-    "Tiempo de espera", // 208
-    "Iniciar escaneo DX", // 209
-    "Opciones FM DX", // 210
-    "¡Abortar! Canal inicial\nmarcado como omitido", // 211
-    "Ordenar AF automático", // 212
-    "Canales guardados", // 213
-    "Excluir", // 214
-    "Solo", // 215
-    "Cancelaciòn automàtica", // 216
-    "PI correcto", // 217
-    "Señal", // 218
-    "Silenciar audio\ndurante escaneo", // 219
-    "AIR", // 220
-    "Mantener BANDA 5 seg.", // 221
-    "Apagar", // 222
-    "Apagar pantalla", // 223
-    "Desactivado", // 224
-    "Ninguno", // 225
-    "Noticias", // 226
-    "Magazine", // 227
-    "Información", // 228
-    "Deportes", // 229
-    "Educación", // 230
-    "Drama", // 231
-    "Cultura", // 232
-    "Ciencia", // 233
-    "Variedades", // 234
-    "Música pop", // 235
-    "Música rock", // 236
-    "Música ligera", // 237
-    "Clásica ligera", // 238
-    "Clásica seria", // 239
-    "Otros géneros", // 240
-    "Meteorología", // 241
-    "Finanzas", // 242
-    "Infantiles", // 243
-    "Sociedad", // 244
-    "Religión", // 245
-    "Llamadas en vivo", // 246
-    "Viajes", // 247
-    "Ocio", // 248
-    "Jazz", // 249
-    "Country", // 250
-    "Música nacional", // 251
-    "Música de Ayer", // 252
-    "Folclórica", // 253
-    "Documental", // 254
-    "Prueba de alarma", // 255
-    "¡ALARMA!", // 256
-    "Inicial", // 257
-    "Siempre", // 258
-    "Mostrar reloj", // 259
-    "Mostrar PS largo", // 260
-    "Frecuencia inicial", // 261
-    "Frecuencia final", // 262
-    "Canal inicial", // 263
-    "Canal final", // 264
-    "Guardar solo\ncon RDS", // 265
-    "Iniciar memoria\nautomática", // 266
-    "Memoria automática", // 267
-    "ID Stationlist", // 268
-    "Encontrado", // 269
-    "¡Error! Sin memorias", // 270
-    "¡Cancelado! Usuario\ndetuvo", // 271
-    "Escaneo exitoso", // 272
-    "Borrar memorias", // 273
-    "borrado", // 274
-    "Evitar PI duplicado", // 275
-    "Rango", // 276
-    "Completo", // 277
-    "Esperar solo\ncon señal", // 278
-    "Toque la esquina\nresaltada", // 279
-    "Calibrar pantalla\ntáctil", // 280
-    "Mantenga BW para\ndetener DX", // 281
-    "Seleccionar ancho\nde banda", // 282
-    "Libro de registro", // 283
-    "Descargar registro", // 284
-    "Registro vacío", // 285
-    "Ir al final", // 286
-    "Entrada añadida", // 287
-    "Error al añadir", // 288
-    "Borrar registro", // 289
-    "Registro borrado", // 290
-    "Error al borrar", // 291
-    "¡Registro lleno!\nNo se puede añadir", // 292
-    "Autoregistro", // 293
-    "DST automático (NTP)", // 294
-    "Ajustar\ndesplazamiento NTP", // 295
-    "El registro tiene +130 entradas.\nDescargue el CSV.", // 296
-    "Canadá" // 297
+    "Silenciar pantalla\nen conexión XDRGTK", // 201
+    "Mejora estéreo FMSI", // 202
+    "¡Función solo para\nTEF6687/6689!", // 203
+    "¡Función no disponible\nen skin seleccionada!", // 204
+    "Iniciar escaneo\nde memorias", // 205
+    "Detener escaneo\nde memorias", // 206
+    "Tiempo de espera", // 207
+    "Iniciar escaneo DX", // 208
+    "Opciones FM DX", // 209
+    "¡Abortar! Canal inicial\nmarcado como omitido", // 210
+    "Ordenar AF automático", // 211
+    "Canales guardados", // 212
+    "Excluir", // 213
+    "Solo", // 214
+    "Cancelaciòn automàtica", // 215
+    "PI correcto", // 216
+    "Señal", // 217
+    "Silenciar audio\ndurante escaneo", // 218
+    "AIR", // 219
+    "Mantener BANDA 5 seg.", // 220
+    "Apagar", // 221
+    "Apagar pantalla", // 222
+    "Desactivado", // 223
+    "Ninguno", // 224
+    "Noticias", // 225
+    "Magazine", // 226
+    "Información", // 227
+    "Deportes", // 228
+    "Educación", // 229
+    "Drama", // 230
+    "Cultura", // 231
+    "Ciencia", // 232
+    "Variedades", // 233
+    "Música pop", // 234
+    "Música rock", // 235
+    "Música ligera", // 236
+    "Clásica ligera", // 237
+    "Clásica seria", // 238
+    "Otros géneros", // 239
+    "Meteorología", // 240
+    "Finanzas", // 241
+    "Infantiles", // 242
+    "Sociedad", // 243
+    "Religión", // 244
+    "Llamadas en vivo", // 245
+    "Viajes", // 246
+    "Ocio", // 247
+    "Jazz", // 248
+    "Country", // 249
+    "Música nacional", // 250
+    "Música de Ayer", // 251
+    "Folclórica", // 252
+    "Documental", // 253
+    "Prueba de alarma", // 254
+    "¡ALARMA!", // 255
+    "Inicial", // 256
+    "Siempre", // 257
+    "Mostrar reloj", // 258
+    "Mostrar PS largo", // 259
+    "Frecuencia inicial", // 260
+    "Frecuencia final", // 261
+    "Canal inicial", // 262
+    "Canal final", // 263
+    "Guardar solo\ncon RDS", // 264
+    "Iniciar memoria\nautomática", // 265
+    "Memoria automática", // 266
+    "ID Stationlist", // 267
+    "Encontrado", // 268
+    "¡Error! Sin memorias", // 269
+    "¡Cancelado! Usuario\ndetuvo", // 270
+    "Escaneo exitoso", // 271
+    "Borrar memorias", // 272
+    "borrado", // 273
+    "Evitar PI duplicado", // 274
+    "Rango", // 275
+    "Completo", // 276
+    "Esperar solo\ncon señal", // 277
+    "Toque la esquina\nresaltada", // 278
+    "Calibrar pantalla\ntáctil", // 279
+    "Mantenga BW para\ndetener DX", // 280
+    "Seleccionar ancho\nde banda", // 281
+    "Libro de registro", // 282
+    "Descargar registro", // 283
+    "Registro vacío", // 284
+    "Ir al final", // 285
+    "Entrada añadida", // 286
+    "Error al añadir", // 287
+    "Borrar registro", // 288
+    "Registro borrado", // 289
+    "Error al borrar", // 290
+    "¡Registro lleno!\nNo se puede añadir", // 291
+    "Autoregistro", // 292
+    "DST automático (NTP)", // 293
+    "Ajustar\ndesplazamiento NTP", // 294
+    "El registro tiene +130 entradas.\nDescargue el CSV.", // 295
+    "Canadá" // 296
   },
 
   { "Português", // Portuguese
@@ -5326,103 +5309,102 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "Grande", // 198
     "Tudo", // 199
     "PS rápido", // 200
-    "Predefinição", // 201
-    "Tela mudo na\nconexão XDRGTK", // 202
-    "FMSI melhoria\ndo som estéreo", // 203
-    "Função disponível apenas\nno TEF6687/6689!", // 204
-    "Função não disponível\nno skin selecionado!", // 205
-    "Comece a pesquisar\ncanais de memória", // 206
-    "Pare de pesquisar\ncanais de memória", // 207
-    "Tempo de espera", // 208
-    "Comece a pesquisar DX", // 209
-    "Opções FM DX", // 210
-    "Abortar! O canal\ninicial é ignorado.", // 211
-    "Classificar AF\nautomaticamente", // 212
-    "Canais memorizados", // 213
-    "Excluir", // 214
-    "Apenas", // 215
-    "Cancelar automatic.\na pesquisa", // 216
-    "PI correto", // 217
-    "Sinal", // 218
-    "Mudo áudio\nenquanto procura", // 219
-    "AIR", // 220
-    "Pressione o botão\nbanda por 5 seg.", // 221
-    "Desligar", // 222
-    "Tela desligado", // 223
-    "Inativo", // 224
-    "Não definido", // 225
-    "Notícias", // 226
-    "Actualidade", // 227
-    "Informação", // 228
-    "Desporto", // 229
-    "Educação", // 230
-    "Rádio – Teatro", // 231
-    "Cultura", // 232
-    "Ciência", // 233
-    "Variado", // 234
-    "Música Pop", // 235
-    "Música Rock", // 236
-    "Música Ligeira", // 237
-    "Clássica Ligeira", // 238
-    "Música Clássica", // 239
-    "Outras Músicas", // 240
-    "Meteorologia", // 241
-    "Economia", // 242
-    "Progr. Infantil", // 243
-    "Acontec. Social", // 244
-    "Religião", // 245
-    "Phone-In", // 246
-    "Viagens", // 247
-    "Lazer", // 248
-    "Música de Jazz", // 249
-    "Música Country", // 250
-    "Música Nacional", // 251
-    "Música Antiga", // 252
-    "Música Folk", // 253
-    "Documentário", // 254
-    "Teste de Alarme", // 255
-    "Alarme – Alarme !", // 256
-    "Inicial", // 257
-    "Sempre", // 258
-    "Mostrar relógio", // 259
-    "Mostrar PS longo", // 260
-    "Iniciar frequência", // 261
-    "Parar frequência", // 262
-    "Iniciar canal\nde memória", // 263
-    "Parar canal de memória", // 264
-    "Somente armazenar\ncom RDS", // 265
-    "Iniciar memória automática", // 266
-    "Memória automática", // 267
-    "ID da lista de estações", // 268
-    "Encontrado", // 269
-    "Abortar! Sem canais\nde memória disponíveis", // 270
-    "Abortar! Usuário\npressionou o botão", // 271
-    "Verificação concluída\nsem erros", // 272
-    "Limpar canais\nde memória", // 273
-    "limpo", // 274
-    "Prevenir PI duplo", // 275
-    "Intervalo", // 276
-    "Completo", // 277
-    "Espera tempo apenas\nquando sinal", // 278
-    "Pressione o\ncanto inscrito", // 279
-    "Para calibração\nda tela de toque", // 280
-    "Segure BW para parar", // 281
-    "Selecione largura de banda", // 282
-    "Seu livro de registro", // 283
-    "Baixar livro de registro", // 284
-    "O livro de registro está vazio", // 285
-    "Ir para o final", // 286
-    "Adicionado ao registro", // 287
-    "Falha na atualização!", // 288
-    "Limpar livro\nde registro", // 289
-    "Livro limpo", // 290
-    "Falha ao limpar", // 291
-    "Não é possível adicionar!\nO livro está cheio!", // 292
-    "Registrador automático", // 293
-    "DST automático\nno horário NTP", // 294
-    "Definir deslocamento\nde tempo NTP", // 295
-    "O diário de bordo contém mais de 130 entradas que o espectador não consegue processar. Descarregue o ficheiro CSV para processá-lo.", // 296
-    "Canadá" // 297
+    "Tela mudo na\nconexão XDRGTK", // 201
+    "FMSI melhoria\ndo som estéreo", // 202
+    "Função disponível apenas\nno TEF6687/6689!", // 203
+    "Função não disponível\nno skin selecionado!", // 204
+    "Comece a pesquisar\ncanais de memória", // 205
+    "Pare de pesquisar\ncanais de memória", // 206
+    "Tempo de espera", // 207
+    "Comece a pesquisar DX", // 208
+    "Opções FM DX", // 209
+    "Abortar! O canal\ninicial é ignorado.", // 210
+    "Classificar AF\nautomaticamente", // 211
+    "Canais memorizados", // 212
+    "Excluir", // 213
+    "Apenas", // 214
+    "Cancelar automatic.\na pesquisa", // 215
+    "PI correto", // 216
+    "Sinal", // 217
+    "Mudo áudio\nenquanto procura", // 218
+    "AIR", // 219
+    "Pressione o botão\nbanda por 5 seg.", // 220
+    "Desligar", // 221
+    "Tela desligado", // 222
+    "Inativo", // 223
+    "Não definido", // 224
+    "Notícias", // 225
+    "Actualidade", // 226
+    "Informação", // 227
+    "Desporto", // 228
+    "Educação", // 229
+    "Rádio – Teatro", // 230
+    "Cultura", // 231
+    "Ciência", // 232
+    "Variado", // 233
+    "Música Pop", // 234
+    "Música Rock", // 235
+    "Música Ligeira", // 236
+    "Clássica Ligeira", // 237
+    "Música Clássica", // 238
+    "Outras Músicas", // 239
+    "Meteorologia", // 240
+    "Economia", // 241
+    "Progr. Infantil", // 242
+    "Acontec. Social", // 243
+    "Religião", // 244
+    "Phone-In", // 245
+    "Viagens", // 246
+    "Lazer", // 247
+    "Música de Jazz", // 248
+    "Música Country", // 249
+    "Música Nacional", // 250
+    "Música Antiga", // 251
+    "Música Folk", // 252
+    "Documentário", // 253
+    "Teste de Alarme", // 254
+    "Alarme – Alarme !", // 255
+    "Inicial", // 256
+    "Sempre", // 257
+    "Mostrar relógio", // 258
+    "Mostrar PS longo", // 259
+    "Iniciar frequência", // 260
+    "Parar frequência", // 261
+    "Iniciar canal\nde memória", // 262
+    "Parar canal de memória", // 263
+    "Somente armazenar\ncom RDS", // 264
+    "Iniciar memória automática", // 265
+    "Memória automática", // 266
+    "ID da lista de estações", // 267
+    "Encontrado", // 268
+    "Abortar! Sem canais\nde memória disponíveis", // 269
+    "Abortar! Usuário\npressionou o botão", // 270
+    "Verificação concluída\nsem erros", // 271
+    "Limpar canais\nde memória", // 272
+    "limpo", // 273
+    "Prevenir PI duplo", // 274
+    "Intervalo", // 275
+    "Completo", // 276
+    "Espera tempo apenas\nquando sinal", // 277
+    "Pressione o\ncanto inscrito", // 278
+    "Para calibração\nda tela de toque", // 279
+    "Segure BW para parar", // 280
+    "Selecione largura de banda", // 281
+    "Seu livro de registro", // 282
+    "Baixar livro de registro", // 283
+    "O livro de registro está vazio", // 284
+    "Ir para o final", // 285
+    "Adicionado ao registro", // 286
+    "Falha na atualização!", // 287
+    "Limpar livro\nde registro", // 288
+    "Livro limpo", // 289
+    "Falha ao limpar", // 290
+    "Não é possível adicionar!\nO livro está cheio!", // 291
+    "Registrador automático", // 292
+    "DST automático\nno horário NTP", // 293
+    "Definir deslocamento\nde tempo NTP", // 294
+    "O diário de bordo contém mais de 130 entradas que o espectador não consegue processar. Descarregue o ficheiro CSV para processá-lo.", // 295
+    "Canadá" // 296
   },
 
   { "Srpski", // Serbian
@@ -5626,103 +5608,102 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "Veliko", // 198
     "Svi", // 199
     "Brzi PS", // 200
-    "Podrazumevano", // 201
-    "Utišaj ekran na XDRGTK", // 202
-    "FMSI stereo\npoboljšanje", // 203
-    "Funkcija dostupna\nsamo na TEF6687/6689!", // 204
-    "Funkcija nije dostupna na koži!", // 205
-    "Počnite skeniranje kanala", // 206
-    "Zaustavite skeniranje kanala", // 207
-    "Vreme čekanja", // 208
-    "Pokrenite DX\nskeniranje", // 209
-    "FM DX Opcije", // 210
-    "Abort! Početni kanal preskočen", // 211
-    "Automatski sortiraj AF", // 212
-    "Memorijski kanali", // 213
-    "Isključi", // 214
-    "Samo", // 215
-    "Automatski otkaži skeniranje", // 216
-    "Ispravi PI", // 217
-    "Signal", // 218
-    "Utišaj zvuk\nu toku skeniranja", // 219
-    "ZRAK", // 220
-    "5 sekundi pritiska na dugme", // 221
-    "Isključivanje", // 222
-    "Isključi ekran", // 223
-    "Onemogućeno", // 224
-    "Nema", // 225
-    "Vesti", // 226
-    "Aktuelnosti", // 227
-    "Informacije", // 228
-    "Sport", // 229
-    "Obrazovanje", // 230
-    "Drama", // 231
-    "Kultura", // 232
-    "Nauka", // 233
-    "Raznovrsno", // 234
-    "Pop muzika", // 235
-    "Rock muzika", // 236
-    "Lagana muzika", // 237
-    "Laka klasična", // 238
-    "Seriozna klasična", // 239
-    "Ostala muzika", // 240
-    "Vreme", // 241
-    "Finansije", // 242
-    "Dečiji programi", // 243
-    "Socijalna pitanja", // 244
-    "Religija", // 245
-    "Telefon na liniji", // 246
-    "Putovanja", // 247
-    "Odmor", // 248
-    "Jazz muzika", // 249
-    "Country muzika", // 250
-    "Nacionalna muzika", // 251
-    "Stari hitovi", // 252
-    "Folk muzika", // 253
-    "Dokumentarni", // 254
-    "Test alarma", // 255
-    "Alarm!!!", // 256
-    "Početni", // 257
-    "Uvek", // 258
-    "Prikazivanje\nsata", // 259
-    "Prikazivanje\ndugog PS", // 260
-    "Početna frekvencija", // 261
-    "Krajnja frekvencija", // 262
-    "Početni memorijski\nkanal", // 263
-    "Krajnji memorijski\nkanal", // 264
-    "Samo sa RDS", // 265
-    "Pokreni automatsko\nmemorijsko pamćenje", // 266
-    "Automatsko memorisanje", // 267
-    "Stationlist ID", // 268
-    "Pronađeno", // 269
-    "Abort! Nedostaju kanali", // 270
-    "Abort! Korisnik je\npritisnuo dugme", // 271
-    "Skeniranje završeno\nbez grešaka", // 272
-    "Očisti memorijske\nkanale", // 273
-    "obrisano", // 274
-    "Prevencija duplog PI", // 275
-    "Opseg", // 276
-    "Puno", // 277
-    "Vreme čekanja na signal", // 278
-    "Pritisnite označeni\nugao", // 279
-    "Za kalibraciju\nekrana", // 280
-    "Drži BW da staneš", // 281
-    "Izaberi širinu\nopsega", // 282
-    "Tvoj dnevnik", // 283
-    "Preuzmi dnevnik", // 284
-    "Dnevnik je prazan", // 285
-    "Idi do dna", // 286
-    "Dodano u dnevnik", // 287
-    "Ažuriranje nije\nuspelo!", // 288
-    "Očisti dnevnik", // 289
-    "Dnevnik očišćen", // 290
-    "Greška pri brisanju", // 291
-    "Ne može se dodati!\nDnevnik je pun!", // 292
-    "Automatski logger", // 293
-    "Auto DST na\nNTP vremenu", // 294
-    "Postavite NTP\nvremenski offset", // 295
-    "Dnevnik sadrži više od 130 unosa, što viewer ne može obraditi. Preuzmite CSV fajl za obradu.", // 296
-    "Canada" // 297
+    "Utišaj ekran na XDRGTK", // 201
+    "FMSI stereo\npoboljšanje", // 202
+    "Funkcija dostupna\nsamo na TEF6687/6689!", // 203
+    "Funkcija nije dostupna na koži!", // 204
+    "Počnite skeniranje kanala", // 205
+    "Zaustavite skeniranje kanala", // 206
+    "Vreme čekanja", // 207
+    "Pokrenite DX\nskeniranje", // 208
+    "FM DX Opcije", // 209
+    "Abort! Početni kanal preskočen", // 210
+    "Automatski sortiraj AF", // 211
+    "Memorijski kanali", // 212
+    "Isključi", // 213
+    "Samo", // 214
+    "Automatski otkaži skeniranje", // 215
+    "Ispravi PI", // 216
+    "Signal", // 217
+    "Utišaj zvuk\nu toku skeniranja", // 218
+    "ZRAK", // 219
+    "5 sekundi pritiska na dugme", // 220
+    "Isključivanje", // 221
+    "Isključi ekran", // 222
+    "Onemogućeno", // 223
+    "Nema", // 224
+    "Vesti", // 225
+    "Aktuelnosti", // 226
+    "Informacije", // 227
+    "Sport", // 228
+    "Obrazovanje", // 229
+    "Drama", // 230
+    "Kultura", // 231
+    "Nauka", // 232
+    "Raznovrsno", // 233
+    "Pop muzika", // 234
+    "Rock muzika", // 235
+    "Lagana muzika", // 236
+    "Laka klasična", // 237
+    "Seriozna klasična", // 238
+    "Ostala muzika", // 239
+    "Vreme", // 240
+    "Finansije", // 241
+    "Dečiji programi", // 242
+    "Socijalna pitanja", // 243
+    "Religija", // 244
+    "Telefon na liniji", // 245
+    "Putovanja", // 246
+    "Odmor", // 247
+    "Jazz muzika", // 248
+    "Country muzika", // 249
+    "Nacionalna muzika", // 250
+    "Stari hitovi", // 251
+    "Folk muzika", // 252
+    "Dokumentarni", // 253
+    "Test alarma", // 254
+    "Alarm!!!", // 255
+    "Početni", // 256
+    "Uvek", // 257
+    "Prikazivanje\nsata", // 258
+    "Prikazivanje\ndugog PS", // 259
+    "Početna frekvencija", // 260
+    "Krajnja frekvencija", // 261
+    "Početni memorijski\nkanal", // 262
+    "Krajnji memorijski\nkanal", // 263
+    "Samo sa RDS", // 264
+    "Pokreni automatsko\nmemorijsko pamćenje", // 265
+    "Automatsko memorisanje", // 266
+    "Stationlist ID", // 267
+    "Pronađeno", // 268
+    "Abort! Nedostaju kanali", // 269
+    "Abort! Korisnik je\npritisnuo dugme", // 270
+    "Skeniranje završeno\nbez grešaka", // 271
+    "Očisti memorijske\nkanale", // 272
+    "obrisano", // 273
+    "Prevencija duplog PI", // 274
+    "Opseg", // 275
+    "Puno", // 276
+    "Vreme čekanja na signal", // 277
+    "Pritisnite označeni\nugao", // 278
+    "Za kalibraciju\nekrana", // 279
+    "Drži BW da staneš", // 280
+    "Izaberi širinu\nopsega", // 281
+    "Tvoj dnevnik", // 282
+    "Preuzmi dnevnik", // 283
+    "Dnevnik je prazan", // 284
+    "Idi do dna", // 285
+    "Dodano u dnevnik", // 286
+    "Ažuriranje nije\nuspelo!", // 287
+    "Očisti dnevnik", // 288
+    "Dnevnik očišćen", // 289
+    "Greška pri brisanju", // 290
+    "Ne može se dodati!\nDnevnik je pun!", // 291
+    "Automatski logger", // 292
+    "Auto DST na\nNTP vremenu", // 293
+    "Postavite NTP\nvremenski offset", // 294
+    "Dnevnik sadrži više od 130 unosa, što viewer ne može obraditi. Preuzmite CSV fajl za obradu.", // 295
+    "Canada" // 296
   },
 
   { "Suomi", // Finnish
@@ -5926,103 +5907,102 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "Suuri", // 198
     "Kaikki", // 199
     "Nopea PS", // 200
-    "Oletus", // 201
-    "Hiljennä näyttö\nXDRGTK-yhteyden aikana", // 202
-    "FMSI stereo\nparannus", // 203
-    "Toiminto saatavilla vain\nTEF6687/6689:ssä!", // 204
-    "Toiminto ei saatavilla\nvalitussa pinnassa!", // 205
-    "Aloita skannaus\nmuistikanavilla", // 206
-    "Pysäytä skannaus\nmuistikanavilla", // 207
-    "Odota-aika", // 208
-    "Aloita DX-skannaus", // 209
-    "FM DX Asetukset", // 210
-    "Keskeytä! Aloituskanava\non merkitty ohitettavaksi.", // 211
-    "Automaattinen AF lajittelu", // 212
-    "Muistikanavat", // 213
-    "Sulje", // 214
-    "Vain", // 215
-    "Automaattinen skannauksen peruutus", // 216
-    "Korjaa PI", // 217
-    "Signaali", // 218
-    "Hiljennä ääni\nskannauksen aikana", // 219
-    "ILMA", // 220
-    "5 sekunnin bandinäppäimen\npainallus", // 221
-    "Virta pois", // 222
-    "Näyttö pois", // 223
-    "Poistettu", // 224
-    "Ei mitään", // 225
-    "Uutiset", // 226
-    "Ajankohtaiset", // 227
-    "Tietoa", // 228
-    "Urheilu", // 229
-    "Koulutus", // 230
-    "Draama", // 231
-    "Kulttuuri", // 232
-    "Tiede", // 233
-    "Vaihteleva", // 234
-    "Pop-musiikki", // 235
-    "Rock-musiikki", // 236
-    "Helppokuuntelu", // 237
-    "Kevyt klassinen", // 238
-    "Vakava klassinen", // 239
-    "Muu musiikki", // 240
-    "Sää", // 241
-    "Talous", // 242
-    "Lasten ohjelmat", // 243
-    "Sosiaaliasiat", // 244
-    "Uskonto", // 245
-    "Puhelinlinja", // 246
-    "Matkustus", // 247
-    "Vapaa-aika", // 248
-    "Jazz-musiikki", // 249
-    "Country-musiikki", // 250
-    "Kansallismusiikki", // 251
-    "Oldies-musiikki", // 252
-    "Folk-musiikki", // 253
-    "Dokumentti", // 254
-    "Hälytyksen testi", // 255
-    "Hälytys!!!", // 256
-    "Alkuperäinen", // 257
-    "Aina", // 258
-    "Näytä kello", // 259
-    "Näytä pitkä PS", // 260
-    "Aloita taajuus", // 261
-    "Pysäytä taajuus", // 262
-    "Aloita muistikanava", // 263
-    "Pysäytä muistikanava", // 264
-    "Tallenna vain RDS:n\nkanssa", // 265
-    "Aloita\nautomaattinen muistio", // 266
-    "Automaattinen muisti", // 267
-    "Stationlist ID", // 268
-    "Löytyi", // 269
-    "Keskeytä! Muistikanavat loppu", // 270
-    "Keskeytä! Käyttäjä painoi nappia", // 271
-    "Skannaus valmis ilman virheitä", // 272
-    "Tyhjennä\nmuistikanavat", // 273
-    "tyhjennetty", // 274
-    "Estä kaksois-PI", // 275
-    "Alue", // 276
-    "Täysi", // 277
-    "Odota-aika\nvain signaalille", // 278
-    "Paina korostettua kulmaa", // 279
-    "Kalibroi kosketusnäyttö", // 280
-    "Pidä BW-nappia painettuna\npysäyttääksesi DX-skannerin", // 281
-    "Valitse\nkaistanleveys", // 282
-    "Oma lokikirja", // 283
-    "Lataa lokikirja", // 284
-    "Lokikirja on tyhjä", // 285
-    "Mene alas", // 286
-    "Merkintä lisätty\nlokikirjaan", // 287
-    "Virhe lisättäessä\nmerkintää lokikirjaan", // 288
-    "Tyhjennä lokikirja", // 289
-    "Lokikirja\ntyhjennetty", // 290
-    "Tyhjennys\nepäonnistui", // 291
-    "Ei voida lisätä merkintää!\nLokikirja on täynnä!", // 292
-    "Autolokikirja", // 293
-    "Auto DST\nNTP-ajassa", // 294
-    "Aseta\nNTP-aikasiirto", // 295
-    "Lokikirja sisältää yli 130 merkintää, joita katselija ei pysty käsittelemään. Lataa CSV-tiedosto sen käsittelemiseksi.", // 296
-    "Kanada" // 297
+    "Hiljennä näyttö\nXDRGTK-yhteyden aikana", // 201
+    "FMSI stereo\nparannus", // 202
+    "Toiminto saatavilla vain\nTEF6687/6689:ssä!", // 203
+    "Toiminto ei saatavilla\nvalitussa pinnassa!", // 204
+    "Aloita skannaus\nmuistikanavilla", // 205
+    "Pysäytä skannaus\nmuistikanavilla", // 206
+    "Odota-aika", // 207
+    "Aloita DX-skannaus", // 208
+    "FM DX Asetukset", // 209
+    "Keskeytä! Aloituskanava\non merkitty ohitettavaksi.", // 210
+    "Automaattinen AF lajittelu", // 211
+    "Muistikanavat", // 212
+    "Sulje", // 213
+    "Vain", // 214
+    "Automaattinen skannauksen peruutus", // 215
+    "Korjaa PI", // 216
+    "Signaali", // 217
+    "Hiljennä ääni\nskannauksen aikana", // 218
+    "ILMA", // 219
+    "5 sekunnin bandinäppäimen\npainallus", // 220
+    "Virta pois", // 221
+    "Näyttö pois", // 222
+    "Poistettu", // 223
+    "Ei mitään", // 224
+    "Uutiset", // 225
+    "Ajankohtaiset", // 226
+    "Tietoa", // 227
+    "Urheilu", // 228
+    "Koulutus", // 229
+    "Draama", // 230
+    "Kulttuuri", // 231
+    "Tiede", // 232
+    "Vaihteleva", // 233
+    "Pop-musiikki", // 234
+    "Rock-musiikki", // 235
+    "Helppokuuntelu", // 236
+    "Kevyt klassinen", // 237
+    "Vakava klassinen", // 238
+    "Muu musiikki", // 239
+    "Sää", // 240
+    "Talous", // 241
+    "Lasten ohjelmat", // 242
+    "Sosiaaliasiat", // 243
+    "Uskonto", // 244
+    "Puhelinlinja", // 245
+    "Matkustus", // 246
+    "Vapaa-aika", // 247
+    "Jazz-musiikki", // 248
+    "Country-musiikki", // 249
+    "Kansallismusiikki", // 250
+    "Oldies-musiikki", // 251
+    "Folk-musiikki", // 252
+    "Dokumentti", // 253
+    "Hälytyksen testi", // 254
+    "Hälytys!!!", // 255
+    "Alkuperäinen", // 256
+    "Aina", // 257
+    "Näytä kello", // 258
+    "Näytä pitkä PS", // 259
+    "Aloita taajuus", // 260
+    "Pysäytä taajuus", // 261
+    "Aloita muistikanava", // 262
+    "Pysäytä muistikanava", // 263
+    "Tallenna vain RDS:n\nkanssa", // 264
+    "Aloita\nautomaattinen muistio", // 265
+    "Automaattinen muisti", // 266
+    "Stationlist ID", // 267
+    "Löytyi", // 268
+    "Keskeytä! Muistikanavat loppu", // 269
+    "Keskeytä! Käyttäjä painoi nappia", // 270
+    "Skannaus valmis ilman virheitä", // 271
+    "Tyhjennä\nmuistikanavat", // 272
+    "tyhjennetty", // 273
+    "Estä kaksois-PI", // 274
+    "Alue", // 275
+    "Täysi", // 276
+    "Odota-aika\nvain signaalille", // 277
+    "Paina korostettua kulmaa", // 278
+    "Kalibroi kosketusnäyttö", // 279
+    "Pidä BW-nappia painettuna\npysäyttääksesi DX-skannerin", // 280
+    "Valitse\nkaistanleveys", // 281
+    "Oma lokikirja", // 282
+    "Lataa lokikirja", // 283
+    "Lokikirja on tyhjä", // 284
+    "Mene alas", // 285
+    "Merkintä lisätty\nlokikirjaan", // 286
+    "Virhe lisättäessä\nmerkintää lokikirjaan", // 287
+    "Tyhjennä lokikirja", // 288
+    "Lokikirja\ntyhjennetty", // 289
+    "Tyhjennys\nepäonnistui", // 290
+    "Ei voida lisätä merkintää!\nLokikirja on täynnä!", // 291
+    "Autolokikirja", // 292
+    "Auto DST\nNTP-ajassa", // 293
+    "Aseta\nNTP-aikasiirto", // 294
+    "Lokikirja sisältää yli 130 merkintää, joita katselija ei pysty käsittelemään. Lataa CSV-tiedosto sen käsittelemiseksi.", // 295
+    "Kanada" // 296
   },
 
   { "Dansk", // Danish
@@ -6226,103 +6206,102 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "Stor", // 198
     "Alle", // 199
     "Hurtig PS", // 200
-    "Standard", // 201
-    "Sluk skærm ved\nXDRGTK-forbindelse", // 202
-    "FMSI stereo\nforbedring", // 203
-    "Funktion kun tilgængelig\npå TEF6687/6689!", // 204
-    "Funktion ikke tilgængelig\npå valgt hud!", // 205
-    "Begynd scanning\naf hukommelseskanaler", // 206
-    "Stop scanning\naf hukommelseskanaler", // 207
-    "Ventetid", // 208
-    "Start DX-scanning", // 209
-    "FM DX-indstillinger", // 210
-    "Afbryd! Startkanal\ner sprunget over.", // 211
-    "Auto-sortering AF", // 212
-    "Hukommelseskanaler", // 213
-    "Udeluk", // 214
-    "Kun", // 215
-    "Auto-annuller scan", // 216
-    "Korrekt PI", // 217
-    "Signal", // 218
-    "Lyd dæmpet\nunder scanning", // 219
-    "LUFT", // 220
-    "5 sek. båndknap-tryk", // 221
-    "Sluk", // 222
-    "Skærm slukket", // 223
-    "Deaktiveret", // 224
-    "Ingen", // 225
-    "Nyheder", // 226
-    "Seneste nyt", // 227
-    "Oplysninger", // 228
-    "Sport", // 229
-    "Uddannelse", // 230
-    "Drama", // 231
-    "Kultur", // 232
-    "Videnskab", // 233
-    "Variabel", // 234
-    "Popmusik", // 235
-    "Rockmusik", // 236
-    "Nem lytning", // 237
-    "Lettelse klassisk", // 238
-    "Seriøs klassisk", // 239
-    "Anden musik", // 240
-    "Vejr", // 241
-    "Finans", // 242
-    "Børneprogrammer", // 243
-    "Sociale anliggender", // 244
-    "Religion", // 245
-    "Ring ind", // 246
-    "Rejse", // 247
-    "Fritid", // 248
-    "Jazzmusik", // 249
-    "Countrymusik", // 250
-    "National musik", // 251
-    "Gamle hits", // 252
-    "Folkemusik", // 253
-    "Dokumentar", // 254
-    "Alarmtest", // 255
-    "Alarm!!!", // 256
-    "Initial", // 257
-    "Altid", // 258
-    "Vis ur", // 259
-    "Vis lang PS", // 260
-    "Startfrekvens", // 261
-    "Stopfrekvens", // 262
-    "Start hukommelseskanal", // 263
-    "Stop hukommelseskanal", // 264
-    "Kun gem med RDS", // 265
-    "Start auto-hukommelse", // 266
-    "Auto-hukommelse", // 267
-    "Stationsliste-ID", // 268
-    "Fundet", // 269
-    "Afbryd! Uden\nhukommelseskanaler", // 270
-    "Afbryd! Brugeren\ntrykkede på knap", // 271
-    "Scanning afsluttet uden fejl", // 272
-    "Ryd\nhukommelseskanaler", // 273
-    "ryddet", // 274
-    "Forhindre\ndobbelt PI", // 275
-    "Rækkevidde", // 276
-    "Fuld", // 277
-    "Ventetid på\nkun signal", // 278
-    "Tryk på det markerede hjørne", // 279
-    "For at kalibrere touchskærmen", // 280
-    "Hold BW for at stoppe", // 281
-    "Vælg båndbredde", // 282
-    "Din logbog", // 283
-    "Download logbog", // 284
-    "Logbog er tom", // 285
-    "Gå til bunden", // 286
-    "Tilføjet til log", // 287
-    "Opdatering\nmislykkedes!", // 288
-    "Ryd logbog", // 289
-    "Logbog ryddet", // 290
-    "Rydning mislykkedes", // 291
-    "Kan ikke tilføje!\nLogbogen er fuld!", // 292
-    "Autologger", // 293
-    "Auto DST på\nNTP-tid", // 294
-    "Indstil NTP-tidsforskel", // 295
-    "Logbogen indeholder over 130 poster, som fremviseren ikke kan behandle. Download CSV-filen for at behandle den.", // 296
-    "Canada" // 297
+    "Sluk skærm ved\nXDRGTK-forbindelse", // 201
+    "FMSI stereo\nforbedring", // 202
+    "Funktion kun tilgængelig\npå TEF6687/6689!", // 203
+    "Funktion ikke tilgængelig\npå valgt hud!", // 204
+    "Begynd scanning\naf hukommelseskanaler", // 205
+    "Stop scanning\naf hukommelseskanaler", // 206
+    "Ventetid", // 207
+    "Start DX-scanning", // 208
+    "FM DX-indstillinger", // 209
+    "Afbryd! Startkanal\ner sprunget over.", // 210
+    "Auto-sortering AF", // 211
+    "Hukommelseskanaler", // 212
+    "Udeluk", // 213
+    "Kun", // 214
+    "Auto-annuller scan", // 215
+    "Korrekt PI", // 216
+    "Signal", // 217
+    "Lyd dæmpet\nunder scanning", // 218
+    "LUFT", // 219
+    "5 sek. båndknap-tryk", // 220
+    "Sluk", // 221
+    "Skærm slukket", // 222
+    "Deaktiveret", // 223
+    "Ingen", // 224
+    "Nyheder", // 225
+    "Seneste nyt", // 226
+    "Oplysninger", // 227
+    "Sport", // 228
+    "Uddannelse", // 229
+    "Drama", // 230
+    "Kultur", // 231
+    "Videnskab", // 232
+    "Variabel", // 233
+    "Popmusik", // 234
+    "Rockmusik", // 235
+    "Nem lytning", // 236
+    "Lettelse klassisk", // 237
+    "Seriøs klassisk", // 238
+    "Anden musik", // 239
+    "Vejr", // 240
+    "Finans", // 241
+    "Børneprogrammer", // 242
+    "Sociale anliggender", // 243
+    "Religion", // 244
+    "Ring ind", // 245
+    "Rejse", // 246
+    "Fritid", // 247
+    "Jazzmusik", // 248
+    "Countrymusik", // 249
+    "National musik", // 250
+    "Gamle hits", // 251
+    "Folkemusik", // 252
+    "Dokumentar", // 253
+    "Alarmtest", // 254
+    "Alarm!!!", // 255
+    "Initial", // 256
+    "Altid", // 257
+    "Vis ur", // 258
+    "Vis lang PS", // 259
+    "Startfrekvens", // 260
+    "Stopfrekvens", // 261
+    "Start hukommelseskanal", // 262
+    "Stop hukommelseskanal", // 263
+    "Kun gem med RDS", // 264
+    "Start auto-hukommelse", // 265
+    "Auto-hukommelse", // 266
+    "Stationsliste-ID", // 267
+    "Fundet", // 268
+    "Afbryd! Uden\nhukommelseskanaler", // 269
+    "Afbryd! Brugeren\ntrykkede på knap", // 270
+    "Scanning afsluttet uden fejl", // 271
+    "Ryd\nhukommelseskanaler", // 272
+    "ryddet", // 273
+    "Forhindre\ndobbelt PI", // 274
+    "Rækkevidde", // 275
+    "Fuld", // 276
+    "Ventetid på\nkun signal", // 277
+    "Tryk på det markerede hjørne", // 278
+    "For at kalibrere touchskærmen", // 279
+    "Hold BW for at stoppe", // 280
+    "Vælg båndbredde", // 281
+    "Din logbog", // 282
+    "Download logbog", // 283
+    "Logbog er tom", // 284
+    "Gå til bunden", // 285
+    "Tilføjet til log", // 286
+    "Opdatering\nmislykkedes!", // 287
+    "Ryd logbog", // 288
+    "Logbog ryddet", // 289
+    "Rydning mislykkedes", // 290
+    "Kan ikke tilføje!\nLogbogen er fuld!", // 291
+    "Autologger", // 292
+    "Auto DST på\nNTP-tid", // 293
+    "Indstil NTP-tidsforskel", // 294
+    "Logbogen indeholder over 130 poster, som fremviseren ikke kan behandle. Download CSV-filen for at behandle den.", // 295
+    "Canada" // 296
   },
 
   { "Svenska", // Swedish
@@ -6526,102 +6505,101 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "Stora", // 198
     "Allt", // 199
     "Snabb PS", // 200
-    "Standard", // 201
-    "Släck skärm vid\nXDRGTK-anslutning", // 202
-    "FMSI stereo\nförbättring", // 203
-    "Funktion endast tillgäng-\nlig på TEF6687/6689!", // 204
-    "Funktion ej tillgänglig\npå valt skinn!", // 205
-    "Första minnesplats", // 206
-    "Sista minnesplats", // 207
-    "Väntetid", // 208
-    "Starta DX-skanning", // 209
-    "FM DX-alternativ", // 210
-    "Avbruten! Startkanalen är\nmärkt som överhoppad.", // 211
-    "Auto-sortera AF", // 212
-    "Minnesplatser", // 213
-    "Exkludera", // 214
-    "Endast", // 215
-    "Auto-avbryt skanning", // 216
-    "Korrekt PI", // 217
-    "Signal", // 218
-    "Tyst under\nskanning", // 219
-    "AIR", // 220
-    "5 sek. BAND-knapptryck", // 221
-    "Stäng av", // 222
-    "Stäng av skärm", // 223
-    "Inaktiverat", // 224
-    "Ingen", // 225
-    "Nyheter", // 226
-    "Aktualiteter", // 227
-    "Information", // 228
-    "Sport", // 229
-    "Utbildning", // 230
-    "Drama", // 231
-    "Kultur", // 232
-    "Vetenskap", // 233
-    "Underhållning", // 234
-    "Popmusik", // 235
-    "Rockmusik", // 236
-    "Lätt musik", // 237
-    "Lätt klassisk", // 238
-    "Klassisk musik", // 239
-    "Annan musik", // 240
-    "Väder", // 241
-    "Ekonomi", // 242
-    "Barnprogram", // 243
-    "Sociala frågor", // 244
-    "Religion", // 245
-    "Ring in", // 246
-    "Resor", // 247
-    "Fritid", // 248
-    "Jazz", // 249
-    "Countrymusik", // 250
-    "Nationell musik", // 251
-    "Oldies musik", // 252
-    "Folkmusik", // 253
-    "Dokumentär", // 254
-    "Alarmtest", // 255
-    "Alarm!!!", // 256
-    "Inledande", // 257
-    "Alltid", // 258
-    "Visa klocka", // 259
-    "Visa lång PS", // 260
-    "Startfrekvens", // 261
-    "Stoppfrekvens", // 262
-    "Första minnesplats", // 263
-    "Sista minnesplats", // 264
-    "Spara endast med RDS", // 265
-    "Starta auto-minne", // 266
-    "Auto-kanalminne", // 267
-    "Stationlist-ID", // 268
-    "Hittade", // 269
-    "Avbruten! Inga minnesplatser", // 270
-    "Avbruten! Användare tryckte knapp", // 271
-    "Skanning slutförd utan fel", // 272
-    "Töm minnesplatser", // 273
-    "raderad", // 274
-    "Förhindra dubbla PI", // 275
-    "Range", // 276
-    "Fullt", // 277
-    "Väntetid bara\nvid signal", // 278
-    "Tryck på markerat hörn", // 279
-    "för att kalibrera touchskärm", // 280
-    "Håll BW-knappen för att\nstoppa DX-skanning", // 281
-    "Välj bandbredd", // 282
-    "Din loggbok", // 283
-    "Ladda ner loggbok", // 284
-    "Loggbok är tom", // 285
-    "Gå till botten", // 286
-    "Post tillagd\ni loggbok", // 287
-    "Fel vid sparande\ni loggbok", // 288
-    "Töm loggbok", // 289
-    "Loggbok tömd", // 290
-    "Tömning misslyckades", // 291
-    "Kan inte spara!\nLoggboken är full!", // 292
-    "Autologgning", // 293
-    "Auto NTP sommartid", // 294
-    "Ange NTP tidszon", // 295
-    "Loggboken har mer än 130 poster, vilket visaren inte kan hantera. Ladda ner CSV för behandling.", // 296
-    "Kanada" // 297
+    "Släck skärm vid\nXDRGTK-anslutning", // 201
+    "FMSI stereo\nförbättring", // 202
+    "Funktion endast tillgäng-\nlig på TEF6687/6689!", // 203
+    "Funktion ej tillgänglig\npå valt skinn!", // 204
+    "Första minnesplats", // 205
+    "Sista minnesplats", // 206
+    "Väntetid", // 207
+    "Starta DX-skanning", // 208
+    "FM DX-alternativ", // 209
+    "Avbruten! Startkanalen är\nmärkt som överhoppad.", // 210
+    "Auto-sortera AF", // 211
+    "Minnesplatser", // 212
+    "Exkludera", // 213
+    "Endast", // 214
+    "Auto-avbryt skanning", // 215
+    "Korrekt PI", // 216
+    "Signal", // 217
+    "Tyst under\nskanning", // 218
+    "AIR", // 219
+    "5 sek. BAND-knapptryck", // 220
+    "Stäng av", // 221
+    "Stäng av skärm", // 222
+    "Inaktiverat", // 223
+    "Ingen", // 224
+    "Nyheter", // 225
+    "Aktualiteter", // 226
+    "Information", // 227
+    "Sport", // 228
+    "Utbildning", // 229
+    "Drama", // 230
+    "Kultur", // 231
+    "Vetenskap", // 232
+    "Underhållning", // 233
+    "Popmusik", // 234
+    "Rockmusik", // 235
+    "Lätt musik", // 236
+    "Lätt klassisk", // 237
+    "Klassisk musik", // 238
+    "Annan musik", // 239
+    "Väder", // 240
+    "Ekonomi", // 241
+    "Barnprogram", // 242
+    "Sociala frågor", // 243
+    "Religion", // 244
+    "Ring in", // 245
+    "Resor", // 246
+    "Fritid", // 247
+    "Jazz", // 248
+    "Countrymusik", // 249
+    "Nationell musik", // 250
+    "Oldies musik", // 251
+    "Folkmusik", // 252
+    "Dokumentär", // 253
+    "Alarmtest", // 254
+    "Alarm!!!", // 255
+    "Inledande", // 256
+    "Alltid", // 257
+    "Visa klocka", // 258
+    "Visa lång PS", // 259
+    "Startfrekvens", // 260
+    "Stoppfrekvens", // 261
+    "Första minnesplats", // 262
+    "Sista minnesplats", // 263
+    "Spara endast med RDS", // 264
+    "Starta auto-minne", // 265
+    "Auto-kanalminne", // 266
+    "Stationlist-ID", // 267
+    "Hittade", // 268
+    "Avbruten! Inga minnesplatser", // 269
+    "Avbruten! Användare tryckte knapp", // 270
+    "Skanning slutförd utan fel", // 271
+    "Töm minnesplatser", // 272
+    "raderad", // 273
+    "Förhindra dubbla PI", // 274
+    "Range", // 275
+    "Fullt", // 276
+    "Väntetid bara\nvid signal", // 277
+    "Tryck på markerat hörn", // 278
+    "för att kalibrera touchskärm", // 279
+    "Håll BW-knappen för att\nstoppa DX-skanning", // 280
+    "Välj bandbredd", // 281
+    "Din loggbok", // 282
+    "Ladda ner loggbok", // 283
+    "Loggbok är tom", // 284
+    "Gå till botten", // 285
+    "Post tillagd\ni loggbok", // 286
+    "Fel vid sparande\ni loggbok", // 287
+    "Töm loggbok", // 288
+    "Loggbok tömd", // 289
+    "Tömning misslyckades", // 290
+    "Kan inte spara!\nLoggboken är full!", // 291
+    "Autologgning", // 292
+    "Auto NTP sommartid", // 293
+    "Ange NTP tidszon", // 294
+    "Loggboken har mer än 130 poster, vilket visaren inte kan hantera. Ladda ner CSV för behandling.", // 295
+    "Kanada" // 296
   }
 };

@@ -41,9 +41,9 @@ void handleRoot() {
   html += "<img src=\"/logo.png\" alt=\"FMDX website\">";
   html += "</a>";
 
-  html += "<h1>" + String(textUI(283)) + "</h1>";
-  html += "<button onclick=\"window.location.href='/downloadCSV'\">" + String(textUI(284)) + "</button>";
-  html += "<button class=\"go-to-bottom\" onclick=\" window.scrollTo(0, document.body.scrollHeight);\">" + String(textUI(286)) + "</button>";
+  html += "<h1>" + String(textUI(282)) + "</h1>";
+  html += "<button onclick=\"window.location.href='/downloadCSV'\">" + String(textUI(283)) + "</button>";
+  html += "<button class=\"go-to-bottom\" onclick=\" window.scrollTo(0, document.body.scrollHeight);\">" + String(textUI(285)) + "</button>";
 
   // Sorting function with icons
   html += "<script>";
@@ -143,9 +143,9 @@ void handleRoot() {
     }
 
     file.close();
-  } else html += "<tr><td colspan=\"100%\" style=\"text-align: center; color: red;\">" + String(textUI(296)) + "</td></tr>";
+  } else html += "<tr><td colspan=\"100%\" style=\"text-align: center; color: red;\">" + String(textUI(295)) + "</td></tr>";
 
-  if (!hasData) html += "<tr><td colspan=\"100%\" style=\"text-align: center; color: red;\">" + String(textUI(285)) + "</td></tr>";
+  if (!hasData) html += "<tr><td colspan=\"100%\" style=\"text-align: center; color: red;\">" + String(textUI(284)) + "</td></tr>";
 
   html += "</table>";
   html += "</body></html>";

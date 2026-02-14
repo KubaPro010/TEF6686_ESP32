@@ -274,7 +274,7 @@ void SetTunerPatch() {
     radio.getIdentification(&hw, &sw);
     TEF = highByte(hw) * 100 + highByte(sw);
     tft.fillScreen(BackgroundColor);
-    analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 15, 255));
+    analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 0, 255));
 
     if(FORBIDDEN_TUNER(TEF)) {
       tftPrint(ACENTER, textUI(32), 150, 78, ActiveColor, ActiveColorSmooth, 28);
@@ -327,13 +327,13 @@ void WakeToSleep(bool yes) {
         MuteScreen(1);
         break;
       case LCD_BRIGHTNESS_1_PERCENT:
-        analogWrite(CONTRASTPIN, map(ContrastSet / 100, 0, 100, 15, 255));
+        analogWrite(CONTRASTPIN, map(ContrastSet / 100, 0, 100, 0, 255));
         break;
       case LCD_BRIGHTNESS_A_QUARTER:
-        analogWrite(CONTRASTPIN, map(ContrastSet / 4, 0, 100, 15, 255));
+        analogWrite(CONTRASTPIN, map(ContrastSet / 4, 0, 100, 0, 255));
         break;
       case LCD_BRIGHTNESS_HALF:
-        analogWrite(CONTRASTPIN, map(ContrastSet / 2, 0, 100, 15, 255));
+        analogWrite(CONTRASTPIN, map(ContrastSet / 2, 0, 100, 0, 255));
         break;
     }
   } else {
@@ -351,7 +351,7 @@ void WakeToSleep(bool yes) {
         screensavertimer = millis();
         break;
     }
-    analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 15, 255));
+    analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 0, 255));
   }
 }
 
@@ -1167,7 +1167,7 @@ void MuteScreen(bool setting) {
     setupmode = true;
     leave = true;
     tft.writecommand(0x11);
-    analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 15, 255));
+    analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 0, 255));
     if (band < BAND_GAP) {
       if (afscreen) {
         BuildAFScreen();
@@ -1191,7 +1191,10 @@ void MuteScreen(bool setting) {
     setupmode = false;
   } else if (setting && !screenmute) {
     screenmute = true;
-    analogWrite(CONTRASTPIN, 0);
+    for(int x = ContrastSet; x > 0; x--) {
+      analogWrite(CONTRASTPIN, map(x, 0, 100, 0, 255));
+      delay(5);
+    }
     tft.writecommand(0x10);
   }
 }
@@ -1290,7 +1293,7 @@ void later_setup_periph() {
   if(fmdeemphasis != DEEMPHASIS_50) radio.setDeemphasis(fmdeemphasis);
   if(fmagc != 92) radio.setAGC(fmagc);
   if(amagc != 100) radio.setAMAGC(amagc);
-  if (fmsi) radio.setFMSI(2);
+  if(fmsi) radio.setFMSI(2);
 
   if(rx_rtc_avail) {
     bool reset = init_rtc();
@@ -1316,6 +1319,9 @@ void setup() {
   gpio_set_drive_capability((gpio_num_t) 21, GPIO_DRIVE_CAP_0);
   gpio_set_drive_capability((gpio_num_t) 22, GPIO_DRIVE_CAP_0);
   gpio_set_drive_capability((gpio_num_t) 23, GPIO_DRIVE_CAP_0);
+
+  analogWriteFrequency(5000);
+
   EEPROM.begin(EE_TOTAL_CNT);
 
   setupmode = true;
@@ -1441,7 +1447,7 @@ void setup() {
     if (rotarymode == 0) rotarymode = 1; else rotarymode = 0;
     EEPROM.writeByte(EE_BYTE_ROTARYMODE, rotarymode);
     EEPROM.commit();
-    analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 15, 255));
+    analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 0, 255));
     Infoboxprint(textUI(1));
     tftPrint(ACENTER, textUI(2), 155, 130, ActiveColor, ActiveColorSmooth, 28);
     while (digitalRead(BWBUTTON) == LOW) delay(50);
@@ -1457,21 +1463,21 @@ void setup() {
     }
     EEPROM.writeByte(EE_BYTE_DISPLAYFLIP, displayflip);
     EEPROM.commit();
-    analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 15, 255));
+    analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 0, 255));
     Infoboxprint(textUI(3));
     tftPrint(ACENTER, textUI(2), 155, 130, ActiveColor, ActiveColorSmooth, 28);
     while (digitalRead(MODEBUTTON) == LOW) delay(50);
   }
 
   if (digitalRead(BWBUTTON) == HIGH && digitalRead(ROTARY_BUTTON) == HIGH && digitalRead(MODEBUTTON) == HIGH && digitalRead(BANDBUTTON) == LOW) {
-    analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 15, 255));
+    analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 0, 255));
     Infoboxprint(textUI(4));
     tftPrint(ACENTER, textUI(2), 155, 130, ActiveColor, ActiveColorSmooth, 28);
     while (digitalRead(BANDBUTTON) == LOW) delay(50);
   }
 
   if (digitalRead(BWBUTTON) == LOW && digitalRead(ROTARY_BUTTON) == LOW && digitalRead(MODEBUTTON) == HIGH && digitalRead(BANDBUTTON) == HIGH) {
-    analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 15, 255));
+    analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 0, 255));
     DefaultSettings();
     Infoboxprint(textUI(63));
     tftPrint(ACENTER, textUI(2), 155, 130, ActiveColor, ActiveColorSmooth, 28);
@@ -1480,9 +1486,9 @@ void setup() {
   }
 
   if (digitalRead(BWBUTTON) == LOW && digitalRead(ROTARY_BUTTON) == HIGH && digitalRead(MODEBUTTON) == LOW && digitalRead(BANDBUTTON) == HIGH) {
-    analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 15, 255));
-    Infoboxprint(textUI(279));
-    tftPrint(ACENTER, textUI(280), 155, 100, ActiveColor, ActiveColorSmooth, 28);
+    analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 0, 255));
+    Infoboxprint(textUI(278));
+    tftPrint(ACENTER, textUI(279), 155, 100, ActiveColor, ActiveColorSmooth, 28);
     tft.calibrateTouch(TouchCalData, PrimaryColor, BackgroundColor, 30);
     EEPROM.writeUInt(EE_UINT16_CALTOUCH1, TouchCalData[0]);
     EEPROM.writeUInt(EE_UINT16_CALTOUCH2, TouchCalData[1]);
@@ -1493,7 +1499,7 @@ void setup() {
   }
 
   if (digitalRead(BWBUTTON) == LOW && digitalRead(ROTARY_BUTTON) == HIGH && digitalRead(MODEBUTTON) == HIGH && digitalRead(BANDBUTTON) == LOW) {
-    analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 15, 255));
+    analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 0, 255));
     Infoboxprint(textUI(66));
     tftPrint(ACENTER, textUI(2), 155, 130, ActiveColor, ActiveColorSmooth, 28);
     invertdisplay = !invertdisplay;
@@ -1511,7 +1517,7 @@ void setup() {
   tft.drawBitmap((tft.width() - 59) / 2, 24, TEFLogo, 59, 23, ActiveColor);
 
   for (int x = 0; x <= ContrastSet; x++) {
-    analogWrite(CONTRASTPIN, map(x, 0, 100, 15, 255));
+    analogWrite(CONTRASTPIN, map(x, 0, 100, 0, 255));
     delay(5);
   }
 
@@ -2966,10 +2972,10 @@ void ShowFreq(int mode) {
             freqold = freq;
             break;
           case 1: Infoboxprint(textUI(31)); break;
-          case 2: Infoboxprint(textUI(287)); break;
-          case 3: Infoboxprint(textUI(288)); break;
-          case 4: Infoboxprint(textUI(292)); break;
-          case 5: Infoboxprint(textUI(281)); break;
+          case 2: Infoboxprint(textUI(286)); break;
+          case 3: Infoboxprint(textUI(287)); break;
+          case 4: Infoboxprint(textUI(291)); break;
+          case 5: Infoboxprint(textUI(280)); break;
         }
 
         FrequencySprite.pushSprite(46, 46);
@@ -3943,7 +3949,7 @@ uint8_t doAutoMemory(uint16_t startfreq, uint16_t stopfreq, uint8_t startmem, ui
 
   tft.drawRect(59, 109, 202, 8, FrameColor);
   tft.fillRect(60, 110, 200, 6, GreyoutColor);
-  tftPrint(ARIGHT, textUI(269), 120, 155, ActiveColor, ActiveColorSmooth, 16);
+  tftPrint(ARIGHT, textUI(268), 120, 155, ActiveColor, ActiveColorSmooth, 16);
 
   for (frequency = startfreq * 10; frequency <= stopfreq * 10; frequency += 10) {
     if (stopScanning) break;

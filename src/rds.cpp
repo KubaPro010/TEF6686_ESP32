@@ -40,7 +40,7 @@ void ShowAdvancedRDS() {
         tftPrint16(ALEFT, radio.rds.PTYN.getPrev(), 216, 109, BackgroundColor, BackgroundColor);
       }
       if (!radio.rds.hasPTYN) radio.rds.PTYN = "PTYN N/A";
-      tftPrint16(ALEFT, String(radio.rds.PTYN), 216, 109, RDSColor, RDSColorSmooth); // PTYN is UCS-2, meaning no chinese characters. Americans...
+      tftPrint16(ALEFT, String(radio.rds.PTYN), 216, 109, RDSColor, RDSColorSmooth); // PTYN is UCS-2, meaning no chinese characters. 美国人!
     }
   }
 
@@ -83,7 +83,7 @@ void ShowAdvancedRDS() {
   if(!screenmute) eonDisplay.update(eonstring, RDSstatus, RDSColor, RDSColorSmooth, RDSDropoutColor, RDSDropoutColorSmooth, BackgroundColor);
 
   String rtplusstring;
-  if (radio.rds.hasRTplus) rtplusstring = (radio.rds.rdsplusTag1 != 169 ? String(textUI(radio.rds.rdsplusTag1)) + ": " + String(radio.rds.RTContent1) : "") + (radio.rds.rdsplusTag2 != 169 ? " - " + String(textUI(radio.rds.rdsplusTag2)) + ": " + String(radio.rds.RTContent2) : ""); else rtplusstring = textUI(86);
+  if (radio.rds.hasRTplus) rtplusstring = (radio.rds.rdsplusTag1 != 166 ? String(textUI(radio.rds.rdsplusTag1)) + ": " + String(radio.rds.RTContent1) : "") + (radio.rds.rdsplusTag2 != 169 ? " - " + String(textUI(radio.rds.rdsplusTag2)) + ": " + String(radio.rds.RTContent2) : ""); else rtplusstring = textUI(86);
   if (radio.rds.hasRTplus.changed(0)) {
     if (!screenmute) {
       if (radio.rds.hasRTplus) tftPrint16(ALEFT, "RT+", 123, 51, RDSColor, RDSColorSmooth); else tftPrint16(ALEFT, "RT+", 123, 51, GreyoutColor, BackgroundColor);
@@ -409,7 +409,7 @@ void showPI() {
 
 void showPTY() {
   if(radio.rds.PTY.changed(0)) {
-    String PTYString = (radio.rds.region != 0 ? (radio.rds.region == 0 ? PTY_EU[radio.rds.PTY] : PTY_USA[radio.rds.PTY]) : textUI(225 + radio.rds.PTY));
+    String PTYString = (radio.rds.region != 0 ? (radio.rds.region == 0 ? PTY_EU[radio.rds.PTY] : PTY_USA[radio.rds.PTY]) : textUI(224 + radio.rds.PTY));
     GeneralTextSprite.fillSprite(TFT_TRANSPARENT);
     GeneralTextSprite.fillRect(0, 0, 160, 19, BackgroundColor);
     if(RDSstatus) GeneralTextSprite.setTextColor(RDSColor, RDSColorSmooth, false);

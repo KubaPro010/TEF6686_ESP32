@@ -241,7 +241,6 @@ static const uint16_t default_4bit_palette[] PROGMEM = {
 typedef uint16_t (*getColorCallback)(uint16_t x, uint16_t y);
 
 class TFT_eSPI { friend class TFT_eSprite;
-
  public:
   void setSPISpeed(uint8_t speed_Mhz);
   TFT_eSPI(int16_t _W = TFT_WIDTH, int16_t _H = TFT_HEIGHT);
@@ -266,9 +265,7 @@ class TFT_eSPI { friend class TFT_eSprite;
   void setAddrWindow(int32_t xs, int32_t ys, int32_t w, int32_t h);
   void setViewport(int32_t x, int32_t y, int32_t w, int32_t h, bool vpDatum = true);
   void resetViewport();
-  bool clipWindow(int32_t* xs, int32_t* ys, int32_t* xe, int32_t* ye);
   void pushColor(uint16_t color, uint32_t len);
-  void pushColors(uint16_t  *data, uint32_t len, bool swap = true);
   void pushBlock(uint16_t color, uint32_t len);
   void pushPixels(const void * data_in, uint32_t len);
   void fillScreen(uint32_t color),
@@ -278,29 +275,20 @@ class TFT_eSPI { friend class TFT_eSprite;
   void drawCircleHelper(int32_t x, int32_t y, int32_t r, uint8_t cornername, uint32_t color),
            fillCircle(int32_t x, int32_t y, int32_t r, uint32_t color),
            fillCircleHelper(int32_t x, int32_t y, int32_t r, uint8_t cornername, int32_t delta, uint32_t color),
-           drawEllipse(int16_t x, int16_t y, int32_t rx, int32_t ry, uint16_t color),
-           fillEllipse(int16_t x, int16_t y, int32_t rx, int32_t ry, uint16_t color),
            fillTriangle(int32_t x1,int32_t y1, int32_t x2,int32_t y2, int32_t x3,int32_t y3, uint32_t color);
   uint16_t drawPixel(int32_t x, int32_t y, uint32_t color, uint8_t alpha, uint32_t bg_color = 0x00FFFFFF);
-  void     drawArc(int32_t x, int32_t y, int32_t r, int32_t ir, uint32_t startAngle, uint32_t endAngle, uint32_t fg_color, uint32_t bg_color, bool smoothArc = true);
-  void     drawSmoothCircle(int32_t x, int32_t y, int32_t r, uint32_t fg_color, uint32_t bg_color);
-  void     fillSmoothCircle(int32_t x, int32_t y, int32_t r, uint32_t color, uint32_t bg_color = 0x00FFFFFF);
-  void     drawSmoothRoundRect(int32_t x, int32_t y, int32_t r, int32_t ir, int32_t w, int32_t h, uint32_t fg_color, uint32_t bg_color = 0x00FFFFFF, uint8_t quadrants = 0xF);
-  void     fillSmoothRoundRect(int32_t x, int32_t y, int32_t w, int32_t h, int32_t radius, uint32_t color, uint32_t bg_color = 0x00FFFFFF);
-  void     drawWedgeLine(float ax, float ay, float bx, float by, float aw, float bw, uint32_t fg_color, uint32_t bg_color = 0x00FFFFFF);
-  void     setSwapBytes(bool swap);
-  bool     getSwapBytes();
-  void     drawBitmap( int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint16_t fgcolor),
-           drawBitmap( int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint16_t fgcolor, uint16_t bgcolor),
-           setBitmapColor(uint16_t fgcolor, uint16_t bgcolor);
-  void     setPivot(int16_t x, int16_t y);
-  void     pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *data);
-  void     pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *data, uint16_t transparent);
-  void     pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const uint16_t *data, uint16_t transparent);
-  void     pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const uint16_t *data);
-  void     pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint8_t  *data, bool bpp8 = true, uint16_t *cmap = nullptr);
-  void     pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint8_t  *data, uint8_t  transparent, bool bpp8 = true, uint16_t *cmap = nullptr);
-  void     pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const uint8_t *data, bool bpp8,  uint16_t *cmap = nullptr);
+  void setSwapBytes(bool swap);
+  bool getSwapBytes();
+  void drawBitmap( int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint16_t fgcolor),
+           drawBitmap( int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint16_t fgcolor, uint16_t bgcolor);
+  void setPivot(int16_t x, int16_t y);
+  void pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *data);
+  void pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *data, uint16_t transparent);
+  void pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const uint16_t *data, uint16_t transparent);
+  void pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const uint16_t *data);
+  void pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint8_t  *data, bool bpp8 = true, uint16_t *cmap = nullptr);
+  void pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint8_t  *data, uint8_t  transparent, bool bpp8 = true, uint16_t *cmap = nullptr);
+  void pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const uint8_t *data, bool bpp8,  uint16_t *cmap = nullptr);
 
   // Text rendering - value returned is the pixel width of the rendered text
   int16_t  drawNumber(long intNumber, int32_t x, int32_t y, uint8_t font), // Draw integer using specified font number
@@ -319,18 +307,14 @@ class TFT_eSPI { friend class TFT_eSprite;
            drawString(const String& string, int32_t x, int32_t y);              // Draw string using current font
 
   // Text rendering and font handling support functions
-  void     setCursor(int16_t x, int16_t y),
+  void setCursor(int16_t x, int16_t y),
            setCursor(int16_t x, int16_t y, uint8_t font);
 
-  void     setTextColor(uint16_t color),                    // Set character (glyph) color only (background not over-written)
-           setTextColor(uint16_t fgcolor, uint16_t bgcolor, bool bgfill = false),  // Set character (glyph) foreground and background colour, optional background fill for smooth fonts
-           setTextSize(uint8_t size);                       // Set character size multiplier (this increases pixel size)
+  void setTextColor(uint16_t color),                    // Set character (glyph) color only (background not over-written)
+           setTextColor(uint16_t fgcolor, uint16_t bgcolor, bool bgfill = false);  // Set character (glyph) foreground and background colour, optional background fill for smooth fonts
+  void setTextDatum(uint8_t datum);                     // Set text datum position (default is top left), see Section 5 above
 
-  void     setTextWrap(bool wrapX, bool wrapY = false);     // Turn on/off wrapping of text in TFT width and/or height
-
-  void     setTextDatum(uint8_t datum);                     // Set text datum position (default is top left), see Section 5 above
-
-  void     setTextPadding(uint16_t x_width);                // Set text padding (background blanking) width in pixels
+  void setTextPadding(uint16_t x_width);                // Set text padding (background blanking) width in pixels
 
   void setTextFont(uint8_t font);                       // Set the font number to use in future
   int16_t  textWidth(const char *string, uint8_t font),     // Returns pixel width of string in specified font
@@ -344,9 +328,8 @@ class TFT_eSPI { friend class TFT_eSprite;
   uint16_t decodeUTF8(uint8_t *buf, uint16_t *index, uint16_t remaining),
            decodeUTF8(uint8_t c);
 
-  void     spiwrite(uint8_t);        // legacy support only
-  void     writecommand(uint8_t c);  // Send an 8-bit command, function resets DC/RS high ready for data
-  void     writedata(uint8_t d);     // Send data with DC/RS set high
+  void writecommand(uint8_t c);  // Send an 8-bit command, function resets DC/RS high ready for data
+  void writedata(uint8_t d);     // Send data with DC/RS set high
 
   // Colour conversion
            // Convert 8-bit red, green and blue to 16 bits
@@ -360,9 +343,7 @@ class TFT_eSPI { friend class TFT_eSprite;
            // 16-bit colour alphaBlend with alpha dither (dither reduces colour banding)
   uint16_t alphaBlend(uint8_t alpha, uint16_t fgc, uint16_t bgc, uint8_t dither);
 
-  uint8_t  spiBusyCheck = 0;      // Number of ESP32 transfer buffers to check
-
-  void     writeColor(uint16_t color, uint32_t len); // Deprecated, use pushBlock()
+  void writeColor(uint16_t color, uint32_t len); // Deprecated, use pushBlock()
 
   // Global variables
   uint32_t textcolor, textbgcolor;         // Text foreground and background colours
@@ -377,13 +358,13 @@ class TFT_eSPI { friend class TFT_eSprite;
   uint8_t  decoderState = 0;   // UTF8 decoder state        - not for user access
   uint16_t decoderBuffer;      // Unicode code-point buffer - not for user access
 
-  void     loadFont(const uint8_t array[], uint8_t font);
-  void     unloadFont(uint8_t font);
-  bool     getUnicodeIndex(uint16_t unicode, uint16_t *index, uint16_t font);
+  void loadFont(const uint8_t array[], uint8_t font);
+  void unloadFont(uint8_t font);
+  bool getUnicodeIndex(uint16_t unicode, uint16_t *index, uint16_t font);
 
   virtual void drawGlyph(uint16_t code, uint16_t font);
 
-  bool     booted;
+  bool booted;
 
   typedef struct
   {
@@ -434,19 +415,9 @@ class TFT_eSPI { friend class TFT_eSprite;
 
   void readAddrWindow(int32_t xs, int32_t ys, int32_t w, int32_t h);
 
-  uint8_t readByte();
-
-  void busDir(uint32_t mask, uint8_t mode);
-
-  void gpioMode(uint8_t gpio, uint8_t mode);
-
-  uint8_t sqrt_fraction(uint32_t num);
-
-  float wedgeLineDistance(float pax, float pay, float bax, float bay, float dr);
-
   getColorCallback getColor = nullptr; // Smooth font callback function pointer
 
-  void loadMetrics(uint8_t font); // Function of Fear, which is Unhandled Exception, writing to 0x000000000
+  void loadMetrics(uint8_t font); // FoF
   uint32_t readInt32();
 
   uint8_t* fontPtr = nullptr;
@@ -454,36 +425,34 @@ class TFT_eSPI { friend class TFT_eSprite;
  //-------------------------------------- protected ----------------------------------//
  protected:
 
-uint8_t spi_write_speed;
-  //int32_t  win_xe, win_ye;          // Window end coords - not needed
+  uint8_t spi_write_speed;
+  int32_t _init_width, _init_height; // Display w/h as input, used by setRotation()
+  int32_t _width, _height;           // Display w/h as modified by current rotation
+  int32_t addr_row, addr_col;        // Window position - used to minimise window commands
 
-  int32_t  _init_width, _init_height; // Display w/h as input, used by setRotation()
-  int32_t  _width, _height;           // Display w/h as modified by current rotation
-  int32_t  addr_row, addr_col;        // Window position - used to minimise window commands
-
-  int16_t  _xPivot;   // TFT x pivot point coordinate for rotated Sprites
-  int16_t  _yPivot;   // TFT x pivot point coordinate for rotated Sprites
+  int16_t _xPivot;   // TFT x pivot point coordinate for rotated Sprites
+  int16_t _yPivot;   // TFT x pivot point coordinate for rotated Sprites
 
   // Viewport variables
-  int32_t  _vpX, _vpY, _vpW, _vpH;    // Note: x start, y start, x end + 1, y end + 1
-  int32_t  _xDatum;
-  int32_t  _yDatum;
-  int32_t  _xWidth;
-  int32_t  _yHeight;
-  bool     _vpDatum;
-  bool     _vpOoB;
+  int32_t _vpX, _vpY, _vpW, _vpH;    // Note: x start, y start, x end + 1, y end + 1
+  int32_t _xDatum;
+  int32_t _yDatum;
+  int32_t _xWidth;
+  int32_t _yHeight;
+  bool _vpDatum;
+  bool _vpOoB;
 
-  int32_t  cursor_x, cursor_y, padX;
-  int32_t  bg_cursor_x;
-  int32_t  last_cursor_x;
+  int32_t cursor_x, cursor_y, padX;
+  int32_t bg_cursor_x;
+  int32_t last_cursor_x;
 
-  bool     isDigits;
-  bool     textwrapX, textwrapY;
-  bool     _swapBytes;
+  bool isDigits;
+  bool textwrapX, textwrapY;
+  bool _swapBytes;
 
   uint32_t _lastColor;
 
-  bool     _fillbg;
+  bool _fillbg;
 
  private:
   inline void begin_touch_read_write() __attribute__((always_inline));
@@ -511,9 +480,8 @@ class TFT_eSprite : public TFT_eSPI {
   void createPalette(const uint16_t *palette = nullptr, uint8_t colors = 16);
   void setPaletteColor(uint8_t index, uint16_t color);
   uint16_t getPaletteColor(uint8_t index);
-  void setBitmapColor(uint16_t fg, uint16_t bg);
   void drawPixel(int32_t x, int32_t y, uint32_t color);
-  void         fillSprite(uint32_t color),
+  void fillSprite(uint32_t color),
            setWindow(int32_t x0, int32_t y0, int32_t x1, int32_t y1),
            pushColor(uint16_t color),
            pushColor(uint16_t color, uint32_t len),
@@ -524,16 +492,16 @@ class TFT_eSprite : public TFT_eSPI {
            fillRect(int32_t x, int32_t y, int32_t w, int32_t h, uint32_t color);
   uint16_t readPixel(int32_t x0, int32_t y0);
   uint16_t readPixelValue(int32_t x, int32_t y);
-  void     pushImage(int32_t x0, int32_t y0, int32_t w, int32_t h, uint16_t *data, uint8_t sbpp = 0);
-  void     pushImage(int32_t x0, int32_t y0, int32_t w, int32_t h, const uint16_t *data);
-  void     pushSprite(int32_t x, int32_t y);
-  void     pushSprite(int32_t x, int32_t y, uint16_t transparent);
-  bool     pushSprite(int32_t tx, int32_t ty, int32_t sx, int32_t sy, int32_t sw, int32_t sh);
-  bool     pushToSprite(TFT_eSprite *dspr, int32_t x, int32_t y);
-  bool     pushToSprite(TFT_eSprite *dspr, int32_t x, int32_t y, uint16_t transparent);
+  void pushImage(int32_t x0, int32_t y0, int32_t w, int32_t h, uint16_t *data, uint8_t sbpp = 0);
+  void pushImage(int32_t x0, int32_t y0, int32_t w, int32_t h, const uint16_t *data);
+  void pushSprite(int32_t x, int32_t y);
+  void pushSprite(int32_t x, int32_t y, uint16_t transparent);
+  bool pushSprite(int32_t tx, int32_t ty, int32_t sx, int32_t sy, int32_t sw, int32_t sh);
+  bool pushToSprite(TFT_eSprite *dspr, int32_t x, int32_t y);
+  bool pushToSprite(TFT_eSprite *dspr, int32_t x, int32_t y, uint16_t transparent);
   int16_t  width(),
            height();
-  void     drawGlyph(uint16_t code, uint16_t font);
+  void drawGlyph(uint16_t code, uint16_t font);
   void copyFontFromTFT(uint8_t source, uint8_t destination);
   void copyAllFontsFromTFT();
 
@@ -541,7 +509,7 @@ class TFT_eSprite : public TFT_eSPI {
 
   TFT_eSPI *_tft;
 
-  void*    callocSprite(int16_t width, int16_t height, uint8_t frames = 1);
+  void* callocSprite(int16_t width, int16_t height, uint8_t frames = 1);
 
  protected:
 
@@ -570,8 +538,7 @@ class TFT_eSprite : public TFT_eSPI {
 };
 
 template <typename T> static inline void transpose(T& a, T& b) { T t = a; a = b; b = t; }
-template <typename A, typename F, typename B> static inline uint16_t fastBlend(A alpha, F fgc, B bgc)
-{
+template <typename A, typename F, typename B> static inline uint16_t fastBlend(A alpha, F fgc, B bgc) {
   // Split out and blend 5-bit red and blue channels
   uint32_t rxb = bgc & 0xF81F;
   rxb += ((fgc & 0xF81F) - rxb) * (alpha >> 2) >> 6;
