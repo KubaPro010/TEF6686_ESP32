@@ -362,10 +362,7 @@ class TFT_eSPI { friend class TFT_eSprite;
 
   uint8_t  spiBusyCheck = 0;      // Number of ESP32 transfer buffers to check
 
-  // Bare metal functions
-  void     startWrite();                         // Begin SPI transaction
   void     writeColor(uint16_t color, uint32_t len); // Deprecated, use pushBlock()
-  void     endWrite();                           // End SPI transaction
 
   // Global variables
   uint32_t textcolor, textbgcolor;         // Text foreground and background colours
@@ -504,7 +501,7 @@ class TFT_eSprite : public TFT_eSPI {
  public:
   explicit TFT_eSprite(TFT_eSPI *tft);
   ~TFT_eSprite();
-  void* createSprite(int16_t width, int16_t height, uint8_t frames = 1);
+  void* createSprite(int16_t width = TFT_WIDTH, int16_t height = TFT_HEIGHT, uint8_t frames = 1);
   void* getPointer();
   bool created();
   void deleteSprite();
@@ -538,6 +535,7 @@ class TFT_eSprite : public TFT_eSPI {
            height();
   void     drawGlyph(uint16_t code, uint16_t font);
   void copyFontFromTFT(uint8_t source, uint8_t destination);
+  void copyAllFontsFromTFT();
 
  private:
 

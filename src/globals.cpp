@@ -2,7 +2,6 @@
 
 bool RDSstatus;
 bool RDSstatusold;
-TFT_eSPI tft = TFT_eSPI();
 
 bool Data_Accelerator = false;
 
@@ -327,6 +326,7 @@ const size_t language_entrynumber = sizeof(myLanguage[0]) / sizeof(myLanguage[0]
 
 mem presets[EE_PRESETS_CNT];
 TEF6686 radio;
+TFT_eSPI tft = TFT_eSPI();
 
 // FrequencySprite.createSprite(200, 50);
 // PSSprite.createSprite(150, 32);

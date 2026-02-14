@@ -344,7 +344,7 @@ void DefaultSettings() {
   EEPROM.writeByte(EE_BYTE_CLOCKAMPM, 0);
   EEPROM.writeUInt(EE_UINT16_PICTLOCK, 0);
 
-  EEPROM.writeByte(EE_BYTE_SPISPEED, 7);
+  EEPROM.writeByte(EE_BYTE_SPISPEED, 0);
 
 #ifdef DEEPELEC_DP_66X
   EEPROM.writeByte(EE_BYTE_ROTARYMODE, 1);

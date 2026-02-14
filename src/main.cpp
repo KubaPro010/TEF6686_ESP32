@@ -1042,7 +1042,6 @@ void NumpadProcess(int num) {
       menuoption = ITEM1;
       menupage = DXMODE;
       menuitem = 0;
-      if (spispeed == 7) tft.setSPISpeed(40);
       submenu = true;
       menu = true;
       if (language == LANGUAGE_CHS) PSSprite.setTextFont(1); else PSSprite.setTextFont(0);
@@ -1111,7 +1110,7 @@ void setAutoSpeedSPI() {
     case 1069 ... 1074: tft.setSPISpeed(14); break;
     case 1075: tft.setSPISpeed(17); break;
     case 1076 ... 1080: tft.setSPISpeed(15); break;
-    default: tft.setSPISpeed(30); break;
+    default: tft.setSPISpeed(35); break;
   }
 }
 
@@ -1326,9 +1325,8 @@ void setup() {
 
   loadData();
 
-  if (spispeed == SPI_SPEED_DEFAULT) tft.setSPISpeed(SPI_FREQUENCY / 1000000);
-  else if (spispeed == 7) setAutoSpeedSPI();
-  else tft.setSPISpeed(spispeed * 10);
+  if (spispeed == 0) setAutoSpeedSPI();
+  else tft.setSPISpeed(spispeed);
 
   if(esp_reset_reason() != ESP_RST_DEEPSLEEP) setup_periph();
 
@@ -1509,7 +1507,7 @@ void setup() {
 
   tft.fillScreen(TFT_BLACK);
 
-  tft.pushImage((tft.width() - 163) / 2, (tft.height() - 84) / 2, 163, 84, radiologo, TFT_BLACK);
+  tft.pushImage((tft.width() - 163) / 2, (tft.height() - 84) / 2, 163, 84, (uint16_t*)radiologo, TFT_BLACK);
   tft.drawBitmap((tft.width() - 59) / 2, 24, TEFLogo, 59, 23, ActiveColor);
 
   for (int x = 0; x <= ContrastSet; x++) {
@@ -2455,9 +2453,7 @@ void ModeButtonPress() {
       freq_in = 0;
     } else {
       if (!BWtune && !menu) {
-        if (!screenmute) {
-          tft.drawBitmap(249, 4, Speaker, 28, 24, GreyoutColor);
-        }
+        if (!screenmute) tft.drawBitmap(249, 4, Speaker, 28, 24, GreyoutColor);
         memorystore = false;
         unsigned long counterold = millis();
         unsigned long counter = millis();
@@ -2470,7 +2466,6 @@ void ModeButtonPress() {
             menuoption = ITEM1;
             menupage = INDEX;
             menuitem = 0;
-            if (spispeed == 7) tft.setSPISpeed(40);
             if (language == LANGUAGE_CHS) PSSprite.setTextFont(1); else PSSprite.setTextFont(0);
             BuildMenu();
             freq_in = 0;
@@ -2831,7 +2826,6 @@ void ShowMemoryPos() {
 }
 
 void DoMemoryPosTune() {
-  if (spispeed == 7) tft.setSPISpeed(50);
   radio.clearRDS();
 
   if (IsStationEmpty()) {
@@ -2984,7 +2978,6 @@ void ShowFreq(int mode) {
     }
   }
 
-  if (spispeed == 7) setAutoSpeedSPI();
   rdsreset = true;
   afmethodBold = false;
   aid_counterold = 0;

@@ -1635,14 +1635,14 @@ void ShowOneLine(byte position, byte item, bool selected) {
 
           FullLineSprite.setTextDatum(TR_DATUM);
 
-          if (spispeed == 7) {
+          if (spispeed == 0) {
             FullLineSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
             FullLineSprite.drawString(textUI(83), 298, 2);
           } else {
             FullLineSprite.setTextColor(ActiveColor, ActiveColorSmooth, false);
             FullLineSprite.drawString("MHz", 298, 2);
             FullLineSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
-            FullLineSprite.drawString((spispeed == SPI_SPEED_DEFAULT ? String(textUI(201)) + " " + String(SPI_FREQUENCY / 1000000, DEC) : String(spispeed * 10, DEC)), 258, 2);
+            FullLineSprite.drawString(String(spispeed), 258, 2);
           }
           break;
 
@@ -2723,7 +2723,7 @@ void ShowOneButton(byte position, byte item, bool selected) {
           PSSprite.setTextColor(ActiveColor, ActiveColorSmooth, false);
           PSSprite.drawString(shortLine(removeNewline(textUI(78))), 75, 1);
 
-          if (spispeed == 7) {
+          if (spispeed == 0) {
             PSSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
             PSSprite.drawString(textUI(83), 75, 15);
           } else {
@@ -2732,7 +2732,7 @@ void ShowOneButton(byte position, byte item, bool selected) {
             PSSprite.drawString("MHz", 77, 15);
             PSSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
             PSSprite.setTextDatum(TR_DATUM);
-            PSSprite.drawString((spispeed == SPI_SPEED_DEFAULT ? String(textUI(201)) + " " + String(SPI_FREQUENCY / 1000000, DEC) : String(spispeed * 10, DEC)), 73, 15);
+            PSSprite.drawString(String(spispeed), 73, 15);
           }
           break;
 
@@ -2836,9 +2836,8 @@ void BuildMenu() {
     default: tft.pushImage (0, 0, 320, 240, configurationbackground); break;
   }
 
-  if (!submenu) {
-    tftPrint(ACENTER, textUI(29), 160, 6, PrimaryColor, PrimaryColorSmooth, 16);
-  } else {
+  if (!submenu) tftPrint(ACENTER, textUI(29), 160, 6, PrimaryColor, PrimaryColorSmooth, 16);
+  else {
     tftPrint(ALEFT, textUI(181), (hardwaremodel == PORTABLE_TOUCH_ILI9341 ? 20 : 8), 6, PrimaryColor, PrimaryColorSmooth, 16);
     tftPrint(ARIGHT, textUI(186 + menupage - 1), 312, 6, ActiveColor, ActiveColorSmooth, 16);
   }
@@ -3351,32 +3350,46 @@ void MenuUpDown(bool dir) {
 
           case ITEM10:
             if (dir) {
-              spispeed++;
-              if (spispeed > SPI_SPEED_COUNT - 1) spispeed = 0;
+              if (spispeed == 0) {
+                spispeed = 4;
+              } else if (spispeed < 10) {
+                spispeed += 1;
+                if (spispeed == 10) spispeed = 10;
+              } else {
+                spispeed += 10;
+                if (spispeed > 80) spispeed = 0;
+              }
             } else {
-              spispeed--;
-              if (spispeed > SPI_SPEED_COUNT - 1) spispeed = SPI_SPEED_COUNT - 1;
+              if (spispeed == 0) {
+                spispeed = 80;
+              } else if (spispeed <= 10) {
+                spispeed -= 1;
+                if (spispeed < 4) spispeed = 0;
+              } else {
+                spispeed -= 10;
+                if (spispeed < 10) spispeed = 9;
+              }
             }
 
             OneBigLineSprite.setTextDatum(TL_DATUM);
             OneBigLineSprite.setTextColor(ActiveColor, ActiveColorSmooth, false);
-            if (spispeed != 7) {
+            
+            if (spispeed == 0) {
+              // Auto mode
+              OneBigLineSprite.setTextDatum(TC_DATUM);
+              OneBigLineSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
+              OneBigLineSprite.drawString(textUI(83), 135, 0);
+              setAutoSpeedSPI();
+            } else {
+              // Manual speed mode
               OneBigLineSprite.drawString("MHz", 175, 0);
               OneBigLineSprite.setTextDatum(TR_DATUM);
-            } else {
-              OneBigLineSprite.setTextDatum(TC_DATUM);
+              OneBigLineSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
+              OneBigLineSprite.drawString(String(spispeed), 160, 0);
+              tft.setSPISpeed(spispeed);
             }
-
-            OneBigLineSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
-            if (spispeed == 7) {
-              OneBigLineSprite.drawString(textUI(83), 135, 0);
-            } else {
-              OneBigLineSprite.drawString((spispeed == SPI_SPEED_DEFAULT ? String(textUI(201)) + " " + String(SPI_FREQUENCY / 1000000, DEC) : String(spispeed * 10, DEC)), 160, 0);
-            }
+            
             OneBigLineSprite.pushSprite(24, 118);
-            if (spispeed == SPI_SPEED_DEFAULT) tft.setSPISpeed(SPI_FREQUENCY / 1000000);
-            else if (spispeed == 7) setAutoSpeedSPI();
-            else tft.setSPISpeed(spispeed * 10);
             break;
         }
         break;
@@ -3633,11 +3646,11 @@ void MenuUpDown(bool dir) {
             switch (CurrentTheme) {
               case 7:
                 OneBigLineSprite.pushImage(-11, -88, 292, 170, popupbackground_wo);
-                tft.pushImage (13, 30, 292, 170, popupbackground_wo);
+                tft.pushImage(13, 30, 292, 170, popupbackground_wo);
                 break;
               default:
                 OneBigLineSprite.pushImage(-11, -88, 292, 170, popupbackground);
-                tft.pushImage (13, 30, 292, 170, popupbackground);
+                tft.pushImage(13, 30, 292, 170, popupbackground);
                 break;
             }
 
@@ -4443,15 +4456,15 @@ void DoMenu() {
     if (menupage != INDEX) {
       menuopen = true;
       switch (CurrentTheme) {
-        case 7: tft.pushImage (13, 30, 292, 170, popupbackground_wo); break;
-        default: tft.pushImage (13, 30, 292, 170, popupbackground); break;
+        case 7: tft.pushImage(13, 30, 292, 170, popupbackground_wo); break;
+        default: tft.pushImage(13, 30, 292, 170, popupbackground); break;
       }
       showMenuOpenTouchButtons();
 
       if (menupage == CONNECTIVITY && menuoption == ITEM3) {
         switch (CurrentTheme) {
-          case 7: tft.pushImage (0, 0, 320, 240, configurationbackground_wo); break;
-          default: tft.pushImage (0, 0, 320, 240, configurationbackground); break;
+          case 7: tft.pushImage(0, 0, 320, 240, configurationbackground_wo); break;
+          default: tft.pushImage(0, 0, 320, 240, configurationbackground); break;
         }
         tftPrint(ACENTER, textUI(189 + menupage - 1), 160, 6, ActiveColor, ActiveColorSmooth, 16);
       }
@@ -4546,7 +4559,7 @@ void DoMenu() {
             tft.fillRoundRect(12, 8, 296, 226, 5, BackgroundColor);
             tftPrint(ACENTER, textUI(68), 155, 13, ActiveColor, ActiveColorSmooth, 28);
             tftPrint(ACENTER, textUI(69), 155, 55, ActiveColor, ActiveColorSmooth, 28);
-            tftPrint(ACENTER, "PE5PVB", 155, 38, PrimaryColor, PrimaryColorSmooth, 16);
+            tftPrint(ACENTER, "KubaPro010", 155, 38, PrimaryColor, PrimaryColorSmooth, 16);
             tftPrint(ARIGHT, "ohmytime", 145, 80, PrimaryColor, PrimaryColorSmooth, 16);
             tftPrint(ARIGHT, "HyperDX", 145, 95, PrimaryColor, PrimaryColorSmooth, 16);
             tftPrint(ALEFT, "MCelliotG", 155, 80, PrimaryColor, PrimaryColorSmooth, 16);
@@ -4564,7 +4577,7 @@ void DoMenu() {
             tftPrint(ARIGHT, "marsel90-1", 145, 185, PrimaryColor, PrimaryColorSmooth, 16);
             tftPrint(ALEFT, "lawendel", 155, 185, PrimaryColor, PrimaryColorSmooth, 16);
             tftPrint(ARIGHT, "KB8U", 145, 200, PrimaryColor, PrimaryColorSmooth, 16);
-            tftPrint(ALEFT, "KubaPro010", 155, 200, PrimaryColor, PrimaryColorSmooth, 16);
+            tftPrint(ALEFT, "PE5PVB", 155, 200, PrimaryColor, PrimaryColorSmooth, 16);
             tftPrint(ACENTER, "github.com/KubaPro010/TEF6686_ESP32", 155, 215, ActiveColor, ActiveColorSmooth, 16);
             if (hardwaremodel == PORTABLE_TOUCH_ILI9341) {
               tft.fillRoundRect(240, 36, 60, 40, 6, FrameColor);
@@ -4690,18 +4703,15 @@ void DoMenu() {
 
             OneBigLineSprite.setTextDatum(TL_DATUM);
             OneBigLineSprite.setTextColor(ActiveColor, ActiveColorSmooth, false);
-            if (spispeed != 7) {
+            if (spispeed != 0) {
               OneBigLineSprite.drawString("MHz", 175, 0);
               OneBigLineSprite.setTextDatum(TR_DATUM);
             } else {
               OneBigLineSprite.setTextDatum(TC_DATUM);
             }
             OneBigLineSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
-            if (spispeed == 7) {
-              OneBigLineSprite.drawString(textUI(83), 135, 0);
-            } else {
-              OneBigLineSprite.drawString((spispeed == SPI_SPEED_DEFAULT ? String(textUI(201)) + " " + String(SPI_FREQUENCY / 1000000, DEC) : String(spispeed * 10, DEC)), 160, 0);
-            }
+            if (spispeed == 0) OneBigLineSprite.drawString(textUI(83), 135, 0);
+            else OneBigLineSprite.drawString(String(spispeed), 160, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
         }

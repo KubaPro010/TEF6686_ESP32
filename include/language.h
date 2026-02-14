@@ -226,7 +226,7 @@ static const char* const myLanguage[22][298] PROGMEM = {
     "Large", // 198
     "All", // 199
     "Fast PS", // 200
-    "Default", // 201
+    "Default", // 201 TODO: remove
     "Mute screen on\nXDRGTK connection", // 202
     "FMSI stereo\nimprovement", // 203
     "Function only available\non TEF6687/6689!", // 204

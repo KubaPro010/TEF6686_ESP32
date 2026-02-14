@@ -39,7 +39,7 @@ void TFT_eSPI::pushBlock(uint16_t color, uint32_t len) {
   len = len - rem;
 
   if (rem) {
-    while (*_spi_cmd&SPI_USR);
+    SPI_BUSY_CHECK;
     for (i=0; i < rem; i+=2) *spi_w++ = color32;
     *_spi_mosi_dlen = (rem << 4) - 1;
     *_spi_cmd = SPI_USR;
@@ -47,12 +47,12 @@ void TFT_eSPI::pushBlock(uint16_t color, uint32_t len) {
     i = i>>1; while(i++<16) *spi_w++ = color32;
   }
 
-  while (*_spi_cmd&SPI_USR);
+  SPI_BUSY_CHECK;
   if (!rem) while (i++<16) *spi_w++ = color32;
   *_spi_mosi_dlen =  511;
 
   while(len) {
-    while (*_spi_cmd&SPI_USR);
+    SPI_BUSY_CHECK;
     *_spi_cmd = SPI_USR;
     len -= 32;
   }
@@ -70,17 +70,17 @@ void TFT_eSPI::pushSwapBytePixels(const void* data_in, uint32_t len) {
         color[i++] = DAT8TO32(data);
         data += 4;
       }
-      while (READ_PERI_REG(SPI_CMD_REG(VSPI))&SPI_USR);
-      WRITE_PERI_REG(SPI_W0_REG(VSPI),  color[0]);
-      WRITE_PERI_REG(SPI_W1_REG(VSPI),  color[1]);
-      WRITE_PERI_REG(SPI_W2_REG(VSPI),  color[2]);
-      WRITE_PERI_REG(SPI_W3_REG(VSPI),  color[3]);
-      WRITE_PERI_REG(SPI_W4_REG(VSPI),  color[4]);
-      WRITE_PERI_REG(SPI_W5_REG(VSPI),  color[5]);
-      WRITE_PERI_REG(SPI_W6_REG(VSPI),  color[6]);
-      WRITE_PERI_REG(SPI_W7_REG(VSPI),  color[7]);
-      WRITE_PERI_REG(SPI_W8_REG(VSPI),  color[8]);
-      WRITE_PERI_REG(SPI_W9_REG(VSPI),  color[9]);
+      SPI_BUSY_CHECK;
+      WRITE_PERI_REG(SPI_W0_REG(VSPI), color[0]);
+      WRITE_PERI_REG(SPI_W1_REG(VSPI), color[1]);
+      WRITE_PERI_REG(SPI_W2_REG(VSPI), color[2]);
+      WRITE_PERI_REG(SPI_W3_REG(VSPI), color[3]);
+      WRITE_PERI_REG(SPI_W4_REG(VSPI), color[4]);
+      WRITE_PERI_REG(SPI_W5_REG(VSPI), color[5]);
+      WRITE_PERI_REG(SPI_W6_REG(VSPI), color[6]);
+      WRITE_PERI_REG(SPI_W7_REG(VSPI), color[7]);
+      WRITE_PERI_REG(SPI_W8_REG(VSPI), color[8]);
+      WRITE_PERI_REG(SPI_W9_REG(VSPI), color[9]);
       WRITE_PERI_REG(SPI_W10_REG(VSPI), color[10]);
       WRITE_PERI_REG(SPI_W11_REG(VSPI), color[11]);
       WRITE_PERI_REG(SPI_W12_REG(VSPI), color[12]);
@@ -96,9 +96,9 @@ void TFT_eSPI::pushSwapBytePixels(const void* data_in, uint32_t len) {
     uint32_t i = 0;
     while(i<8) {
       color[i++] = DAT8TO32(data);
-      data +=4 ;
+      data += 4;
     }
-    while (READ_PERI_REG(SPI_CMD_REG(VSPI))&SPI_USR);
+    SPI_BUSY_CHECK;
     WRITE_PERI_REG(SPI_MOSI_DLEN_REG(VSPI), 255);
     WRITE_PERI_REG(SPI_W0_REG(VSPI),  color[0]);
     WRITE_PERI_REG(SPI_W1_REG(VSPI),  color[1]);
@@ -113,15 +113,14 @@ void TFT_eSPI::pushSwapBytePixels(const void* data_in, uint32_t len) {
   }
 
   if (len) {
-    while (READ_PERI_REG(SPI_CMD_REG(VSPI))&SPI_USR);
+    SPI_BUSY_CHECK;
     WRITE_PERI_REG(SPI_MOSI_DLEN_REG(VSPI), (len << 4) - 1);
     for (uint32_t i=0; i <= (len<<1); i+=4) {
       WRITE_PERI_REG(SPI_W0_REG(VSPI)+i, DAT8TO32(data)); data += 4;
     }
     SET_PERI_REG_MASK(SPI_CMD_REG(VSPI), SPI_USR);
   }
-  while (READ_PERI_REG(SPI_CMD_REG(VSPI))&SPI_USR);
-
+  SPI_BUSY_CHECK;
 }
 
 void TFT_eSPI::pushPixels(const void* data_in, uint32_t len){
@@ -136,7 +135,7 @@ void TFT_eSPI::pushPixels(const void* data_in, uint32_t len){
   if (len > 31) {
     WRITE_PERI_REG(SPI_MOSI_DLEN_REG(VSPI), 511);
     while(len>31) {
-      while (READ_PERI_REG(SPI_CMD_REG(VSPI))&SPI_USR);
+      SPI_BUSY_CHECK;
       WRITE_PERI_REG(SPI_W0_REG(VSPI),  *data++);
       WRITE_PERI_REG(SPI_W1_REG(VSPI),  *data++);
       WRITE_PERI_REG(SPI_W2_REG(VSPI),  *data++);
@@ -159,12 +158,12 @@ void TFT_eSPI::pushPixels(const void* data_in, uint32_t len){
   }
 
   if (len) {
-    while (READ_PERI_REG(SPI_CMD_REG(VSPI))&SPI_USR);
+    SPI_BUSY_CHECK;
     WRITE_PERI_REG(SPI_MOSI_DLEN_REG(VSPI), (len << 4) - 1);
     for (uint32_t i=0; i <= (len<<1); i+=4) WRITE_PERI_REG((SPI_W0_REG(VSPI) + i), *data++);
     SET_PERI_REG_MASK(SPI_CMD_REG(VSPI), SPI_USR);
   }
-  while (READ_PERI_REG(SPI_CMD_REG(VSPI))&SPI_USR);
+  SPI_BUSY_CHECK;
 }
 
 // Clipping macro for pushImage
@@ -224,8 +223,7 @@ inline void TFT_eSPI::end_tft_read() {
   SET_BUS_WRITE_MODE;
 }
 
-void TFT_eSPI::setViewport(int32_t x, int32_t y, int32_t w, int32_t h, bool vpDatum)
-{
+void TFT_eSPI::setViewport(int32_t x, int32_t y, int32_t w, int32_t h, bool vpDatum) {
   _xDatum  = x;
   _yDatum  = y;
   _xWidth  = w;
@@ -404,7 +402,7 @@ void TFT_eSPI::init() {
     gpio_set_level((gpio_num_t)TFT_RST, 1);
   }
 
-  delay(35); // Wait for reset to complete
+  delay(34); // Wait for reset to complete
 
   begin_tft_write();
 
@@ -420,7 +418,7 @@ void TFT_eSPI::setRotation(uint8_t m) {
 
   #include "ILI9341_Rotation.h"
 
-  delayMicroseconds(10);
+  delayMicroseconds(9);
 
   end_tft_write();
 
@@ -1568,8 +1566,7 @@ void TFT_eSPI::readAddrWindow(int32_t xs, int32_t ys, int32_t w, int32_t h)
 ** Function name:           drawPixel
 ** Description:             push a single pixel at an arbitrary position
 ***************************************************************************************/
-void TFT_eSPI::drawPixel(int32_t x, int32_t y, uint32_t color)
-{
+void TFT_eSPI::drawPixel(int32_t x, int32_t y, uint32_t color) {
   if (_vpOoB) return;
 
   x+= _xDatum;
@@ -1578,13 +1575,8 @@ void TFT_eSPI::drawPixel(int32_t x, int32_t y, uint32_t color)
   // Range checking
   if ((x < _vpX) || (y < _vpY) ||(x >= _vpW) || (y >= _vpH)) return;
 
-#if defined (MULTI_TFT_SUPPORT)
-  addr_row = 0xFFFF;
-  addr_col = 0xFFFF;
-#endif
-
   begin_tft_write();
-    SPI_BUSY_CHECK;
+  SPI_BUSY_CHECK;
 
   // No need to send x if it has not changed (speeds things up)
   if (addr_col != x) {
@@ -1607,12 +1599,7 @@ void TFT_eSPI::drawPixel(int32_t x, int32_t y, uint32_t color)
   end_tft_write();
 }
 
-/***************************************************************************************
-** Function name:           pushColor
-** Description:             push a single pixel
-***************************************************************************************/
-void TFT_eSPI::pushColor(uint16_t color)
-{
+void TFT_eSPI::pushColor(uint16_t color) {
   begin_tft_write();
 
   SPI_BUSY_CHECK;
@@ -1622,25 +1609,12 @@ void TFT_eSPI::pushColor(uint16_t color)
 }
 
 
-/***************************************************************************************
-** Function name:           pushColor
-** Description:             push a single colour to "len" pixels
-***************************************************************************************/
-void TFT_eSPI::pushColor(uint16_t color, uint32_t len)
-{
+void TFT_eSPI::pushColor(uint16_t color, uint32_t len) {
   begin_tft_write();
 
   pushBlock(color, len);
 
   end_tft_write();
-}
-
-void TFT_eSPI::startWrite() {
-  begin_tft_write();
-}
-
-void TFT_eSPI::endWrite() {
-  end_tft_write();         // Release SPI bus
 }
 
 void TFT_eSPI::writeColor(uint16_t color, uint32_t len) {
@@ -2546,8 +2520,7 @@ void TFT_eSPI::loadFont(const uint8_t array[], uint8_t font) {
   fontOwned[font] = true;
 }
 
-void TFT_eSPI::loadMetrics(uint8_t font)
-{
+void TFT_eSPI::loadMetrics(uint8_t font) {
   uint32_t headerPtr = 24;
   uint32_t bitmapPtr = headerPtr + gFonts[font].gCount * 28;
 
@@ -2562,20 +2535,18 @@ void TFT_eSPI::loadMetrics(uint8_t font)
   uint16_t gNum = 0;
 
   while (gNum < gFonts[font].gCount) {
-    gUnicode[font][gNum]  = (uint16_t)readInt32(); // Unicode code point value
-    gHeight[font][gNum]   =  (uint8_t)readInt32(); // Height of glyph
-    gWidth[font][gNum]    =  (uint8_t)readInt32(); // Width of glyph
-    gxAdvance[font][gNum] =  (uint8_t)readInt32(); // xAdvance - to move x cursor
-    gdY[font][gNum]       =  (int16_t)readInt32(); // y delta from baseline
-    gdX[font][gNum]       =   (int8_t)readInt32(); // x delta from cursor
+    gUnicode[font][gNum] = (uint16_t)readInt32(); // Unicode code point value
+    gHeight[font][gNum] =  (uint8_t)readInt32(); // Height of glyph
+    gWidth[font][gNum] = (uint8_t)readInt32(); // Width of glyph
+    gxAdvance[font][gNum] = (uint8_t)readInt32(); // xAdvance - to move x cursor
+    gdY[font][gNum] = (int16_t)readInt32(); // y delta from baseline
+    gdX[font][gNum] = (int8_t)readInt32(); // x delta from cursor
     readInt32(); // ignored
 
     // Different glyph sets have different descent values not always based on "p", so get maximum glyph descent
-    if (((int16_t)gHeight[font][gNum] - (int16_t)gdY[font][gNum]) > gFonts[font].maxDescent)
-    {
+    if (((int16_t)gHeight[font][gNum] - (int16_t)gdY[font][gNum]) > gFonts[font].maxDescent) {
       // Avoid UTF coding values and characters that tend to give duff values
-      if (((gUnicode[font][gNum] > 0x20) && (gUnicode[font][gNum] < 0xA0) && (gUnicode[font][gNum] != 0x7F)) || (gUnicode[font][gNum] > 0xFF))
-      {
+      if (((gUnicode[font][gNum] > 0x20) && (gUnicode[font][gNum] < 0xA0) && (gUnicode[font][gNum] != 0x7F)) || (gUnicode[font][gNum] > 0xFF)) {
         gFonts[font].maxDescent  = gHeight[font][gNum] - gdY[font][gNum];
       }
     }
@@ -2698,9 +2669,7 @@ void TFT_eSPI::drawGlyph(uint16_t code, uint16_t font) {
   uint16_t gNum = 0;
   bool found = getUnicodeIndex(code, &gNum, font);
 
-  if (found)
-  {
-
+  if (found) {
     if (textwrapX && (cursor_x + gWidth[font][gNum] + gdX[font][gNum] > width()))
     {
       cursor_y += gFonts[font].yAdvance;
@@ -2710,7 +2679,6 @@ void TFT_eSPI::drawGlyph(uint16_t code, uint16_t font) {
     if (textwrapY && ((cursor_y + gFonts[font].yAdvance) >= height())) cursor_y = 0;
     if (cursor_x == 0) cursor_x -= gdX[font][gNum];
 
-    uint8_t* pbuffer = nullptr;
     const uint8_t* gPtr = (const uint8_t*) gFonts[font].gArray;
 
     int16_t cy = cursor_y + gFonts[font].maxAscent - gdY[font][gNum];
@@ -2726,7 +2694,7 @@ void TFT_eSPI::drawGlyph(uint16_t code, uint16_t font) {
     int16_t  bx = 0;
     uint8_t pixel;
 
-    startWrite();
+    begin_tft_write();
 
     int16_t fillwidth  = 0;
     int16_t fillheight = 0;
@@ -2751,14 +2719,10 @@ void TFT_eSPI::drawGlyph(uint16_t code, uint16_t font) {
       }
     }
 
-    for (int32_t y = 0; y < gHeight[font][gNum]; y++)
-    {
-      for (int32_t x = 0; x < gWidth[font][gNum]; x++)
-      {
+    for (int32_t y = 0; y < gHeight[font][gNum]; y++) {
+      for (int32_t x = 0; x < gWidth[font][gNum]; x++) {
         pixel = pgm_read_byte(gPtr + gBitmap[font][gNum] + x + gWidth[font][gNum] * y);
-
-        if (pixel)
-        {
+        if (pixel) {
           if (bl) { drawFastHLine( bxs, y + cy, bl, textbgcolor); bl = 0; }
           if (pixel != 0xFF)
           {
@@ -2799,9 +2763,8 @@ void TFT_eSPI::drawGlyph(uint16_t code, uint16_t font) {
       }
     }
 
-    if (pbuffer) free(pbuffer);
     cursor_x += gxAdvance[font][gNum];
-    endWrite();
+    end_tft_write();
   }
   else
   {
@@ -3296,14 +3259,12 @@ uint16_t TFT_eSprite::getPaletteColor(uint8_t index) {
 
 
 void TFT_eSprite::deleteSprite() {
-  if (_colorMap != nullptr)
-  {
+  if (_colorMap != nullptr) {
     free(_colorMap);
     _colorMap = nullptr;
   }
 
-  if (_created)
-  {
+  if (_created) {
     free(_img8_1);
     _img8 = nullptr;
     _created = false;
@@ -3483,7 +3444,7 @@ bool TFT_eSprite::pushSprite(int32_t tx, int32_t ty, int32_t sx, int32_t sy, int
       sw--;
 
       uint32_t yp = (_xs + ds + _iwidth * _ys)>>1;
-      _tft->startWrite();
+      _tft->begin_tft_write();
       while (sh--)
       {
         if (ds) _tft->drawPixel(tx, ty, readPixel(_xs, _ys) );
@@ -3493,22 +3454,19 @@ bool TFT_eSprite::pushSprite(int32_t tx, int32_t ty, int32_t sx, int32_t sy, int
         ty++;
         yp += (_iwidth>>1);
       }
-      _tft->endWrite();
+      _tft->end_tft_write();
     }
   }
   else // 1bpp
   {
     // Check if a faster block copy to screen is possible
     if ( sx == 0 && sw == _dwidth)
-      _tft->pushImage(tx, ty, sw, sh, _img8 + (_bitwidth>>3) * _ys, (bool)false );
+      _tft->pushImage(tx, ty, sw, sh, _img8 + (_bitwidth>>3) * _ys, false);
     else // Render line by line
     {
-      _tft->startWrite();
-      while (sh--)
-      {
-        _tft->pushImage(tx, ty++, sw, 1, _img8 + (_bitwidth>>3) * _ys++, (bool)false );
-      }
-      _tft->endWrite();
+      _tft->begin_tft_write();
+      while (sh--) _tft->pushImage(tx, ty++, sw, 1, _img8 + (_bitwidth>>3) * _ys++, false);
+      _tft->end_tft_write();
     }
   }
 
@@ -3644,8 +3602,7 @@ uint16_t TFT_eSprite::readPixel(int32_t x, int32_t y)
   else       return _tft->bitmap_bg;
 }
 
-void  TFT_eSprite::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *data, uint8_t sbpp)
-{
+void TFT_eSprite::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *data, uint8_t sbpp) {
   if (data == nullptr || !_created) return;
 
   PI_CLIP;
@@ -3774,7 +3731,7 @@ void  TFT_eSprite::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_
   }
 }
 
-void  TFT_eSprite::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const uint16_t *data) {
+void TFT_eSprite::pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const uint16_t *data) {
   pushImage(x, y, w, h, (uint16_t*) data);
 }
 
@@ -4217,9 +4174,7 @@ void TFT_eSprite::drawGlyph(uint16_t code, uint16_t font) {
       bg_cursor_x = cursor_x;
       last_cursor_x = cursor_x;
       return;
-    }
-
-    if (code == '\n') {
+    } else if (code == '\n') {
       cursor_x = 0;
       bg_cursor_x = 0;
       last_cursor_x = 0;
@@ -4253,7 +4208,6 @@ void TFT_eSprite::drawGlyph(uint16_t code, uint16_t font) {
       if ( cursor_x == 0) cursor_x -= gdX[font][gNum];
     }
 
-    uint8_t* pbuffer = nullptr;
     const uint8_t* gPtr = (const uint8_t*) gFonts[font].gArray;
 
     int16_t cy = cursor_y + gFonts[font].maxAscent - gdY[font][gNum];
@@ -4325,15 +4279,13 @@ void TFT_eSprite::drawGlyph(uint16_t code, uint16_t font) {
       if (fillheight > 0) fillRect(bg_cursor_x, cy + gHeight[font][gNum], fillwidth, fillheight, textbgcolor);
     }
 
-    if (pbuffer) free(pbuffer);
     cursor_x += gxAdvance[font][gNum];
 
     if (newSprite) {
       pushSprite(cx, cursor_y);
       deleteSprite();
     }
-  }
-  else {
+  } else {
     drawRect(cursor_x, cursor_y + gFonts[font].maxAscent - gFonts[font].ascent, gFonts[font].spaceWidth, gFonts[font].ascent, textcolor);
     cursor_x += gFonts[font].spaceWidth + 1;
   }
@@ -4355,4 +4307,8 @@ void TFT_eSprite::copyFontFromTFT(uint8_t source, uint8_t destination) {
   memcpy(&gFonts[destination], &_tft->gFonts[source], sizeof(fontMetrics));
 
   fontOwned[destination] = false;
+}
+
+void TFT_eSprite::copyAllFontsFromTFT() {
+  for(uint8_t i = 0; i < FONT_COUNT; i++) copyFontFromTFT(i, i);
 }
