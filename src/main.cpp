@@ -1191,10 +1191,7 @@ void MuteScreen(bool setting) {
     setupmode = false;
   } else if (setting && !screenmute) {
     screenmute = true;
-    for(int x = ContrastSet; x > 0; x--) {
-      analogWrite(CONTRASTPIN, map(x, 0, 100, 0, 255));
-      delay(5);
-    }
+    analogWrite(CONTRASTPIN, 0);
     tft.writecommand(0x10);
   }
 }
