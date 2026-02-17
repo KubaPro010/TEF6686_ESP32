@@ -923,6 +923,7 @@ void tryWiFi() {
 }
 
 void total_pc_control() {
+  static uint8_t data[255];
   if(i2c_pc_control_init) {
     Serial.write(1);
     Serial.write(0xff);
@@ -938,13 +939,9 @@ void total_pc_control() {
       return;
     }
 
-    uint8_t *data = (uint8_t*)malloc(userlen);
-    if(data == NULL) return;
     auto len = Serial.read(data, userlen);
-    if(len != userlen) {
-      free(data);
-      return; // Incomplete data
-    }
+    if(len != userlen) return;
+  
     switch (data[0]) {
     case 0: { // Set clock
       if(len < 5) break;
@@ -973,7 +970,7 @@ void total_pc_control() {
       if(len < 3 + datalen + 1) break; // Validate buffer size
       
       Wire.beginTransmission(addr);
-      for(int i = 0; i < datalen; i++) Wire.write(data[3+i]);
+      Wire.write(data + 3, len - 3);
       auto out = Wire.endTransmission(false);
       
       uint8_t recvlen_requested = data[3+datalen];
@@ -1018,7 +1015,6 @@ void total_pc_control() {
     default:
       break;
     }
-    free(data);
     Serial.flush(true);
   }
 }
