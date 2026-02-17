@@ -945,10 +945,7 @@ void total_pc_control() {
     switch (data[0]) {
     case 0: { // Set clock
       if(len < 5) break;
-      uint32_t clock = ((uint32_t)data[1] << 24) |
-                 ((uint32_t)data[2] << 16) |
-                 ((uint32_t)data[3] << 8)  |
-                 ((uint32_t)data[4]);
+      uint32_t clock = ((uint32_t)data[1] << 24) | ((uint32_t)data[2] << 16) | ((uint32_t)data[3] << 8)  | ((uint32_t)data[4]);
       Wire.setClock(clock);
       Serial.write(1);
       Serial.write(0);
@@ -973,9 +970,7 @@ void total_pc_control() {
       Wire.write(data + 3, len - 3);
       auto out = Wire.endTransmission(false);
       
-      uint8_t recvlen_requested = data[3+datalen];
-      uint8_t recvlen = Wire.requestFrom(addr, recvlen_requested);
-
+      uint8_t recvlen = Wire.requestFrom(addr, data[3+datalen]);
       Serial.write(recvlen+2);
       Serial.write(2);
       Serial.write(out);
@@ -992,13 +987,12 @@ void total_pc_control() {
     case 4: { // Version
       Serial.write(2);
       Serial.write(4);
-      Serial.write(0);
+      Serial.write(1);
     } break;
     case 5: { // Reboot
       Serial.write(1);
       Serial.write(5);
       Serial.flush();
-      delay(5);
       esp_restart();
     } break;
     case 6: { // Change baud
@@ -1009,8 +1003,13 @@ void total_pc_control() {
                  ((uint32_t)data[4]);
       Serial.write(1);
       Serial.write(6);
-      Serial.flush(true);
+      Serial.flush();
       Serial.updateBaudRate(clock);
+    } break;
+    case 0xff: { // Another wake command
+      Serial.write(1);
+      Serial.write(0xff);
+      Serial.flush(true);
     } break;
     default:
       break;

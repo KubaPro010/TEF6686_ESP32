@@ -106,6 +106,7 @@
 #include <pgmspace.h>
 
 #include "soc/spi_reg.h"
+#include "soc/rtc.h"
 #include "driver/spi_master.h"
 #include "hal/gpio_ll.h"
 
@@ -127,7 +128,7 @@
 #define WR_L
 #define WR_H
 
-#define TFT_MISO -1
+#define TFT_MISO 19
 #define TFT_MOSI 23
 #define TFT_SCLK 18
 #define TFT_CS 5
@@ -163,7 +164,7 @@
 // Write same value twice
 #define tft_Write_32D(C) TFT_WRITE_BITS((uint16_t)((C)<<8 | (C)>>8)<<16 | (uint16_t)((C)<<8 | (C)>>8), 32)
 
-#define tft_Read_8() transfer(0)
+#define tft_Read_8() spi_transfer(0)
 
 #define DAT8TO32(P) ( (uint32_t)P[0]<<8 | P[1] | P[2]<<24 | P[3]<<16 )
 
@@ -218,28 +219,6 @@
 // Convenient for 8-bit and 16-bit transparent sprites.
 #define TFT_TRANSPARENT 0x0120 // This is actually a dark green
 
-// Default palette for 4-bit colour sprites
-static const uint16_t default_4bit_palette[] PROGMEM = {
-  TFT_BLACK,    //  0  ^
-  TFT_BROWN,    //  1  |
-  TFT_RED,      //  2  |
-  TFT_ORANGE,   //  3  |
-  TFT_YELLOW,   //  4  Colours 0-9 follow the resistor colour code!
-  TFT_GREEN,    //  5  |
-  TFT_BLUE,     //  6  |
-  TFT_PURPLE,   //  7  |
-  TFT_DARKGREY, //  8  |
-  TFT_WHITE,    //  9  v
-  TFT_CYAN,     // 10  Blue+green mix
-  TFT_MAGENTA,  // 11  Blue+red mix
-  TFT_MAROON,   // 12  Darker red colour
-  TFT_DARKGREEN,// 13  Darker green colour
-  TFT_NAVY,     // 14  Darker blue colour
-  TFT_PINK      // 15
-};
-
-typedef uint16_t (*getColorCallback)(uint16_t x, uint16_t y);
-
 class TFT_eSPI { friend class TFT_eSprite;
  public:
   void setSPISpeed(uint8_t speed_Mhz);
@@ -254,7 +233,6 @@ class TFT_eSPI { friend class TFT_eSprite;
 
   virtual int16_t height(),
                    width();
-  virtual uint16_t readPixel(int32_t x, int32_t y);
   virtual void setWindow(int32_t xs, int32_t ys, int32_t xe, int32_t ye);
   virtual void pushColor(uint16_t color);
   virtual void begin_nin_write();
@@ -281,7 +259,6 @@ class TFT_eSPI { friend class TFT_eSprite;
   bool getSwapBytes();
   void drawBitmap( int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint16_t fgcolor),
            drawBitmap( int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint16_t fgcolor, uint16_t bgcolor);
-  void setPivot(int16_t x, int16_t y);
   void pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *data);
   void pushImage(int32_t x, int32_t y, int32_t w, int32_t h, uint16_t *data, uint16_t transparent);
   void pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const uint16_t *data, uint16_t transparent);
@@ -351,7 +328,6 @@ class TFT_eSPI { friend class TFT_eSprite;
   uint32_t bitmap_fg, bitmap_bg;           // Bitmap foreground (bit=1) and background (bit=0) colours
 
   uint8_t  textfont,  // Current selected font number
-           textsize,  // Current font size multiplier
            textdatum, // Text reference datum
            rotation;  // Display rotation (0-3)
 
@@ -401,23 +377,20 @@ class TFT_eSPI { friend class TFT_eSprite;
   void     calibrateTouch(uint16_t *data, uint32_t color_fg, uint32_t color_bg, uint8_t size);
   void     setTouch(uint16_t *data);
 
- //--------------------------------------- private ------------------------------------//
+  void begin_tft_write();
+  void end_tft_write();
+
+  void begin_tft_read();
+  void end_tft_read();
+
  private:
-  inline void begin_tft_write() __attribute__((always_inline));
-  inline void end_tft_write()   __attribute__((always_inline));
-
-  inline void begin_tft_read()  __attribute__((always_inline));
-  inline void end_tft_read()    __attribute__((always_inline));
-
   void initBus();
 
   void pushSwapBytePixels(const void* data_in, uint32_t len);
 
   void readAddrWindow(int32_t xs, int32_t ys, int32_t w, int32_t h);
 
-  getColorCallback getColor = nullptr; // Smooth font callback function pointer
-
-  void loadMetrics(uint8_t font); // FoF
+  void loadMetrics(uint8_t font);
   uint32_t readInt32();
 
   uint8_t* fontPtr = nullptr;
@@ -429,9 +402,6 @@ class TFT_eSPI { friend class TFT_eSprite;
   int32_t _init_width, _init_height; // Display w/h as input, used by setRotation()
   int32_t _width, _height;           // Display w/h as modified by current rotation
   int32_t addr_row, addr_col;        // Window position - used to minimise window commands
-
-  int16_t _xPivot;   // TFT x pivot point coordinate for rotated Sprites
-  int16_t _yPivot;   // TFT x pivot point coordinate for rotated Sprites
 
   // Viewport variables
   int32_t _vpX, _vpY, _vpW, _vpH;    // Note: x start, y start, x end + 1, y end + 1
@@ -470,16 +440,10 @@ class TFT_eSprite : public TFT_eSPI {
  public:
   explicit TFT_eSprite(TFT_eSPI *tft);
   ~TFT_eSprite();
-  void* createSprite(int16_t width = TFT_WIDTH, int16_t height = TFT_HEIGHT, uint8_t frames = 1);
+  void* createSprite(int16_t width = TFT_WIDTH, int16_t height = TFT_HEIGHT);
   void* getPointer();
   bool created();
   void deleteSprite();
-  void* setColorDepth(int8_t b);
-  int8_t getColorDepth();
-  void createPalette(uint16_t *palette = nullptr, uint8_t colors = 16);
-  void createPalette(const uint16_t *palette = nullptr, uint8_t colors = 16);
-  void setPaletteColor(uint8_t index, uint16_t color);
-  uint16_t getPaletteColor(uint8_t index);
   void drawPixel(int32_t x, int32_t y, uint32_t color);
   void fillSprite(uint32_t color),
            setWindow(int32_t x0, int32_t y0, int32_t x1, int32_t y1),
@@ -490,8 +454,6 @@ class TFT_eSprite : public TFT_eSPI {
            drawFastVLine(int32_t x, int32_t y, int32_t h, uint32_t color),
            drawFastHLine(int32_t x, int32_t y, int32_t w, uint32_t color),
            fillRect(int32_t x, int32_t y, int32_t w, int32_t h, uint32_t color);
-  uint16_t readPixel(int32_t x0, int32_t y0);
-  uint16_t readPixelValue(int32_t x, int32_t y);
   void pushImage(int32_t x0, int32_t y0, int32_t w, int32_t h, uint16_t *data, uint8_t sbpp = 0);
   void pushImage(int32_t x0, int32_t y0, int32_t w, int32_t h, const uint16_t *data);
   void pushSprite(int32_t x, int32_t y);
@@ -509,18 +471,11 @@ class TFT_eSprite : public TFT_eSPI {
 
   TFT_eSPI *_tft;
 
-  void* callocSprite(int16_t width, int16_t height, uint8_t frames = 1);
+  void* callocSprite(int16_t width, int16_t height);
 
  protected:
 
-  uint8_t  _bpp;     // bits per pixel (1, 4, 8 or 16)
   uint16_t *_img;    // pointer to 16-bit sprite
-  uint8_t  *_img8;   // pointer to  1 and 8-bit sprite frame 1 or frame 2
-  uint8_t  *_img4;   // pointer to  4-bit sprite (uses color map)
-  uint8_t  *_img8_1; // pointer to frame 1
-  uint8_t  *_img8_2; // pointer to frame 2
-
-  uint16_t *_colorMap; // color map pointer: 16 entries, used with 4-bit color map.
 
   int32_t  _sinra;   // Sine of rotation angle in fixed point
   int32_t  _cosra;   // Cosine of rotation angle in fixed point
@@ -533,8 +488,7 @@ class TFT_eSprite : public TFT_eSPI {
   uint32_t _scolor;
 
   int32_t  _iwidth, _iheight; // Sprite memory image bit width and height (swapped during rotations)
-  int32_t  _dwidth, _dheight; // Real sprite width and height (for <8bpp Sprites)
-  int32_t  _bitwidth;         // Sprite image bit width for drawPixel (for <8bpp Sprites, not swapped)
+  int32_t  _dwidth, _dheight; // Real sprite width and height
 };
 
 template <typename T> static inline void transpose(T& a, T& b) { T t = a; a = b; b = t; }

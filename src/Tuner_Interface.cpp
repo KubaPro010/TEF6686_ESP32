@@ -23,7 +23,6 @@ bool Tuner_ReadBuffer(unsigned char *buf, uint16_t len) {
 static void Tuner_Patch_Load(const unsigned char *pLutBytes, uint16_t size) {
   unsigned char buf[24 + 1];
   uint16_t i, len;
-  uint16_t r;
   buf[0] = 0x1b;
 
   while (size) {
