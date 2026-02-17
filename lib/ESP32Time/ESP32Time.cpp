@@ -29,13 +29,6 @@
 
 RTC_DATA_ATTR static bool overflow;
 
-/*!
-    @brief  set the internal RTC time
-    @param  epoch
-            epoch time in seconds
-    @param  ms
-            microseconds (optional)
-*/
 void ESP32Time::setTime(unsigned long epoch, int ms) const {
   struct timeval tv;
   if (epoch > 2082758399){
@@ -49,27 +42,19 @@ void ESP32Time::setTime(unsigned long epoch, int ms) const {
   settimeofday(&tv, NULL);
 }
 
-/*!
-    @brief  get the internal RTC time as a tm struct
-*/
 tm ESP32Time::getTimeStruct() const {
   struct tm timeinfo;
   time_t now;
   time(&now);
   localtime_r(&now, &timeinfo);
-  time_t tt = mktime (&timeinfo);
-    
+
+  time_t tt = mktime(&timeinfo);    
   if (overflow) tt += 63071999;
-  struct tm * tn = localtime(&tt);
-  if (overflow){
-	  tn->tm_year += 64;
-  }
+  struct tm* tn = localtime(&tt);
+  if (overflow) tn->tm_year += 64;
   return *tn;
 }
 
-/*!
-    @brief  get the current epoch seconds as unsigned long
-*/
 unsigned long ESP32Time::getEpoch() const {
 	struct tm timeinfo = getTimeStruct();
 	return mktime(&timeinfo);

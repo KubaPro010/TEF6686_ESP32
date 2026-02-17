@@ -4,7 +4,6 @@
 #include <TFT_eSPI.h>
 #include <WiFiClient.h>
 #include "TEF6686.h"
-#include <WiFi.h>
 #include <ESP32Time.h>
 #include "globals.h"
 #include "NTPupdate.h"

@@ -268,17 +268,8 @@ class TFT_eSPI { friend class TFT_eSprite;
   void pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const uint8_t *data, bool bpp8,  uint16_t *cmap = nullptr);
 
   // Text rendering - value returned is the pixel width of the rendered text
-  int16_t  drawNumber(long intNumber, int32_t x, int32_t y, uint8_t font), // Draw integer using specified font number
-           drawNumber(long intNumber, int32_t x, int32_t y),               // Draw integer using current font
-
-           // Decimal is the number of decimal places to render
-           // Use with setTextDatum() to position values on TFT, and setTextPadding() to blank old displayed values
-           drawFloat(float floatNumber, uint8_t decimal, int32_t x, int32_t y, uint8_t font), // Draw float using specified font number
-           drawFloat(float floatNumber, uint8_t decimal, int32_t x, int32_t y),               // Draw float using current font
-
            // Handle char arrays
-           // Use with setTextDatum() to position string on TFT, and setTextPadding() to blank old displayed strings
-           drawString(const char *string, int32_t x, int32_t y, uint8_t font),  // Draw string using specified font number
+  int16_t drawString(const char *string, int32_t x, int32_t y, uint8_t font),  // Draw string using specified font number
            drawString(const char *string, int32_t x, int32_t y),                // Draw string using current font
            drawString(const String& string, int32_t x, int32_t y, uint8_t font),// Draw string using specified font number
            drawString(const String& string, int32_t x, int32_t y);              // Draw string using current font
@@ -291,15 +282,13 @@ class TFT_eSPI { friend class TFT_eSprite;
            setTextColor(uint16_t fgcolor, uint16_t bgcolor, bool bgfill = false);  // Set character (glyph) foreground and background colour, optional background fill for smooth fonts
   void setTextDatum(uint8_t datum);                     // Set text datum position (default is top left), see Section 5 above
 
-  void setTextPadding(uint16_t x_width);                // Set text padding (background blanking) width in pixels
-
   void setTextFont(uint8_t font);                       // Set the font number to use in future
   int16_t  textWidth(const char *string, uint8_t font),     // Returns pixel width of string in specified font
            textWidth(const char *string),                   // Returns pixel width of string in current font
            textWidth(const String& string, uint8_t font),   // As above for String types
            textWidth(const String& string),
-           fontHeight(uint8_t font),                        // Returns pixel height of specified font
-           fontHeight();                                // Returns pixel height of current font
+           fontHeight(uint8_t font);                        // Returns pixel height of specified font
+  inline int16_t fontHeight() { return fontHeight(textfont); }
 
            // Used by library and Smooth font class to extract Unicode point codes from a UTF8 encoded string
   uint16_t decodeUTF8(uint8_t *buf, uint16_t *index, uint16_t remaining),
@@ -310,7 +299,7 @@ class TFT_eSPI { friend class TFT_eSprite;
 
   // Colour conversion
            // Convert 8-bit red, green and blue to 16 bits
-  uint16_t color565(uint8_t red, uint8_t green, uint8_t blue);
+  inline uint16_t color565(uint8_t r, uint8_t g, uint8_t b) { return ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3); }
 
            // Alpha blend 2 colours, see generic "alphaBlend_Test" example
            // alpha =   0 = 100% background colour
@@ -320,7 +309,7 @@ class TFT_eSPI { friend class TFT_eSprite;
            // 16-bit colour alphaBlend with alpha dither (dither reduces colour banding)
   uint16_t alphaBlend(uint8_t alpha, uint16_t fgc, uint16_t bgc, uint8_t dither);
 
-  void writeColor(uint16_t color, uint32_t len); // Deprecated, use pushBlock()
+  inline void writeColor(uint16_t color, uint32_t len) { pushBlock(color, len); }
 
   // Global variables
   uint32_t textcolor, textbgcolor;         // Text foreground and background colours
@@ -412,11 +401,10 @@ class TFT_eSPI { friend class TFT_eSprite;
   bool _vpDatum;
   bool _vpOoB;
 
-  int32_t cursor_x, cursor_y, padX;
+  int32_t cursor_x, cursor_y;
   int32_t bg_cursor_x;
   int32_t last_cursor_x;
 
-  bool isDigits;
   bool textwrapX, textwrapY;
   bool _swapBytes;
 
@@ -442,7 +430,7 @@ class TFT_eSprite : public TFT_eSPI {
   ~TFT_eSprite();
   void* createSprite(int16_t width = TFT_WIDTH, int16_t height = TFT_HEIGHT);
   void* getPointer();
-  bool created();
+  inline bool created() {return _created; }
   void deleteSprite();
   void drawPixel(int32_t x, int32_t y, uint32_t color);
   void fillSprite(uint32_t color),
@@ -455,7 +443,7 @@ class TFT_eSprite : public TFT_eSPI {
            drawFastHLine(int32_t x, int32_t y, int32_t w, uint32_t color),
            fillRect(int32_t x, int32_t y, int32_t w, int32_t h, uint32_t color);
   void pushImage(int32_t x0, int32_t y0, int32_t w, int32_t h, uint16_t *data, uint8_t sbpp = 0);
-  void pushImage(int32_t x0, int32_t y0, int32_t w, int32_t h, const uint16_t *data);
+  inline void pushImage(int32_t x, int32_t y, int32_t w, int32_t h, const uint16_t *data) { pushImage(x, y, w, h, (uint16_t*) data); }
   void pushSprite(int32_t x, int32_t y);
   void pushSprite(int32_t x, int32_t y, uint16_t transparent);
   bool pushSprite(int32_t tx, int32_t ty, int32_t sx, int32_t sy, int32_t sw, int32_t sh);

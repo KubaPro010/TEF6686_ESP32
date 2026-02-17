@@ -25,10 +25,8 @@
 #pragma once
 #include <time.h>
 class ESP32Time {
-
 	public:
-		void setTime(unsigned long epoch, int ms = 0) const;
-		tm getTimeStruct() const;
-
-		unsigned long getEpoch() const;
+  void setTime(unsigned long epoch, int ms = 0) const;
+  tm getTimeStruct() const;
+  unsigned long getEpoch() const;
 };
