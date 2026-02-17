@@ -136,9 +136,10 @@ void TEF6686::init(byte TEF) {
   while(devTEF_APPL_Get_Operation_Status() != 2) delay(1); // Wait for it to start
 
   Wire.setClock(old_clock);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_LevelStep, 7, 0xffff, 0xffff, 0xffff, 0xffff, 0xfffc, 0xfff8, 0x0);
   devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Mph, 3, 0, 360, 300);
   devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Max, 2, 0, 4000);
-  devTEF_Set_Cmd(TEF_FM, Cmd_Set_LowCut_Max, 2, 0, 100);
+  devTEF_Set_Cmd(TEF_FM, Cmd_Set_LowCut_Max, 2, 1, 60);
   devTEF_Set_Cmd(TEF_FM, Cmd_Set_Stereo_Time, 4, 60, 120, 100, 200);
   devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Time, 4, 500, 2000, 200, 200);
   devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Level, 3, 0, 600, 240);

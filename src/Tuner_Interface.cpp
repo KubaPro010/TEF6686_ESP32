@@ -5,7 +5,7 @@
 
 bool Tuner_WriteBuffer(unsigned char *buf, uint16_t len) {
   Wire.beginTransmission(TEF668X_ADDRESS);
-  for (uint16_t i = 0; i < len; i++) Wire.write(buf[i]);
+  Wire.write(buf, len);
   uint8_t r = Wire.endTransmission();
   if (!Data_Accelerator) delay(1);
   return (r == 0) ? true : false;
@@ -33,7 +33,7 @@ static void Tuner_Patch_Load(const unsigned char *pLutBytes, uint16_t size) {
     for (i = 0; i < len; i++) buf[1 + i] = pgm_read_byte(&pLutBytes[i]);
     pLutBytes += len;
 
-    if (1 != (r = Tuner_WriteBuffer(buf, len + 1))) break;
+    if(!Tuner_WriteBuffer(buf, len + 1)) break;
   }
 }
 

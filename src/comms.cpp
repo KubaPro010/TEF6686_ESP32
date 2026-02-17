@@ -959,7 +959,7 @@ void total_pc_control() {
     case 1: { // Send data
       if(len < 3) break;
       Wire.beginTransmission(data[1]);
-      for(int i = 0; i < (len-2); i++) Wire.write(data[2+i]);
+      Wire.write(data + 2, len - 2);
       auto out = Wire.endTransmission();
       Serial.write(2);
       Serial.write(1);

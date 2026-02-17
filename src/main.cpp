@@ -1036,6 +1036,44 @@ void NumpadProcess(int num) {
       ShowFreq(5);
       ShowFreq(0);
     }
+  } else if (tunemode == TUNE_MEM) {
+    if (num == 127) {
+      freq_in = 0;
+      menuoption = ITEM1;
+      menupage = DXMODE;
+      menuitem = 0;
+      submenu = true;
+      menu = true;
+      if (language == LANGUAGE_CHS) PSSprite.setTextFont(1); else PSSprite.setTextFont(0);
+      BuildMenu();
+    } else if (num == 13) {
+      if (freq_in > 0 && freq_in <= EE_PRESETS_CNT) {
+        byte oldmemorypos = memorypos;
+        memorypos = freq_in - 1;
+        if (IsStationEmpty()) {
+          // Flash red and revert
+          FrequencySprite.setTextDatum(TR_DATUM);
+          FrequencySprite.fillSprite(BackgroundColor);
+          FrequencySprite.setTextColor(SignificantColor, SignificantColorSmooth, false);
+          FrequencySprite.drawString(String(freq_in) + " ", 218, -6);
+          FrequencySprite.pushSprite(46, 46);
+          delay(500);
+          memorypos = oldmemorypos;
+          ShowFreq(0);
+          ShowMemoryPos();
+        } else {
+          DoMemoryPosTune();
+          ShowMemoryPos();
+        }
+      } else ShowFreq(0);
+      freq_in = 0;
+    } else {
+      if (freq_in / 100 == 0) {
+        int temp = freq_in * 10 + num;
+        if (temp <= EE_PRESETS_CNT) freq_in = temp;
+      }
+      ShowNum(freq_in);
+    }
   } else {
     if (num == 127) {
       freq_in = 0;
@@ -1353,10 +1391,10 @@ void setup() {
 
   if (USBmode) Serial.updateBaudRate(19200); else Serial.updateBaudRate(115200);
 
-  if (iMSset && EQset) iMSEQ = 2;
-  if (!iMSset && EQset) iMSEQ = 3;
-  if (iMSset && !EQset) iMSEQ = 4;
-  if (!iMSset && !EQset) iMSEQ = 1;
+  if(iMSset && EQset) iMSEQ = 2;
+  else if(!iMSset && EQset) iMSEQ = 3;
+  else if(iMSset && !EQset) iMSEQ = 4;
+  else iMSEQ = 1;
 
   switch (band) {
     case BAND_LW:
@@ -1625,6 +1663,7 @@ void handleTimers() {
   if (freq_in != 0 && millis() >= keypadtimer + DELAY_KEYPAD_TIMEOUT_MS) {
     freq_in = 0;
     ShowFreq(0);
+    if (tunemode == TUNE_MEM) ShowMemoryPos();
   }
 }
 
@@ -2648,10 +2687,10 @@ void ButtonPress() {
         if (BWsettemp == 18 || BWsettemp == 19) {
           if (BWsettemp == 18) iMSset = !iMSset;
           if (BWsettemp == 19) EQset = !EQset;
-          if (!iMSset && !EQset) iMSEQ = 0;
-          if (iMSset && EQset) iMSEQ = 2;
-          if (!iMSset && EQset) iMSEQ = 3;
-          if (iMSset && !EQset) iMSEQ = 4;
+          if(!iMSset && !EQset) iMSEQ = 0;
+          else if(iMSset && EQset) iMSEQ = 2;
+          else if(!iMSset && EQset) iMSEQ = 3;
+          else iMSEQ = 4;
           EEPROM.writeByte(EE_BYTE_IMSSET, iMSset);
           EEPROM.writeByte(EE_BYTE_EQSET, EQset);
           EEPROM.commit();
