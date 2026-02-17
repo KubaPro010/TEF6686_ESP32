@@ -6,7 +6,7 @@ using fs::FS;
 #include <SPIFFS.h>
 #include "globals.h"
 #include "rtc.hpp"
-#include "main.h"
+#include "core.h"
 
 void handleRoot();
 void handleDownloadCSV();

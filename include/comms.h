@@ -3,7 +3,7 @@
 #include "globals.h"
 #include "nonvolatile.h"
 #include <Hash.h>
-#include "main.h"
+#include "core.h"
 
 void Communication();
 void XDRGTKRoutine();

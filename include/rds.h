@@ -8,7 +8,7 @@
 #include "globals.h"
 #include "NTPupdate.h"
 #include "rtc.hpp"
-#include "main.h"
+#include "core.h"
 
 void ShowAdvancedRDS();
 void readRds();

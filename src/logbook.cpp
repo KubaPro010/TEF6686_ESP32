@@ -104,7 +104,7 @@ void handleRoot() {
     String column = header.substring(startIndex, endIndex);
 
     if (column.equalsIgnoreCase("PI")) piCodeIndex = columnIndex;
-    if (column.equalsIgnoreCase("Frequency")) frequencyIndex = columnIndex;
+    else if (column.equalsIgnoreCase("Frequency")) frequencyIndex = columnIndex;
 
     startIndex = endIndex + 1;
     columnIndex++;
@@ -170,9 +170,7 @@ void handleDownloadCSV() {
 }
 
 bool handleCreateNewLogbook() {
-  if (SPIFFS.exists("/logbook.csv")) {
-    if (!SPIFFS.remove("/logbook.csv")) return false;
-  }
+  if (SPIFFS.exists("/logbook.csv") && !SPIFFS.remove("/logbook.csv")) return false;
 
   fs::File file = SPIFFS.open("/logbook.csv", "w");
   if (!file) return false;
@@ -343,8 +341,7 @@ void printLogbookCSV() {
   Serial.println("===== Start of logbook.csv =====");
 
   while (file.available()) {
-    String line = file.readStringUntil('\n');
-    Serial.println(line);
+    Serial.println(file.readStringUntil('\n'));
   }
 
   file.close();

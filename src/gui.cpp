@@ -6,6 +6,9 @@
 extern mem presets[];
 bool setWiFiConnectParam = false;
 
+const char* BWButtonLabelsFM[] = {"56 kHz", "64 kHz", "72 kHz", "84 kHz", "97 kHz", "114 kHz", "133 kHz", "151 kHz", "168 kHz", "184 kHz", "200 kHz", "217 kHz", "236 kHz", "254 kHz", "287 kHz", "311 kHz", "Auto", "iMS", "EQ"};
+const char* BWButtonLabelsAM[] = {"3 kHz", "4 kHz", "6 kHz", "8 kHz"};
+
 void doTheme() {  // Use this to put your own colors in: http://www.barth-dev.de/online/rgb565-color-picker/
   switch (CurrentTheme) {
     case 0:  // Essence

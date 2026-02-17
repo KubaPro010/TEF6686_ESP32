@@ -16,8 +16,7 @@ bool Tuner_ReadBuffer(unsigned char *buf, uint16_t len) {
   if (Wire.available() >= len) {
     for (uint16_t i = 0; i < len; i++) buf[i] = Wire.read();
     return true;
-  }
-  return false;
+  } return false;
 }
 
 static void Tuner_Patch_Load(const unsigned char *pLutBytes, uint16_t size) {

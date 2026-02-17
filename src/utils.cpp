@@ -96,8 +96,7 @@ String ucs2ToUtf8(const char* ucs2Input) {
       utf8Output += (char)(0x80 | ((ucs2Char >> 6) & 0x3F));
       utf8Output += (char)(0x80 | (ucs2Char & 0x3F));
     }
-  }
-  return utf8Output;
+  } return utf8Output;
 }
 
 String extractUTF8Substring(const String & utf8String, size_t start, size_t length, bool underscore) {
@@ -133,6 +132,5 @@ String removeNewline(String inputString) {
   for (int i = 0; i < inputString.length(); i++) {
     if (inputString[i] == '\n') outputString += ' ';
     else outputString += inputString[i];
-  }
-  return outputString;
+  } return outputString;
 }
