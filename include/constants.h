@@ -51,7 +51,7 @@
 #define DELAY_BUTTON_DEBOUNCE_MS      50
 #define DELAY_BUTTON_DEBOUNCE_EXTRA_MS 75
 #define DELAY_KEYPAD_TIMEOUT_MS      2000
-#define DELAY_RDS_READ_MS            50
+#define DELAY_RDS_READ_MS            60
 #define DELAY_TOUCH_REPEAT_MS         500
 #define TOT_MULTIPLIER_MS            60000
 #define NTP_UPDATE_INTERVAL_MS        1800000

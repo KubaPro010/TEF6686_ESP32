@@ -25,6 +25,12 @@ void drawButton(const char* text, byte button_number, bool active, bool selected
 String shortLine(String text);
 void showMenuOpenTouchButtons();
 void showBWSelector();
+void ShowRDSLogo(bool RDSstatus);
+void showAutoSquelch(bool mode);
+void updateEQ();
+void updateiMS();
+void updateBW();
+void ShowStepSize();
 
 extern void ShowBandSelectionFM(bool notglanceview, bool normaldisplay);
 extern void ShowBandSelectionAM(bool notglanceview, bool normaldisplay);

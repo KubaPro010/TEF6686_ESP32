@@ -9,6 +9,7 @@
 #include "NTPupdate.h"
 #include "rtc.hpp"
 #include "core.h"
+#include "gui.h"
 
 void ShowAdvancedRDS();
 void readRds();

@@ -24,7 +24,7 @@ Process:
 }
 */
 
-static const char* const myLanguage[22][297] PROGMEM = {
+static const char* const Languages[22][297] PROGMEM = {
   { "English", // English
     "Rotary direction changed", // 1
     "Please release button", // 2

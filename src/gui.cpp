@@ -5615,3 +5615,81 @@ String shortLine(String text) {
   }
   return text;
 }
+
+void ShowRDSLogo(bool RDSstatus) {
+  if (screenmute) return;
+  if (RDSstatus != RDSstatusold) {
+    if (RDSstatus) tft.drawBitmap(68, 5, RDSLogo, 35, 22, RDSColor);
+    else tft.drawBitmap(68, 5, RDSLogo, 35, 22, GreyoutColor);
+  }
+  RDSstatusold = RDSstatus;
+}
+
+void showAutoSquelch(bool mode) {
+  if (screenmute) return;
+  if (mode) tft.drawBitmap(223, 147, AutoSQ, 18, 18, PrimaryColor);
+  else tft.drawBitmap(223, 147, AutoSQ, 18, 18, BackgroundColor);
+}
+
+void updateiMS() {
+  if (band < BAND_GAP) {
+    if (iMSset == 0) {
+      if (!screenmute && !advancedRDS && !afscreen && !rdsstatscreen && !BWtune) {
+        tft.fillRoundRect(249, 57, 30, 18, 2, SecondaryColor);
+        tftPrint16(ACENTER, "iMS", 265, 59, BackgroundColor, SecondaryColor);
+      } radio.setiMS(1);
+    } else {
+      if (!screenmute && !advancedRDS && !afscreen && !rdsstatscreen && !BWtune) {
+        tft.fillRoundRect(249, 57, 30, 18, 2, GreyoutColor);
+        tftPrint16(ACENTER, "iMS", 265, 59, BackgroundColor, GreyoutColor);
+      } radio.setiMS(0);
+    }
+  }
+}
+
+void updateEQ() {
+  if (band < BAND_GAP) {
+    if (EQset == 0) {
+      if (!screenmute && !advancedRDS && !afscreen && !rdsstatscreen && !BWtune) {
+        tft.fillRoundRect(287, 57, 30, 18, 2, SecondaryColor);
+        tftPrint16(ACENTER, "EQ", 301, 59, BackgroundColor, SecondaryColor);
+      } radio.setEQ(1);
+    } else {
+      if (!screenmute && !advancedRDS && !afscreen && !rdsstatscreen && !BWtune) {
+        tft.fillRoundRect(287, 57, 30, 18, 2, GreyoutColor);
+        tftPrint16(ACENTER, "EQ", 301, 59, BackgroundColor, GreyoutColor);
+      } radio.setEQ(0);
+    }
+  }
+}
+
+void updateBW() {
+  if (BWset == 0) {
+    if (!BWtune && !screenmute && !advancedRDS && !afscreen && !rdsstatscreen) {
+      tft.fillRoundRect(248, 36, 69, 18, 2, SecondaryColor);
+      tftPrint16(ACENTER, "AUTO BW", 282, 38, BackgroundColor, SecondaryColor);
+    } radio.setFMABandw();
+  } else {
+    if (!BWtune && !screenmute && !advancedRDS && !afscreen && !rdsstatscreen) {
+      tft.fillRoundRect(248, 36, 69, 18, 2, GreyoutColor);
+      tftPrint16(ACENTER, "AUTO BW", 282, 38, BackgroundColor, GreyoutColor);
+    }
+  }
+}
+
+void ShowStepSize() {
+  if (!advancedRDS) {
+    tft.fillRect(191, 38, 15, 4, GreyoutColor);
+    tft.fillRect(222, 38, 15, 4, GreyoutColor);
+    if (band < BAND_GAP) tft.fillRect(113, 38, 15, 4, GreyoutColor); else if (band != BAND_LW && band != BAND_MW) tft.fillRect(129, 38, 15, 4, GreyoutColor);
+    if (band < BAND_GAP) tft.fillRect(144, 38, 15, 4, GreyoutColor); else tft.fillRect(159, 38, 15, 4, GreyoutColor);
+    if (stepsize == 1) tft.fillRect(222, 38, 15, 4, InsignificantColor);
+    if (stepsize == 2) tft.fillRect(191, 38, 15, 4, InsignificantColor);
+    if (stepsize == 3) {
+      if (band < BAND_GAP) tft.fillRect(144, 38, 15, 4, InsignificantColor); else tft.fillRect(159, 38, 15, 4, InsignificantColor);
+    }
+    if (stepsize == 4) {
+      if (band < BAND_GAP) tft.fillRect(113, 38, 15, 4, InsignificantColor); else tft.fillRect(129, 38, 15, 4, InsignificantColor);
+    }
+  }
+}

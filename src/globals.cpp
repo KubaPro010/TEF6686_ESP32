@@ -321,8 +321,8 @@ unsigned long tuningtimer;
 unsigned long udplogtimer;
 unsigned long udptimer;
 bool rds_settings_changed;
-const size_t language_totalnumber = sizeof(myLanguage) / sizeof(myLanguage[0]);
-const size_t language_entrynumber = sizeof(myLanguage[0]) / sizeof(myLanguage[0][0]);
+const size_t language_totalnumber = sizeof(Languages) / sizeof(Languages[0]);
+const size_t language_entrynumber = sizeof(Languages[0]) / sizeof(Languages[0][0]);
 
 volatile bool i2c_pc_control = false;
 volatile bool i2c_pc_control_init = false;

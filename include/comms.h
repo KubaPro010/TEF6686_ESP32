@@ -4,6 +4,7 @@
 #include "nonvolatile.h"
 #include <Hash.h>
 #include "core.h"
+#include "gui.h"
 
 void Communication();
 void XDRGTKRoutine();
