@@ -2996,6 +2996,7 @@ void BuildDisplay() {
   rdsstatscreen = false;
   advancedRDS = false;
   BWtune = false;
+  modLevelForceRedraw = true;
 
   tft.fillScreen(BackgroundColor);
   tft.drawRect(0, 0, 320, 240, FrameColor);
@@ -3116,8 +3117,8 @@ void BuildDisplay() {
   radio.rds.hasTMC.call();
   radio.rds.hasCT.call();
   radio.rds.hasRTplus.call();
-  MPold = 99;
-  USold = 99;
+  MPold = 100;
+  USold = 100;
 }
 
 void MenuUpDown(bool dir) {

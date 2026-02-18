@@ -35,7 +35,7 @@ uint8_t devTEF_APPL_Get_Operation_Status() {
 
 void devTEF_Radio_Get_Quality_Status(uint16_t *status, int16_t *level, uint16_t *usn, uint16_t *wam, int16_t *offset, uint16_t *bandwidth, uint16_t *audiolevel, int8_t *snr) {
   uint8_t buf[14];
-  devTEF_Get_Cmd(TEF_FM, Cmd_Get_Quality_Data, buf, sizeof(buf));
+  devTEF_Get_Cmd(TEF_FM, Cmd_Get_Quality_Status, buf, sizeof(buf));
   if(status != NULL) *status = Convert8bto16b(buf);
   if(level != NULL) *level = Convert8bto16b(buf + 2);
   if(usn != NULL) *usn = Convert8bto16b(buf + 4);

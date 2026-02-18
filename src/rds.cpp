@@ -491,9 +491,7 @@ void showCT() {
   time_t t = rtc.getEpoch();
 
   t += Timezone * 3600; // Convert offset from hours to seconds
-  if (NTPupdated) {
-    if (autoDST && isDST(t)) t += 3600;
-  }
+  if (autoDST && isDST(t)) t += 3600;
 
   auto localtm = localtime(&t);
 

@@ -356,7 +356,7 @@ void TEF6686::getStatus(int16_t *level, uint16_t *USN, uint16_t *WAM, int16_t *o
 
 void TEF6686::getStatusAM(int16_t *level, uint16_t *noise, uint16_t *cochannel, int16_t *offset, uint16_t *bandwidth, uint16_t *audiolevel, int8_t *snr) {
   uint8_t buf[14];
-  devTEF_Get_Cmd(TEF_AM, Cmd_Get_Quality_Data, buf, sizeof(buf));
+  devTEF_Get_Cmd(TEF_AM, Cmd_Get_Quality_Status, buf, sizeof(buf));
   if(level != NULL) *level = Convert8bto16b(buf + 2);
   if(noise != NULL) *noise = Convert8bto16b(buf + 4);
   if(cochannel != NULL) *cochannel = Convert8bto16b(buf + 6);

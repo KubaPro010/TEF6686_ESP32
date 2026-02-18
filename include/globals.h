@@ -5,6 +5,7 @@
 #include "TEF6686.h"
 #include "constants.h"
 #include "change_detector.h"
+#include "nonvolatile.h"
 #include "language.h"
 #include <WiFi.h>
 #include <WiFiUdp.h>
@@ -261,6 +262,7 @@ extern String XDRGTK_key;
 extern Detector<String, 1> XDRGTKRDS;
 extern uint16_t BW;
 extern uint16_t MStatus;
+extern bool modLevelForceRedraw;
 extern uint16_t SWMIBandPos;
 extern uint16_t SWMIBandPosold;
 extern uint16_t TouchCalData[5];

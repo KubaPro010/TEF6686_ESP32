@@ -11,12 +11,15 @@
 #include "FREQFONT.h"
 #include "touch.h"
 #include "rds.h"
+#include "logbook.h"
+#include "comms.h"
 
 void Touch_IRQ_Handler() {
   touch_detect = true;
 }
 
 void read_encoder() {
+  if(i2c_pc_control) return;
   if (!digitalRead(ROTARY_PIN_A) || !digitalRead(ROTARY_PIN_B)) {
     uint32_t dt = millis() - rotarytimer;
     if (dt >= 45) {
@@ -182,16 +185,8 @@ void later_setup_periph() {
 
 void setup() {
   WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
-  gpio_set_drive_capability((gpio_num_t)5, GPIO_DRIVE_CAP_0);
-  gpio_set_drive_capability((gpio_num_t)16, GPIO_DRIVE_CAP_0);
-  gpio_set_drive_capability((gpio_num_t)17, GPIO_DRIVE_CAP_0);
-  gpio_set_drive_capability((gpio_num_t)18, GPIO_DRIVE_CAP_0);
-  gpio_set_drive_capability((gpio_num_t)19, GPIO_DRIVE_CAP_0);
-  gpio_set_drive_capability((gpio_num_t)21, GPIO_DRIVE_CAP_0);
-  gpio_set_drive_capability((gpio_num_t)22, GPIO_DRIVE_CAP_0);
-  gpio_set_drive_capability((gpio_num_t)23, GPIO_DRIVE_CAP_0);
 
-  analogWriteFrequency(5000);
+  analogWriteFrequency(6700); // six seven
 
   EEPROM.begin(EE_TOTAL_CNT);
 
@@ -452,8 +447,6 @@ void setup() {
   console.reset();
 }
 
-#include "comms.h"
-
 void handleWiFi() {
   if (wifi && !menu) {
     webserver.handleClient();
@@ -530,26 +523,39 @@ void ShowAudioLevel() {
 
     peakholdold = constrain(peakholdold, 0, 86);
 
-    HSV hsv1 = RGB565toHSV(ModBarInsignificantColor);
-    HSV hsv2 = RGB565toHSV(ModBarSignificantColor);
+    // Skip redraw when nothing changed
+    static int prevDisplayedSegments = -1;
+    static int prevPeakhold = -1;
+    if (!modLevelForceRedraw && DisplayedSegments == prevDisplayedSegments && peakholdold == prevPeakhold) return;
+    modLevelForceRedraw = false;
 
-    int gradientStart = (86 * 25) / 100;
-    int gradientEnd = (86 * 60) / 100;
+    // Pre-computed gradient color lookup table (cached, recomputed only on theme change)
+    static uint16_t modGradient[87];
+    static uint16_t cachedInsigColor = 0;
+    static uint16_t cachedSigColor = 0;
+    static bool gradientReady = false;
 
-    for (int i = 0; i < min(DisplayedSegments, gradientStart); i++) tft.fillRect(16 + 2 * i, 133, 2, 6, ModBarInsignificantColor);
-
-    if (DisplayedSegments > gradientStart) {
-      for (int i = gradientStart; i < min(DisplayedSegments, gradientEnd); i++) {
-        float h = map(i, gradientStart, gradientEnd, hsv1.h, hsv2.h);
-        float s = map(i, gradientStart, gradientEnd, hsv1.s * 100, hsv2.s * 100) / 100.0;
-        float v = map(i, gradientStart, gradientEnd, hsv1.v * 100, hsv2.v * 100) / 100.0;
-        tft.fillRect(16 + 2 * i, 133, 2, 6, HSVtoRGB565(h, s, v));
+    if (!gradientReady || cachedInsigColor != ModBarInsignificantColor || cachedSigColor != ModBarSignificantColor) {
+      HSV hsv1 = RGB565toHSV(ModBarInsignificantColor);
+      HSV hsv2 = RGB565toHSV(ModBarSignificantColor);
+      int gStart = (86 * 25) / 100;
+      int gEnd = (86 * 60) / 100;
+      for (int i = 0; i < 87; i++) {
+        if (i < gStart) modGradient[i] = ModBarInsignificantColor;
+        else if (i < gEnd) {
+          float h = map(i, gStart, gEnd, hsv1.h, hsv2.h);
+          float s = map(i, gStart, gEnd, hsv1.s * 100, hsv2.s * 100) / 100.0;
+          float v = map(i, gStart, gEnd, hsv1.v * 100, hsv2.v * 100) / 100.0;
+          modGradient[i] = HSVtoRGB565(h, s, v);
+        } else modGradient[i] = ModBarSignificantColor;
       }
+      cachedInsigColor = ModBarInsignificantColor;
+      cachedSigColor = ModBarSignificantColor;
+      gradientReady = true;
     }
 
-    if (DisplayedSegments > gradientEnd) {
-      for (int i = gradientEnd; i < DisplayedSegments; i++) tft.fillRect(16 + 2 * i, 133, 2, 6, ModBarSignificantColor);
-    }
+    // Draw bar segments using cached gradient colors
+    for (int i = 0; i < DisplayedSegments; i++) tft.fillRect(16 + 2 * i, 133, 2, 6, modGradient[i]);
 
     int greyStart = 16 + 2 * DisplayedSegments;
     int greyWidth = 2 * (87 - DisplayedSegments);
@@ -559,6 +565,9 @@ void ShowAudioLevel() {
     tft.fillRect(peakHoldPosition, 133, 2, 6, (MStatus > 80) ? ModBarSignificantColor : PrimaryColor);
 
     if (millis() - peakholdmillis >= 1000 && (peakholdold <= DisplayedSegments || peakholdold >= 86)) tft.fillRect(peakHoldPosition, 133, 2, 6, GreyoutColor);
+
+    prevDisplayedSegments = DisplayedSegments;
+    prevPeakhold = peakholdold;
   }
 }
 
@@ -948,7 +957,7 @@ void ShowBattery() {
   else return;
 
   float v = analogReadMilliVolts(BATTERY_PIN) * 0.002; // 0.002 converts to volts plus corrects the /2 voltage divider
-  byte battery = map(constrain(v, BATTERY_LOW_VALUE, BATTERY_FULL_VALUE), BATTERY_LOW_VALUE, BATTERY_FULL_VALUE, 0, BAT_LEVEL_STAGE);
+  byte battery = map(constrain(v, BATTERY_LOW_VALUE, BATTERY_FULL_VALUE), BATTERY_LOW_VALUE, BATTERY_FULL_VALUE, 0, 32);
   byte batteryprobe = map(constrain(v, BATTERY_LOW_VALUE, BATTERY_FULL_VALUE), BATTERY_LOW_VALUE, BATTERY_FULL_VALUE, 0, 50);
   if (batteryold != batteryprobe) {
     if (batterydetect) {
@@ -962,7 +971,7 @@ void ShowBattery() {
 
       if (batteryoptions != BATTERY_VALUE && batteryoptions != BATTERY_PERCENT && battery != 0) {
         if(v > BATTERY_FULL_VALUE) tft.fillRoundRect(279, 8, 32, 16, 2, ActiveColor);
-        else tft.fillRoundRect(279, 8, battery * 8, 16, 2, SecondaryColor);
+        else tft.fillRoundRect(279, 8, battery, 16, 2, SecondaryColor);
       } else tft.fillRoundRect(279, 8, 32, 16, 2, BackgroundColor);
     }
     batteryold = batteryprobe;
@@ -1359,7 +1368,7 @@ void loop() {
     if (screensavertriggered) {
       if (!touchrotating) {
         rotary = 0;
-        WakeToSleep(REVERSE);
+        WakeToSleep(false);
       } else {
         if (BWtune) doBWtuneUp(); else KeyUp();
       }
@@ -1378,7 +1387,7 @@ void loop() {
     if (screensavertriggered) {
       if (!touchrotating) {
         rotary = 0;
-        WakeToSleep(REVERSE);
+        WakeToSleep(false);
       } else {
         if (BWtune) doBWtuneDown(); else KeyDown();
       }
@@ -1395,7 +1404,7 @@ void loop() {
   if (digitalRead(BANDBUTTON) == LOW) {
     tottimer = millis();
     if (screensavertriggered) {
-      WakeToSleep(REVERSE);
+      WakeToSleep(false);
       while (digitalRead(BANDBUTTON) == LOW);
     } else BANDBUTTONPress();
   }
@@ -1403,7 +1412,7 @@ void loop() {
   if (digitalRead(ROTARY_BUTTON) == LOW) {
     tottimer = millis();
     if (screensavertriggered) {
-      WakeToSleep(REVERSE);
+      WakeToSleep(false);
       while (digitalRead(ROTARY_BUTTON) == LOW);
     } else if (!afscreen && !rdsstatscreen) ButtonPress();
   }
@@ -1411,7 +1420,7 @@ void loop() {
   if (digitalRead(MODEBUTTON) == LOW) {
     tottimer = millis();
     if (screensavertriggered) {
-      WakeToSleep(REVERSE);
+      WakeToSleep(false);
       while (digitalRead(MODEBUTTON) == LOW);
     } else if(!screenmute) ModeButtonPress();
   }
@@ -1419,13 +1428,13 @@ void loop() {
   if (digitalRead(BWBUTTON) == LOW && !BWtune) {
     tottimer = millis();
     if (screensavertriggered) {
-      WakeToSleep(REVERSE);
+      WakeToSleep(false);
       while (digitalRead(BWBUTTON) == LOW);
     } else if(!screenmute) BWButtonPress();
   }
 
   if (digitalRead(EXT_IRQ) == LOW) {
-    if (screensavertriggered) WakeToSleep(REVERSE);
+    if (screensavertriggered) WakeToSleep(false);
     int num = GetNum();
     if (!screenmute && !BWtune && !menu && !advancedRDS && !rdsstatscreen && !afscreen && num != -1) NumpadProcess(num);
   }

@@ -15,6 +15,7 @@ using fs::FS;
 #include "system_console.h"
 #include "core.h"
 #include "main.h"
+#include "logbook.h"
 
 Console console(&tft);
 RTC_DATA_ATTR bool gpio_chip = false;
@@ -1646,7 +1647,7 @@ void KeyUp() {
           case TUNE_MI_BAND:
             if (showSWMIBand) {
               if (displayflip) ToggleSWMIBand(true);
-              else ToggleSWMIBand(REVERSE);
+              else ToggleSWMIBand(false);
             }
             break;
         }
@@ -1704,7 +1705,7 @@ void KeyDown() {
             break;
           case TUNE_MI_BAND:
             if (showSWMIBand) {
-              if (displayflip) ToggleSWMIBand(REVERSE);
+              if (displayflip) ToggleSWMIBand(false);
               else ToggleSWMIBand(true);
             } break;
         }

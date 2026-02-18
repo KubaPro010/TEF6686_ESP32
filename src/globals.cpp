@@ -249,6 +249,7 @@ String XDRGTK_key;
 Detector<String, 1> XDRGTKRDS{""};
 uint16_t BW;
 uint16_t MStatus;
+bool modLevelForceRedraw = true;
 uint16_t SWMIBandPos;
 uint16_t SWMIBandPosold;
 uint16_t TouchCalData[5];

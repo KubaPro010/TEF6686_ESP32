@@ -1,4 +1,6 @@
 #include "nonvolatile.h"
+#include "globals.h"
+#include "logbook.h"
 
 void StoreFrequency() {
   switch (band) {
