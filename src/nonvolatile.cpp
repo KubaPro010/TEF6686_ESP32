@@ -125,6 +125,7 @@ void saveData() {
   EEPROM.writeByte(EE_BYTE_AUTODST, autoDST);
   EEPROM.writeByte(EE_BYTE_CLOCKAMPM, clockampm);
   EEPROM.writeUInt(EE_UINT16_PICTLOCK, radio.rds.PICTlock);
+  EEPROM.writeByte(EE_BYTE_CONTROLMODE, 0); // Always 0
   EEPROM.commit();
 }
 
@@ -239,6 +240,7 @@ void loadData() {
   clockampm = EEPROM.readByte(EE_BYTE_CLOCKAMPM);
   logcounter = EEPROM.readUInt(EE_UINT16_LOGCOUNTER);
   radio.rds.PICTlock = EEPROM.readUInt(EE_UINT16_PICTLOCK);
+  i2c_pc_control = i2c_pc_control_init = EEPROM.readByte(EE_BYTE_CONTROLMODE);
 }
 
 void DefaultSettings() {
@@ -345,6 +347,7 @@ void DefaultSettings() {
   EEPROM.writeByte(EE_BYTE_AUTODST, 1);
   EEPROM.writeByte(EE_BYTE_CLOCKAMPM, 0);
   EEPROM.writeUInt(EE_UINT16_PICTLOCK, 0);
+  EEPROM.writeByte(EE_BYTE_CONTROLMODE, 0);
 
   EEPROM.writeByte(EE_BYTE_SPISPEED, 0);
 

@@ -198,6 +198,10 @@ void setup() {
 
   loadData();
 
+  pinMode(MODEBUTTON, INPUT);
+  if(i2c_pc_control && digitalRead(MODEBUTTON) == HIGH) return;
+  else i2c_pc_control = false;
+
   if (spispeed == 0) setAutoSpeedSPI();
   else tft.setSPISpeed(spispeed);
 
@@ -265,7 +269,6 @@ void setup() {
   tft.invertDisplay(!invertdisplay);
 
   pinMode(BANDBUTTON, INPUT);
-  pinMode(MODEBUTTON, INPUT);
   pinMode(BWBUTTON, INPUT);
   pinMode(ROTARY_BUTTON, INPUT);
   pinMode(ROTARY_PIN_A, INPUT);
@@ -1075,6 +1078,10 @@ void loop() {
   if(i2c_pc_control) {
     total_pc_control();
     if(i2c_pc_control) return;
+    if(EEPROM.readByte(EE_BYTE_CONTROLMODE)) {
+      saveData();
+      esp_restart();
+    }
   }
 
   handleWiFi();

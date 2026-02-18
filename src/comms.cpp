@@ -997,10 +997,8 @@ void total_pc_control() {
     } break;
     case 6: { // Change baud
       if(len < 5) break;
-      uint32_t clock = ((uint32_t)data[1] << 24) |
-                 ((uint32_t)data[2] << 16) |
-                 ((uint32_t)data[3] << 8)  |
-                 ((uint32_t)data[4]);
+      uint32_t clock = ((uint32_t)data[1] << 24) | ((uint32_t)data[2] << 16) |
+                 ((uint32_t)data[3] << 8) | ((uint32_t)data[4]);
       Serial.write(1);
       Serial.write(6);
       Serial.flush();
@@ -1020,10 +1018,14 @@ void total_pc_control() {
       Serial.write(8);
       for(uint16_t i = 0; i < data[3]; i++) Serial.write(EEPROM.read(address + i));
     } break;
+    case 0xfe: { // Get EEPROM address for starting control mode on boot
+      Serial.write(2);
+      Serial.write((uint8_t)(EE_BYTE_CONTROLMODE >> 8));
+      Serial.write(EE_BYTE_CONTROLMODE & 0xff);
+    } break;
     case 0xff: { // Another wake command
       Serial.write(1);
       Serial.write(0xff);
-      Serial.flush(true);
     } break;
     default:
       break;
