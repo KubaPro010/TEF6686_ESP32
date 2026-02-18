@@ -4462,7 +4462,7 @@ void DoMenu() {
           case 7: tft.pushImage(0, 0, 320, 240, configurationbackground_wo); break;
           default: tft.pushImage(0, 0, 320, 240, configurationbackground); break;
         }
-        tftPrint(ACENTER, textUI(189 + menupage - 1), 160, 6, ActiveColor, ActiveColorSmooth, 16);
+        tftPrint(ACENTER, textUI(43 + menupage - 1), 160, 6, ActiveColor, ActiveColorSmooth, 16);
       }
     }
 
@@ -5218,9 +5218,9 @@ void DoMenu() {
                 wifi = false;
                 tryWiFi();
               }
-              WiFiConnectParam XDRGTK_key_text("Set XDRGTK Password: (max 8 characters)");
               WiFiConnectParam XDRGTK_key_input("XDRGTK_key", "Password", key, 9);
               if (!setWiFiConnectParam) {
+                WiFiConnectParam XDRGTK_key_text("Set XDRGTK Password: (max 8 characters)");
                 wc.addParameter(&XDRGTK_key_text);
                 wc.addParameter(&XDRGTK_key_input);
                 setWiFiConnectParam = true;
@@ -5235,7 +5235,6 @@ void DoMenu() {
               menuopen = false;
               BuildMenu();
             } break;
-
           case ITEM4:
             if (wifi) {
               Infoboxprint(textUI(55));

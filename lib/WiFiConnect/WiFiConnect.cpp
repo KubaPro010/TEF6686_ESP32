@@ -392,11 +392,11 @@ boolean WiFiConnect::startConfigurationPortal(AP_Continue apcontinue, const char
   _lastAPPage = millis();
   _readyToConnect = false;	  
   while (true) {
-	
-	if (apcontinue != AP_WAIT)	// Stay here if the AP_LOOP enabled	
-		if (millis() - (unsigned long int)_lastAPPage >= ( (unsigned int)_apTimeoutMins * 60 * 1000)) {
-		  break;
-		}
+    if (apcontinue != AP_WAIT) {
+      if (millis() - (unsigned long int)_lastAPPage >= ( (unsigned int)_apTimeoutMins * 60 * 1000)) {
+        break;
+      }
+    }
 		
     dnsServer->processNextRequest();
     server->handleClient();
