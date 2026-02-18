@@ -490,8 +490,8 @@ void showCT() {
   char dateStr[9];
   time_t t = rtc.getEpoch();
 
+  t += Timezone * 3600; // Convert offset from hours to seconds
   if (NTPupdated) {
-    t += NTPoffset * 3600; // Convert offset from hours to seconds
     if (autoDST && isDST(t)) t += 3600;
   }
 

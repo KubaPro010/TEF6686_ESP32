@@ -1,4 +1,6 @@
 #include "rtc.hpp"
+#include "globals.h"
+#include "nonvolatile.h"
 
 // the hardware rtc driver was made with the support of Wh1teRabbitHU's implementation
 
@@ -120,8 +122,14 @@ bool init_rtc() {
     return false;
 }
 
-void set_time(time_t time) {
+void set_time(time_t time, int8_t offset) {
     rtc.setTime(time);
+    if(Timezone != offset) {
+        EEPROM.writeByte(EE_BYTE_TIMEZONE, offset);
+        EEPROM.commit();
+        Timezone = offset;
+    }
+    
     if(!rx_rtc_avail) return;
     struct tm* timeinfo = gmtime(&time);
     writeToModule(0x1F, 64);

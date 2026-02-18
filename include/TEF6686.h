@@ -100,7 +100,7 @@ static const uint16_t oda_app_ids[] {
 
 static const char* const ECCtext[] {
   "Bundesrepublik Deutschland", // 0
-  "Ελληνική Δημοκρατία / (Hellenic Republic)", // 1
+  "Ελληνική Δημοκρατία [Hellenic Republic]", // 1
   "Kingdom of Morroco", // 2
   "Republica Moldova", // 3
   "People's Democratic Republic of Algeria", // 4
@@ -297,8 +297,8 @@ static const char* const ECCtext[] {
   "Islamic Republic of Iran", // 195
   "Japan", // 196
   "Republic of Kiribati", // 197
-  "Democratic People's Republic of Korea (North Korea)", // 198
-  "Republic of Korea (South Korea)", // 199
+  "Democratic People's Republic of Korea [North Korea]", // 198
+  "Republic of Korea [South Korea]", // 199
   "Lao People's Democratic Republic", // 200
   "中华人民共和国（澳门) [PRC, M]", // 201
   "Malaysia", // 202
@@ -316,7 +316,7 @@ static const char* const ECCtext[] {
   "Republic of Singapore", // 214
   "Solomon Islands", // 215
   "Democratic Socialist Republic of Sri Lanka", // 216
-  "Republic of China (Taiwan)", // 217
+  "Republic of China [Taiwan]", // 217
   "Kingdom of Thailand", // 218
   "Kingdom of Tonga", // 219
   "Republic of Vanuatu", // 220

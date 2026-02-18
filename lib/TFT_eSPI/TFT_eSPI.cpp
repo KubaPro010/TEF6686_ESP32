@@ -44,7 +44,7 @@ void TFT_eSPI::pushBlock(uint16_t color, uint32_t len) {
   SPI_BUSY_CHECK;
 
   uint32_t i = 0;
-  if (rem) { // len was not multiple of 32  
+  if(rem) { // len was not multiple of 32  
     for (i = 0; i < rem; i += 2) *spi_w++ = color32;
     *_spi_mosi_dlen = (rem << 4) - 1; // << 4 = * 16
     *_spi_cmd = SPI_USR;
@@ -343,11 +343,11 @@ void TFT_eSPI::init() {
     gpio_set_level((gpio_num_t)TFT_RST, 1);
     delay(3);
     gpio_set_level((gpio_num_t)TFT_RST, 0);
-    delay(12);
+    delay(10);
     gpio_set_level((gpio_num_t)TFT_RST, 1);
   }
 
-  delay(34); // Wait for reset to complete
+  delay(25); // Wait for reset to complete
 
   begin_tft_write();
 

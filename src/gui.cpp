@@ -1393,7 +1393,7 @@ void ShowOneLine(byte position, byte item, bool selected) {
 
           FullLineSprite.setTextDatum(TR_DATUM);
           FullLineSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
-          FullLineSprite.drawString((NTPoffset > -1 ? "+" : "") + String(NTPoffset, DEC), 298, 2);
+          FullLineSprite.drawString((Timezone > -1 ? "+" : "") + String(Timezone), 298, 2);
           FullLineSprite.setTextColor(ActiveColor, ActiveColorSmooth, false);
           FullLineSprite.drawString("GMT", 258, 2);
           break;
@@ -2491,7 +2491,7 @@ void ShowOneButton(byte position, byte item, bool selected) {
 
           PSSprite.setTextDatum(TL_DATUM);
           PSSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
-          PSSprite.drawString((NTPoffset > -1 ? "+" : "") + String(NTPoffset, DEC), 77, 15);
+          PSSprite.drawString((Timezone > -1 ? "+" : "") + String(Timezone), 77, 15);
           PSSprite.setTextColor(ActiveColor, ActiveColorSmooth, false);
           PSSprite.setTextDatum(TR_DATUM);
           PSSprite.drawString("GMT", 73, 15);
@@ -4171,11 +4171,11 @@ void MenuUpDown(bool dir) {
 
           case ITEM7:
             if (dir) {
-              NTPoffset++;
-              if (NTPoffset > 12) NTPoffset = -12;
+              Timezone++;
+              if (Timezone > 12) Timezone = -12;
             } else {
-              NTPoffset--;
-              if (NTPoffset < -12) NTPoffset = 12;
+              Timezone--;
+              if (Timezone < -12) Timezone = 12;
             }
 
             OneBigLineSprite.setTextDatum(TR_DATUM);
@@ -4183,7 +4183,7 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.drawString("GMT", 135, 0);
             OneBigLineSprite.setTextDatum(TL_DATUM);
             OneBigLineSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
-            OneBigLineSprite.drawString((NTPoffset > -1 ? "+" : "") + String(NTPoffset), 155, 0);
+            OneBigLineSprite.drawString((Timezone > -1 ? "+" : "") + String(Timezone), 155, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
 
@@ -5225,7 +5225,7 @@ void DoMenu() {
                 wc.addParameter(&XDRGTK_key_input);
                 setWiFiConnectParam = true;
               }
-              wc.startConfigurationPortal(AP_WAIT);
+              wc.startConfigurationPortal();
               XDRGTK_key = XDRGTK_key_input.getValue();
               EEPROM.writeString(EE_STRING_XDRGTK_KEY, XDRGTK_key);
               EEPROM.commit();
@@ -5269,7 +5269,7 @@ void DoMenu() {
             OneBigLineSprite.drawString("GMT", 135, 0);
             OneBigLineSprite.setTextDatum(TL_DATUM);
             OneBigLineSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
-            OneBigLineSprite.drawString((NTPoffset > -1 ? "+" : "") + String(NTPoffset), 155, 0);
+            OneBigLineSprite.drawString((Timezone > -1 ? "+" : "") + String(Timezone), 155, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
 

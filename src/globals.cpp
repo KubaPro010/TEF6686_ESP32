@@ -217,7 +217,7 @@ int8_t MPold = 0;
 int8_t USold = 0;
 int8_t LevelOffset;
 int8_t LowLevelSet;
-int8_t NTPoffset;
+int8_t Timezone;
 int8_t CN;
 int8_t CNold;
 RTC_DATA_ATTR int8_t VolSet;

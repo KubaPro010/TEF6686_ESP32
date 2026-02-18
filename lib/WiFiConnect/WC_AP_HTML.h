@@ -1,16 +1,5 @@
-/*!
- * @file WC_AP_HTML.h
- *
- * HTML snippets to build the Access Point portal and the Parameters Portal.
- *
- * Written by Stuart Blair
- *
- * GNU General Public License v3.0 licence, all text here must be included in any redistribution and you should receive a copy of the license file.
- *
- */
+#pragma once
 
-#ifndef WC_AP_HTML
-#define WC_AP_HTML ///< Define to stop re-inclusion
 /*! \def char AP_HTTP_HEAD[] PROGMEM
 Start of HTML output
  */
@@ -73,5 +62,3 @@ const char AP_HTTP_END[] PROGMEM             = "</div></body></html>";
 const char AP_HTTP_PORTAL_PARAM_OPTIONS[] PROGMEM  = "<form action=\"/params\" method=\"get\"><button>Configure Parameters</button></form><br/><form action=\"/i\" method=\"get\"><button>Info</button></form><br/>";
 /** HTML snippet for our custom parameters save */
 const char AP_HTTP_FORM_PARAM_START[] PROGMEM      ="<form method=\"get\" action=\"wifisave\">";
-
-#endif

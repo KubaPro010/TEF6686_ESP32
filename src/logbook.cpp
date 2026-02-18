@@ -255,14 +255,14 @@ String getCurrentDateTime(bool inUTC) {
   int utcOffsetHours = 0;
 
   if (!inUTC) {
-    currentEpoch += (NTPupdated ? NTPoffset * 3600 : radio.rds.offset); // Apply GMT offset if NTPupdated, else RDS offset
+    currentEpoch += (NTPupdated ? Timezone * 3600 : radio.rds.offset); // Apply GMT offset if NTPupdated, else RDS offset
 
     if (NTPupdated && autoDST) {
       struct tm tempTimeInfo;
       localtime_r(&currentEpoch, &tempTimeInfo);
       if (isDST(mktime(&tempTimeInfo))) currentEpoch += 3600;
     }
-  } else utcOffsetHours = (NTPupdated ? NTPoffset : radio.rds.offset / 3600);
+  } else utcOffsetHours = (NTPupdated ? Timezone : radio.rds.offset / 3600);
 
   localtime_r(&currentEpoch, &timeInfo);
 

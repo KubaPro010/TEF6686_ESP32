@@ -50,7 +50,7 @@ void NTPupdate() {
   time_t currentTime = getNtpTime();
 
   if (currentTime) {
-    set_time(currentTime);
+    set_time(currentTime, Timezone);
     rtcset = true;
     NTPupdated = true;
     radio.rds.ctupdate = false;

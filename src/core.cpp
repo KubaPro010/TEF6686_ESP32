@@ -846,7 +846,6 @@ void endMenu() {
   menuitem = 0;
   saveData();
   if (af == 2) radio.rds.afreg = true; else radio.rds.afreg = false;
-  Serial.end();
   if (wifi) remoteip = IPAddress(WiFi.localIP()[0], WiFi.localIP()[1], WiFi.localIP()[2], subnetclient);
 
   Serial.flush();

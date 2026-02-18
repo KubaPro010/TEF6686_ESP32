@@ -12,4 +12,4 @@ extern ESP32Time rtc;
 extern bool rx_rtc_avail;
 
 bool init_rtc();
-void set_time(time_t time);
+void set_time(time_t time, int8_t offset);

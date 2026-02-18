@@ -967,7 +967,7 @@ void total_pc_control() {
       if(len < 3 + datalen + 1) break; // Validate buffer size
       
       Wire.beginTransmission(addr);
-      Wire.write(data + 3, len - 3);
+      Wire.write(data + 3, datalen);
       auto out = Wire.endTransmission(false);
       
       uint8_t recvlen = Wire.requestFrom(addr, data[3+datalen]);
@@ -987,7 +987,7 @@ void total_pc_control() {
     case 4: { // Version
       Serial.write(2);
       Serial.write(4);
-      Serial.write(1);
+      Serial.write(2);
     } break;
     case 5: { // Reboot
       Serial.write(1);
@@ -1005,6 +1005,20 @@ void total_pc_control() {
       Serial.write(6);
       Serial.flush();
       Serial.updateBaudRate(clock);
+    } break;
+    case 7: { // Write to EEPROM
+      if(len < 4) break;
+      EEPROM.writeBytes((data[1] << 8) | data[2], data + 3, len - 3);
+      EEPROM.commit();
+      Serial.write(1);
+      Serial.write(7);
+    } break;
+    case 8: { // Read from EEPROM
+      if(len < 4) break;
+      auto address = (data[1] << 8) | data[2];
+      Serial.write(data[3] + 1);
+      Serial.write(8);
+      for(uint16_t i = 0; i < data[3]; i++) Serial.write(EEPROM.read(address + i));
     } break;
     case 0xff: { // Another wake command
       Serial.write(1);

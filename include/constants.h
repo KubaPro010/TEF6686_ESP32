@@ -265,17 +265,17 @@
 #define ITEM10          210
 
 // EEPROM index defines
-#define EE_PRESETS_CNT                99    // When set > 99 change the complete EEPROM adressing!
-#define EE_CHECKBYTE_VALUE            20     // 0 ~ 255,add new entry, change for new value
-#define EE_PRESETS_FREQUENCY          0     // Default value when memory channel should be skipped!
-#define EE_TOTAL_CNT                  2287  // Total occupied eeprom bytes
+#define EE_PRESETS_CNT 99    // When set > 99 change the complete EEPROM adressing!
+#define EE_CHECKBYTE_VALUE 20     // 0 ~ 255,add new entry, change for new value
+#define EE_PRESETS_FREQUENCY 0     // Default value when memory channel should be skipped!
+#define EE_TOTAL_CNT 2287  // Total occupied eeprom bytes
 
-#define EE_PRESETS_BAND_START         0     // 99 * 1 byte
-#define EE_PRESET_BW_START            99    // 99 * 1 byte
-#define EE_PRESET_MS_START            198   // 99 * 1 byte
-#define EE_PRESETS_FREQUENCY_START    297   // 99 * 4 bytes
-#define EE_PRESETS_RDSPI_START        693   // 99 * 5 bytes
-#define EE_PRESETS_RDSPS_START        1188  // 99 * 9 bytes
+#define EE_PRESETS_BAND_START 0     // 99 * 1 byte
+#define EE_PRESET_BW_START 99    // 99 * 1 byte
+#define EE_PRESET_MS_START 198   // 99 * 1 byte
+#define EE_PRESETS_FREQUENCY_START 297   // 99 * 4 bytes
+#define EE_PRESETS_RDSPI_START 693   // 99 * 5 bytes
+#define EE_PRESETS_RDSPS_START 1188  // 99 * 9 bytes
 
 #define EE_UINT16_FREQUENCY_FM        2079
 #define EE_BYTE_VOLSET                2083
@@ -356,40 +356,40 @@
 #define EE_BYTE_FMSCANSENS            2201
 #define EE_BYTE_FREQFONT              2202
 // Empty space, this was not used
-#define EE_BYTE_XDRGTKMUTE            2204
-#define EE_BYTE_FMAGC                 2205
-#define EE_BYTE_AMAGC                 2206
-#define EE_BYTE_FMSI                  2207
-#define EE_BYTE_SCANSTART             2208
-#define EE_BYTE_SCANSTOP              2209
-#define EE_BYTE_SCANHOLD              2210
-#define EE_BYTE_SCANMEM               2211
-#define EE_BYTE_SCANCANCEL            2212
-#define EE_BYTE_SCANMUTE              2213
-#define EE_BYTE_AUTOSQUELCH           2214
-#define EE_BYTE_LONGBANDPRESS         2215
-#define EE_BYTE_SHOWCLOCK             2216
-#define EE_BYTE_SHOWLONGPS            2217
-#define EE_UINT16_MEMSTARTFREQ        2218
-#define EE_UINT16_MEMSTOPFREQ         2222
-#define EE_BYTE_MEMSTARTPOS           2226
-#define EE_BYTE_MEMSTOPPOS            2227
-#define EE_BYTE_MEMPIONLY             2228
-#define EE_BYTE_MEMDOUBLEPI           2229
+#define EE_BYTE_XDRGTKMUTE 2204
+#define EE_BYTE_FMAGC 2205
+#define EE_BYTE_AMAGC 2206
+#define EE_BYTE_FMSI 2207
+#define EE_BYTE_SCANSTART 2208
+#define EE_BYTE_SCANSTOP 2209
+#define EE_BYTE_SCANHOLD 2210
+#define EE_BYTE_SCANMEM 2211
+#define EE_BYTE_SCANCANCEL 2212
+#define EE_BYTE_SCANMUTE 2213
+#define EE_BYTE_AUTOSQUELCH 2214
+#define EE_BYTE_LONGBANDPRESS 2215
+#define EE_BYTE_SHOWCLOCK 2216
+#define EE_BYTE_SHOWLONGPS 2217
+#define EE_UINT16_MEMSTARTFREQ 2218
+#define EE_UINT16_MEMSTOPFREQ 2222
+#define EE_BYTE_MEMSTARTPOS 2226
+#define EE_BYTE_MEMSTOPPOS 2227
+#define EE_BYTE_MEMPIONLY 2228
+#define EE_BYTE_MEMDOUBLEPI 2229
 // blank space
-#define EE_BYTE_WAITONLYONSIGNAL      2253
-#define EE_UINT16_CALTOUCH1           2254
-#define EE_UINT16_CALTOUCH2           2258
-#define EE_UINT16_CALTOUCH3           2262
-#define EE_UINT16_CALTOUCH4           2266
-#define EE_UINT16_CALTOUCH5           2270
-#define EE_BYTE_INVERTDISPLAY         2274
-#define EE_BYTE_NTPOFFSET             2275
-#define EE_BYTE_AUTOLOG               2276
-#define EE_BYTE_AUTODST               2277
-#define EE_BYTE_CLOCKAMPM             2278
-#define EE_UINT16_LOGCOUNTER          2279
-#define EE_UINT16_PICTLOCK            2283
+#define EE_BYTE_WAITONLYONSIGNAL 2253
+#define EE_UINT16_CALTOUCH1 2254
+#define EE_UINT16_CALTOUCH2 2258
+#define EE_UINT16_CALTOUCH3 2262
+#define EE_UINT16_CALTOUCH4 2266
+#define EE_UINT16_CALTOUCH5 2270
+#define EE_BYTE_INVERTDISPLAY 2274
+#define EE_BYTE_TIMEZONE 2275
+#define EE_BYTE_AUTOLOG 2276
+#define EE_BYTE_AUTODST 2277
+#define EE_BYTE_CLOCKAMPM 2278
+#define EE_UINT16_LOGCOUNTER 2279
+#define EE_UINT16_PICTLOCK 2283
 // End of EEPROM index defines
 
 // Memory channel database

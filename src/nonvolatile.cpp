@@ -118,7 +118,7 @@ void saveData() {
   EEPROM.writeByte(EE_BYTE_MEMPIONLY, mempionly);
   EEPROM.writeByte(EE_BYTE_MEMDOUBLEPI, memdoublepi);
   EEPROM.writeByte(EE_BYTE_WAITONLYONSIGNAL, scanholdonsignal);
-  EEPROM.writeByte(EE_BYTE_NTPOFFSET, NTPoffset);
+  EEPROM.writeByte(EE_BYTE_TIMEZONE, Timezone);
   EEPROM.writeByte(EE_BYTE_AUTOLOG, autolog);
   EEPROM.writeByte(EE_BYTE_AUTODST, autoDST);
   EEPROM.writeByte(EE_BYTE_CLOCKAMPM, clockampm);
@@ -231,7 +231,7 @@ void loadData() {
   TouchCalData[3] = EEPROM.readUInt(EE_UINT16_CALTOUCH4);
   TouchCalData[4] = EEPROM.readUInt(EE_UINT16_CALTOUCH5);
   invertdisplay = EEPROM.readByte(EE_BYTE_INVERTDISPLAY);
-  NTPoffset = EEPROM.readByte(EE_BYTE_NTPOFFSET);
+  Timezone = EEPROM.readByte(EE_BYTE_TIMEZONE);
   autolog = EEPROM.readByte(EE_BYTE_AUTOLOG);
   autoDST = EEPROM.readByte(EE_BYTE_AUTODST);
   clockampm = EEPROM.readByte(EE_BYTE_CLOCKAMPM);
@@ -338,7 +338,7 @@ void DefaultSettings() {
   EEPROM.writeUInt(EE_UINT16_CALTOUCH3, 300);
   EEPROM.writeUInt(EE_UINT16_CALTOUCH4, 3450);
   EEPROM.writeUInt(EE_UINT16_CALTOUCH5, 3);
-  EEPROM.writeByte(EE_BYTE_NTPOFFSET, 1);
+  EEPROM.writeByte(EE_BYTE_TIMEZONE, 0);
   EEPROM.writeByte(EE_BYTE_AUTOLOG, 1);
   EEPROM.writeByte(EE_BYTE_AUTODST, 1);
   EEPROM.writeByte(EE_BYTE_CLOCKAMPM, 0);

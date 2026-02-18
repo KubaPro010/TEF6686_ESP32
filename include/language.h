@@ -319,7 +319,7 @@ static const char* const Languages[22][297] PROGMEM = {
     "Can't add entry!\nLogbook is full!", // 291
     "Autologger", // 292
     "Auto DST on NTP time", // 293
-    "Set NTP time offset", // 294
+    "Set time zone", // 294
     "The logbook contains over 130 entries, which the viewer cannot process. Please download the CSV file to process it.", // 295
     "Canada" // 296
   },
@@ -618,7 +618,7 @@ static const char* const Languages[22][297] PROGMEM = {
     "Toevoegen mislukt!\nLogboek is vol!", // 291
     "Automatisch loggen", // 292
     "Auto zomertijd\nop NTP tijd", // 293
-    "NTP tijdverschil\ninstellen", // 294
+    "Tijdzone", // 294
     "Het logboek bevat meer dan 130 items, die de viewer niet kan verwerken. Download alstublieft het CSV-bestand om het te bekijken.", // 295
     "Canada" // 296
   },
@@ -917,7 +917,7 @@ static const char* const Languages[22][297] PROGMEM = {
     "Wykaz pełny!", // 291
     "Autologowanie stacji", // 292
     "Auto czas letni wg NTP", // 293
-    "Ustaw odchyl. czasu NTP", // 294
+    "Strefa czasowa", // 294
     "Wykaz zawiera ponad 130 wpisów, których przeglądarka nie może pokazać. Pobierz plik CSV, aby je przetworzyć.", // 295
     "Kanada" // 296
   },
@@ -1216,7 +1216,7 @@ static const char* const Languages[22][297] PROGMEM = {
     "Ne mogu dodati unos!\nDnevnik je pun!", // 291
     "Autologger", // 292
     "Auto DST na NTP vremenu", // 293
-    "Postavi NTP pomak vremena", // 294
+    "postaviti pomak vremenske zone", // 294
     "Dnevnik sadrži preko 130 unosa, koje preglednik ne može obraditi. Preuzmite CSV datoteku za obradu.", // 295
     "Canada" // 296
   },
@@ -1515,7 +1515,7 @@ static const char* const Languages[22][297] PROGMEM = {
     "Αδυναμία προσθήκης!\nΒιβλίο γεμάτο!", // 291
     "Αυτόματη καταγραφή", // 292
     "Αυτόματο DST\nσε ώρα NTP", // 293
-    "Ολίσθηση ώρας NTP", // 294
+    "Ορισμός ζώνης ώρας", // 294
     "Το βιβλίο περιέχει πάνω από 130 καταγραφές, και είναι αδύνατη η επεξεργασία τους από το χρήστη. Κάντε λήψη του αρχείου CSV για να το επεξεργαστείτε.", // 295
     "Καναδάς" // 296
   },
@@ -1814,7 +1814,7 @@ static const char* const Languages[22][297] PROGMEM = {
     "Nu se poate adăuga!\nJurnalul este plin!", // 291
     "Autologger", // 292
     "Auto DST pe ora NTP", // 293
-    "Setează offsetul pentru ora NTP", // 294
+    "Setați fusul orar", // 294
     "Jurnalul conține peste 130 de intrări, pe care vizualizatorul nu le poate procesa. Te rog descarcă fișierul CSV pentru a le procesa.", // 295
     "Canada" // 296
   },
@@ -2113,7 +2113,7 @@ static const char* const Languages[22][297] PROGMEM = {
     "Logbucheintrag nicht möglich\nLogbuch ist voll!", // 291
     "Automatisch loggen", // 292
     "Auto-Sommerzeit\nüber NTP", // 293
-    "NTP-Zeitversatz\neinstellen", // 294
+    "Zeitzone einstellen", // 294
     "Das Logbuch enthält mehr als 130 Einträge, was das Anzeigeprogramm nicht verarbeiten kann. Bitte lade die CSV-Datei zum Verarbeiten herunter.", // 295
     "Kanada" // 296
   },
@@ -2412,7 +2412,7 @@ static const char* const Languages[22][297] PROGMEM = {
     "Nelze přidat položku!\nLogbook je plný!", // 291
     "Automatický logger", // 292
     "Auto DST u NTP času", // 293
-    "Nastavte časový posun NTP", // 294
+    "Nastavit časové pásmo", // 294
     "Logbook obsahuje více než 130 položek, které prohlížeč nedokáže zpracovat. Pro zpracování všech položek si stáhněte CSV soubor.", // 295
     "Canada" // 296
   },
@@ -2711,7 +2711,7 @@ static const char* const Languages[22][297] PROGMEM = {
     "Nem adható hozzá!\nLogbook megtelt!", // 291
     "Auto logoló", // 292
     "Auto nyári idő(DST)\nNTP idő szerint", // 293
-    "NTP időeltolás beállítása", // 294
+    "Állítsa be az időzónát", // 294
     "A napló több mint 130 bejegyzést tartalmaz, amelyeket a megtekintő nem tud feldolgozni. Kérlek, töltsd le a CSV fájlt a megtekintéshez.", // 295
     "Kanada" // 296
   },
@@ -3010,7 +3010,7 @@ static const char* const Languages[22][297] PROGMEM = {
     "Impossible d'ajouter l'entrée!\nJournal de bord plein!", // 291
     "Log automatique", // 292
     "DST automatique\nsur l'heure NTP", // 293
-    "Décalage horaire NTP", // 294
+    "Définir le fuseau horaire", // 294
     "Le journal de bord contient plus de 130 entrées que la liste ne peut pas afficher. Veuillez télécharger le fichier CSV.", // 295
     "Canada" // 296
   },
@@ -3309,7 +3309,7 @@ static const char* const Languages[22][297] PROGMEM = {
     "Не може да се добави запис!\nДневникът е пълен!", // 291
     "Автоматичен дневник", // 292
     "Автоматично лятно\nвреме по NTP", // 293
-    "Отместване на NTP", // 294
+    "Задаване на часова зона", // 294
     "Дневникът съдържа над 130 записа, които не могат да бъдат обработени. Моля, изтеглете CSV файла за обработка.", // 295
     "Канада" // 296
   },
@@ -3608,7 +3608,7 @@ static const char* const Languages[22][297] PROGMEM = {
     "Смещение времени NTP", // 291
     "Автологгер", // 292
     "Автоматическое летнее время по NTP", // 293
-    "Смещение времени NTP", // 294
+    "Установить часовой пояс", // 294
     "В логе более 130 записей, которые программа просмотра не может обработать. Загрузите файл CSV для его обработки.", // 295
     "Канада" // 296
   },
@@ -3907,7 +3907,7 @@ static const char* const Languages[22][297] PROGMEM = {
     "Твій журнал повний!", // 291
     "Автореєстратор", // 292
     "Автоматичний літній\nчас за NTP", // 293
-    "Встановити зміщення\nчасу NTP", // 294
+    "Встановити часовий пояс", // 294
     "Журнал містить понад 130 записів, які оглядач не може обробити. Будь ласка, завантажте файл CSV, щоб обробити його.", // 295
     "Канада" // 296
   },
@@ -4206,7 +4206,7 @@ static const char* const Languages[22][297] PROGMEM = {
     "Impossibile aggiungere voce!\nRegistro dei log pieno!", // 291
     "Autologger", // 292
     "Auto DST su tempo NTP", // 293
-    "Imposta offset orario NTP", // 294
+    "Imposta il fuso orario", // 294
     "Registro dei log con + di 130 voci, il visualizzatore non può gestirle. Scarica il file CSV per gestirlo.", // 295
     "Canada" // 296
   },
@@ -4505,7 +4505,7 @@ static const char* const Languages[22][297] PROGMEM = {
     "log记录已满!", // 291
     "自动记录日志", // 292
     "联网自动同步本机时间", // 293
-    "设置NTP时区", // 294
+    "设置时区", // 294
     "该日志包含超过130个条目，观看者无法处理。请下载CSV文件进行处理。", // 295
     "加拿大" // 296
   },
@@ -4804,7 +4804,7 @@ static const char* const Languages[22][297] PROGMEM = {
     "Kan ikke lagre!\nLoggbok er full!", // 291
     "Autologger", // 292
     "Auto sommertid med NTP", // 293
-    "Angi NTP-tidsforskyvning", // 294
+    "Angi tidssone", // 294
     "Loggbok har over 130 oppføringer.\nLast ned CSV for behandling.", // 295
     "Canada" // 296
   },
@@ -5103,7 +5103,7 @@ static const char* const Languages[22][297] PROGMEM = {
     "¡Registro lleno!\nNo se puede añadir", // 291
     "Autoregistro", // 292
     "DST automático (NTP)", // 293
-    "Ajustar\ndesplazamiento NTP", // 294
+    "Establecer zona horaria", // 294
     "El registro tiene +130 entradas.\nDescargue el CSV.", // 295
     "Canadá" // 296
   },
@@ -5402,7 +5402,7 @@ static const char* const Languages[22][297] PROGMEM = {
     "Não é possível adicionar!\nO livro está cheio!", // 291
     "Registrador automático", // 292
     "DST automático\nno horário NTP", // 293
-    "Definir deslocamento\nde tempo NTP", // 294
+    "Definir fuso horário", // 294
     "O diário de bordo contém mais de 130 entradas que o espectador não consegue processar. Descarregue o ficheiro CSV para processá-lo.", // 295
     "Canadá" // 296
   },
@@ -5701,7 +5701,7 @@ static const char* const Languages[22][297] PROGMEM = {
     "Ne može se dodati!\nDnevnik je pun!", // 291
     "Automatski logger", // 292
     "Auto DST na\nNTP vremenu", // 293
-    "Postavite NTP\nvremenski offset", // 294
+    "Podesite vremensku zonu", // 294
     "Dnevnik sadrži više od 130 unosa, što viewer ne može obraditi. Preuzmite CSV fajl za obradu.", // 295
     "Canada" // 296
   },
@@ -6000,7 +6000,7 @@ static const char* const Languages[22][297] PROGMEM = {
     "Ei voida lisätä merkintää!\nLokikirja on täynnä!", // 291
     "Autolokikirja", // 292
     "Auto DST\nNTP-ajassa", // 293
-    "Aseta\nNTP-aikasiirto", // 294
+    "Aseta aikavyöhyke", // 294
     "Lokikirja sisältää yli 130 merkintää, joita katselija ei pysty käsittelemään. Lataa CSV-tiedosto sen käsittelemiseksi.", // 295
     "Kanada" // 296
   },
@@ -6299,7 +6299,7 @@ static const char* const Languages[22][297] PROGMEM = {
     "Kan ikke tilføje!\nLogbogen er fuld!", // 291
     "Autologger", // 292
     "Auto DST på\nNTP-tid", // 293
-    "Indstil NTP-tidsforskel", // 294
+    "Indstil tidszone", // 294
     "Logbogen indeholder over 130 poster, som fremviseren ikke kan behandle. Download CSV-filen for at behandle den.", // 295
     "Canada" // 296
   },
@@ -6598,7 +6598,7 @@ static const char* const Languages[22][297] PROGMEM = {
     "Kan inte spara!\nLoggboken är full!", // 291
     "Autologgning", // 292
     "Auto NTP sommartid", // 293
-    "Ange NTP tidszon", // 294
+    "Ställ in tidszon", // 294
     "Loggboken har mer än 130 poster, vilket visaren inte kan hantera. Ladda ner CSV för behandling.", // 295
     "Kanada" // 296
   }
