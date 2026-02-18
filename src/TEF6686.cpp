@@ -1270,7 +1270,7 @@ void TEF6686::readRDS(byte showrdserrors) {
               rds.offset = timeoffset;
               rtcset = true;
 
-              if (!NTPupdated) set_time(rdstime, timeoffset);
+              if (!NTPupdated) set_time(rdstime, timeoffset / 3600);
             } else rds.hasCT = false;
             lastrdstime = rdstime;
             lasttimeoffset = timeoffset;
