@@ -33,19 +33,24 @@ uint8_t devTEF_APPL_Get_Operation_Status() {
   return Convert8bto16b(buf);
 }
 
-void devTEF_Radio_Get_Quality_Status(uint16_t *status, int16_t *level, uint16_t *usn, uint16_t *wam, int16_t *offset, uint16_t *bandwidth, uint16_t *audiolevel, int8_t *snr) {
+void devTEF_Radio_Get_Quality_Data(uint16_t *status, int16_t *level, uint16_t *usn, uint16_t *wam, int16_t *offset, uint16_t *bandwidth, uint16_t *audiolevel, int8_t *snr) {
   uint8_t buf[14];
-  devTEF_Get_Cmd(TEF_FM, Cmd_Get_Quality_Status, buf, sizeof(buf));
+  devTEF_Get_Cmd(TEF_FM, Cmd_Get_Quality_Data, buf, sizeof(buf));
+
+  int16_t _level = Convert8bto16b(buf + 2);
+  if (_level < -200) _level = -200;
+  if (_level > 1200) _level = 1200;
+  uint16_t _usn = Convert8bto16b(buf + 4);
+  uint16_t _wam = Convert8bto16b(buf + 6);
+
   if(status != NULL) *status = Convert8bto16b(buf);
-  if(level != NULL) *level = Convert8bto16b(buf + 2);
-  if(usn != NULL) *usn = Convert8bto16b(buf + 4);
-  if(wam != NULL) *wam = Convert8bto16b(buf + 6);
+  if(level != NULL) *level = _level;
+  if(usn != NULL) *usn = _usn;
+  if(wam != NULL) *wam = _wam;
   if(offset != NULL) *offset = Convert8bto16b(buf + 8);
   if(bandwidth != NULL) *bandwidth = Convert8bto16b(buf + 10) / 10;
   if(audiolevel != NULL) *audiolevel = Convert8bto16b(buf + 12) / 10;
-  if (*level < -200) *level = -200;
-  if (*level > 1200) *level = 1200;
-  if(snr != NULL) *snr = int(0.46222375 * (float)(*level) / 10 - 0.082495118 * (float)(*usn) / 10) + 10;
+  if(snr != NULL) *snr = (int8_t)(_level * 0.075f - (_usn * 0.038f) - (_wam * 0.018f));
 }
 
 void devTEF_Radio_Get_RDS_Status(uint16_t *status, uint16_t *A_block, uint16_t *B_block, uint16_t *C_block, uint16_t *D_block, uint16_t *dec_error) {

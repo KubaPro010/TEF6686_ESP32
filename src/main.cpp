@@ -722,13 +722,13 @@ void ShowSignalLevel() {
       SNRupdatetimer = millis();
       if (!advancedRDS) {
         if (CN > (CNold + 1) || CN < (CNold - 1)) {
-          if (CNold == 0) tftPrint16(ARIGHT, "--", 234, 165, BackgroundColor, BackgroundColor); else tftPrint16(ARIGHT, String(CNold), 234, 165, BackgroundColor, BackgroundColor);
+          if (CNold == -126) tftPrint16(ARIGHT, "--", 234, 165, BackgroundColor, BackgroundColor); else tftPrint16(ARIGHT, String(CNold), 234, 165, BackgroundColor, BackgroundColor);
           if (tuned) {
-            if (CN == 0) tftPrint16(ARIGHT, "--", 234, 165, PrimaryColor, PrimaryColorSmooth); else tftPrint16(ARIGHT, String(CN), 234, 165, PrimaryColor, PrimaryColorSmooth);
+            tftPrint16(ARIGHT, String(CN), 234, 165, PrimaryColor, PrimaryColorSmooth);
             CNold = CN;
           } else {
             tftPrint16(ARIGHT, "--", 234, 165, PrimaryColor, PrimaryColorSmooth);
-            CNold = 0;
+            CNold = -126;
           }
         }
 

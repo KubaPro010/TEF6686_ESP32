@@ -26,7 +26,7 @@ void TEF6686::TestAFEON() {
       timing = 0;
       devTEF_Set_Cmd(TEF_FM, Cmd_Tune_To, 2, 3, af[x].frequency);
       while (timing == 0 && !bitRead(timing, 15)) {
-        devTEF_Radio_Get_Quality_Status(&status, &aflevel, &afusn, &afwam, &afoffset, NULL, NULL, NULL);
+        devTEF_Radio_Get_Quality_Data(&status, &aflevel, &afusn, &afwam, &afoffset, NULL, NULL, NULL);
         timing = lowByte(status);
       }
       if (afoffset > -125 || afoffset < 125) {
@@ -56,14 +56,14 @@ uint16_t TEF6686::TestAF() {
     int16_t aflevel, afoffset, currentoffset, currentlevel;
     byte timing;
 
-    devTEF_Radio_Get_Quality_Status(&status, &currentlevel, &currentusn, &currentwam, &currentoffset, NULL, NULL, NULL);
+    devTEF_Radio_Get_Quality_Data(&status, &currentlevel, &currentusn, &currentwam, &currentoffset, NULL, NULL, NULL);
     devTEF_Radio_Get_RDS_Status(&rds.rdsStat, &rds.rdsA, &rds.rdsB, &rds.rdsC, &rds.rdsD, &rds.rdsErr);
 
     for (int x = 0; x < af_counter; x++) {
       timing = 0;
       devTEF_Set_Cmd(TEF_FM, Cmd_Tune_To, 2, 3, af[x].frequency);
       while (timing == 0 && !bitRead(timing, 15)) {
-        devTEF_Radio_Get_Quality_Status(&status, &aflevel, &afusn, &afwam, &afoffset, NULL, NULL, NULL);
+        devTEF_Radio_Get_Quality_Data(&status, &aflevel, &afusn, &afwam, &afoffset, NULL, NULL, NULL);
         timing = lowByte(status);
       }
       af[x].score = aflevel - afusn - afwam;
@@ -351,7 +351,7 @@ void TEF6686::setStHiBlendOffset(uint8_t start) {
 }
 
 void TEF6686::getStatus(int16_t *level, uint16_t *USN, uint16_t *WAM, int16_t *offset, uint16_t *bandwidth, uint16_t *audiolevel, int8_t *snr) {
-  devTEF_Radio_Get_Quality_Status(NULL, level, USN, WAM, offset, bandwidth, audiolevel, snr);
+  devTEF_Radio_Get_Quality_Data(NULL, level, USN, WAM, offset, bandwidth, audiolevel, snr);
 }
 
 void TEF6686::getStatusAM(int16_t *level, uint16_t *noise, uint16_t *cochannel, int16_t *offset, uint16_t *bandwidth, uint16_t *audiolevel, int8_t *snr) {
