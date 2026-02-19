@@ -16,6 +16,7 @@ using fs::FS;
 #include "core.h"
 #include "main.h"
 #include "logbook.h"
+#include "graphics.h"
 
 Console console(&tft);
 RTC_DATA_ATTR bool gpio_chip = false;

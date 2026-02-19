@@ -1,4 +1,5 @@
 #include "gui.h"
+#include "graphics.h"
 #include <Wire.h>
 #include <EEPROM.h>
 #include <cstring>
@@ -5210,7 +5211,7 @@ void DoMenu() {
 
           case ITEM3: {
               tftPrint(ACENTER, textUI(50), 155, 58, ActiveColor, ActiveColorSmooth, 28);
-              tftPrint(ACENTER, "ESP_" + String(ESP_getChipId()), 155, 98, PrimaryColor, PrimaryColorSmooth, 28);
+              tftPrint(ACENTER, "TEF_" + String((uint32_t)ESP.getEfuseMac()), 155, 98, PrimaryColor, PrimaryColorSmooth, 28);
               tftPrint(ACENTER, textUI(51), 155, 138, ActiveColor, ActiveColorSmooth, 28);
               tftPrint(ACENTER, "http://192.168.4.1", 155, 174, PrimaryColor, PrimaryColorSmooth, 16);
               char key[9];

@@ -1,6 +1,7 @@
 #include "rds.h"
 #include "constants.h"
 #include "utils.h"
+#include "graphics.h"
 
 String HexStringold;
 float smoothBER = 0;

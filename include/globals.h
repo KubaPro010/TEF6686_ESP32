@@ -11,10 +11,9 @@
 #include <WiFiUdp.h>
 #include <WiFiClient.h>
 #include <WebServer.h>
-#include <WiFiConnect.h>
-#include <WiFiConnectParam.h>
 #include "scrolling_text.h"
 #include "rtc.hpp"
+#include "WiFiConnect.h"
 
 extern bool RDSstatus;
 extern bool RDSstatusold;

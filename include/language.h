@@ -24,7 +24,7 @@ Process:
 }
 */
 
-static const char* const Languages[22][297] PROGMEM = {
+static const char* const Languages[22][317] PROGMEM = {
   { "English", // English
     "Rotary direction changed", // 1
     "Please release button", // 2
@@ -321,7 +321,27 @@ static const char* const Languages[22][297] PROGMEM = {
     "Auto DST on NTP time", // 293
     "Set time zone", // 294
     "The logbook contains over 130 entries, which the viewer cannot process. Please download the CSV file to process it.", // 295
-    "Canada" // 296
+    "Canada", // 296
+    "Connect this device to a WiFi network to enable remote features.", // 297
+    "Configure WiFi", //  298
+    "Hidden network", // 299
+    "WiFi Network Name", // 300
+    "Enter SSID or tap a network above", // 301
+    "Password", // 302
+    "Enter password", // 303
+    "Save and Connect", // 304
+    "Scan again", // 305
+    "Connecting to", // 306
+    "Connected to", // 307
+    "You may now close this page.", // 308
+    "Could not connect to", // 309
+    "Click here to try again", // 310
+    "Options", // 311
+    "Select WiFi", // 312
+    "No networks found. Refresh to scan again.", // 313
+    "Credentials Saved", // 314
+    "Set XDRGTK password (max 8 characters)", // 315
+    "ID" // 316
   },
 
   { "Nederlands", // Dutch
@@ -620,7 +640,27 @@ static const char* const Languages[22][297] PROGMEM = {
     "Auto zomertijd\nop NTP tijd", // 293
     "Tijdzone", // 294
     "Het logboek bevat meer dan 130 items, die de viewer niet kan verwerken. Download alstublieft het CSV-bestand om het te bekijken.", // 295
-    "Canada" // 296
+    "Canada", // 296
+    "Configureer de verbinding met een WiFi netwerk.<br>Hierna zal de radio automatisch proberen verbinding te maken.", // 297
+    "WiFi configureren", // 298
+    "Verborgen netwerk", // 299
+    "WiFi netwerknaam", // 300
+    "Voer SSID in of klik op een netwerk", // 301
+    "Wachtwoord", // 302
+    "Voer wachtwoord in", // 303
+    "Opslaan en verbinden", // 304
+    "Opnieuw zoeken", // 305
+    "Verbinden met", // 306
+    "Verbonden met", // 307
+    "Je kunt deze pagina sluiten.", // 308
+    "Kan niet verbinden met", // 309
+    "Klik hier om opnieuw te proberen", // 310
+    "Opties", // 311
+    "Selecteer WiFi", // 312
+    "Geen netwerken gevonden. Ververs om opnieuw te zoeken.", // 313
+    "Gegevens opgeslagen", // 314
+    "Voer XDRGTK wachtwoord (max 8 karakters) in", // 315
+    "ID" // 316
   },
 
   { "Polski", // Polish
@@ -919,7 +959,27 @@ static const char* const Languages[22][297] PROGMEM = {
     "Auto czas letni wg NTP", // 293
     "Strefa czasowa", // 294
     "Wykaz zawiera ponad 130 wpisów, których przeglądarka nie może pokazać. Pobierz plik CSV, aby je przetworzyć.", // 295
-    "Kanada" // 296
+    "Kanada", // 296
+    "Połącz to urządzenie z siecią WiFi, aby włączyć funkcje zdalne.", // 297
+    "Konfiguruj WiFi", // 298
+    "Ukryta sieć", // 299
+    "Nazwa sieci WiFi", // 300
+    "Wpisz SSID lub wybierz sieć powyżej", // 301
+    "Hasło", // 302
+    "Wpisz hasło", // 303
+    "Zapisz i połącz", // 304
+    "Skanuj ponownie", // 305
+    "Łączenie z", // 306
+    "Połączono z", // 307
+    "Możesz teraz zamknąć tę stronę.", // 308
+    "Nie można połączyć z", // 309
+    "Kliknij tutaj, aby spróbować ponownie", // 310
+    "Opcje", // 311
+    "Wybierz WiFi", // 312
+    "Nie znaleziono sieci. Odśwież, aby skanować ponownie.", // 313
+    "Dane zapisane", // 314
+    "Ustaw hasło XDRGTK (maks. 8 znaków)", // 315
+    "ID" // 316
   },
 
   { "Hrvatski", // Croatian
@@ -1218,7 +1278,27 @@ static const char* const Languages[22][297] PROGMEM = {
     "Auto DST na NTP vremenu", // 293
     "postaviti pomak vremenske zone", // 294
     "Dnevnik sadrži preko 130 unosa, koje preglednik ne može obraditi. Preuzmite CSV datoteku za obradu.", // 295
-    "Canada" // 296
+    "Canada", // 296
+    "Povežite ovaj uređaj na WiFi mrežu za omogućavanje daljinskih funkcija.", // 297
+    "Konfiguriraj WiFi", // 298
+    "Skrivena mreža", // 299
+    "Naziv WiFi mreže", // 300
+    "Unesite SSID ili odaberite mrežu iznad", // 301
+    "Lozinka", // 302
+    "Unesite lozinku", // 303
+    "Spremi i poveži", // 304
+    "Skeniraj ponovo", // 305
+    "Povezivanje na", // 306
+    "Povezano na", // 307
+    "Sada možete zatvoriti ovu stranicu.", // 308
+    "Nije moguće povezati se na", // 309
+    "Kliknite ovdje za ponovni pokušaj", // 310
+    "Opcije", // 311
+    "Odaberi WiFi", // 312
+    "Mreže nisu pronađene. Osvježite za ponovno skeniranje.", // 313
+    "Podaci spremljeni", // 314
+    "Postavi XDRGTK lozinku (maks. 8 znakova)", // 315
+    "ID" // 316
   },
 
   { "Ελληνικά", // Greek
@@ -1517,7 +1597,27 @@ static const char* const Languages[22][297] PROGMEM = {
     "Αυτόματο DST\nσε ώρα NTP", // 293
     "Ορισμός ζώνης ώρας", // 294
     "Το βιβλίο περιέχει πάνω από 130 καταγραφές, και είναι αδύνατη η επεξεργασία τους από το χρήστη. Κάντε λήψη του αρχείου CSV για να το επεξεργαστείτε.", // 295
-    "Καναδάς" // 296
+    "Καναδάς", // 296
+    "Συνδέστε αυτή τη συσκευή σε δίκτυο WiFi για ενεργοποίηση λειτουργιών.", // 297
+    "Ρύθμιση WiFi", // 298
+    "Κρυφό δίκτυο", // 299
+    "Όνομα δικτύου WiFi", // 300
+    "Εισάγετε SSID ή επιλέξτε δίκτυο", // 301
+    "Κωδικός πρόσβασης", // 302
+    "Εισάγετε κωδικό", // 303
+    "Αποθήκευση και σύνδεση", // 304
+    "Σάρωση ξανά", // 305
+    "Σύνδεση με", // 306
+    "Συνδεδεμένο με", // 307
+    "Μπορείτε να κλείσετε αυτή τη σελίδα.", // 308
+    "Αδύνατη η σύνδεση με", // 309
+    "Κάντε κλικ εδώ για να ξαναδοκιμάσετε", // 310
+    "Επιλογές", // 311
+    "Επιλογή WiFi", // 312
+    "Δεν βρέθηκαν δίκτυα. Ανανεώστε για σάρωση.", // 313
+    "Στοιχεία αποθηκεύτηκαν", // 314
+    "Ορισμός κωδικού XDRGTK (μέγ. 8 χαρακτήρες)", // 315
+    "ID" // 316
   },
 
   { "Română", // Romanian
@@ -1816,7 +1916,27 @@ static const char* const Languages[22][297] PROGMEM = {
     "Auto DST pe ora NTP", // 293
     "Setați fusul orar", // 294
     "Jurnalul conține peste 130 de intrări, pe care vizualizatorul nu le poate procesa. Te rog descarcă fișierul CSV pentru a le procesa.", // 295
-    "Canada" // 296
+    "Canada", // 296
+    "Conectați acest dispozitiv la o rețea WiFi pentru a activa funcțiile la distanță.", // 297
+    "Configurare WiFi", // 298
+    "Rețea ascunsă", // 299
+    "Numele rețelei WiFi", // 300
+    "Introduceți SSID sau selectați o rețea", // 301
+    "Parolă", // 302
+    "Introduceți parola", // 303
+    "Salvează și conectează", // 304
+    "Scanează din nou", // 305
+    "Conectare la", // 306
+    "Conectat la", // 307
+    "Puteți închide această pagină.", // 308
+    "Nu s-a putut conecta la", // 309
+    "Apăsați aici pentru a încerca din nou", // 310
+    "Opțiuni", // 311
+    "Selectați WiFi", // 312
+    "Nu s-au găsit rețele. Reîmprospătați pentru a scana din nou.", // 313
+    "Date salvate", // 314
+    "Setați parola XDRGTK (max. 8 caractere)", // 315
+    "ID" // 316
   },
 
   { "Deutsch", // German
@@ -2115,7 +2235,27 @@ static const char* const Languages[22][297] PROGMEM = {
     "Auto-Sommerzeit\nüber NTP", // 293
     "Zeitzone einstellen", // 294
     "Das Logbuch enthält mehr als 130 Einträge, was das Anzeigeprogramm nicht verarbeiten kann. Bitte lade die CSV-Datei zum Verarbeiten herunter.", // 295
-    "Kanada" // 296
+    "Kanada", // 296
+    "Verbinden Sie dieses Gerät mit einem WiFi-Netzwerk, um Fernfunktionen zu aktivieren.", // 297
+    "WiFi konfigurieren", // 298
+    "Verstecktes Netzwerk", // 299
+    "WiFi-Netzwerkname", // 300
+    "SSID eingeben oder Netzwerk oben wählen", // 301
+    "Passwort", // 302
+    "Passwort eingeben", // 303
+    "Speichern und verbinden", // 304
+    "Erneut scannen", // 305
+    "Verbinde mit", // 306
+    "Verbunden mit", // 307
+    "Sie können diese Seite jetzt schließen.", // 308
+    "Verbindung fehlgeschlagen mit", // 309
+    "Hier klicken, um es erneut zu versuchen", // 310
+    "Optionen", // 311
+    "WiFi auswählen", // 312
+    "Keine Netzwerke gefunden. Aktualisieren zum erneuten Scannen.", // 313
+    "Zugangsdaten gespeichert", // 314
+    "XDRGTK-Passwort festlegen (max. 8 Zeichen)", // 315
+    "ID" // 316
   },
 
   { "Čeština", // Czech
@@ -2414,7 +2554,27 @@ static const char* const Languages[22][297] PROGMEM = {
     "Auto DST u NTP času", // 293
     "Nastavit časové pásmo", // 294
     "Logbook obsahuje více než 130 položek, které prohlížeč nedokáže zpracovat. Pro zpracování všech položek si stáhněte CSV soubor.", // 295
-    "Canada" // 296
+    "Canada", // 296
+    "Připojte toto zařízení k WiFi síti pro povolení vzdálených funkcí.", // 297
+    "Konfigurace WiFi", // 298
+    "Skrytá síť", // 299
+    "Název WiFi sítě", // 300
+    "Zadejte SSID nebo vyberte síť výše", // 301
+    "Heslo", // 302
+    "Zadejte heslo", // 303
+    "Uložit a připojit", // 304
+    "Znovu skenovat", // 305
+    "Připojování k", // 306
+    "Připojeno k", // 307
+    "Nyní můžete tuto stránku zavřít.", // 308
+    "Nelze se připojit k", // 309
+    "Klikněte zde pro opakování pokusu", // 310
+    "Možnosti", // 311
+    "Vyberte WiFi", // 312
+    "Žádné sítě nenalezeny. Obnovte pro opakované skenování.", // 313
+    "Údaje uloženy", // 314
+    "Nastavte heslo XDRGTK (max. 8 znaků)", // 315
+    "ID" // 316
   },
 
   { "Magyar", // Hungarian
@@ -2713,7 +2873,27 @@ static const char* const Languages[22][297] PROGMEM = {
     "Auto nyári idő(DST)\nNTP idő szerint", // 293
     "Állítsa be az időzónát", // 294
     "A napló több mint 130 bejegyzést tartalmaz, amelyeket a megtekintő nem tud feldolgozni. Kérlek, töltsd le a CSV fájlt a megtekintéshez.", // 295
-    "Kanada" // 296
+    "Kanada", // 296
+    "Csatlakoztassa ezt az eszközt egy WiFi hálózathoz a távoli funkciók engedélyezéséhez.", // 297
+    "WiFi beállítása", // 298
+    "Rejtett hálózat", // 299
+    "WiFi hálózat neve", // 300
+    "Írja be az SSID-t vagy válasszon hálózatot fent", // 301
+    "Jelszó", // 302
+    "Írja be a jelszót", // 303
+    "Mentés és csatlakozás", // 304
+    "Újraszkennelés", // 305
+    "Csatlakozás a következőhöz", // 306
+    "Csatlakoztatva a következőhöz", // 307
+    "Most már bezárhatja ezt az oldalt.", // 308
+    "Nem sikerült csatlakozni a következőhöz", // 309
+    "Kattintson ide az újrapróbálkozáshoz", // 310
+    "Beállítások", // 311
+    "WiFi kiválasztása", // 312
+    "Nem található hálózat. Frissítse az újraszkenneléshez.", // 313
+    "Adatok mentve", // 314
+    "Állítsa be az XDRGTK jelszót (max. 8 karakter)", // 315
+    "ID" // 316
   },
 
   { "Français", // French
@@ -3012,7 +3192,27 @@ static const char* const Languages[22][297] PROGMEM = {
     "DST automatique\nsur l'heure NTP", // 293
     "Définir le fuseau horaire", // 294
     "Le journal de bord contient plus de 130 entrées que la liste ne peut pas afficher. Veuillez télécharger le fichier CSV.", // 295
-    "Canada" // 296
+    "Canada", // 296
+    "Connectez cet appareil à un réseau WiFi pour activer les fonctions à distance.", // 297
+    "Configurer le WiFi", // 298
+    "Réseau caché", // 299
+    "Nom du réseau WiFi", // 300
+    "Entrez le SSID ou sélectionnez un réseau", // 301
+    "Mot de passe", // 302
+    "Entrez le mot de passe", // 303
+    "Enregistrer et connecter", // 304
+    "Scanner à nouveau", // 305
+    "Connexion à", // 306
+    "Connecté à", // 307
+    "Vous pouvez maintenant fermer cette page.", // 308
+    "Impossible de se connecter à", // 309
+    "Cliquez ici pour réessayer", // 310
+    "Options", // 311
+    "Sélectionner le WiFi", // 312
+    "Aucun réseau trouvé. Actualisez pour scanner à nouveau.", // 313
+    "Identifiants enregistrés", // 314
+    "Définir le mot de passe XDRGTK (max. 8 caractères)", // 315
+    "ID" // 316
   },
 
   { "Български", // Bulgarian
@@ -3311,7 +3511,27 @@ static const char* const Languages[22][297] PROGMEM = {
     "Автоматично лятно\nвреме по NTP", // 293
     "Задаване на часова зона", // 294
     "Дневникът съдържа над 130 записа, които не могат да бъдат обработени. Моля, изтеглете CSV файла за обработка.", // 295
-    "Канада" // 296
+    "Канада", // 296
+    "Свържете това устройство към WiFi мрежа за отдалечени функции.", // 297
+    "Настройка на WiFi", // 298
+    "Скрита мрежа", // 299
+    "Име на WiFi мрежа", // 300
+    "Въведете SSID или изберете мрежа", // 301
+    "Парола", // 302
+    "Въведете парола", // 303
+    "Запази и свържи", // 304
+    "Сканиране отново", // 305
+    "Свързване към", // 306
+    "Свързан към", // 307
+    "Можете да затворите тази страница.", // 308
+    "Не може да се свърже към", // 309
+    "Натиснете тук за нов опит", // 310
+    "Опции", // 311
+    "Изберете WiFi", // 312
+    "Не са намерени мрежи. Опреснете за сканиране.", // 313
+    "Данните са запазени", // 314
+    "Задайте парола за XDRGTK (макс. 8 знака)", // 315
+    "ID" // 316
   },
 
   { "Русский", // Russian
@@ -3610,7 +3830,27 @@ static const char* const Languages[22][297] PROGMEM = {
     "Автоматическое летнее время по NTP", // 293
     "Установить часовой пояс", // 294
     "В логе более 130 записей, которые программа просмотра не может обработать. Загрузите файл CSV для его обработки.", // 295
-    "Канада" // 296
+    "Канада", // 296
+    "Подключите это устройство к сети WiFi для включения удалённых функций.", // 297
+    "Настройка WiFi", // 298
+    "Скрытая сеть", // 299
+    "Имя сети WiFi", // 300
+    "Введите SSID или выберите сеть выше", // 301
+    "Пароль", // 302
+    "Введите пароль", // 303
+    "Сохранить и подключить", // 304
+    "Сканировать снова", // 305
+    "Подключение к", // 306
+    "Подключено к", // 307
+    "Теперь вы можете закрыть эту страницу.", // 308
+    "Не удалось подключиться к", // 309
+    "Нажмите здесь, чтобы попробовать снова", // 310
+    "Настройки", // 311
+    "Выбор WiFi", // 312
+    "Сети не найдены. Обновите для повторного сканирования.", // 313
+    "Данные сохранены", // 314
+    "Установите пароль XDRGTK (макс. 8 символов)", // 315
+    "ID" // 316
   },
 
   { "Українська", // Ukranian
@@ -3909,7 +4149,27 @@ static const char* const Languages[22][297] PROGMEM = {
     "Автоматичний літній\nчас за NTP", // 293
     "Встановити часовий пояс", // 294
     "Журнал містить понад 130 записів, які оглядач не може обробити. Будь ласка, завантажте файл CSV, щоб обробити його.", // 295
-    "Канада" // 296
+    "Канада", // 296
+    "Підключіть цей пристрій до мережі WiFi для увімкнення віддалених функцій.", // 297
+    "Налаштування WiFi", // 298
+    "Прихована мережа", // 299
+    "Назва мережі WiFi", // 300
+    "Введіть SSID або оберіть мережу вище", // 301
+    "Пароль", // 302
+    "Введіть пароль", // 303
+    "Зберегти і підключити", // 304
+    "Сканувати знову", // 305
+    "Підключення до", // 306
+    "Підключено до", // 307
+    "Тепер ви можете закрити цю сторінку.", // 308
+    "Не вдалося підключитися до", // 309
+    "Натисніть тут, щоб спробувати знову", // 310
+    "Налаштування", // 311
+    "Вибір WiFi", // 312
+    "Мережі не знайдено. Оновіть для повторного сканування.", // 313
+    "Дані збережено", // 314
+    "Встановіть пароль XDRGTK (макс. 8 символів)", // 315
+    "ID" // 316
   },
 
   { "Italiano", // Italian
@@ -4208,7 +4468,27 @@ static const char* const Languages[22][297] PROGMEM = {
     "Auto DST su tempo NTP", // 293
     "Imposta il fuso orario", // 294
     "Registro dei log con + di 130 voci, il visualizzatore non può gestirle. Scarica il file CSV per gestirlo.", // 295
-    "Canada" // 296
+    "Canada", // 296
+    "Collega questo dispositivo a una rete WiFi per abilitare le funzioni remote.", // 297
+    "Configura WiFi", // 298
+    "Rete nascosta", // 299
+    "Nome rete WiFi", // 300
+    "Inserisci SSID o seleziona una rete sopra", // 301
+    "Password", // 302
+    "Inserisci password", // 303
+    "Salva e connetti", // 304
+    "Scansiona di nuovo", // 305
+    "Connessione a", // 306
+    "Connesso a", // 307
+    "Ora puoi chiudere questa pagina.", // 308
+    "Impossibile connettersi a", // 309
+    "Clicca qui per riprovare", // 310
+    "Opzioni", // 311
+    "Seleziona WiFi", // 312
+    "Nessuna rete trovata. Aggiorna per scansionare di nuovo.", // 313
+    "Credenziali salvate", // 314
+    "Imposta password XDRGTK (max. 8 caratteri)", // 315
+    "ID" // 316
   },
 
   { "Simplified Chinese", // Simplified Chinese
@@ -4507,7 +4787,27 @@ static const char* const Languages[22][297] PROGMEM = {
     "联网自动同步本机时间", // 293
     "设置时区", // 294
     "该日志包含超过130个条目，观看者无法处理。请下载CSV文件进行处理。", // 295
-    "加拿大" // 296
+    "加拿大", // 296
+    "将此设备连接到WiFi网络以启用远程功能。", // 297
+    "配置WiFi", // 298
+    "隐藏网络", // 299
+    "WiFi网络名称", // 300
+    "输入SSID或选择上方网络", // 301
+    "密码", // 302
+    "输入密码", // 303
+    "保存并连接", // 304
+    "重新扫描", // 305
+    "正在连接", // 306
+    "已连接到", // 307
+    "您现在可以关闭此页面。", // 308
+    "无法连接到", // 309
+    "点击此处重试", // 310
+    "选项", // 311
+    "选择WiFi", // 312
+    "未找到网络。刷新以重新扫描。", // 313
+    "凭据已保存", // 314
+    "设置XDRGTK密码（最多8个字符）", // 315
+    "ID" // 316
   },
 
   { "Norsk", // Norwegian
@@ -4806,7 +5106,27 @@ static const char* const Languages[22][297] PROGMEM = {
     "Auto sommertid med NTP", // 293
     "Angi tidssone", // 294
     "Loggbok har over 130 oppføringer.\nLast ned CSV for behandling.", // 295
-    "Canada" // 296
+    "Canada", // 296
+    "Koble denne enheten til et WiFi-nettverk for å aktivere fjernfunksjoner.", // 297
+    "Konfigurer WiFi", // 298
+    "Skjult nettverk", // 299
+    "WiFi-nettverksnavn", // 300
+    "Skriv inn SSID eller velg et nettverk ovenfor", // 301
+    "Passord", // 302
+    "Skriv inn passord", // 303
+    "Lagre og koble til", // 304
+    "Skann på nytt", // 305
+    "Kobler til", // 306
+    "Koblet til", // 307
+    "Du kan nå lukke denne siden.", // 308
+    "Kunne ikke koble til", // 309
+    "Klikk her for å prøve igjen", // 310
+    "Alternativer", // 311
+    "Velg WiFi", // 312
+    "Ingen nettverk funnet. Oppdater for å skanne på nytt.", // 313
+    "Legitimasjon lagret", // 314
+    "Sett XDRGTK-passord (maks. 8 tegn)", // 315
+    "ID" // 316
   },
 
   { "Español", // Spanish
@@ -5105,7 +5425,27 @@ static const char* const Languages[22][297] PROGMEM = {
     "DST automático (NTP)", // 293
     "Establecer zona horaria", // 294
     "El registro tiene +130 entradas.\nDescargue el CSV.", // 295
-    "Canadá" // 296
+    "Canadá", // 296
+    "Conecte este dispositivo a una red WiFi para habilitar las funciones remotas.", // 297
+    "Configurar WiFi", // 298
+    "Red oculta", // 299
+    "Nombre de red WiFi", // 300
+    "Ingrese SSID o seleccione una red arriba", // 301
+    "Contraseña", // 302
+    "Ingrese contraseña", // 303
+    "Guardar y conectar", // 304
+    "Escanear de nuevo", // 305
+    "Conectando a", // 306
+    "Conectado a", // 307
+    "Ahora puede cerrar esta página.", // 308
+    "No se pudo conectar a", // 309
+    "Haga clic aquí para intentar de nuevo", // 310
+    "Opciones", // 311
+    "Seleccionar WiFi", // 312
+    "No se encontraron redes. Actualice para escanear de nuevo.", // 313
+    "Credenciales guardadas", // 314
+    "Establecer contraseña XDRGTK (máx. 8 caracteres)", // 315
+    "ID" // 316
   },
 
   { "Português", // Portuguese
@@ -5404,7 +5744,27 @@ static const char* const Languages[22][297] PROGMEM = {
     "DST automático\nno horário NTP", // 293
     "Definir fuso horário", // 294
     "O diário de bordo contém mais de 130 entradas que o espectador não consegue processar. Descarregue o ficheiro CSV para processá-lo.", // 295
-    "Canadá" // 296
+    "Canadá", // 296
+    "Conecte este dispositivo a uma rede WiFi para ativar recursos remotos.", // 297
+    "Configurar WiFi", // 298
+    "Rede oculta", // 299
+    "Nome da rede WiFi", // 300
+    "Digite o SSID ou selecione uma rede acima", // 301
+    "Senha", // 302
+    "Digite a senha", // 303
+    "Salvar e conectar", // 304
+    "Escanear novamente", // 305
+    "Conectando a", // 306
+    "Conectado a", // 307
+    "Agora você pode fechar esta página.", // 308
+    "Não foi possível conectar a", // 309
+    "Clique aqui para tentar novamente", // 310
+    "Opções", // 311
+    "Selecionar WiFi", // 312
+    "Nenhuma rede encontrada. Atualize para escanear novamente.", // 313
+    "Credenciais salvas", // 314
+    "Definir senha XDRGTK (máx. 8 caracteres)", // 315
+    "ID" // 316
   },
 
   { "Srpski", // Serbian
@@ -5703,7 +6063,27 @@ static const char* const Languages[22][297] PROGMEM = {
     "Auto DST na\nNTP vremenu", // 293
     "Podesite vremensku zonu", // 294
     "Dnevnik sadrži više od 130 unosa, što viewer ne može obraditi. Preuzmite CSV fajl za obradu.", // 295
-    "Canada" // 296
+    "Canada", // 296
+    "Повежите овај уређај на WiFi мрежу за омогућавање даљинских функција.", // 297
+    "Конфигурација WiFi", // 298
+    "Скривена мрежа", // 299
+    "Назив WiFi мреже", // 300
+    "Унесите SSID или изаберите мрежу изнад", // 301
+    "Лозинка", // 302
+    "Унесите лозинку", // 303
+    "Сачувај и повежи", // 304
+    "Скенирај поново", // 305
+    "Повезивање са", // 306
+    "Повезано са", // 307
+    "Сада можете затворити ову страницу.", // 308
+    "Није могуће повезати се са", // 309
+    "Кликните овде да покушате поново", // 310
+    "Опције", // 311
+    "Изаберите WiFi", // 312
+    "Мреже нису пронађене. Освежите за поновно скенирање.", // 313
+    "Подаци сачувани", // 314
+    "Поставите XDRGTK лозинку (макс. 8 знакова)", // 315
+    "ID" // 316
   },
 
   { "Suomi", // Finnish
@@ -6002,7 +6382,27 @@ static const char* const Languages[22][297] PROGMEM = {
     "Auto DST\nNTP-ajassa", // 293
     "Aseta aikavyöhyke", // 294
     "Lokikirja sisältää yli 130 merkintää, joita katselija ei pysty käsittelemään. Lataa CSV-tiedosto sen käsittelemiseksi.", // 295
-    "Kanada" // 296
+    "Kanada", // 296
+    "Yhdistä tämä laite WiFi-verkkoon etäominaisuuksien käyttöön ottamiseksi.", // 297
+    "Määritä WiFi", // 298
+    "Piilotettu verkko", // 299
+    "WiFi-verkon nimi", // 300
+    "Syötä SSID tai valitse verkko ylhäältä", // 301
+    "Salasana", // 302
+    "Syötä salasana", // 303
+    "Tallenna ja yhdistä", // 304
+    "Skannaa uudelleen", // 305
+    "Yhdistetään kohteeseen", // 306
+    "Yhdistetty kohteeseen", // 307
+    "Voit nyt sulkea tämän sivun.", // 308
+    "Ei voitu yhdistää kohteeseen", // 309
+    "Napsauta tästä yrittääksesi uudelleen", // 310
+    "Asetukset", // 311
+    "Valitse WiFi", // 312
+    "Verkkoja ei löydetty. Päivitä skannataksesi uudelleen.", // 313
+    "Tunnukset tallennettu", // 314
+    "Aseta XDRGTK-salasana (enint. 8 merkkiä)", // 315
+    "ID" // 316
   },
 
   { "Dansk", // Danish
@@ -6301,7 +6701,27 @@ static const char* const Languages[22][297] PROGMEM = {
     "Auto DST på\nNTP-tid", // 293
     "Indstil tidszone", // 294
     "Logbogen indeholder over 130 poster, som fremviseren ikke kan behandle. Download CSV-filen for at behandle den.", // 295
-    "Canada" // 296
+    "Canada", // 296
+    "Forbind denne enhed til et WiFi-netværk for at aktivere fjernfunktioner.", // 297
+    "Konfigurer WiFi", // 298
+    "Skjult netværk", // 299
+    "WiFi-netværksnavn", // 300
+    "Indtast SSID eller vælg et netværk ovenfor", // 301
+    "Adgangskode", // 302
+    "Indtast adgangskode", // 303
+    "Gem og forbind", // 304
+    "Scan igen", // 305
+    "Forbinder til", // 306
+    "Forbundet til", // 307
+    "Du kan nu lukke denne side.", // 308
+    "Kunne ikke forbinde til", // 309
+    "Klik her for at prøve igen", // 310
+    "Indstillinger", // 311
+    "Vælg WiFi", // 312
+    "Ingen netværk fundet. Opdater for at scanne igen.", // 313
+    "Legitimationsoplysninger gemt", // 314
+    "Indstil XDRGTK-adgangskode (maks. 8 tegn)", // 315
+    "ID" // 316
   },
 
   { "Svenska", // Swedish
@@ -6600,6 +7020,26 @@ static const char* const Languages[22][297] PROGMEM = {
     "Auto NTP sommartid", // 293
     "Ställ in tidszon", // 294
     "Loggboken har mer än 130 poster, vilket visaren inte kan hantera. Ladda ner CSV för behandling.", // 295
-    "Kanada" // 296
+    "Kanada", // 296
+    "Anslut denna enhet till ett WiFi-nätverk för att aktivera fjärrfunktioner.", // 297
+    "Konfigurera WiFi", // 298
+    "Dolt nätverk", // 299
+    "WiFi-nätverksnamn", // 300
+    "Ange SSID eller välj ett nätverk ovan", // 301
+    "Lösenord", // 302
+    "Ange lösenord", // 303
+    "Spara och anslut", // 304
+    "Skanna igen", // 305
+    "Ansluter till", // 306
+    "Ansluten till", // 307
+    "Du kan nu stänga denna sida.", // 308
+    "Kunde inte ansluta till", // 309
+    "Klicka här för att försöka igen", // 310
+    "Alternativ", // 311
+    "Välj WiFi", // 312
+    "Inga nätverk hittades. Uppdatera för att skanna igen.", // 313
+    "Uppgifter sparade", // 314
+    "Ställ in XDRGTK-lösenord (max. 8 tecken)", // 315
+    "ID" // 316
   }
 };

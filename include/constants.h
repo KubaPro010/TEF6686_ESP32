@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 
-#define VERSION "v2.20.6c"
+#define VERSION "v2.20.7b"
 
 #define ROTARY_PIN_A 34
 #define ROTARY_PIN_B 36

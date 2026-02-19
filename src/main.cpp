@@ -13,6 +13,7 @@
 #include "rds.h"
 #include "logbook.h"
 #include "comms.h"
+#include "graphics.h"
 
 void Touch_IRQ_Handler() {
   touch_detect = true;
