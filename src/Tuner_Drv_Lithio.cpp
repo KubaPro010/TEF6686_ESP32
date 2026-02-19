@@ -50,7 +50,7 @@ void devTEF_Radio_Get_Quality_Data(uint16_t *status, int16_t *level, uint16_t *u
   if(offset != NULL) *offset = Convert8bto16b(buf + 8);
   if(bandwidth != NULL) *bandwidth = Convert8bto16b(buf + 10) / 10;
   if(audiolevel != NULL) *audiolevel = Convert8bto16b(buf + 12) / 10;
-  if(snr != NULL) *snr = (int8_t)(_level * 0.075f - (_usn * 0.038f) - (_wam * 0.018f));
+  if(snr != NULL) *snr = (int8_t)(_level * 0.0675f - (_usn * 0.038f) - (_wam * 0.018f));
 }
 
 void devTEF_Radio_Get_RDS_Status(uint16_t *status, uint16_t *A_block, uint16_t *B_block, uint16_t *C_block, uint16_t *D_block, uint16_t *dec_error) {

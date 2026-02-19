@@ -923,8 +923,26 @@ void tryWiFi() {
   }
 }
 
+uint8_t crc8_update(uint8_t crc, uint8_t data) {
+    crc ^= data;
+    for (uint8_t i = 0; i < 8; i++) {
+        if (crc & 0x80) crc = (crc << 1) ^ 0x07;
+        else crc <<= 1;
+    }
+    return crc;
+}
+uint8_t crc8(const uint8_t *data, size_t len) {
+    uint8_t crc = 0x00;
+    while (len--) crc = crc8_update(crc, *data++);
+    return crc;
+}
+
 void total_pc_control() {
-  static uint8_t data[255];
+  static uint8_t data[127];
+  static uint8_t output[257];
+  uint8_t *p = output + 2;
+  uint32_t baud_change = 0;
+
   if(i2c_pc_control_init) {
     Serial.write(1);
     Serial.write(0xff);
@@ -933,62 +951,75 @@ void total_pc_control() {
   }
   if(Serial.available()) {
     uint8_t userlen = Serial.read();
-    if(userlen == '~' && Serial.read() == '/') {
+    if (userlen == 0) return;
+
+    if(Serial.available() && userlen == '~' && Serial.peek() == '/') {
+      Serial.read();
       Serial.write(1);
       Serial.write(0xff);
       Serial.flush(true);
       return;
     }
 
+    bool has_crc = (userlen >> 7) == 1;
+    uint8_t orig_userlen = userlen;
+    userlen &= 127;
+
     auto len = Serial.read(data, userlen);
     if(len != userlen) return;
+
+    if(has_crc && Serial.available()) {
+      uint8_t crc = Serial.read();
+
+      uint8_t expected_crc = 0;
+      expected_crc = crc8_update(expected_crc, orig_userlen);
+      for (int i = 0; i < len; i++) expected_crc = crc8_update(expected_crc, data[i]);
+      if(crc != expected_crc) {
+        Serial.write(0x02);
+        Serial.write(0xFF);
+        Serial.write(0x01);
+        Serial.flush();
+        return;
+      }
+    }
   
     switch (data[0]) {
     case 0: { // Set clock
-      if(len < 5) break;
+      if(len < 5) return;
       uint32_t clock = ((uint32_t)data[1] << 24) | ((uint32_t)data[2] << 16) | ((uint32_t)data[3] << 8)  | ((uint32_t)data[4]);
       Wire.setClock(clock);
-      Serial.write(1);
-      Serial.write(0);
     } break;
     case 1: { // Send data
-      if(len < 3) break;
+      if(len < 3) return;
       Wire.beginTransmission(data[1]);
       Wire.write(data + 2, len - 2);
       auto out = Wire.endTransmission();
-      Serial.write(2);
-      Serial.write(1);
-      Serial.write(out);
+      *p++ = out;
     } break;
     case 2: { // Send and receive data
-      if(len < 4) break; // Need at least: cmd, addr, datalen, recvlen
+      if(len < 4) return; // Need at least: cmd, addr, datalen, recvlen
       uint8_t addr = data[1];
       uint8_t datalen = data[2];
       
-      if(len < 3 + datalen + 1) break; // Validate buffer size
+      if(len < 3 + datalen + 1) return; // Validate buffer size
       
       Wire.beginTransmission(addr);
       Wire.write(data + 3, datalen);
       auto out = Wire.endTransmission(false);
       
       uint8_t recvlen = Wire.requestFrom(addr, data[3+datalen]);
-      Serial.write(recvlen+2);
-      Serial.write(2);
-      Serial.write(out);
-      while(Wire.available()) Serial.write(Wire.read());
+      if ((p - output) + recvlen >= sizeof(output)) return;
+
+      *p++ = out;
+      while(Wire.available()) *p++ = Wire.read();
     } break;
     case 3: { // Quit
       i2c_pc_control = false;
       MuteScreen(false);
-      Serial.write(1);
-      Serial.write(3);
-      Serial.flush();
-      Serial.updateBaudRate(115200);
+      baud_change = 115200;
     } break;
     case 4: { // Version
-      Serial.write(2);
-      Serial.write(4);
-      Serial.write(2);
+      *p++ = 2;
     } break;
     case 5: { // Reboot
       Serial.write(1);
@@ -997,40 +1028,53 @@ void total_pc_control() {
       esp_restart();
     } break;
     case 6: { // Change baud
-      if(len < 5) break;
-      uint32_t clock = ((uint32_t)data[1] << 24) | ((uint32_t)data[2] << 16) |
+      if(len < 5) return;
+      baud_change = ((uint32_t)data[1] << 24) | ((uint32_t)data[2] << 16) |
                  ((uint32_t)data[3] << 8) | ((uint32_t)data[4]);
-      Serial.write(1);
-      Serial.write(6);
-      Serial.flush();
-      Serial.updateBaudRate(clock);
     } break;
     case 7: { // Write to EEPROM
-      if(len < 4) break;
+      if(len < 4) return;
       EEPROM.writeBytes((data[1] << 8) | data[2], data + 3, len - 3);
       EEPROM.commit();
-      Serial.write(1);
-      Serial.write(7);
     } break;
     case 8: { // Read from EEPROM
-      if(len < 4) break;
+      if(len < 4) return;
       auto address = (data[1] << 8) | data[2];
-      Serial.write(data[3] + 1);
-      Serial.write(8);
-      for(uint16_t i = 0; i < data[3]; i++) Serial.write(EEPROM.read(address + i));
+      *p++ = data[3] + 1;
+      *p++ = 8;
+      for(uint16_t i = 0; i < data[3]; i++) *p++ = EEPROM.read(address + i);
+    } break;
+    case 0xfd: { // Get EEPROM address for userdata
+      *p++ = (uint8_t)(EE_START_CONTROLMODE_DATA >> 8);
+      *p++ = EE_START_CONTROLMODE_DATA & 0xff;
+      *p++ = (uint8_t)(EE_LEN_CONTROLMODE_DATA >> 8);
+      *p++ = EE_LEN_CONTROLMODE_DATA & 0xff;
     } break;
     case 0xfe: { // Get EEPROM address for starting control mode on boot
-      Serial.write(2);
-      Serial.write((uint8_t)(EE_BYTE_CONTROLMODE >> 8));
-      Serial.write(EE_BYTE_CONTROLMODE & 0xff);
+      *p++ = (uint8_t)(EE_BYTE_CONTROLMODE >> 8);
+      *p++ = EE_BYTE_CONTROLMODE & 0xff;
     } break;
-    case 0xff: { // Another wake command
-      Serial.write(1);
-      Serial.write(0xff);
-    } break;
+    case 0xff:
     default:
       break;
     }
+
+    output[0] = (p - output) - 1;
+    output[1] = data[0];
+    if(has_crc) {
+      output[0] |= 0x80;
+      uint8_t crc = crc8(output, p - output);
+      *p++ = crc;
+    }
+
+    Serial.write(output, p - output);
+
+    if(baud_change != 0) {
+      Serial.flush();
+      Serial.updateBaudRate(baud_change);
+      baud_change = 0;
+    }
+
     Serial.flush(true);
   }
 }

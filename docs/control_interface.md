@@ -10,7 +10,7 @@ That means, we can send commands to the radio now.
 
 ## Packet
 
-Every single packet starts with its length, example: [0x02 0xAA 0x55] [0x03 0x00 0x01 0x02]
+Every single packet starts with its length (MSB of length is reserved for optional CRC8 at end of packet, see [CRC](#crc)), example: [0x02 0xAA 0x55] [0x03 0x00 0x01 0x02]
 
 The byte after the lenght is expected to be the command, which will be defined below
 
@@ -134,7 +134,7 @@ Returns the current protocol version
 
 [0x04] - Response to command 4
 
-[0x02] - Current protocol version
+[0x03] - Current protocol version
 
 #### 5 - Reboot
 
@@ -244,6 +244,54 @@ This command is only available on versions 2+
 
 n*[X] - Data read from EEPROM
 
+#### 253 - Get user data for control mode
+
+This command is only available on versions 2+
+
+This commands gets the length and address of the user data for control mode
+
+##### Structure
+
+[0x01] - Length
+
+[0xFD] - Command
+
+##### Response
+
+[0x05] - Length
+
+[0xFD] - Response to command 253
+
+[X] - MSB byte of address
+
+[X] - LSB byte of address
+
+[X] - MSB byte of size
+
+[X] - LSB byte of size
+
+#### 254 - Get persistence address
+
+This command is only available on versions 2+
+
+If an non zero was written to the persistance address in the EEPROM, after every reboot the radio would boot up into the control mode without the full init sequence (Holding mode while booting will override this)
+
+##### Structure
+
+[0x01] - Length
+
+[0xFE] - Command
+
+##### Response
+
+[0x03] - Length
+
+[0xFE] - Response to command 254
+
+[X] - MSB byte of persistence address
+
+[X] - LSB byte of persistence address
+
 #### 255 - Ping / Wake
 
 This command is only available on versions 2+
@@ -259,3 +307,7 @@ This command is only available on versions 2+
 [0x01] - Length
 
 [0xFF] - Response to command 255
+
+### CRC
+
+First bit of the length from version 3 control whether there is an crc byte at the end of the command, it is not included in the length. If the request was sent with CRC, response also will be too. In case of a CRC mismatch the radio will send back [0x02 0xFF 0x01]. CRC is calculated with the lenght included

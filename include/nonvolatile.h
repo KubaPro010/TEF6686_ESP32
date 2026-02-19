@@ -5,7 +5,7 @@
 #define EE_PRESETS_CNT 99    // When set > 99 change the complete EEPROM adressing!
 #define EE_CHECKBYTE_VALUE 20     // 0 ~ 255,add new entry, change for new value
 #define EE_PRESETS_FREQUENCY 0     // Default value when memory channel should be skipped!
-#define EE_TOTAL_CNT 2288  // Total occupied eeprom bytes, we can take 20K
+#define EE_TOTAL_CNT 2296  // Total occupied eeprom bytes, we can take 20K
 
 #define EE_PRESETS_BAND_START 0     // 99 * 1 byte
 #define EE_PRESET_BW_START 99    // 99 * 1 byte
@@ -129,6 +129,8 @@
 #define EE_UINT16_PICTLOCK 2283
 #define EE_BYTE_CONTROLMODE 2285
 // End of EEPROM index defines
+#define EE_START_CONTROLMODE_DATA 2286
+#define EE_LEN_CONTROLMODE_DATA 8
 
 void StoreFrequency();
 void ClearMemoryRange(uint8_t start, uint8_t stop);
