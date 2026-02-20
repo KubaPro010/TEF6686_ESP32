@@ -824,7 +824,7 @@ void ShowOneLine(byte position, byte item, bool selected) {
         case CONNECTIVITY:
           FullLineSprite.setTextDatum(TL_DATUM);
           FullLineSprite.setTextColor(ActiveColor, ActiveColorSmooth, false);
-          FullLineSprite.drawString(removeNewline(textUI(48) + (wifi ? " IP: " + String(WiFi.localIP().toString()) : "")), 6, 2);
+          FullLineSprite.drawString(removeNewline(textUI(48) + (wifi && WiFi.status() == WL_CONNECTED ? " IP: " + String(WiFi.localIP().toString()) : "")), 6, 2);
 
           FullLineSprite.setTextDatum(TR_DATUM);
           FullLineSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
@@ -1048,7 +1048,7 @@ void ShowOneLine(byte position, byte item, bool selected) {
 
           FullLineSprite.setTextDatum(TR_DATUM);
           FullLineSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
-          FullLineSprite.drawString((wifi ? String(WiFi.localIP()[0]) + "." + String(WiFi.localIP()[1]) + "." + String(WiFi.localIP()[2]) + "." + String(subnetclient, DEC) : "-"), 298, 2);
+          FullLineSprite.drawString((wifi && WiFi.status() == WL_CONNECTED ? String(WiFi.localIP()[0]) + "." + String(WiFi.localIP()[1]) + "." + String(WiFi.localIP()[2]) + "." + String(subnetclient, DEC) : "-"), 298, 2);
           break;
 
         case DXMODE:
@@ -1901,7 +1901,7 @@ void ShowOneButton(byte position, byte item, bool selected) {
         case CONNECTIVITY:
           PSSprite.setTextDatum(TC_DATUM);
           PSSprite.setTextColor(ActiveColor, ActiveColorSmooth, false);
-          PSSprite.drawString(shortLine(removeNewline(wifi ? " IP: " + String(WiFi.localIP().toString()) : textUI(48))), 75, 1);
+          PSSprite.drawString(shortLine(removeNewline(wifi && WiFi.status() == WL_CONNECTED ? " IP: " + String(WiFi.localIP().toString()) : textUI(48))), 75, 1);
 
           PSSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
           PSSprite.drawString((wifi ? textUI(28) : textUI(27)), 75, 15);
@@ -2132,7 +2132,7 @@ void ShowOneButton(byte position, byte item, bool selected) {
           PSSprite.drawString(shortLine(removeNewline(textUI(55))), 75, 1);
 
           PSSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
-          PSSprite.drawString((wifi ? String(WiFi.localIP()[0]) + "." + String(WiFi.localIP()[1]) + "." + String(WiFi.localIP()[2]) + "." + String(subnetclient, DEC) : "-"), 75, 15);
+          PSSprite.drawString((wifi && WiFi.status() == WL_CONNECTED ? String(WiFi.localIP()[0]) + "." + String(WiFi.localIP()[1]) + "." + String(WiFi.localIP()[2]) + "." + String(subnetclient, DEC) : "-"), 75, 15);
           break;
 
         case DXMODE:
@@ -5227,7 +5227,8 @@ void DoMenu() {
                 wc.addParameter(&XDRGTK_key_input);
                 setWiFiConnectParam = true;
               }
-              wc.startConfigurationPortal();
+              tftPrint(ACENTER, textUI(29), 155, 202, ActiveColor, ActiveColorSmooth, 16);
+              wc.startConfigurationPortal(26);
               XDRGTK_key = XDRGTK_key_input.getValue();
               EEPROM.writeString(EE_STRING_XDRGTK_KEY, XDRGTK_key);
               EEPROM.commit();

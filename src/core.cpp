@@ -503,34 +503,34 @@ void toggleiMSEQ() {
   }
 }
 
-void TuneFreq(int temp) {
+bool TuneFreq(int temp) {
   int newfreq = temp;
 
   if (band == BAND_FM) {
     while (newfreq < (LowEdgeSet * 10)) newfreq *= 10;
     if (newfreq > (HighEdgeSet * 10)) {
       EdgeBeeper();
-      return;
+      return false;
     }
-    if (newfreq == frequency) return;
+    if (newfreq == frequency) return true;
     frequency = newfreq;
     radio.SetFreq(frequency);
   } else if (band == BAND_OIRT) {
-    while (newfreq < (LowEdgeOIRTSet * 10)) newfreq *= 10;
+    while (temp < LowEdgeOIRTSet) temp = temp * 10;
     if (newfreq > HighEdgeOIRTSet) {
       EdgeBeeper();
-      return;
+      return false;
     }
-    if (newfreq == frequency_OIRT) return;
+    if (newfreq == frequency_OIRT) return true;
     frequency_OIRT = newfreq;
     radio.SetFreq(frequency_OIRT);
   } else if (band == BAND_LW) {
     while (newfreq < LWLowEdgeSet) newfreq *= 10;
     if (newfreq > LWHighEdgeSet) {
       EdgeBeeper();
-      return;
+      return false;
     }
-    if (newfreq == frequency_LW) return;
+    if (newfreq == frequency_LW) return true;
     frequency_AM = newfreq;
     frequency_LW = newfreq;
     radio.SetFreqAM(frequency_AM);
@@ -538,9 +538,9 @@ void TuneFreq(int temp) {
     while (newfreq < MWLowEdgeSet) newfreq *= 10;
     if (newfreq > MWHighEdgeSet) {
       EdgeBeeper();
-      return;
+      return false;
     }
-    if (newfreq == frequency_MW) return;
+    if (newfreq == frequency_MW) return true;
     frequency_AM = newfreq;
     frequency_MW = newfreq;
     radio.SetFreqAM(frequency_AM);
@@ -548,9 +548,9 @@ void TuneFreq(int temp) {
     while (newfreq < SWLowEdgeSet) newfreq *= 10;
     if (newfreq > SWHighEdgeSet) {
       EdgeBeeper();
-      return;
+      return false;
     }
-    if (newfreq == frequency_SW) return;
+    if (newfreq == frequency_SW) return true;
     frequency_AM = newfreq;
     frequency_SW = newfreq;
     radio.SetFreqAM(frequency_AM);
@@ -562,6 +562,7 @@ void TuneFreq(int temp) {
   radio.clearRDS();
   if (RDSSPYUSB) Serial.print("G:\r\nRESET-------\r\n\r\n");
   if (RDSSPYTCP) RemoteClient.print("G:\r\nRESET-------\r\n\r\n");
+  return true;
 }
 
 void ShowNum(int val) {
@@ -768,15 +769,26 @@ void NumpadProcess(int num) {
       BuildMenu();
     } else if (num == 13) {
       if (freq_in != 0) {
-        TuneFreq(freq_in);
-        if (XDRGTKUSB || XDRGTKTCP) {
-          if (band == BAND_FM) DataPrint("M0\nT" + String(frequency * 10) + "\n"); else if (band == BAND_OIRT) DataPrint("M0\nT" + String(frequency_OIRT * 10) + "\n"); else DataPrint("M1\nT" + String(frequency_AM) + "\n");
-        }
-        if (!memorystore) {
-          if (!memtune) radio.clearRDS();
-          memtune = false;
+        if (TuneFreq(freq_in)) {
+          if (XDRGTKUSB || XDRGTKTCP) {
+            if (band == BAND_FM) DataPrint("M0\nT" + String(frequency * 10) + "\n"); else if (band == BAND_OIRT) DataPrint("M0\nT" + String(frequency_OIRT * 10) + "\n"); else DataPrint("M1\nT" + String(frequency_AM) + "\n");
+          }
+          if (!memorystore) {
+            if (!memtune) radio.clearRDS();
+            memtune = false;
+            ShowFreq(0);
+            store = true;
+          }
+        } else {
+          ShowNum(freq_in);
+          FrequencySprite.setTextDatum(TR_DATUM);
+          FrequencySprite.fillSprite(BackgroundColor);
+          FrequencySprite.setTextColor(SignificantColor, SignificantColorSmooth, false);
+          FrequencySprite.drawString(String(freq_in) + " ", 218, -6, freqfont);
+          FrequencySprite.pushSprite(46, 46);
+          delay(1000);
           ShowFreq(0);
-          store = true;
+
         }
       } else ShowFreq(0);
       freq_in = 0;

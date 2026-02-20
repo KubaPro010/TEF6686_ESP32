@@ -413,7 +413,7 @@ void setup() {
   if (wifi) {
     console.print("Trying WiFi");
     tryWiFi();
-    delay(1750);
+    delay(1500);
   } else {
     Server.end();
     Udp.stop();
@@ -454,6 +454,7 @@ void setup() {
 void handleWiFi() {
   if (wifi && !menu) {
     webserver.handleClient();
+    ntpPoll();
 
     if (millis() >= udplogtimer + UDP_LOG_INTERVAL_MS) {
       sendUDPlog();
@@ -830,8 +831,10 @@ void ShowRSSI() {
   if (wifi) rssi = WiFi.RSSI(); else rssi = 0;
   if (rssiold != rssi) {
     if (!wifi && batterydetect) tft.drawBitmap(WIFI_ICON_X, WIFI_ICON_Y, WiFi4, WIFI_ICON_WIDTH, WIFI_ICON_HEIGHT, BackgroundColor);
-    else if (rssi == 0) tft.drawBitmap(WIFI_ICON_X, WIFI_ICON_Y, WiFi4, WIFI_ICON_WIDTH, WIFI_ICON_HEIGHT, GreyoutColor);
-    else if (rssi > -50 && rssi < 0) tft.drawBitmap(WIFI_ICON_X, WIFI_ICON_Y, WiFi4, WIFI_ICON_WIDTH, WIFI_ICON_HEIGHT, WifiColorHigh);
+    else if (rssi == 0) {
+      tft.drawBitmap(WIFI_ICON_X, WIFI_ICON_Y, WiFi4, WIFI_ICON_WIDTH, WIFI_ICON_HEIGHT, GreyoutColor);
+      tft.drawBitmap(282, 3, WiFiX, 30, 25, BarSignificantColor);
+    } else if (rssi > -50 && rssi < 0) tft.drawBitmap(WIFI_ICON_X, WIFI_ICON_Y, WiFi4, WIFI_ICON_WIDTH, WIFI_ICON_HEIGHT, WifiColorHigh);
     else if (rssi > -60) {
       tft.drawBitmap(WIFI_ICON_X, WIFI_ICON_Y, WiFi4, WIFI_ICON_WIDTH, WIFI_ICON_HEIGHT, GreyoutColor);
       tft.drawBitmap(WIFI_ICON_X, WIFI_ICON_Y, WiFi3, WIFI_ICON_WIDTH, WIFI_ICON_HEIGHT, WifiColorHigh);
@@ -1084,6 +1087,8 @@ void loop() {
       esp_restart();
     }
   }
+
+  wifiPoll(); // He really lost it
 
   handleWiFi();
   handleTouch();

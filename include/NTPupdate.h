@@ -9,3 +9,4 @@ constexpr int NTP_PACKET_SIZE = 48;
 void sendNTPpacket(IPAddress &address);
 void NTPupdate();
 time_t getNtpTime();
+void ntpPoll();

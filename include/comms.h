@@ -10,6 +10,7 @@ void Communication();
 void XDRGTKRoutine();
 void passwordcrypt();
 void tryWiFi();
+void wifiPoll();
 void total_pc_control();
 
 extern void BuildDisplay();

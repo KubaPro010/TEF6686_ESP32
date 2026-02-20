@@ -227,7 +227,7 @@ boolean WiFiConnect::autoConnect(char const *ssidName, char const *ssidPassword,
   return false;
 }
 
-boolean WiFiConnect::startConfigurationPortal() {
+boolean WiFiConnect::startConfigurationPortal(int8_t cancelPin) {
   delay(50);
 
   if (WiFi.status() != WL_CONNECTED) {
@@ -269,6 +269,11 @@ boolean WiFiConnect::startConfigurationPortal() {
 
   server->begin();
 
+  if (cancelPin >= 0) {
+    while (digitalRead(cancelPin) == LOW) delay(10);
+    delay(200);
+  }
+
   _readyToConnect = false;
   while (true) {
     dnsServer->processNextRequest();
@@ -281,6 +286,10 @@ boolean WiFiConnect::startConfigurationPortal() {
         delay(500);
         break;
       }
+    }
+    if (cancelPin >= 0 && digitalRead(cancelPin) == LOW) {
+      delay(50);  // debounce
+      if (digitalRead(cancelPin) == LOW) break;
     }
     yield();
   }

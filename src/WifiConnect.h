@@ -44,7 +44,7 @@ public:
 
   boolean autoConnect();
   void addParameter(WiFiConnectParam *p);
-  boolean startConfigurationPortal();
+  boolean startConfigurationPortal(int8_t cancelPin);
 
 private:
   static constexpr int RETRY_ATTEMPTS = 3;
