@@ -937,7 +937,7 @@ uint8_t crc8(const uint8_t *data, size_t len) {
     return crc;
 }
 
-bool execute_pc_command(uint8_t *data, uint8_t *&p, uint8_t *output, uint8_t len, uint32_t* baud_change) {
+bool execute_pc_command(uint8_t *data, uint8_t *&p, uint8_t *output, uint8_t len, uint32_t* baud_change, size_t output_size) {
   switch (data[0]) {
   case 0: { // Set clock
     if(len < 5) {
@@ -975,7 +975,7 @@ bool execute_pc_command(uint8_t *data, uint8_t *&p, uint8_t *output, uint8_t len
     auto out = Wire.endTransmission(false);
     
     uint8_t recvlen = Wire.requestFrom(addr, data[3+datalen]);
-    if ((p - output) + recvlen >= sizeof(output)) {
+    if ((p - output) + recvlen >= output_size) {
       *p++ = 2;
       return true;
     }
@@ -1078,6 +1078,7 @@ void total_pc_control() {
       auto len = Serial.read(data, userlen);
       if(len != userlen) {
         error = true;
+        has_crc = false;
         *p++ = 0;
       }
 
@@ -1093,7 +1094,7 @@ void total_pc_control() {
           *p++ = 1;
         }
       }
-      if(!error) error = execute_pc_command(data, p, output, len, &baud_change);
+      if(!error) error = execute_pc_command(data, p, output, len, &baud_change, sizeof(output));
       done = true;
     }
   }
