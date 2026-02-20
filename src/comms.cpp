@@ -937,131 +937,173 @@ uint8_t crc8(const uint8_t *data, size_t len) {
     return crc;
 }
 
+bool execute_pc_command(uint8_t *data, uint8_t *&p, uint8_t *output, uint8_t len, uint32_t* baud_change) {
+  switch (data[0]) {
+  case 0: { // Set clock
+    if(len < 5) {
+      *p++ = 2;
+      return true;
+    }
+    uint32_t clock = ((uint32_t)data[1] << 24) | ((uint32_t)data[2] << 16) | ((uint32_t)data[3] << 8)  | ((uint32_t)data[4]);
+    Wire.setClock(clock);
+  } break;
+  case 1: { // Send data
+    if(len < 3) {
+      *p++ = 2;
+      return true;
+    }
+    Wire.beginTransmission(data[1]);
+    Wire.write(data + 2, len - 2);
+    auto out = Wire.endTransmission();
+    *p++ = out;
+  } break;
+  case 2: { // Send and receive data
+    if(len < 4) {
+      *p++ = 2;
+      return true;
+    }
+    uint8_t addr = data[1];
+    uint8_t datalen = data[2];
+    
+    if(len < 3 + datalen + 1) {
+      *p++ = 2;
+      return true;
+    }
+    
+    Wire.beginTransmission(addr);
+    Wire.write(data + 3, datalen);
+    auto out = Wire.endTransmission(false);
+    
+    uint8_t recvlen = Wire.requestFrom(addr, data[3+datalen]);
+    if ((p - output) + recvlen >= sizeof(output)) {
+      *p++ = 2;
+      return true;
+    }
+
+    *p++ = out;
+    while(Wire.available()) *p++ = Wire.read();
+  } break;
+  case 3: { // Quit
+    i2c_pc_control = false;
+    MuteScreen(false);
+    *baud_change = 115200;
+  } break;
+  case 4: { // Version
+    *p++ = 3;
+  } break;
+  case 5: { // Reboot
+    Serial.write(1);
+    Serial.write(5);
+    Serial.flush();
+    esp_restart();
+  } break;
+  case 6: { // Change baud
+    if(len < 5) {
+      *p++ = 2;
+      return true;
+    }
+    *baud_change = ((uint32_t)data[1] << 24) | ((uint32_t)data[2] << 16) |
+              ((uint32_t)data[3] << 8) | ((uint32_t)data[4]);
+  } break;
+  case 7: { // Write to EEPROM
+    if(len < 4) {
+      *p++ = 2;
+      return true;
+    }
+    EEPROM.writeBytes((data[1] << 8) | data[2], data + 3, len - 3);
+    EEPROM.commit();
+  } break;
+  case 8: { // Read from EEPROM
+    if(len < 4) {
+      *p++ = 2;
+      return true;
+    }
+    auto address = (data[1] << 8) | data[2];
+    *p++ = data[3] + 1;
+    *p++ = 8;
+    for(uint16_t i = 0; i < data[3]; i++) *p++ = EEPROM.read(address + i);
+  } break;
+  case 0xfd: { // Get EEPROM address for userdata
+    *p++ = (uint8_t)(EE_START_CONTROLMODE_DATA >> 8);
+    *p++ = EE_START_CONTROLMODE_DATA & 0xff;
+    *p++ = (uint8_t)(EE_LEN_CONTROLMODE_DATA >> 8);
+    *p++ = EE_LEN_CONTROLMODE_DATA & 0xff;
+  } break;
+  case 0xfe: { // Get EEPROM address for starting control mode on boot
+    *p++ = (uint8_t)(EE_BYTE_CONTROLMODE >> 8);
+    *p++ = EE_BYTE_CONTROLMODE & 0xff;
+  } break;
+  case 0xff:
+    break;
+  default:
+    *p++ = 3;
+    return true;
+  }
+  return false;
+}
+
 void total_pc_control() {
   static uint8_t data[127];
   static uint8_t output[257];
   uint8_t *p = output + 2;
   uint32_t baud_change = 0;
+  bool error = false;
+  bool done = false;
+  bool send_crc = false;
 
   if(i2c_pc_control_init) {
-    Serial.write(1);
-    Serial.write(0xff);
-    Serial.flush();
+    error = true;
+    done = true;
     i2c_pc_control_init = false;
   }
-  if(Serial.available()) {
+  if(Serial.available() && !done) {
     uint8_t userlen = Serial.read();
-    if (userlen == 0) return;
-
-    if(Serial.available() && userlen == '~' && Serial.peek() == '/') {
-      Serial.read();
-      Serial.write(1);
-      Serial.write(0xff);
-      Serial.flush(true);
+    if (userlen == 0) {
+      Serial.flush();
       return;
     }
 
-    bool has_crc = (userlen >> 7) == 1;
-    uint8_t orig_userlen = userlen;
-    userlen &= 127;
+    if(Serial.available() && userlen == '~' && Serial.peek() == '/') {
+      Serial.read();
+      error = true;
+      done = true;
+    }
 
-    auto len = Serial.read(data, userlen);
-    if(len != userlen) return;
+    if(!done) {
+      bool has_crc = (userlen >> 7) == 1;
+      send_crc = has_crc;
+      uint8_t orig_userlen = userlen;
+      userlen &= 127;
 
-    if(has_crc && Serial.available()) {
-      uint8_t crc = Serial.read();
-
-      uint8_t expected_crc = 0;
-      expected_crc = crc8_update(expected_crc, orig_userlen);
-      for (int i = 0; i < len; i++) expected_crc = crc8_update(expected_crc, data[i]);
-      if(crc != expected_crc) {
-        Serial.write(0x02);
-        Serial.write(0xFF);
-        Serial.write(0x01);
-        Serial.flush();
-        return;
+      auto len = Serial.read(data, userlen);
+      if(len != userlen) {
+        error = true;
+        *p++ = 0;
       }
+
+      if(has_crc && Serial.available()) {
+        uint8_t crc = Serial.read();
+
+        uint8_t expected_crc = 0;
+        expected_crc = crc8_update(expected_crc, orig_userlen);
+        for (int i = 0; i < len; i++) expected_crc = crc8_update(expected_crc, data[i]);
+        if(crc != expected_crc) {
+          error = true;
+          send_crc = false;
+          *p++ = 1;
+        }
+      }
+      if(!error) error = execute_pc_command(data, p, output, len, &baud_change);
+      done = true;
     }
+  }
   
-    switch (data[0]) {
-    case 0: { // Set clock
-      if(len < 5) return;
-      uint32_t clock = ((uint32_t)data[1] << 24) | ((uint32_t)data[2] << 16) | ((uint32_t)data[3] << 8)  | ((uint32_t)data[4]);
-      Wire.setClock(clock);
-    } break;
-    case 1: { // Send data
-      if(len < 3) return;
-      Wire.beginTransmission(data[1]);
-      Wire.write(data + 2, len - 2);
-      auto out = Wire.endTransmission();
-      *p++ = out;
-    } break;
-    case 2: { // Send and receive data
-      if(len < 4) return; // Need at least: cmd, addr, datalen, recvlen
-      uint8_t addr = data[1];
-      uint8_t datalen = data[2];
-      
-      if(len < 3 + datalen + 1) return; // Validate buffer size
-      
-      Wire.beginTransmission(addr);
-      Wire.write(data + 3, datalen);
-      auto out = Wire.endTransmission(false);
-      
-      uint8_t recvlen = Wire.requestFrom(addr, data[3+datalen]);
-      if ((p - output) + recvlen >= sizeof(output)) return;
-
-      *p++ = out;
-      while(Wire.available()) *p++ = Wire.read();
-    } break;
-    case 3: { // Quit
-      i2c_pc_control = false;
-      MuteScreen(false);
-      baud_change = 115200;
-    } break;
-    case 4: { // Version
-      *p++ = 2;
-    } break;
-    case 5: { // Reboot
-      Serial.write(1);
-      Serial.write(5);
-      Serial.flush();
-      esp_restart();
-    } break;
-    case 6: { // Change baud
-      if(len < 5) return;
-      baud_change = ((uint32_t)data[1] << 24) | ((uint32_t)data[2] << 16) |
-                 ((uint32_t)data[3] << 8) | ((uint32_t)data[4]);
-    } break;
-    case 7: { // Write to EEPROM
-      if(len < 4) return;
-      EEPROM.writeBytes((data[1] << 8) | data[2], data + 3, len - 3);
-      EEPROM.commit();
-    } break;
-    case 8: { // Read from EEPROM
-      if(len < 4) return;
-      auto address = (data[1] << 8) | data[2];
-      *p++ = data[3] + 1;
-      *p++ = 8;
-      for(uint16_t i = 0; i < data[3]; i++) *p++ = EEPROM.read(address + i);
-    } break;
-    case 0xfd: { // Get EEPROM address for userdata
-      *p++ = (uint8_t)(EE_START_CONTROLMODE_DATA >> 8);
-      *p++ = EE_START_CONTROLMODE_DATA & 0xff;
-      *p++ = (uint8_t)(EE_LEN_CONTROLMODE_DATA >> 8);
-      *p++ = EE_LEN_CONTROLMODE_DATA & 0xff;
-    } break;
-    case 0xfe: { // Get EEPROM address for starting control mode on boot
-      *p++ = (uint8_t)(EE_BYTE_CONTROLMODE >> 8);
-      *p++ = EE_BYTE_CONTROLMODE & 0xff;
-    } break;
-    case 0xff:
-    default:
-      break;
-    }
-
+  if(done) {
     output[0] = (p - output) - 1;
-    output[1] = data[0];
-    if(has_crc) {
+    if(error) output[1] = 0xff;
+    else output[1] = data[0];
+  
+    if(send_crc) {
       output[0] |= 0x80;
       uint8_t crc = crc8(output, p - output);
       *p++ = crc;
@@ -1075,6 +1117,6 @@ void total_pc_control() {
       baud_change = 0;
     }
 
-    Serial.flush(true);
+    Serial.flush(!error);
   }
 }
