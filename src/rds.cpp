@@ -594,9 +594,9 @@ void ShowAFEON() {
       if (!haseonold) {
         tftPrint(ALEFT, textUI(85), 6, 48, BackgroundColor, BackgroundColor, 16);
         tftPrint16(ALEFT, "PI", 4, 32, ActiveColor, ActiveColorSmooth);
-        tftPrint16(ACENTER, "TA", 250, 32, ActiveColor, ActiveColorSmooth);
-        tftPrint16(ACENTER, "TP", 276, 32, ActiveColor, ActiveColorSmooth);
-        tftPrint16(ACENTER, "PTY", 304, 32, ActiveColor, ActiveColorSmooth);
+        tftPrint16(ACENTER, "TA", 256, 32, ActiveColor, ActiveColorSmooth);
+        tftPrint16(ACENTER, "TP", 282, 32, ActiveColor, ActiveColorSmooth);
+        tftPrint16(ACENTER, "PTY", 310, 32, ActiveColor, ActiveColorSmooth);
         haseonold = true;
       }
 
@@ -631,67 +631,67 @@ void ShowAFEON() {
           } else tftPrint(ALEFT, eonpsold[i + y].c_str(), 46, 48 + (15 * i), BackgroundColor, BackgroundColor, 16);
 
           if (radio.eon[i + y].mappedfreq > 0) {
-            tftPrint(ALEFT, "MF", 119, 32, ActiveColor, ActiveColorSmooth, 16);
+            tftPrint(ALEFT, "MF", 125, 32, ActiveColor, ActiveColorSmooth, 16);
 
             if (radio.eon[i + y].mappedfreq != mappedfreqold[i + y]) {
               char oldFreq[10];
               dtostrf(mappedfreqold[i + y] / 100.0, 5, 1, oldFreq);
-              tftPrint(ALEFT, oldFreq, 115, 48 + (15 * i), BackgroundColor, BackgroundColor, 16);
+              tftPrint(ALEFT, oldFreq, 121, 48 + (15 * i), BackgroundColor, BackgroundColor, 16);
             }
             char newFreq[10];
             dtostrf(radio.eon[i + y].mappedfreq / 100.0, 5, 1, newFreq);
-            tftPrint(ALEFT, newFreq, 115, 48 + (15 * i), RDSDropoutColor, RDSDropoutColorSmooth, 16);
+            tftPrint(ALEFT, newFreq, 121, 48 + (15 * i), RDSDropoutColor, RDSDropoutColorSmooth, 16);
             mappedfreqold[i + y] = radio.eon[i + y].mappedfreq;
           } else {
             char oldFreq[10];
             dtostrf(mappedfreqold[i + y] / 100.0, 5, 1, oldFreq);
-            tftPrint(ALEFT, oldFreq, 115, 48 + (15 * i), BackgroundColor, BackgroundColor, 16);
+            tftPrint(ALEFT, oldFreq, 121, 48 + (15 * i), BackgroundColor, BackgroundColor, 16);
           }
 
           if (radio.eon[i + y].mappedfreq2 > 0) {
-            tftPrint(ALEFT, "MF2", 162, 32, ActiveColor, ActiveColorSmooth, 16);
+            tftPrint(ALEFT, "MF2", 168, 32, ActiveColor, ActiveColorSmooth, 16);
 
             if (radio.eon[i + y].mappedfreq2 != mappedfreqold2[i + y]) {
               char oldFreq2[10];
               dtostrf(mappedfreqold2[i + y] / 100.0, 5, 1, oldFreq2);
-              tftPrint(ALEFT, oldFreq2, 160, 48 + (15 * i), BackgroundColor, BackgroundColor, 16);
+              tftPrint(ALEFT, oldFreq2, 166, 48 + (15 * i), BackgroundColor, BackgroundColor, 16);
             }
             char newFreq2[10];
             dtostrf(radio.eon[i + y].mappedfreq2 / 100.0, 5, 1, newFreq2);
-            tftPrint(ALEFT, newFreq2, 160, 48 + (15 * i), RDSDropoutColor, RDSDropoutColorSmooth, 16);
+            tftPrint(ALEFT, newFreq2, 166, 48 + (15 * i), RDSDropoutColor, RDSDropoutColorSmooth, 16);
             mappedfreqold2[i + y] = radio.eon[i + y].mappedfreq2;
           } else {
             char oldFreq2[10];
             dtostrf(mappedfreqold2[i + y] / 100.0, 5, 1, oldFreq2);
-            tftPrint(ALEFT, oldFreq2, 160, 48 + (15 * i), BackgroundColor, BackgroundColor, 16);
+            tftPrint(ALEFT, oldFreq2, 166, 48 + (15 * i), BackgroundColor, BackgroundColor, 16);
           }
 
           if (radio.eon[i + y].mappedfreq3 > 0) {
-            tftPrint(ALEFT, "MF3", 207, 32, ActiveColor, ActiveColorSmooth, 16);
+            tftPrint(ALEFT, "MF3", 213, 32, ActiveColor, ActiveColorSmooth, 16);
 
             if (radio.eon[i + y].mappedfreq3 != mappedfreqold3[i + y]) {
               char oldFreq3[10];
               dtostrf(mappedfreqold3[i + y] / 100.0, 5, 1, oldFreq3);
-              tftPrint(ALEFT, oldFreq3, 205, 48 + (15 * i), BackgroundColor, BackgroundColor, 16);
+              tftPrint(ALEFT, oldFreq3, 211, 48 + (15 * i), BackgroundColor, BackgroundColor, 16);
             }
             char newFreq3[10];
             dtostrf(radio.eon[i + y].mappedfreq3 / 100.0, 5, 1, newFreq3);
-            tftPrint(ALEFT, newFreq3, 205, 48 + (15 * i), RDSDropoutColor, RDSDropoutColorSmooth, 16);
+            tftPrint(ALEFT, newFreq3, 211, 48 + (15 * i), RDSDropoutColor, RDSDropoutColorSmooth, 16);
             mappedfreqold3[i + y] = radio.eon[i + y].mappedfreq3;
           } else {
             char oldFreq3[10];
             dtostrf(mappedfreqold3[i + y] / 100.0, 5, 1, oldFreq3);
-            tftPrint(ALEFT, oldFreq3, 205, 48 + (15 * i), BackgroundColor, BackgroundColor, 16);
+            tftPrint(ALEFT, oldFreq3, 211, 48 + (15 * i), BackgroundColor, BackgroundColor, 16);
           }
 
           if (radio.eon[i + y].ptyset) {
-            if (eonptyold[i + y] != radio.eon[i + y].pty) tft.fillRect(290, 48 + (15 * i), 29, 16, BackgroundColor);
-            if (radio.eon[i + y].pty != 254) tftPrint(ARIGHT, String(radio.eon[i + y].pty), 310, 48 + (15 * i), RDSColor, RDSColorSmooth, 16);
+            if (eonptyold[i + y] != radio.eon[i + y].pty) tft.fillRect(296, 48 + (15 * i), 24, 16, BackgroundColor);
+            if (radio.eon[i + y].pty != 254) tftPrint(ARIGHT, String(radio.eon[i + y].pty), 316, 48 + (15 * i), RDSColor, RDSColorSmooth, 16);
             eonptyold[i + y] = radio.eon[i + y].pty;
-          } else tft.fillRect(290, 48 + (15 * i), 29, 16, BackgroundColor);
+          } else tft.fillRect(296, 48 + (15 * i), 24, 16, BackgroundColor);
 
-          if (radio.eon[i + y].ta) tftPrint(ACENTER, "O", 250, 48 + (15 * i), RDSColor, RDSColorSmooth, 16); else tftPrint(ACENTER, "O", 250, 48 + (15 * i), BackgroundColor, BackgroundColor, 16);
-          if (radio.eon[i + y].tp) tftPrint(ACENTER, "O", 276, 48 + (15 * i), RDSColor, RDSColorSmooth, 16); else tftPrint(ACENTER, "O", 276, 48 + (15 * i), BackgroundColor, BackgroundColor, 16);
+          if (radio.eon[i + y].ta) tftPrint(ACENTER, "O", 256, 48 + (15 * i), RDSColor, RDSColorSmooth, 16); else tftPrint(ACENTER, "O", 250, 48 + (15 * i), BackgroundColor, BackgroundColor, 16);
+          if (radio.eon[i + y].tp) tftPrint(ACENTER, "O", 282, 48 + (15 * i), RDSColor, RDSColorSmooth, 16); else tftPrint(ACENTER, "O", 276, 48 + (15 * i), BackgroundColor, BackgroundColor, 16);
         }
       }
     }

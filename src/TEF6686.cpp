@@ -1448,7 +1448,7 @@ void TEF6686::readRDS(byte showrdserrors) {
             if (offset == 13 && eon[eonIndex].pi == rds.rdsD) {
               eon[eonIndex].taset = true;
               eon[eonIndex].ta = bitRead(rds.rdsC, 0);
-              eon[eonIndex].pty = (rds.rdsC >> 11) & 0xF;
+              eon[eonIndex].pty = (rds.rdsC >> 11) & 0x1F;
               eon[eonIndex].ptyset = true;
             }
 
