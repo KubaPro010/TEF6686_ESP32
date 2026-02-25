@@ -311,3 +311,7 @@ This command is only available on versions 2+
 ### CRC
 
 First bit of the length from version 3 control whether there is an crc byte at the end of the command, it is not included in the length. If the request was sent with CRC, response also will be too. In case of a CRC mismatch the radio will send back [0x02 0xFF 0x01]. CRC is calculated with the lenght included
+
+## Changes
+
+Length is now 16 bits. MSB is now the last bit of the 16 bits.

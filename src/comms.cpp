@@ -999,7 +999,7 @@ uint8_t crc8(const uint8_t *data, size_t len) {
     return crc;
 }
 
-bool execute_pc_command(uint8_t *data, uint8_t *&p, uint8_t *output, uint8_t len, uint32_t* baud_change, size_t output_size) {
+bool execute_pc_command(uint8_t *data, uint8_t *&p, uint8_t *output, uint16_t len, uint32_t* baud_change, size_t output_size) {
   switch (data[0]) {
   case 0: { // Set clock
     if(len < 5) {
@@ -1054,6 +1054,7 @@ bool execute_pc_command(uint8_t *data, uint8_t *&p, uint8_t *output, uint8_t len
     *p++ = 3;
   } break;
   case 5: { // Reboot
+    Serial.write(0);
     Serial.write(1);
     Serial.write(5);
     Serial.flush();
@@ -1105,50 +1106,50 @@ bool execute_pc_command(uint8_t *data, uint8_t *&p, uint8_t *output, uint8_t len
 }
 
 void total_pc_control() {
-  static uint8_t data[127];
-  static uint8_t output[257];
-  uint8_t *p = output + 2;
+  static uint8_t data[4096];
+  static uint8_t output[4096];
+  uint8_t *p = output + 3;
   uint32_t baud_change = 0;
   bool error = false;
   bool done = false;
   bool send_crc = false;
 
-  if(i2c_pc_control_init) {
-    error = true;
-    done = true;
-    i2c_pc_control_init = false;
-  }
-  if(Serial.available() && !done) {
-    uint8_t userlen = Serial.read();
+  if(Serial.available() > 2 && !done) {
+    uint16_t userlen = (Serial.read() << 8) | Serial.read();
     if (userlen == 0) {
       Serial.flush();
       return;
     }
 
-    if(Serial.available() && userlen == '~' && Serial.peek() == '/') {
-      Serial.read();
+    if(userlen == 0x7e2f) { // ~/
       error = true;
       done = true;
     }
 
-    if(!done) {
-      bool has_crc = (userlen >> 7) == 1;
-      send_crc = has_crc;
-      uint8_t orig_userlen = userlen;
-      userlen &= 127;
+    bool has_crc = (userlen >> 15) & 1;
+    send_crc = has_crc;
+    uint16_t orig_userlen = userlen;
+    userlen &= 0x7fff;
 
-      auto len = Serial.read(data, userlen);
+    if(userlen > 4096) {
+      *p++ = 0;
+      send_crc = false;
+      error = true;
+      done = true;
+    }
+    if(!done) {
+      uint16_t len = Serial.read(data, userlen);
       if(len != userlen) {
         error = true;
-        has_crc = false;
+        send_crc = false;
         *p++ = 0;
       }
 
-      if(has_crc && Serial.available()) {
+      if(!error & has_crc && Serial.available()) {
         uint8_t crc = Serial.read();
 
-        uint8_t expected_crc = 0;
-        expected_crc = crc8_update(expected_crc, orig_userlen);
+        uint8_t expected_crc = crc8_update(0, orig_userlen >> 8);
+        expected_crc = crc8_update(expected_crc, orig_userlen & 0xff);
         for (int i = 0; i < len; i++) expected_crc = crc8_update(expected_crc, data[i]);
         if(crc != expected_crc) {
           error = true;
@@ -1162,9 +1163,11 @@ void total_pc_control() {
   }
   
   if(done) {
-    output[0] = (p - output) - 1;
-    if(error) output[1] = 0xff;
-    else output[1] = data[0];
+    uint16_t out_len = (p - output) - 2;
+    output[0] = out_len >> 8;
+    output[1] = out_len & 0xff;
+    if(error) output[2] = 0xff;
+    else output[2] = data[0];
   
     if(send_crc) {
       output[0] |= 0x80;
