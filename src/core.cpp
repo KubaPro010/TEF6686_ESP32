@@ -2282,7 +2282,7 @@ void Seek(bool mode) {
 
   if (!screenmute) tft.drawBitmap(249, 4, Speaker, 28, 24, PrimaryColor);
   if (!mode) TuneDown(); else TuneUp();
-  delay(50);
+  delay(55);
 
   ShowFreq(0);
   if (XDRGTKUSB || XDRGTKTCP) {
@@ -2375,8 +2375,7 @@ uint8_t doAutoMemory(uint16_t startfreq, uint16_t stopfreq, uint8_t startmem, ui
           error = 1;
           stopScanning = true;
           break;
-        }
-        dostore = false;
+        } dostore = false;
       }
     }
 

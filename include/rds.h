@@ -10,6 +10,7 @@
 #include "rtc.hpp"
 #include "core.h"
 #include "gui.h"
+#include "logbook.h"
 
 void ShowAdvancedRDS();
 void readRds();
@@ -22,5 +23,3 @@ void ShowAFEON();
 void showCT();
 void ShowErrors();
 void ShowRDSStatistics();
-
-extern bool isDST(time_t t);

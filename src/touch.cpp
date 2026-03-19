@@ -159,11 +159,9 @@ void doTouchEvent(uint16_t x, uint16_t y) {
         doBW();
         BWtune = false;
         bwtouchtune = false;
-        if (advancedRDS) {
-          BuildAdvancedRDS();
-        } else if (afscreen) {
-          BuildAFScreen();
-        } else {
+        if (advancedRDS) BuildAdvancedRDS();
+        else if (afscreen) BuildAFScreen();
+        else {
           BuildDisplay();
           SelectBand();
         }
@@ -173,8 +171,7 @@ void doTouchEvent(uint16_t x, uint16_t y) {
         showBWSelector();
         doBW();
         bwtouchtune = false;
-      }
-      return;
+      } return;
     }
 
     if (!BWtune && !menu && !advancedRDS && !seek && !afscreen) {        
@@ -188,9 +185,7 @@ void doTouchEvent(uint16_t x, uint16_t y) {
       } else if (x > 0 && x < 30 && y > 25 && y < 90) {
         doTuneMode();                                                  
         return;
-      } else if (x > 250 && x < 320 && y > 50 && y < 80) {
-        toggleiMSEQ();                                             
-      }
+      } else if (x > 250 && x < 320 && y > 50 && y < 80) toggleiMSEQ();                                             
     }
 
     if (!BWtune && !menu && advancedRDS && !seek && !afscreen) {        

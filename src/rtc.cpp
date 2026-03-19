@@ -118,7 +118,7 @@ bool init_rtc() {
         writeToModule(0x1F, 0);
         return true;
     }
-    sync_from_rx_rtc(1); // mystery offset
+    sync_from_rx_rtc(1); // mystery offset, without it the time is offset by one second
     return false;
 }
 

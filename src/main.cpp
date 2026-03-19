@@ -37,7 +37,7 @@ void read_encoder() {
 
   static uint8_t old_AB = 3;
   static int8_t encval = 0;
-  static const int8_t enc_states[] = {0, -1, 1, 0, 1, 0, 0, -1, -1, 0, 0, 1, 0, 1, -1, 0};
+  constexpr int8_t enc_states[] = {0, -1, 1, 0, 1, 0, 0, -1, -1, 0, 0, 1, 0, 1, -1, 0};
 
   old_AB <<= 2;
   if (digitalRead(ROTARY_PIN_A)) old_AB |= 0x02;
@@ -124,10 +124,8 @@ void later_setup_periph() {
     Wire.endTransmission();
   } else console.print("XL9555 found not found on address " + String(XL9555_ADDRESS, HEX) + ". Numpad will not work");
 
-  if(tef_found) {
-    // The tuner being missing here, would cause a infinite loop with no exit and no error, as it resets and polls the chip if it reset, if no response then we try again, and now, you see?
-    radio.init(TEF);
-  }
+  // The tuner being missing here, would cause a infinite loop with no exit and no error, as it resets and polls the chip if it reset, if no response then we try again, and now, you see?
+  if(tef_found) radio.init(TEF);
 
   uint16_t device, hw, sw;
   device = radio.getIdentification(&hw, &sw);
@@ -172,8 +170,7 @@ void later_setup_periph() {
   if(fmsi) radio.setFMSI(2);
 
   if(rx_rtc_avail) {
-    bool reset = init_rtc();
-    if(reset) console.print("RX8010SJ was reset, no time");
+    if(init_rtc()) console.print("RX8010SJ was reset, no time");
     else {
       rtcset = true;
       console.print("RX8010SJ is used as a time source");
@@ -187,7 +184,7 @@ void later_setup_periph() {
 void setup() {
   WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);
 
-  analogWriteFrequency(6700); // six seven
+  analogWriteFrequency(6700); // sick in the head seven
 
   EEPROM.begin(EE_TOTAL_CNT);
 
@@ -254,7 +251,7 @@ void setup() {
       break;
   }
 
-  tft.init();
+  tft.init(); // have to reinit display because of how the reset pin works: toggling it from 1 to 0 makes it reset, when the esp32 stops, the pin goes off, and when we start we bring it up and accidentally restart the display: thanks very much
 
   tft.loadFont(FONT16_CHS, 0);
   tft.loadFont(FONT48, 1);
@@ -587,8 +584,7 @@ void doLog() {
 
       delay(DELAY_UI_UPDATE_MS);
       ShowFreq(0);
-    }
-    autologged = true;
+    } autologged = true;
   }
 }
 
@@ -736,8 +732,8 @@ void ShowSignalLevel() {
 
     int SStatusprint = 0;
     if (unit == 0) SStatusprint = SStatus;
-    if (unit == 1) SStatusprint = ((SStatus * 100) + 10875) / 100;
-    if (unit == 2) SStatusprint = round((float(SStatus) / 10.0 - 10.0 * log10(75) - 90.0) * 10.0);
+    else if (unit == 1) SStatusprint = ((SStatus * 100) + 10875) / 100;
+    else if (unit == 2) SStatusprint = round((float(SStatus) / 10.0 - 10.0 * log10(75) - 90.0) * 10.0);
 
     static int DisplayedSignalSegments = 0;
     if (SStatusprint > (SStatusold + 3) || SStatusprint < (SStatusold - 3)) {
@@ -831,8 +827,7 @@ void ShowRSSI() {
     } else if (rssi < -70) {
       tft.drawBitmap(WIFI_ICON_X, WIFI_ICON_Y, WiFi4, WIFI_ICON_WIDTH, WIFI_ICON_HEIGHT, GreyoutColor);
       tft.drawBitmap(WIFI_ICON_X, WIFI_ICON_Y, WiFi1, WIFI_ICON_WIDTH, WIFI_ICON_HEIGHT, WifiColorLow);
-    }
-    rssiold = rssi;
+    } rssiold = rssi;
   }
 }
 
@@ -844,12 +839,12 @@ void ShowBW() {
     if(BW == 0) panic("BW is 0");
     else if(BW > 311) panic("BW larger than 311");
 
-    if(BWset == 0) tftReplace(ARIGHT, String(BWOld, DEC), String(BW, DEC), 203, 4, BWAutoColor, BWAutoColorSmooth, BackgroundColor, 28); else tftReplace(ARIGHT, String (BWOld, DEC), String(BW, DEC), 203, 4, PrimaryColor, PrimaryColorSmooth, BackgroundColor, 28);
+    if(BWset == 0) tftReplace(ARIGHT, String(BWOld), String(BW), 203, 4, BWAutoColor, BWAutoColorSmooth, BackgroundColor, 28); else tftReplace(ARIGHT, String(BWOld), String(BW), 203, 4, PrimaryColor, PrimaryColorSmooth, BackgroundColor, 28);
     BWOld = BW;
     BWreset = false;
     if (wifi) {
       Udp.beginPacket(remoteip, 9030);
-      Udp.print("from=TEF_tuner_" + String(stationlistid, DEC) + ";bandwidth=" + String(BW * 1000));
+      Udp.print("from=TEF_tuner_" + String(stationlistid) + ";bandwidth=" + String(BW * 1000));
       Udp.endPacket();
     }
   }
@@ -860,10 +855,10 @@ void ShowOffset() {
     if (millis() >= offsetupdatetimer + TIMER_OFFSET_TIMER) offsetupdatetimer = millis();
     else return;
 
-    int baseX = 13; // Left boundary
-    int baseY = 2; // Top boundary
-    int width = 4; // Max width
-    int height = 26; // Max height
+    constexpr int baseX = 13; // Left boundary
+    constexpr int baseY = 2; // Top boundary
+    constexpr int width = 4; // Max width
+    constexpr int height = 26; // Max height
 
     int centerX = baseX + width / 2;    // Center dot X
     int centerY = baseY + height / 2;   // Center dot Y
@@ -934,8 +929,7 @@ void ShowOffset() {
         tft.fillCircle(centerX, centerY, 3, GreyoutColor);
         tuned = false;
       }
-    }
-    OStatusold = OStatus;
+    } OStatusold = OStatus;
   }
 }
 
@@ -998,11 +992,8 @@ void GetData() {
       showPTY();
       showRadioText();
       if (millis() >= tuningtimer + 200) doAF();
-    }
-    showPI();
-  }
-
-  ShowStereoStatus();
+    } showPI();
+  } ShowStereoStatus();
 
   if (!screenmute) {
     showCT();
@@ -1019,6 +1010,7 @@ inline __attribute__((always_inline)) const char* getBWButtonLabel(byte temp, bo
   if (temp == BW_OK_BUTTON) return "OK";
   return isFM ? BWButtonLabelsFM[temp - 1] : BWButtonLabelsAM[temp - 1];
 }
+
 inline __attribute__((always_inline)) bool shouldHighlightBWButton(byte temp, byte set) {
   return (set == temp) || (temp == 17 && set == 0) || (temp == 18 && !iMSset) || (temp == 19 && !EQset);
 }
@@ -1069,13 +1061,9 @@ void loop() {
   if(i2c_pc_control) {
     total_pc_control();
     if(i2c_pc_control) return;
-    if(EEPROM.readByte(EE_BYTE_CONTROLMODE)) {
-      saveData();
-      esp_restart();
-    }
   }
 
-  wifiPoll(); // He really lost it
+  wifiPoll(); //
 
   handleWiFi();
   handleTouch();
@@ -1194,8 +1182,8 @@ void loop() {
           }
 
           if (!foundmemaf) {
-            frequency = freqold;
             radio.SetFreq(frequency);
+            frequency = freqold;
           }
 
           if (!screenmute) {
@@ -1224,8 +1212,7 @@ void loop() {
       if (screenmute) {
         freqold = frequency;
         dropout = false;
-      }
-      store = true;
+      } store = true;
     }
 
     if (band == BAND_FM && af != 0 && radio.rds.correctPI != 0) {
@@ -1244,8 +1231,7 @@ void loop() {
           if (screenmute) {
             freqold = frequency;
             dropout = false;
-          }
-          store = true;
+          } store = true;
         }
       }
 
@@ -1300,8 +1286,7 @@ void loop() {
       tftPrint16(ALEFT, "RT", 3, 221, ActiveColor, ActiveColorSmooth);
       tftPrint16(ALEFT, "PTY", 3, 163, ActiveColor, ActiveColorSmooth);
       if (!showaudio) tft.drawLine(16, 143, 189, 143, GreyoutColor); else tft.drawLine(16, 143, 189, 143, ActiveColor);
-    }
-    LowLevelInit = true;
+    } LowLevelInit = true;
   }
 
   if ((SStatus / 10 <= LowLevelSet) && band < BAND_GAP) {
@@ -1333,8 +1318,7 @@ void loop() {
         tftPrint16(ALEFT, "PTY", 3, 163, GreyoutColor, BackgroundColor);
         tft.drawLine(16, 143, 189, 143, GreyoutColor);
         tft.drawBitmap(68, 5, RDSLogo, 35, 22, GreyoutColor);
-      }
-      LowLevelInit = false;
+      } LowLevelInit = false;
     }
 
     if (!BWtune && !menu && (screenmute || radio.rds.correctPI != 0)) readRds();
@@ -1349,7 +1333,6 @@ void loop() {
         GetData();
       }
     }
-
   } else {
     if (af || (!screenmute || (screenmute && (XDRGTKTCP || XDRGTKUSB)))) {
       if (band < BAND_GAP) radio.getStatus(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus);

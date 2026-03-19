@@ -127,7 +127,7 @@ void doAF() {
   if (radio.af_counter != af_counterold && radio.rds.hasAF) {
     if (wifi) {
       Udp.beginPacket(remoteip, 9030);
-      Udp.print("from=TEF_tuner_" + String(stationlistid, DEC) + ";AF=");
+      Udp.print("from=TEF_tuner_" + String(stationlistid) + ";AF=");
 
       for (byte af_scan = 0; af_scan < radio.af_counter; af_scan++) {
         if (wifi) {
@@ -254,7 +254,7 @@ void readRds() {
 
       sprintf(hexbuf, "%X%X", (erroutput >> 4) & 0xF, erroutput & 0xF);
       XDRGTKRDS += hexbuf;
-      XDRGTKRDS += '\n';
+      XDRGTKRDS += F('\n');
 
       if (XDRGTKRDS.changed(0)) {
         uint8_t piError = radio.rds.rdsErr >> 14;
@@ -491,7 +491,7 @@ void showCT() {
   char dateStr[9];
   time_t t = rtc.getEpoch();
 
-  t += Timezone * 3600; // Convert offset from hours to seconds
+  t += Timezone * 3600;
   if (autoDST && isDST(t)) t += 3600;
 
   auto localtm = localtime(&t);
@@ -511,9 +511,7 @@ void showCT() {
     if (hour < 0 || hour > 23) hour = 0;
 
     snprintf(timeStr, sizeof(timeStr), "%02d:%02d:%02d", hour, localtm->tm_min, localtm->tm_sec);
-    
-  }
-  rds_clock = String(timeStr);
+  } rds_clock = String(timeStr);
 
   if (clockampm) strftime(dateStr, sizeof(dateStr), "%m-%d-%y", localtm);
   else strftime(dateStr, sizeof(dateStr), "%d-%m-%y", localtm);
@@ -548,11 +546,8 @@ void showRadioText() {
         if (RThex[i] < 0x10) Udp.print("0");
         if (RThex[i] == ' ') RThex[i] = '_';
         Udp.print(String(RThex[i], HEX));
-      }
-      Udp.endPacket();
-    }
-
-    RTold = RTString;
+      } Udp.endPacket();
+    } RTold = RTString;
   }
 }
 
@@ -711,8 +706,7 @@ void ShowAFEON() {
                 uint8_t nibble = (radio.rds.aid[y] >> (4 * (3 - z))) & 0xF;
                 if (nibble < 10) id[z] = nibble + '0';
                 else id[z] = nibble - 10 + 'A';
-              }
-              id[4] = '\0';
+              } id[4] = '\0';
 
               AIDStringTemp += String(id);
               AIDStringTemp += ": ";
@@ -733,9 +727,7 @@ void ShowAFEON() {
         AIDWidth = FullLineSprite.textWidth(AIDString);
         AIDStringold = AIDString;
       }
-    }
-
-    aidDisplay.update(AIDString, true, ActiveColor, ActiveColorSmooth, 0, 0, BackgroundColor);
+    } aidDisplay.update(AIDString, true, ActiveColor, ActiveColorSmooth, 0, 0, BackgroundColor);
   }
 }
 
@@ -784,7 +776,7 @@ void ShowRDSStatistics() {
       if (lastX >= 0 && (lastX != xpos || lastY != ypos)) tft.fillCircle(lastX - 55, lastY + 7, 2, SignificantColor);
 
       tftReplace(ARIGHT, oldBuf, newBuf, xpos, ypos, PrimaryColor, PrimaryColorSmooth, BackgroundColor, 16);
-      tftPrint(ACENTER, "%", xposPct, ypos, ActiveColor, ActiveColorSmooth, 16);
+      tftPrint(ACENTER, F("%"), xposPct, ypos, ActiveColor, ActiveColorSmooth, 16);
 
       tft.fillCircle(xpos - 55, ypos + 7, 2, InsignificantColor);
 
@@ -796,11 +788,11 @@ void ShowRDSStatistics() {
     }
 
     String HexString = String(((radio.rds.rdsA >> 12) & 0xF), HEX) + String(((radio.rds.rdsA >> 8)  & 0xF), HEX) + String(((radio.rds.rdsA >> 4)  & 0xF), HEX) + String((radio.rds.rdsA & 0xF), HEX);
-    HexString += " ";
+    HexString += F(" ");
     HexString += String(((radio.rds.rdsB >> 12) & 0xF), HEX) + String(((radio.rds.rdsB >> 8)  & 0xF), HEX) + String(((radio.rds.rdsB >> 4)  & 0xF), HEX) + String((radio.rds.rdsB & 0xF), HEX);
-    HexString += " ";
+    HexString += F(" ");
     HexString += String(((radio.rds.rdsC >> 12) & 0xF), HEX) + String(((radio.rds.rdsC >> 8)  & 0xF), HEX) + String(((radio.rds.rdsC >> 4)  & 0xF), HEX) + String((radio.rds.rdsC & 0xF), HEX);
-    HexString += " ";
+    HexString += F(" ");
     HexString += String(((radio.rds.rdsD >> 12) & 0xF), HEX) + String(((radio.rds.rdsD >> 8)  & 0xF), HEX) + String(((radio.rds.rdsD >> 4)  & 0xF), HEX) + String((radio.rds.rdsD & 0xF), HEX);
     HexString.toUpperCase();
 
@@ -836,7 +828,7 @@ void ShowRDSStatistics() {
 
     int berPercent = (int)(smoothBER * 100.0);
     if (berPercentold != berPercent) {
-      tftReplace(ARIGHT, String(berPercentold) + "%", String(berPercent) + "%", 318, 34, PrimaryColor, PrimaryColorSmooth, BackgroundColor, 16);
+      tftReplace(ARIGHT, String(berPercentold) + F("%"), String(berPercent) + F("%"), 318, 34, PrimaryColor, PrimaryColorSmooth, BackgroundColor, 16);
       berPercentold = berPercent;
     }
   }

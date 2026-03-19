@@ -502,14 +502,14 @@ void BuildRDSStatScreen() {
     tft.drawLine(160, 50, 160, 218, FrameColor);
     tft.drawLine(240, 50, 240, 218, FrameColor);
 
-    tftPrint(ALEFT, "kHz", 205, 4, ActiveColor, ActiveColorSmooth, 28); // 28, not 16 can't force latin font
+    tftPrint(ALEFT, F("kHz"), 205, 4, ActiveColor, ActiveColorSmooth, 28); // 28, not 16 can't force latin font
 
-    tftPrint16(ALEFT, "ERRORS", 3, 34, ActiveColor, ActiveColorSmooth);
-    tftPrint16(ALEFT, "A:", 66, 34, ActiveColor, ActiveColorSmooth);
-    tftPrint16(ALEFT, "B:", 104, 34, ActiveColor, ActiveColorSmooth);
-    tftPrint16(ALEFT, "C:", 142, 34, ActiveColor, ActiveColorSmooth);
-    tftPrint16(ALEFT, "D:", 180, 34, ActiveColor, ActiveColorSmooth);
-    tftPrint16(ALEFT, "BER", 250, 34, ActiveColor, ActiveColorSmooth);
+    tftPrint16(ALEFT, F("ERRORS"), 3, 34, ActiveColor, ActiveColorSmooth);
+    tftPrint16(ALEFT, F("A:"), 66, 34, ActiveColor, ActiveColorSmooth);
+    tftPrint16(ALEFT, F("B:"), 104, 34, ActiveColor, ActiveColorSmooth);
+    tftPrint16(ALEFT, F("C:"), 142, 34, ActiveColor, ActiveColorSmooth);
+    tftPrint16(ALEFT, F("D:"), 180, 34, ActiveColor, ActiveColorSmooth);
+    tftPrint16(ALEFT, F("BER"), 250, 34, ActiveColor, ActiveColorSmooth);
 
     const uint16_t xcol[4] = {10, 90, 170, 250};       // column X positions
     const uint16_t rowY[8] = {56, 76, 96, 116, 136, 156, 176, 196}; // row Y positions
@@ -540,22 +540,22 @@ void BuildRDSStatScreen() {
     }
 
     // --- Reset stored states ---
-    RDSstatusold      = !RDSstatusold;
-    Stereostatusold   = false;
-    BWreset           = true;
-    berPercentold     = 255;
-    rssiold           = 2000;
-    batteryold        = 6;
-    batteryVold       = 0;
-    vPerold           = 0;
-    rds_clockold      = "";
-    dropout           = false;
-    rdsreset          = true;
+    RDSstatusold = !RDSstatusold;
+    Stereostatusold = false;
+    BWreset = true;
+    berPercentold = 255;
+    rssiold = 2000;
+    batteryold = 6;
+    batteryVold = 0;
+    vPerold = 0;
+    rds_clockold = "";
+    dropout = false;
+    rdsreset = true;
 
     // --- Clear previous RDS block counters ---
     for (int x = 0; x < 33; x++) {
       processed_rdsblocksold[x] = 0;
-      blockcounterold[x]       = 0;
+      blockcounterold[x] = 0;
     }
   }
 }
@@ -582,7 +582,7 @@ void BuildAFScreen() {
   tft.drawLine(105, 30, 105, 0, FrameColor);
   tft.drawLine(162, 30, 162, 0, FrameColor);
   tft.drawLine(248, 30, 248, 0, FrameColor);
-  tftPrint(ALEFT, "kHz", 205, 4, ActiveColor, ActiveColorSmooth, 28);
+  tftPrint(ALEFT, F("kHz"), 205, 4, ActiveColor, ActiveColorSmooth, 28);
   tftPrint(ACENTER, textUI(30), 160, 222, ActiveColor, ActiveColorSmooth, 16);
   if (afpagenr == 1) {
     if (!radio.rds.hasAF) tftPrint(ALEFT, textUI(84), 6, 48, PrimaryColor, PrimaryColorSmooth, 16);
@@ -619,7 +619,6 @@ void BuildAFScreen() {
   for (byte i = 0; i < 20; i++) std::memset(eonpicodeold[i], '\0', sizeof(eonpicodeold[i]));
 
   if (afpagenr == 1 && radio.rds.hasDABAF && radio.rds.dabaffreq != 0) tftPrint(ARIGHT, "DAB: " + String(radio.rds.dabafchannel) + " (" + String(radio.rds.dabafeid) + ")", 166, 32, SecondaryColor, SecondaryColorSmooth, 16);
-
 }
 
 void ShowOneLine(byte position, byte item, bool selected) {
@@ -3195,13 +3194,11 @@ void MenuUpDown(bool dir) {
 
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM2:
             touchrotating = !touchrotating;
             OneBigLineSprite.drawString((touchrotating ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM3:
             if (dir) {
               switch (tot) {
@@ -3239,7 +3236,6 @@ void MenuUpDown(bool dir) {
 
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM4:
             if (autosquelch && !usesquelch) {
               usesquelch = true;
@@ -3255,7 +3251,6 @@ void MenuUpDown(bool dir) {
             if (autosquelch) OneBigLineSprite.drawString(textUI(83), 135, 0); else OneBigLineSprite.drawString((usesquelch ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM5:
             if (dir) {
               fmagc++;
@@ -3273,7 +3268,6 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.pushSprite(24, 118);
             radio.setAGC(fmagc);
             break;
-
           case ITEM6:
             if (dir) {
               amagc++;
@@ -3306,8 +3300,7 @@ void MenuUpDown(bool dir) {
               case FM_BAND_OIRT: OneBigLineSprite.drawString(textUI(103), 135, 0); break;
               case FM_BAND_FM: OneBigLineSprite.drawString(textUI(102), 135, 0); break;
               case FM_BAND_NONE: OneBigLineSprite.drawString(textUI(80), 135, 0); break;
-            }
-            OneBigLineSprite.pushSprite(24, 118);
+            } OneBigLineSprite.pushSprite(24, 118);
             break;
 
           case ITEM8:
@@ -3327,10 +3320,8 @@ void MenuUpDown(bool dir) {
               case AM_BAND_MW: OneBigLineSprite.drawString(textUI(100), 135, 0); break;
               case AM_BAND_SW: OneBigLineSprite.drawString(textUI(101), 135, 0); break;
               case AM_BAND_NONE: OneBigLineSprite.drawString(textUI(80), 135, 0); break;
-            }
-            OneBigLineSprite.pushSprite(24, 118);
+            } OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM9:
             if (dir) {
               longbandpress++;
@@ -3347,7 +3338,6 @@ void MenuUpDown(bool dir) {
             }
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM10:
             if (dir) {
               if (spispeed == 0) {
@@ -3387,13 +3377,10 @@ void MenuUpDown(bool dir) {
               OneBigLineSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
               OneBigLineSprite.drawString(String(spispeed), 160, 0);
               tft.setSPISpeed(spispeed);
-            }
-            
-            OneBigLineSprite.pushSprite(24, 118);
+            } OneBigLineSprite.pushSprite(24, 118);
             break;
         }
         break;
-
       case AUDIOSETTINGS:
         switch (menuoption) {
           case ITEM1:
@@ -3414,13 +3401,11 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.pushSprite(24, 118);
             radio.setVolume(VolSet);
             break;
-
           case ITEM2:
             edgebeep = !edgebeep;
             OneBigLineSprite.drawString((edgebeep ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM3:
             audiomode = !audiomode;
 
@@ -3428,7 +3413,6 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.pushSprite(24, 118);
             radio.setAudio(audiomode);
             break;
-
           case ITEM4:
             if (dir) {
               StereoLevel ++;
@@ -3451,7 +3435,6 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.pushSprite(24, 118);
             radio.setStereoLevel(StereoLevel);
             break;
-
           case ITEM5:
             if (dir) {
               HighCutLevel ++;
@@ -3470,7 +3453,6 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.pushSprite(24, 118);
             radio.setHighCutLevel(HighCutLevel);
             break;
-
           case ITEM6:
             if (dir) {
               HighCutOffset ++;
@@ -3494,7 +3476,6 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.pushSprite(24, 118);
             radio.setHighCutOffset(HighCutOffset);
             break;
-
           case ITEM7:
             if (dir) fmdeemphasis = (RADIO_FM_DEEMPHASIS)((fmdeemphasis + 1) % DEEMPHASIS_COUNT);
             else fmdeemphasis = (RADIO_FM_DEEMPHASIS)((fmdeemphasis + DEEMPHASIS_COUNT - 1) % DEEMPHASIS_COUNT);
@@ -3510,7 +3491,6 @@ void MenuUpDown(bool dir) {
             break;
         }
         break;
-
       case DISPLAYSETTINGS:
         switch (menuoption) {
           case ITEM1:
@@ -3526,7 +3506,6 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.drawString(textUI(0), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM2:
             if (dir) {
               ContrastSet++;
@@ -3545,14 +3524,12 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.pushSprite(24, 118);
             analogWrite(CONTRASTPIN, map(ContrastSet, 0, 100, 0, 255));
             break;
-
           case ITEM3:
             showaudio = !showaudio;
 
             OneBigLineSprite.drawString((showaudio ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM4:
             if (dir) {
               screensaverset ++;
@@ -3570,7 +3547,6 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.drawString((screensaverset ? String(screensaverOptions[screensaverset], DEC) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM5:
             if (dir) {
               poweroptions++;
@@ -3585,11 +3561,8 @@ void MenuUpDown(bool dir) {
               case LCD_BRIGHTNESS_1_PERCENT: OneBigLineSprite.drawString(textUI(91), 135, 0); break;
               case LCD_BRIGHTNESS_A_QUARTER: OneBigLineSprite.drawString(textUI(92), 135, 0); break;
               case LCD_BRIGHTNESS_HALF: OneBigLineSprite.drawString(textUI(93), 135, 0); break;
-            }
-
-            OneBigLineSprite.pushSprite(24, 118);
+            } OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM6:
             if (dir) {
               batteryoptions++;
@@ -3603,11 +3576,8 @@ void MenuUpDown(bool dir) {
               case BATTERY_NONE: OneBigLineSprite.drawString(textUI(27), 135, 0); break;
               case BATTERY_VALUE: OneBigLineSprite.drawString(textUI(171), 135, 0); break;
               case BATTERY_PERCENT: OneBigLineSprite.drawString(textUI(172), 135, 0); break;
-            }
-
-            OneBigLineSprite.pushSprite(24, 118);
+            } OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM7:
             if (dir) {
               unit ++;
@@ -3620,14 +3590,12 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.drawString(unitString[unit], 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM8:
             showclock = !showclock;
 
             OneBigLineSprite.drawString((showclock ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM9:
             if (dir) {
               CurrentTheme ++;
@@ -3672,7 +3640,6 @@ void MenuUpDown(bool dir) {
             break;
         }
         break;
-
       case RDSSETTINGS:
         rds_settings_changed = true;
         switch (menuoption) {
@@ -3689,10 +3656,8 @@ void MenuUpDown(bool dir) {
               case 0: OneBigLineSprite.drawString(textUI(27), 135, 0); break;
               case 1: OneBigLineSprite.drawString(textUI(197), 135, 0); break;
               case 2: OneBigLineSprite.drawString(textUI(198), 135, 0); break;
-            }
-            OneBigLineSprite.pushSprite(24, 118);
+            } OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM2:
             if (dir) {
               radio.rds.region++;
@@ -3710,7 +3675,6 @@ void MenuUpDown(bool dir) {
             }
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM3:
             if (dir) {
               radio.underscore++;
@@ -3724,24 +3688,20 @@ void MenuUpDown(bool dir) {
               case 0: OneBigLineSprite.drawString(textUI(27), 135, 0); break;
               case 1: OneBigLineSprite.drawString(textUI(47), 135, 0); break;
               case 2: OneBigLineSprite.drawString(textUI(28), 135, 0); break;
-            }
-            OneBigLineSprite.pushSprite(24, 118);
+            } OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM4:
             radio.rds.filter = !radio.rds.filter;
 
             OneBigLineSprite.drawString((radio.rds.filter ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM5:
             radio.rds.pierrors = !radio.rds.pierrors;
 
             OneBigLineSprite.drawString((radio.rds.pierrors ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM6:
             if (dir) {
               af++;
@@ -3755,25 +3715,20 @@ void MenuUpDown(bool dir) {
               case 0: OneBigLineSprite.drawString(textUI(27), 135, 0); break;
               case 1: OneBigLineSprite.drawString(String(textUI(28)) + " / REG " + String(textUI(28)), 135, 0); break;
               case 2: OneBigLineSprite.drawString(String(textUI(28)) + " / REG " + String(textUI(27)), 135, 0); break;
-            }
-
-            OneBigLineSprite.pushSprite(24, 118);
+            } OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM7:
             radio.rds.rtbuffer = !radio.rds.rtbuffer;
 
             OneBigLineSprite.drawString((radio.rds.rtbuffer ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM8:
             radio.rds.sortaf = !radio.rds.sortaf;
 
             OneBigLineSprite.drawString((radio.rds.sortaf ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM9:
             if (dir) {
               radio.rds.fastps++;
@@ -3787,20 +3742,15 @@ void MenuUpDown(bool dir) {
               case 0: OneBigLineSprite.drawString(textUI(27), 135, 0); break;
               case 1: OneBigLineSprite.drawString(textUI(256), 135, 0); break;
               case 2: OneBigLineSprite.drawString(textUI(257), 135, 0); break;
-            }
-
-            OneBigLineSprite.pushSprite(24, 118);
+            } OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM10:
             showlongps = !showlongps;
 
             OneBigLineSprite.drawString((showlongps ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-        }
-        break;
-
+        } break;
       case FMSETTINGS:
         switch (menuoption) {
           case ITEM1:
@@ -3824,7 +3774,6 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.drawString(String(ConverterSet, DEC), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM2:
             if (dir) {
               LowEdgeSet ++;
@@ -3842,7 +3791,6 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.drawString(String(LowEdgeSet / 10 + ConverterSet, DEC) + "." + String(LowEdgeSet % 10 + ConverterSet, DEC), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM3:
             if (dir) {
               HighEdgeSet ++;
@@ -3860,7 +3808,6 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.drawString(String(HighEdgeSet / 10 + ConverterSet, DEC) + "." + String(HighEdgeSet % 10 + ConverterSet, DEC), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM4:
             if (dir) {
               LevelOffset++;
@@ -3880,7 +3827,6 @@ void MenuUpDown(bool dir) {
             radio.setOffset(LevelOffset);
             change = true;
             break;
-
           case ITEM5:
             if (dir) {
               LowLevelSet++;
@@ -3898,7 +3844,6 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.drawString(String(LowLevelSet, DEC), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM6:
             softmutefm = !softmutefm;
 
@@ -3906,7 +3851,6 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.pushSprite(24, 118);
             radio.setSoftmuteFM(softmutefm);
             break;
-
           case ITEM7:
             if (dir) {
               fmnb ++;
@@ -3929,7 +3873,6 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.pushSprite(24, 118);
             radio.setFMNoiseBlanker(fmnb);
             break;
-
           case ITEM8:
             if (dir) {
               fmdefaultstepsize++;
@@ -3946,22 +3889,18 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
 
             switch (fmdefaultstepsize) {
-              case 0: OneBigLineSprite.drawString(String(FREQ_FM_STEP_50K * 10, DEC), 135, 0); break;
-              case 1: OneBigLineSprite.drawString(String(FREQ_FM_STEP_100K * 10, DEC), 135, 0); break;
-              case 2: OneBigLineSprite.drawString(String(FREQ_FM_STEP_200K * 10, DEC), 135, 0); break;
-            }
-            OneBigLineSprite.pushSprite(24, 118);
+              case 0: OneBigLineSprite.drawString(String(FREQ_FM_STEP_50K * 10), 135, 0); break;
+              case 1: OneBigLineSprite.drawString(String(FREQ_FM_STEP_100K * 10), 135, 0); break;
+              case 2: OneBigLineSprite.drawString(String(FREQ_FM_STEP_200K * 10), 135, 0); break;
+            } OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM9:
             if (chipmodel == 1 || chipmodel == 3) {
               fmsi = !fmsi;
               OneBigLineSprite.drawString((fmsi ? textUI(28) : textUI(27)), 135, 0);
               OneBigLineSprite.pushSprite(24, 118);
               if (fmsi) radio.setFMSI(2); else radio.setFMSI(1);
-            }
-            break;
-
+            } break;
           case ITEM10:
             if (dir) {
               fmscansens++;
@@ -3986,7 +3925,6 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.pushSprite(24, 118);
             radio.setSoftmuteAM(softmuteam);
             break;
-
           case ITEM2:
             if (dir) {
               amnb ++;
@@ -4009,7 +3947,6 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.pushSprite(24, 118);
             radio.setAMNoiseBlanker(amnb);
             break;
-
           case ITEM3:
             if (dir) {
               AMLevelOffset++;
@@ -4028,14 +3965,12 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.pushSprite(24, 118);
             radio.setAMOffset(AMLevelOffset);
             break;
-
           case ITEM4:
             showSWMIBand = !showSWMIBand;
 
             OneBigLineSprite.drawString((showSWMIBand ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM5:
             if (dir) {
               amcodect++;
@@ -4058,7 +3993,6 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.pushSprite(24, 118);
             if (band > BAND_GAP) radio.setAMCoChannel(amcodect, amcodectcount);
             break;
-
           case ITEM6:
             if (dir) {
               amcodectcount++;
@@ -4072,7 +4006,6 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.pushSprite(24, 118);
             if (band > BAND_GAP) radio.setAMCoChannel(amcodect, amcodectcount);
             break;
-
           case ITEM7:
             if (dir) {
               amgain += 6;
@@ -4091,7 +4024,6 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.pushSprite(24, 118);
             if (band > BAND_GAP) radio.setAMAttenuation(amgain);
             break;
-
           case ITEM8:
             mwstepsize = !mwstepsize;
 
@@ -4103,7 +4035,6 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.drawString((mwstepsize ? "10" : "9"), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM9:
             if (dir) {
               amscansens++;
@@ -4127,14 +4058,12 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.drawString((USBmode ? "RDS Spy" : "XDRGTK"), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM2:
             wifi = !wifi;
 
             OneBigLineSprite.drawString((wifi ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM4:
             if (dir) {
               subnetclient ++;
@@ -4147,7 +4076,6 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.drawString(String(WiFi.localIP()[0]) + "." + String(WiFi.localIP()[1]) + "." + String(WiFi.localIP()[2]) + "." + String(subnetclient, DEC), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM5:
             if (dir) {
               stationlistid ++;
@@ -4160,14 +4088,12 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.drawString(String(stationlistid, DEC), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM6:
             XDRGTKMuteScreen = !XDRGTKMuteScreen;
 
             OneBigLineSprite.drawString((XDRGTKMuteScreen ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM7:
             if (dir) {
               Timezone++;
@@ -4185,21 +4111,18 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.drawString((Timezone > -1 ? "+" : "") + String(Timezone), 155, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM8:
             autoDST = !autoDST;
 
             OneBigLineSprite.drawString((autoDST ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM9:
             clockampm = !clockampm;
 
             OneBigLineSprite.drawString((clockampm ? "12" : "24"), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM10:
             char PICT[5];
             OneBigLineSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
@@ -4222,12 +4145,10 @@ void MenuUpDown(bool dir) {
                 OneBigLineSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
                 OneBigLineSprite.drawString(textUI(39), 135, 0);
               }
-            }
-            OneBigLineSprite.pushSprite(24, 118);
+            } OneBigLineSprite.pushSprite(24, 118);
             break;
         }
         break;
-
       case DXMODE:
         switch (menuoption) {
           case ITEM2:
@@ -4242,7 +4163,6 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.drawString(String(scanstart + 1, DEC), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM3:
             if (dir) {
               scanstop++;
@@ -4255,7 +4175,6 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.drawString(String(scanstop + 1, DEC), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM4:
             if (dir) {
               scanhold++;
@@ -4273,13 +4192,11 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.drawString((scanhold == 0 ? "0.5" : String(scanhold, DEC)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM5:
             scanmem = !scanmem;
             OneBigLineSprite.drawString((scanmem ? textUI(214) : textUI(213)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM6:
             if (dir) {
               scancancel++;
@@ -4293,24 +4210,20 @@ void MenuUpDown(bool dir) {
               case SCAN_CANCEL:  OneBigLineSprite.drawString(textUI(27), 135, 0); break;
               case CORRECTPI: OneBigLineSprite.drawString(textUI(216), 135, 0); break;
               case SIGNAL: OneBigLineSprite.drawString(textUI(217), 135, 0); break;
-            }
-            OneBigLineSprite.pushSprite(24, 118);
+            } OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM7:
             scanmute = !scanmute;
 
             OneBigLineSprite.drawString((scanmute ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM8:
             autolog = !autolog;
 
             OneBigLineSprite.drawString((autolog ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM9:
             scanholdonsignal = !scanholdonsignal;
 
@@ -4319,7 +4232,6 @@ void MenuUpDown(bool dir) {
             break;
         }
         break;
-
       case AUTOMEM:
         switch (menuoption) {
           case ITEM2:
@@ -4339,7 +4251,6 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.drawString(String(memstartfreq / 10 + ConverterSet, DEC) + "." + String(memstartfreq % 10 + ConverterSet, DEC), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM3:
             if (dir) {
               memstopfreq ++;
@@ -4357,7 +4268,6 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.drawString(String(memstopfreq / 10 + ConverterSet, DEC) + "." + String(memstopfreq % 10 + ConverterSet, DEC), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM4:
             if (dir) {
               memstartpos++;
@@ -4370,7 +4280,6 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.drawString(String(memstartpos + 1, DEC), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM5:
             if (dir) {
               memstoppos++;
@@ -4383,14 +4292,12 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.drawString(String(memstoppos + 1, DEC), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM6:
             mempionly = !mempionly;
 
             OneBigLineSprite.drawString((mempionly ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM7:
             if (dir) {
               memdoublepi++;
@@ -4399,15 +4306,12 @@ void MenuUpDown(bool dir) {
               memdoublepi--;
               if (memdoublepi > 2) memdoublepi = 2;
             }
-
             switch (memdoublepi) {
               case MEMPI_OFF: OneBigLineSprite.drawString(textUI(27), 135, 0); break;
               case MEMPI_RANGE: OneBigLineSprite.drawString(textUI(275), 135, 0); break;
               default: OneBigLineSprite.drawString(textUI(276), 135, 0); break;
-            }
-            OneBigLineSprite.pushSprite(24, 118);
+            } OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM8:
             if (dir) {
               fmscansens++;
@@ -4420,8 +4324,7 @@ void MenuUpDown(bool dir) {
             OneBigLineSprite.drawString(String(fmscansens), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-        }
-        break;
+        } break;
     }
   }
 }
@@ -4453,15 +4356,13 @@ void DoMenu() {
       switch (CurrentTheme) {
         case 7: tft.pushImage(13, 30, 292, 170, popupbackground_wo); break;
         default: tft.pushImage(13, 30, 292, 170, popupbackground); break;
-      }
-      showMenuOpenTouchButtons();
+      } showMenuOpenTouchButtons();
 
       if (menupage == CONNECTIVITY && menuoption == ITEM3) {
         switch (CurrentTheme) {
           case 7: tft.pushImage(0, 0, 320, 240, configurationbackground_wo); break;
           default: tft.pushImage(0, 0, 320, 240, configurationbackground); break;
-        }
-        tftPrint(ACENTER, textUI(43 + menupage - 1), 160, 6, ActiveColor, ActiveColorSmooth, 16);
+        } tftPrint(ACENTER, textUI(43 + menupage - 1), 160, 6, ActiveColor, ActiveColorSmooth, 16);
       }
     }
 
@@ -4483,7 +4384,6 @@ void DoMenu() {
             submenu = true;
             BuildMenu();
             break;
-
           case ITEM2:
             menupage = AUDIOSETTINGS;
             menuoption = ITEM1;
@@ -4491,7 +4391,6 @@ void DoMenu() {
             submenu = true;
             BuildMenu();
             break;
-
           case ITEM3:
             menupage = DISPLAYSETTINGS;
             menuoption = ITEM1;
@@ -4499,7 +4398,6 @@ void DoMenu() {
             submenu = true;
             BuildMenu();
             break;
-
           case ITEM4:
             menupage = RDSSETTINGS;
             menuoption = ITEM1;
@@ -4507,7 +4405,6 @@ void DoMenu() {
             submenu = true;
             BuildMenu();
             break;
-
           case ITEM5:
             menupage = FMSETTINGS;
             menuoption = ITEM1;
@@ -4515,7 +4412,6 @@ void DoMenu() {
             submenu = true;
             BuildMenu();
             break;
-
           case ITEM6:
             menupage = AMSETTINGS;
             menuoption = ITEM1;
@@ -4523,7 +4419,6 @@ void DoMenu() {
             submenu = true;
             BuildMenu();
             break;
-
           case ITEM7:
             menupage = CONNECTIVITY;
             menuoption = ITEM1;
@@ -4531,7 +4426,6 @@ void DoMenu() {
             submenu = true;
             BuildMenu();
             break;
-
           case ITEM8:
             menupage = DXMODE;
             menuoption = ITEM1;
@@ -4539,7 +4433,6 @@ void DoMenu() {
             submenu = true;
             BuildMenu();
             break;
-
           case ITEM9:
             menupage = AUTOMEM;
             menuoption = ITEM1;
@@ -4547,42 +4440,38 @@ void DoMenu() {
             submenu = true;
             BuildMenu();
             break;
-
           case ITEM10:
             menuopen = true;
             tft.drawRoundRect(10, 6, 300, 230, 5, ActiveColor);
             tft.fillRoundRect(12, 8, 296, 226, 5, BackgroundColor);
             tftPrint(ACENTER, textUI(68), 155, 13, ActiveColor, ActiveColorSmooth, 28);
             tftPrint(ACENTER, textUI(69), 155, 55, ActiveColor, ActiveColorSmooth, 28);
-            tftPrint(ACENTER, "KubaPro010", 155, 38, PrimaryColor, PrimaryColorSmooth, 16);
-            tftPrint(ARIGHT, "ohmytime", 145, 80, PrimaryColor, PrimaryColorSmooth, 16);
-            tftPrint(ARIGHT, "HyperDX", 145, 95, PrimaryColor, PrimaryColorSmooth, 16);
-            tftPrint(ALEFT, "MCelliotG", 155, 80, PrimaryColor, PrimaryColorSmooth, 16);
-            tftPrint(ALEFT, "andimik", 155, 95, PrimaryColor, PrimaryColorSmooth, 16);
-            tftPrint(ARIGHT, "DXHR05", 145, 110, PrimaryColor, PrimaryColorSmooth, 16);
-            tftPrint(ARIGHT, "NoobishSVK", 145, 125, PrimaryColor, PrimaryColorSmooth, 16);
-            tftPrint(ALEFT, "yo2ldk", 155, 110, PrimaryColor, PrimaryColorSmooth, 16);
-            tftPrint(ALEFT, "Justin_Peng(Portable)", 155, 125, PrimaryColor, PrimaryColorSmooth, 16);
-            tftPrint(ARIGHT, "Overland DX", 145, 140, PrimaryColor, PrimaryColorSmooth, 16);
-            tftPrint(ALEFT, "elektronik232", 155, 140, PrimaryColor, PrimaryColorSmooth, 16);
-            tftPrint(ARIGHT, "KOTYA8", 145, 155, PrimaryColor, PrimaryColorSmooth, 16);
-            tftPrint(ALEFT, "mrwish7", 155, 155, PrimaryColor, PrimaryColorSmooth, 16);
-            tftPrint(ARIGHT, "lxsxl", 145, 170, PrimaryColor, PrimaryColorSmooth, 16);
-            tftPrint(ALEFT, "leryfm", 155, 170, PrimaryColor, PrimaryColorSmooth, 16);
-            tftPrint(ARIGHT, "marsel90-1", 145, 185, PrimaryColor, PrimaryColorSmooth, 16);
-            tftPrint(ALEFT, "lawendel", 155, 185, PrimaryColor, PrimaryColorSmooth, 16);
-            tftPrint(ARIGHT, "KB8U", 145, 200, PrimaryColor, PrimaryColorSmooth, 16);
-            tftPrint(ALEFT, "PE5PVB", 155, 200, PrimaryColor, PrimaryColorSmooth, 16);
-            tftPrint(ACENTER, "github.com/KubaPro010/TEF6686_ESP32", 155, 215, ActiveColor, ActiveColorSmooth, 16);
+            tftPrint(ACENTER, F("KubaPro010"), 155, 38, PrimaryColor, PrimaryColorSmooth, 16);
+            tftPrint(ARIGHT, F("ohmytime"), 145, 80, PrimaryColor, PrimaryColorSmooth, 16);
+            tftPrint(ARIGHT, F("HyperDX"), 145, 95, PrimaryColor, PrimaryColorSmooth, 16);
+            tftPrint(ALEFT, F("MCelliotG"), 155, 80, PrimaryColor, PrimaryColorSmooth, 16);
+            tftPrint(ALEFT, F("andimik"), 155, 95, PrimaryColor, PrimaryColorSmooth, 16);
+            tftPrint(ARIGHT, F("DXHR05"), 145, 110, PrimaryColor, PrimaryColorSmooth, 16);
+            tftPrint(ARIGHT, F("NoobishSVK"), 145, 125, PrimaryColor, PrimaryColorSmooth, 16);
+            tftPrint(ALEFT, F("yo2ldk"), 155, 110, PrimaryColor, PrimaryColorSmooth, 16);
+            tftPrint(ALEFT, F("Justin_Peng(Portable)"), 155, 125, PrimaryColor, PrimaryColorSmooth, 16);
+            tftPrint(ARIGHT, F("Overland DX"), 145, 140, PrimaryColor, PrimaryColorSmooth, 16);
+            tftPrint(ALEFT, F("elektronik232"), 155, 140, PrimaryColor, PrimaryColorSmooth, 16);
+            tftPrint(ARIGHT, F("KOTYA8"), 145, 155, PrimaryColor, PrimaryColorSmooth, 16);
+            tftPrint(ALEFT, F("mrwish7"), 155, 155, PrimaryColor, PrimaryColorSmooth, 16);
+            tftPrint(ARIGHT, F("lxsxl"), 145, 170, PrimaryColor, PrimaryColorSmooth, 16);
+            tftPrint(ALEFT, F("leryfm"), 155, 170, PrimaryColor, PrimaryColorSmooth, 16);
+            tftPrint(ARIGHT, F("marsel90-1"), 145, 185, PrimaryColor, PrimaryColorSmooth, 16);
+            tftPrint(ALEFT, F("lawendel"), 155, 185, PrimaryColor, PrimaryColorSmooth, 16);
+            tftPrint(ARIGHT, F("KB8U"), 145, 200, PrimaryColor, PrimaryColorSmooth, 16);
+            tftPrint(ALEFT, F("PE5PVB"), 155, 200, PrimaryColor, PrimaryColorSmooth, 16);
+            tftPrint(ACENTER, F("github.com/KubaPro010/TEF6686_ESP32"), 155, 215, ActiveColor, ActiveColorSmooth, 16);
             if (hardwaremodel == PORTABLE_TOUCH_ILI9341) {
               tft.fillRoundRect(240, 36, 60, 40, 6, FrameColor);
               tft.drawRoundRect(240, 36, 60, 40, 6, ActiveColor);
               tftPrint(ACENTER, "OK", 270, 44, (CurrentTheme == 7 ? White : ActiveColor), ActiveColorSmooth, 28);
-            }
-            break;
-        }
-        break;
-
+            } break;
+        } break;
       case MAINSETTINGS:
         switch (menuoption) {
           case ITEM1:
@@ -4592,18 +4481,14 @@ void DoMenu() {
               case BASE_ILI9341: OneBigLineSprite.drawString(textUI(106), 135, 0); break;
               case PORTABLE_ILI9341: OneBigLineSprite.drawString(textUI(107), 135, 0); break;
               case PORTABLE_TOUCH_ILI9341: OneBigLineSprite.drawString(textUI(108), 135, 0); break;
-            }
-
-            OneBigLineSprite.pushSprite(24, 118);
+            } OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM2:
             Infoboxprint(textUI(65));
 
             OneBigLineSprite.drawString((touchrotating ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM3:
             Infoboxprint(textUI(72));
 
@@ -4619,17 +4504,13 @@ void DoMenu() {
               OneBigLineSprite.setTextDatum(TC_DATUM);
               OneBigLineSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
               OneBigLineSprite.drawString(textUI(27), 135, 0);
-            }
-
-            OneBigLineSprite.pushSprite(24, 118);
+            } OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM4:
             Infoboxprint(textUI(59));
             if (autosquelch) OneBigLineSprite.drawString(textUI(83), 135, 0); else OneBigLineSprite.drawString((usesquelch ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM5:
             Infoboxprint(textUI(34));
 
@@ -4641,7 +4522,6 @@ void DoMenu() {
             OneBigLineSprite.drawString(String(fmagc), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM6:
             Infoboxprint(textUI(195));
 
@@ -4653,7 +4533,6 @@ void DoMenu() {
             OneBigLineSprite.drawString(String(amagc), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM7:
             Infoboxprint(textUI(97));
 
@@ -4665,7 +4544,6 @@ void DoMenu() {
             }
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM8:
             Infoboxprint(textUI(98));
             switch (bandAM) {
@@ -4677,10 +4555,8 @@ void DoMenu() {
               case AM_BAND_MW: OneBigLineSprite.drawString(textUI(100), 135, 0); break;
               case AM_BAND_SW: OneBigLineSprite.drawString(textUI(101), 135, 0); break;
               case AM_BAND_NONE: OneBigLineSprite.drawString(textUI(80), 135, 0); break;
-            }
-            OneBigLineSprite.pushSprite(24, 118);
+            } OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM9:
             Infoboxprint(textUI(220));
 
@@ -4688,11 +4564,8 @@ void DoMenu() {
               case STANDBY: OneBigLineSprite.drawString(textUI(221), 135, 0); break;
               case SCREENOFF: OneBigLineSprite.drawString(textUI(222), 135, 0); break;
               default: OneBigLineSprite.drawString(textUI(223), 135, 0); break;
-            }
-            OneBigLineSprite.pushSprite(24, 118);
+            } OneBigLineSprite.pushSprite(24, 118);
             break;
-
-
           case ITEM10:
             Infoboxprint(textUI(78));
 
@@ -4701,17 +4574,13 @@ void DoMenu() {
             if (spispeed != 0) {
               OneBigLineSprite.drawString("MHz", 175, 0);
               OneBigLineSprite.setTextDatum(TR_DATUM);
-            } else {
-              OneBigLineSprite.setTextDatum(TC_DATUM);
-            }
+            } else OneBigLineSprite.setTextDatum(TC_DATUM);
             OneBigLineSprite.setTextColor(PrimaryColor, PrimaryColorSmooth, false);
             if (spispeed == 0) OneBigLineSprite.drawString(textUI(83), 135, 0);
             else OneBigLineSprite.drawString(String(spispeed), 160, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-        }
-        break;
-
+        } break;
       case AUDIOSETTINGS:
         switch (menuoption) {
           case ITEM1:
@@ -4726,21 +4595,18 @@ void DoMenu() {
             OneBigLineSprite.pushSprite(24, 118);
             radio.setVolume(VolSet);
             break;
-
           case ITEM2:
             Infoboxprint(textUI(42));
 
             OneBigLineSprite.drawString((edgebeep ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM3:
             Infoboxprint(textUI(64));
 
             OneBigLineSprite.drawString((audiomode ? "MPX" : "Stereo"), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM4:
             Infoboxprint(textUI(12));
 
@@ -4752,7 +4618,6 @@ void DoMenu() {
             OneBigLineSprite.drawString((StereoLevel != 0 ? String(StereoLevel, DEC) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM5:
             Infoboxprint(textUI(13));
 
@@ -4764,7 +4629,6 @@ void DoMenu() {
             OneBigLineSprite.drawString(String(HighCutLevel * 100, DEC), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM6:
             Infoboxprint(textUI(14));
 
@@ -4776,7 +4640,6 @@ void DoMenu() {
             OneBigLineSprite.drawString((HighCutOffset != 0 ? String(HighCutOffset, DEC) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM7:
             Infoboxprint(textUI(196));
 
@@ -4799,7 +4662,6 @@ void DoMenu() {
             OneBigLineSprite.drawString(textUI(0), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM2:
             Infoboxprint(textUI(16));
 
@@ -4811,14 +4673,12 @@ void DoMenu() {
             OneBigLineSprite.drawString(String(ContrastSet, DEC), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM3:
             Infoboxprint(textUI(60));
 
             OneBigLineSprite.drawString((showaudio ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM4:
             Infoboxprint(textUI(88));
 
@@ -4830,7 +4690,6 @@ void DoMenu() {
             OneBigLineSprite.drawString((screensaverset ? String(screensaverOptions[screensaverset], DEC) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM5:
             Infoboxprint(textUI(71));
 
@@ -4843,7 +4702,6 @@ void DoMenu() {
 
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM6:
             Infoboxprint(textUI(170));
 
@@ -4855,28 +4713,24 @@ void DoMenu() {
 
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM7:
             Infoboxprint(textUI(95));
 
             OneBigLineSprite.drawString(unitString[unit], 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM8:
             Infoboxprint(textUI(258));
 
             OneBigLineSprite.drawString((showclock ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM9:
             Infoboxprint(textUI(74));
 
             OneBigLineSprite.drawString(Theme[CurrentTheme], 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM10:
             Infoboxprint(textUI(82));
 
@@ -4898,7 +4752,6 @@ void DoMenu() {
             }
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM2:
             Infoboxprint(textUI(43));
 
@@ -4910,7 +4763,6 @@ void DoMenu() {
             }
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM3:
             Infoboxprint(textUI(46));
 
@@ -4921,21 +4773,18 @@ void DoMenu() {
             }
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM4:
             Infoboxprint(textUI(57));
 
             OneBigLineSprite.drawString((radio.rds.filter ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM5:
             Infoboxprint(textUI(58));
 
             OneBigLineSprite.drawString((radio.rds.pierrors ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM6:
             Infoboxprint(textUI(96));
 
@@ -4947,21 +4796,18 @@ void DoMenu() {
 
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM7:
             Infoboxprint(textUI(173));
 
             OneBigLineSprite.drawString((radio.rds.rtbuffer ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM8:
             Infoboxprint(textUI(211));
 
             OneBigLineSprite.drawString((radio.rds.sortaf ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM9:
             Infoboxprint(textUI(200));
 
@@ -4973,7 +4819,6 @@ void DoMenu() {
 
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM10:
             Infoboxprint(textUI(259));
 
@@ -4996,7 +4841,6 @@ void DoMenu() {
             OneBigLineSprite.drawString(String(ConverterSet, DEC), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM2:
             Infoboxprint(textUI(9));
 
@@ -5008,7 +4852,6 @@ void DoMenu() {
             OneBigLineSprite.drawString(String(LowEdgeSet / 10 + ConverterSet, DEC) + "." + String(LowEdgeSet % 10 + ConverterSet, DEC), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM3:
             Infoboxprint(textUI(10));
 
@@ -5020,7 +4863,6 @@ void DoMenu() {
             OneBigLineSprite.drawString(String(HighEdgeSet / 10 + ConverterSet, DEC) + "." + String(HighEdgeSet % 10 + ConverterSet, DEC), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM4:
             Infoboxprint(textUI(11));
 
@@ -5032,7 +4874,6 @@ void DoMenu() {
             OneBigLineSprite.drawString((LevelOffset > 0 ? "+" : "") + String(LevelOffset, DEC), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM5:
             Infoboxprint(textUI(15));
 
@@ -5044,14 +4885,12 @@ void DoMenu() {
             OneBigLineSprite.drawString(String(LowLevelSet, DEC), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM6:
             Infoboxprint(textUI(40));
 
             OneBigLineSprite.drawString((softmutefm ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM7:
             Infoboxprint(textUI(62));
 
@@ -5063,7 +4902,6 @@ void DoMenu() {
             OneBigLineSprite.drawString((fmnb != 0 ? String(fmnb, DEC) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM8:
             Infoboxprint(textUI(87));
 
@@ -5080,7 +4918,6 @@ void DoMenu() {
             }
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM9:
             if(chipmodel == 1 || chipmodel == 3) {
               Infoboxprint(textUI(202));
@@ -5088,7 +4925,6 @@ void DoMenu() {
             } else Infoboxprint(textUI(203));
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM10:
             Infoboxprint(textUI(79));
 
@@ -5106,7 +4942,6 @@ void DoMenu() {
             OneBigLineSprite.drawString((softmuteam ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM2:
             Infoboxprint(textUI(61));
 
@@ -5118,7 +4953,6 @@ void DoMenu() {
             OneBigLineSprite.drawString((amnb != 0 ? String(amnb, DEC) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM3:
             Infoboxprint(textUI(94));
 
@@ -5130,14 +4964,12 @@ void DoMenu() {
             OneBigLineSprite.drawString((AMLevelOffset > 0 ? "+" : "") + String(AMLevelOffset, DEC), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM4:
             Infoboxprint(textUI(56));
 
             OneBigLineSprite.drawString((showSWMIBand ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM5:
             Infoboxprint(textUI(183));
 
@@ -5149,14 +4981,12 @@ void DoMenu() {
             OneBigLineSprite.drawString((amcodect != 0 ? String(amcodect, DEC) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM6:
             Infoboxprint(textUI(185));
 
             OneBigLineSprite.drawString(String(amcodectcount, DEC), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM7:
             Infoboxprint(textUI(33));
 
@@ -5168,7 +4998,6 @@ void DoMenu() {
             OneBigLineSprite.drawString((amgain != 0 ? String(amgain, DEC) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM8:
             Infoboxprint(textUI(166));
 
@@ -5180,7 +5009,6 @@ void DoMenu() {
             OneBigLineSprite.drawString((mwstepsize ? "10" : "9"), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM9:
             Infoboxprint(textUI(79));
 
@@ -5198,14 +5026,12 @@ void DoMenu() {
             OneBigLineSprite.drawString((USBmode ? "RDS Spy" : "XDRGTK"), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM2:
             Infoboxprint(textUI(48));
 
             OneBigLineSprite.drawString((wifi ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM3: {
               tftPrint(ACENTER, textUI(50), 155, 58, ActiveColor, ActiveColorSmooth, 28);
               tftPrint(ACENTER, "TEF_" + String((uint32_t)ESP.getEfuseMac()), 155, 98, PrimaryColor, PrimaryColorSmooth, 28);
@@ -5214,8 +5040,8 @@ void DoMenu() {
               char key[9];
               XDRGTK_key.toCharArray(key, 9);
               if (wifi) {
-                wifi = false;
                 tryWiFi();
+                wifi = false;
               }
               WiFiConnectParam XDRGTK_key_input("XDRGTK_key", "Password", key, 9);
               if (!setWiFiConnectParam) {
@@ -5244,23 +5070,19 @@ void DoMenu() {
             } else {
               menuopen = false;
               BuildMenu();
-            }
-            break;
-
+            } break;
           case ITEM5:
             Infoboxprint(textUI(267));
 
             OneBigLineSprite.drawString(String(stationlistid, DEC), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM6:
             Infoboxprint(textUI(201));
 
             OneBigLineSprite.drawString((XDRGTKMuteScreen ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM7:
             Infoboxprint(textUI(294));
 
@@ -5272,21 +5094,18 @@ void DoMenu() {
             OneBigLineSprite.drawString((Timezone > -1 ? "+" : "") + String(Timezone), 155, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM8:
             Infoboxprint(textUI(293));
 
             OneBigLineSprite.drawString((autoDST ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM9:
             Infoboxprint(textUI(90));
 
             OneBigLineSprite.drawString((clockampm ? "12" : "24"), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM10:
             Infoboxprint(textUI(38));
 
@@ -5303,36 +5122,28 @@ void DoMenu() {
               OneBigLineSprite.setTextDatum(TL_DATUM);
               OneBigLineSprite.setTextColor(ActiveColor, ActiveColorSmooth, false);
               OneBigLineSprite.drawString(String(PICT), 155, 0);
-            }
-            OneBigLineSprite.pushSprite(24, 118);
-        }
-        break;
-
+            } OneBigLineSprite.pushSprite(24, 118);
+        } break;
       case DXMODE:
         switch (menuoption) {
           case ITEM1:
             if (presets[scanstart].band == BAND_FM && presets[scanstart].frequency == EE_PRESETS_FREQUENCY && scanmem) {
               Infoboxprint(textUI(210));
               OneBigLineSprite.pushSprite(24, 118);
-            } else {
-              startFMDXScan();
-            }
+            } else startFMDXScan();
             break;
-
           case ITEM2:
             Infoboxprint(textUI(205));
 
             OneBigLineSprite.drawString(String(scanstart + 1), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM3:
             Infoboxprint(textUI(206));
 
             OneBigLineSprite.drawString(String(scanstop + 1), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM4:
             Infoboxprint(textUI(207));
 
@@ -5344,46 +5155,39 @@ void DoMenu() {
             OneBigLineSprite.drawString((scanhold == 0 ? "0.5" : String(scanhold, DEC)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM5:
             Infoboxprint(textUI(212));
 
             OneBigLineSprite.drawString((scanmem ? textUI(214) : textUI(213)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM6:
             Infoboxprint(textUI(215));
 
             switch (scancancel) {
-              case SCAN_CANCEL:  OneBigLineSprite.drawString(textUI(27), 135, 0); break;
+              case SCAN_CANCEL: OneBigLineSprite.drawString(textUI(27), 135, 0); break;
               case CORRECTPI: OneBigLineSprite.drawString(textUI(216), 135, 0); break;
               case SIGNAL: OneBigLineSprite.drawString(textUI(217), 135, 0); break;
-            }
-            OneBigLineSprite.pushSprite(24, 118);
+            } OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM7:
             Infoboxprint(textUI(218));
 
             OneBigLineSprite.drawString((scanmute ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM8:
             Infoboxprint(textUI(292));
 
             OneBigLineSprite.drawString((autolog ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM9:
             Infoboxprint(textUI(277));
 
             OneBigLineSprite.drawString((scanholdonsignal ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM10:
             Infoboxprint(textUI(288));
             if (handleCreateNewLogbook()) OneBigLineSprite.drawString(textUI(289), 135, 0); else OneBigLineSprite.drawString(textUI(290), 135, 0);
@@ -5393,11 +5197,8 @@ void DoMenu() {
               tft.fillRoundRect(130, 154, 60, 40, 6, FrameColor);
               tft.drawRoundRect(130, 154, 60, 40, 6, ActiveColor);
               tftPrint(ACENTER, "OK", 160, 162, (CurrentTheme == 7 ? White : ActiveColor), ActiveColorSmooth, 28);
-            }
-            break;
-        }
-        break;
-
+            } break;
+        } break;
       case AUTOMEM:
         switch (menuoption) {
           case ITEM1:
@@ -5406,11 +5207,9 @@ void DoMenu() {
               case 0:
                 tftPrint(ACENTER, textUI(271), 160, 175, ActiveColor, ActiveColorSmooth, 16);
                 break;
-
               case 1:
                 tftPrint(ACENTER, textUI(269), 160, 175, ActiveColor, ActiveColorSmooth, 16);
                 break;
-
               case 2:
                 tftPrint(ACENTER, textUI(270), 160, 175, ActiveColor, ActiveColorSmooth, 16);
                 break;
@@ -5421,7 +5220,6 @@ void DoMenu() {
               tftPrint(ACENTER, "OK", 270, 44, (CurrentTheme == 7 ? White : ActiveColor), ActiveColorSmooth, 28);
             }
             break;
-
           case ITEM2:
             Infoboxprint(textUI(260));
 
@@ -5433,7 +5231,6 @@ void DoMenu() {
             OneBigLineSprite.drawString(String(memstartfreq / 10 + ConverterSet, DEC) + "." + String(memstartfreq % 10 + ConverterSet, DEC), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM3:
             Infoboxprint(textUI(261));
 
@@ -5445,28 +5242,24 @@ void DoMenu() {
             OneBigLineSprite.drawString(String(memstopfreq / 10 + ConverterSet, DEC) + "." + String(memstopfreq % 10 + ConverterSet, DEC), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM4:
             Infoboxprint(textUI(262));
 
             OneBigLineSprite.drawString(String(memstartpos + 1), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM5:
             Infoboxprint(textUI(263));
 
             OneBigLineSprite.drawString(String(memstoppos + 1), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM6:
             Infoboxprint(textUI(264));
 
             OneBigLineSprite.drawString((mempionly ? textUI(28) : textUI(27)), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM7:
             Infoboxprint(textUI(274));
 
@@ -5477,14 +5270,12 @@ void DoMenu() {
             }
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM8:
             Infoboxprint(textUI(79));
 
             OneBigLineSprite.drawString(String(fmscansens), 135, 0);
             OneBigLineSprite.pushSprite(24, 118);
             break;
-
           case ITEM9:
             Infoboxprint(textUI(272));
 
@@ -5502,19 +5293,15 @@ void DoMenu() {
               tft.fillRoundRect(240, 36, 60, 40, 6, FrameColor);
               tft.drawRoundRect(240, 36, 60, 40, 6, ActiveColor);
               tftPrint(ACENTER, "OK", 270, 44, (CurrentTheme == 7 ? White : ActiveColor), ActiveColorSmooth, 28);
-            }
-            break;
-        }
-        break;
+            } break;
+        } break;
     }
   } else {
     if (menupage == CONNECTIVITY && menuoption == ITEM2) {
       tryWiFi();
       delay(1750);
     }
-    if (menupage == DISPLAYSETTINGS && menuoption == ITEM5) {
-      doTheme();
-    }
+    if (menupage == DISPLAYSETTINGS && menuoption == ITEM5) doTheme();
 
     menuopen = false;
     if (scanstart >= scanstop) scanstart = scanstop - 1;

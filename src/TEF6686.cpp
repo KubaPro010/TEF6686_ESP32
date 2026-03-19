@@ -128,14 +128,13 @@ void TEF6686::init(byte TEF) {
   // Start the firmware
   devTEF_Set_Cmd(TEF_INIT, 0, 0);
 
-  while(devTEF_APPL_Get_Operation_Status() != 1) delay(1); // Wait for it to load
+  while(devTEF_APPL_Get_Operation_Status() != 1) delay(2); // Wait for it to load
 
   if(clock != 9216000) devTEF_Set_Cmd(TEF_APPL, Cmd_Set_ReferenceClock, 3, (clock >> 16) & 0xffff, clock & 0xffff, (clock == 55466670) ? 1 : 0);
   devTEF_Set_Cmd(TEF_APPL, Cmd_Set_Activate, 1, 1); // Setup done, start radio
 
   while(devTEF_APPL_Get_Operation_Status() != 2) delay(1); // Wait for it to start
 
-  Wire.setClock(old_clock);
   devTEF_Set_Cmd(TEF_FM, Cmd_Set_LevelStep, 7, 0xffff, 0xffff, 0xffff, 0xffff, 0xfffc, 0xfff8, 0x0);
   devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Mph, 3, 0, 360, 300);
   devTEF_Set_Cmd(TEF_FM, Cmd_Set_Highcut_Max, 2, 0, 4000);
@@ -148,6 +147,7 @@ void TEF6686::init(byte TEF) {
   devTEF_Set_Cmd(TEF_FM, Cmd_Set_StHiBlend_Max, 2, 0, 4000);
   devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_Ana_Out, 2, 128, 1);
   devTEF_Set_Cmd(TEF_AUDIO, Cmd_Set_Output_Source, 2, 128, 224);
+  Wire.setClock(old_clock);
 
   uint16_t device = getIdentification(NULL, NULL);
 

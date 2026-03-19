@@ -1,3 +1,5 @@
+// This is ancient
+
 #pragma once
 
 #include "globals.h"
