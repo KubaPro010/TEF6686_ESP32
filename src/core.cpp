@@ -2290,7 +2290,7 @@ void Seek(bool mode) {
   }
 
   if (band < BAND_GAP) {
-    radio.getStatus(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus, &CN);
+    radio.getStatus(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus);
     if (isSignalQualityGood(USN, WAM, OStatus) && (!usesquelch || (Squelch < SStatus || Squelch == SQUELCH_MAX_VALUE))) {
       seek = false;
       radio.setUnMute();
@@ -2302,7 +2302,7 @@ void Seek(bool mode) {
       if (RDSSPYTCP) RemoteClient.print("G:\r\nRESET-------\r\n\r\n");
     }
   } else {
-    radio.getStatusAM(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus, &CN);
+    radio.getStatusAM(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus);
     if ((USN < amscansens * 30) && (OStatus < 2 && OStatus > -2) && (!usesquelch || (Squelch < SStatus || Squelch == 920))) {
       seek = false;
       radio.setUnMute();
@@ -2339,7 +2339,7 @@ uint8_t doAutoMemory(uint16_t startfreq, uint16_t stopfreq, uint8_t startmem, ui
     radio.SetFreq(frequency);
     radio.clearRDS();
     delay(DELAY_TUNE_MS);
-    radio.getStatus(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus, &CN);
+    radio.getStatus(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus);
     if (isSignalQualityGood(USN, WAM, OStatus)) {
       for (byte y = 0; y < 20; y++) {
         delay(DELAY_RDS_READ_MS);

@@ -3036,7 +3036,6 @@ void BuildDisplay() {
   if (usesquelch || autosquelch) tftPrint(ALEFT, "SQ:", 197, 147, ActiveColor, ActiveColorSmooth, 16);
   tftPrint(ALEFT, "US:", 259, 147, ActiveColor, ActiveColorSmooth, 16);
   tftPrint(ALEFT, "MP:", 259, 165, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ALEFT, "CN:", 197, 165, ActiveColor, ActiveColorSmooth, 16);
   tftPrint(ARIGHT, "dB", 255, 165, ActiveColor, ActiveColorSmooth, 16);
   tftPrint(ARIGHT, "%", 316, 165, ActiveColor, ActiveColorSmooth, 16);
   tftPrint(ARIGHT, "%", 316, 147, ActiveColor, ActiveColorSmooth, 16);
@@ -3088,7 +3087,6 @@ void BuildDisplay() {
   SStatusold = 2000;
   SStatus = 100;
   rssiold = 2000;
-  CNold = 254;
   af_counterold = 254;
   batteryold = 6;
   batteryVold = 0;

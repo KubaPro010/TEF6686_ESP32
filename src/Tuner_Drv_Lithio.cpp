@@ -33,7 +33,7 @@ uint8_t devTEF_APPL_Get_Operation_Status() {
   return Convert8bto16b(buf);
 }
 
-void devTEF_Radio_Get_Quality_Data(uint16_t *status, int16_t *level, uint16_t *usn, uint16_t *wam, int16_t *offset, uint16_t *bandwidth, uint16_t *audiolevel, int8_t *snr) {
+void devTEF_Radio_Get_Quality_Data(uint16_t *status, int16_t *level, uint16_t *usn, uint16_t *wam, int16_t *offset, uint16_t *bandwidth, uint16_t *audiolevel) {
   uint8_t buf[14];
   devTEF_Get_Cmd(TEF_FM, Cmd_Get_Quality_Data, buf, sizeof(buf));
 
@@ -50,7 +50,6 @@ void devTEF_Radio_Get_Quality_Data(uint16_t *status, int16_t *level, uint16_t *u
   if(offset != NULL) *offset = Convert8bto16b(buf + 8);
   if(bandwidth != NULL) *bandwidth = Convert8bto16b(buf + 10) / 10;
   if(audiolevel != NULL) *audiolevel = Convert8bto16b(buf + 12) / 10;
-  if(snr != NULL) *snr = (int8_t)(_level * 0.0675f - (_usn * 0.038f) - (_wam * 0.018f));
 }
 
 void devTEF_Radio_Get_RDS_Status(uint16_t *status, uint16_t *A_block, uint16_t *B_block, uint16_t *C_block, uint16_t *D_block, uint16_t *dec_error) {

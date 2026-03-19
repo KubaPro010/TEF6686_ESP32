@@ -776,7 +776,7 @@ void XDRGTKRoutine() {
               delay(5);
               DataPrint(String(freq_scan * 10, DEC));
               DataPrint(" = ");
-              if (band < BAND_GAP) radio.getStatus(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus, &CN); else radio.getStatusAM(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus, &CN);
+              if (band < BAND_GAP) radio.getStatus(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus); else radio.getStatusAM(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus);
               DataPrint(String((SStatus / 10) + 10, DEC));
               DataPrint(", ");
             }

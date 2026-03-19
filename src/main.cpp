@@ -709,12 +709,10 @@ void doSquelch() {
 
 void ShowSignalLevel() {
   SAvg = (((SAvg * 9) + 5) / 10) + SStatus;
-  SAvg2 = (((SAvg2 * 9) + 5) / 10) + CN;
   SAvg4 = (((SAvg4 * 9) + 5) / 10) + WAM;
   SAvg5 = (((SAvg5 * 9) + 5) / 10) + USN;
 
   SStatus = SAvg / 10;
-  CN = SAvg2 / 10;
   MP = SAvg4 / 10;
   US = SAvg5 / 10;
 
@@ -722,17 +720,6 @@ void ShowSignalLevel() {
     if (millis() >= SNRupdatetimer + TIMER_SNR_TIMER) {
       SNRupdatetimer = millis();
       if (!advancedRDS) {
-        if (CN > (CNold + 1) || CN < (CNold - 1)) {
-          if (CNold == -126) tftPrint16(ARIGHT, "--", 234, 165, BackgroundColor, BackgroundColor); else tftPrint16(ARIGHT, String(CNold), 234, 165, BackgroundColor, BackgroundColor);
-          if (tuned) {
-            tftPrint16(ARIGHT, String(CN), 234, 165, PrimaryColor, PrimaryColorSmooth);
-            CNold = CN;
-          } else {
-            tftPrint16(ARIGHT, "--", 234, 165, PrimaryColor, PrimaryColorSmooth);
-            CNold = -126;
-          }
-        }
-
         byte MPprint = constrain(map(MP, 0, 1000, 0, 100), 0, 100);
         if (MPprint != MPold) {
           tftReplace(ARIGHT, String(MPold), (band < BAND_GAP ? String(MPprint) : "--"), 299, 165, PrimaryColor, PrimaryColorSmooth, BackgroundColor, 16);
@@ -795,7 +782,7 @@ void ShowSignalLevel() {
   }
 
   if (!seek) {
-    if (tuned && CN > 15 && SStatus > 300) {
+    if (tuned && SStatus > 300) {
       if (!setextendbw) {
         setextendbw = true;
         radio.extendBW(true);
@@ -1152,7 +1139,7 @@ void loop() {
     }
 
     if (!scanholdflag) delay(75);
-    radio.getStatus(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus, &CN);
+    radio.getStatus(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus);
 
     if (!initdxscan) {
       switch (scancancel) {
@@ -1354,8 +1341,8 @@ void loop() {
     if (millis() >= lowsignaltimer + 300) {
       lowsignaltimer = millis();
       if (af || (!screenmute || (screenmute && (XDRGTKTCP || XDRGTKUSB)))) {
-        if (band < BAND_GAP) radio.getStatus(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus, &CN);
-        else radio.getStatusAM(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus, &CN);
+        if (band < BAND_GAP) radio.getStatus(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus);
+        else radio.getStatusAM(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus);
       }
       if (!BWtune && !menu) {
         doSquelch();
@@ -1365,8 +1352,8 @@ void loop() {
 
   } else {
     if (af || (!screenmute || (screenmute && (XDRGTKTCP || XDRGTKUSB)))) {
-      if (band < BAND_GAP) radio.getStatus(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus, &CN);
-      else radio.getStatusAM(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus, &CN);
+      if (band < BAND_GAP) radio.getStatus(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus);
+      else radio.getStatusAM(&SStatus, &USN, &WAM, &OStatus, &BW, &MStatus);
     }
     if (!BWtune && !menu) {
       doSquelch();

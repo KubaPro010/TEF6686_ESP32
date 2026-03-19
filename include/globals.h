@@ -230,8 +230,6 @@ extern int8_t USold;
 extern int8_t LevelOffset;
 extern int8_t LowLevelSet;
 extern int8_t Timezone;
-extern int8_t CN;
-extern int8_t CNold;
 extern int8_t VolSet;
 extern float batteryVold;
 extern IPAddress remoteip;
