@@ -639,7 +639,7 @@ void doSquelch() {
           if (Squelch == -100) SquelchSprite.drawString("--", 0, 0);
           else if (Squelch == 920) SquelchSprite.drawString("ST", 0, 0);
           else SquelchSprite.drawString(String(SquelchShow), 0, 0);
-          SquelchSprite.pushSprite(223, 147);
+          SquelchSprite.pushSprite(223, 156);
           Squelchold = Squelch;
         }
       }
@@ -676,7 +676,7 @@ void doSquelch() {
             if (Squelch == -1) SquelchSprite.drawString("ST", 0, 0);
             else if (Squelch == 0) SquelchSprite.drawString("--", 0, 0);
             else SquelchSprite.drawString(String(SquelchShow), 0, 0);
-            if (Squelch != Squelchold) SquelchSprite.pushSprite(223, 147);
+            if (Squelch != Squelchold) SquelchSprite.pushSprite(223, 156);
             Squelchold = Squelch;
           }
         }

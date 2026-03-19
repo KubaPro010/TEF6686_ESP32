@@ -3033,40 +3033,39 @@ void BuildDisplay() {
     }
   }
 
-  if (usesquelch || autosquelch) tftPrint(ALEFT, "SQ:", 197, 147, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ALEFT, "US:", 259, 147, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ALEFT, "MP:", 259, 165, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ARIGHT, "dB", 255, 165, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ARIGHT, "%", 316, 165, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ARIGHT, "%", 316, 147, ActiveColor, ActiveColorSmooth, 16);
+  if (usesquelch || autosquelch) tftPrint16(ALEFT, "SQ:", 197, 156, ActiveColor, ActiveColorSmooth);
+  tftPrint16(ALEFT, F("US:"), 259, 147, ActiveColor, ActiveColorSmooth);
+  tftPrint16(ALEFT, F("MP:"), 259, 165, ActiveColor, ActiveColorSmooth);
+  tftPrint16(ARIGHT, F("%"), 316, 165, ActiveColor, ActiveColorSmooth);
+  tftPrint16(ARIGHT, F("%"), 316, 147, ActiveColor, ActiveColorSmooth);
 
-  tftPrint(ACENTER, "S", 7, 101, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ALEFT, "1", 21, 115, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ALEFT, "3", 41, 115, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ALEFT, "5", 61, 115, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ALEFT, "7", 81, 115, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ALEFT, "9", 101, 115, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ALEFT, "+10", 127, 115, ActiveColor, ActiveColorSmooth, 16);
-  tftPrint(ALEFT, "+30", 160, 115, ActiveColor, ActiveColorSmooth, 16);
+  tftPrint16(ACENTER, F("S"), 7, 101, ActiveColor, ActiveColorSmooth);
+  tftPrint16(ALEFT, F("1"), 21, 115, ActiveColor, ActiveColorSmooth);
+  tftPrint16(ALEFT, F("3"), 41, 115, ActiveColor, ActiveColorSmooth);
+  tftPrint16(ALEFT, F("5"), 61, 115, ActiveColor, ActiveColorSmooth);
+  tftPrint16(ALEFT, F("7"), 81, 115, ActiveColor, ActiveColorSmooth);
+  tftPrint16(ALEFT, F("9"), 101, 115, ActiveColor, ActiveColorSmooth);
+  tftPrint16(ALEFT, F("+10"), 127, 115, ActiveColor, ActiveColorSmooth);
+  tftPrint16(ALEFT, F("+30"), 160, 115, ActiveColor, ActiveColorSmooth);
 
   if (!showaudio) {
-    tftPrint(ACENTER, "A", 7, 128, GreyoutColor, BackgroundColor, 16);
-    tftPrint(ALEFT, "10", 24, 144, GreyoutColor, BackgroundColor, 16);
-    tftPrint(ALEFT, "30", 54, 144, GreyoutColor, BackgroundColor, 16);
-    tftPrint(ALEFT, "50", 84, 144, GreyoutColor, BackgroundColor, 16);
-    tftPrint(ALEFT, "70", 114, 144, GreyoutColor, BackgroundColor, 16);
-    tftPrint(ALEFT, "100", 160, 144, GreyoutColor, BackgroundColor, 16);
+    tftPrint16(ACENTER, F("A"), 7, 128, GreyoutColor, BackgroundColor);
+    tftPrint16(ALEFT, F("10"), 24, 144, GreyoutColor, BackgroundColor);
+    tftPrint16(ALEFT, F("30"), 54, 144, GreyoutColor, BackgroundColor);
+    tftPrint16(ALEFT, F("50"), 84, 144, GreyoutColor, BackgroundColor);
+    tftPrint16(ALEFT, F("70"), 114, 144, GreyoutColor, BackgroundColor);
+    tftPrint16(ALEFT, F("100"), 160, 144, GreyoutColor, BackgroundColor);
   } else {
-    tftPrint(ACENTER, "A", 7, 128, ActiveColor, ActiveColorSmooth, 16);
-    tftPrint(ALEFT, "10", 24, 144, ActiveColor, ActiveColorSmooth, 16);
-    tftPrint(ALEFT, "30", 54, 144, ActiveColor, ActiveColorSmooth, 16);
-    tftPrint(ALEFT, "50", 84, 144, ActiveColor, ActiveColorSmooth, 16);
-    tftPrint(ALEFT, "70", 114, 144, ActiveColor, BackgroundColor, 16);
-    tftPrint(ALEFT, "100", 160, 144, ActiveColor, ActiveColorSmooth, 16);
+    tftPrint16(ACENTER, F("A"), 7, 128, ActiveColor, ActiveColorSmooth);
+    tftPrint16(ALEFT, F("10"), 24, 144, ActiveColor, ActiveColorSmooth);
+    tftPrint16(ALEFT, F("30"), 54, 144, ActiveColor, ActiveColorSmooth);
+    tftPrint16(ALEFT, F("50"), 84, 144, ActiveColor, ActiveColorSmooth);
+    tftPrint16(ALEFT, F("70"), 114, 144, ActiveColor, BackgroundColor);
+    tftPrint16(ALEFT, F("100"), 160, 144, ActiveColor, ActiveColorSmooth);
   }
 
-  tftPrint(ARIGHT, "kHz", 246, 4, ActiveColor, ActiveColorSmooth, 28);
-  tftPrint(ARIGHT, unitString[unit], 316, 128, ActiveColor, ActiveColorSmooth, 16);
+  tftPrint(ARIGHT, F("kHz"), 246, 4, ActiveColor, ActiveColorSmooth, 28);
+  tftPrint16(ARIGHT, unitString[unit], 316, 128, ActiveColor, ActiveColorSmooth);
 
   tft.drawBitmap(68, 5, RDSLogo, 35, 22, GreyoutColor);
   tft.drawBitmap(249, 4, Speaker, 28, 24, GreyoutColor);
@@ -5610,10 +5609,8 @@ String shortLine(String text) {
       int lastCharIndex = tempText.length() - 1;
       while (lastCharIndex > 0 && (tempText[lastCharIndex] & 0xC0) == 0x80) lastCharIndex--;
       tempText = tempText.substring(0, lastCharIndex);
-    }
-    text = tempText + "...";
-  }
-  return text;
+    } text = tempText + "...";
+  } return text;
 }
 
 void ShowRDSLogo(bool RDSstatus) {
@@ -5621,14 +5618,13 @@ void ShowRDSLogo(bool RDSstatus) {
   if (RDSstatus != RDSstatusold) {
     if (RDSstatus) tft.drawBitmap(68, 5, RDSLogo, 35, 22, RDSColor);
     else tft.drawBitmap(68, 5, RDSLogo, 35, 22, GreyoutColor);
-  }
-  RDSstatusold = RDSstatus;
+  } RDSstatusold = RDSstatus;
 }
 
 void showAutoSquelch(bool mode) {
   if (screenmute) return;
-  if (mode) tft.drawBitmap(223, 147, AutoSQ, 18, 18, PrimaryColor);
-  else tft.drawBitmap(223, 147, AutoSQ, 18, 18, BackgroundColor);
+  if (mode) tft.drawBitmap(223, 156, AutoSQ, 18, 18, PrimaryColor);
+  else tft.drawBitmap(223, 156, AutoSQ, 18, 18, BackgroundColor);
 }
 
 void updateiMS() {
